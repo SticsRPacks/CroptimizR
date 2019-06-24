@@ -62,4 +62,3 @@ Please note that this project is released with a [Contributor Code of Conduct](C
 The STICS (Simulateur mulTIdisciplinaire pour les Cultures Standard, or multidisciplinary simulator for standard crops) model is a dynamic, generic and robust model aiming to simulate the soil-crop-atmosphere system. It was first developed in 1996 by INRA -the French National Institute for Agricultural research-  by Nadine Brisson and Dominique Ripoche. An overview of the model is available [here](https://www6.paca.inra.fr/stics_eng/About-us/Stics-model-overview).
 
 The SticsOptimizR package is developed by Samuel Buis, Michel Giner and the [SticsOptimizR Team] (https://github.com/orgs/SticsRPacks/teams/sticsoptimizr).
----
