@@ -187,4 +187,61 @@ nloptr(x0 = param_value_vec, eval_f = Stic_Crit, lb = lb_vec, ub = ub_vec, opts 
 
 
 
-Après si ça marche, arranger le param_value, utiliser des apply pour réduire les for dans Stic_Crit().
+# ---------------------------------------------------------------------------------------------------------
+
+# Graphics
+
+
+init <- list()
+fin <- list()
+for (i in 1:length(lb_vec)){
+  init[[i]] <- 0
+  fin[[i]] <- 0
+}
+
+T1<-Sys.time()
+
+for (z in 1:2){
+  param_value_vec <- vector("numeric")
+  for (i in 1:length(lb_vec)){
+    param_value_vec[i] <- runif(1,lb_vec[i], ub_vec[i])
+    init[[i]][z] <- param_value_vec[i]
+  }
+
+  nlo <- nloptr(x0 = param_value_vec, eval_f = Stic_Crit, lb = lb_vec, ub = ub_vec, opts = list("algorithm"="NLOPT_LN_NELDERMEAD", "xtol_rel"=1e-08, "maxeval"=2),
+                param_name = param_name, USM = USM, USM_list = USM_list, obs_val = all_obs, obs_jul = all_jul_obs, flag_log = flag_log)
+
+
+  for (y in 1:length(lb_vec)){
+    fin[[y]][z] <- nlo$solution[y]
+  }
+}
+
+T2<-Sys.time()
+difftime(T2, T1)
+
+
+# PDF
+pdf(file = "graph_test.pdf", width = 9, height = 9, pointsize = 10)
+
+for (i in 1:length(init)) {
+  n<-which.min(init[[i]])
+  plot(init[[i]], fin[[i]], main = "Estimated vs Initial values of the
+parameters for different repetitions", text(init[[i]], fin[[i]], pos=1,col="black"), xlim = c(lb_vec[i],ub_vec[i]), ylim =   c(lb_vec[i],ub_vec[i]), xlab = paste("Initial value for", param_name_plot[i]), ylab = paste("Estimated value for", param_name_plot[i]))
+  text(init[[i]][n], fin[[i]][n], labels = n, pos=1,col="red")
+}
+
+dev.off()
+
+
+
+
+
+
+
+
+
+
+
+
+#Après si ça marche, arranger le param_value, utiliser des apply pour réduire les for dans Stic_Crit().
