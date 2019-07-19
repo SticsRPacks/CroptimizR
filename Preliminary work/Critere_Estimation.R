@@ -135,7 +135,7 @@ if (TRUE %in% duplicated(USM_list)){
 #}
 
 val_removed <- -999.00
-flag_log <- FALSE
+flag_log <- TRUE
 val_obs <- vector("list")
 jul_obs <- vector("list")
 val_obs_int <- vector("list")
