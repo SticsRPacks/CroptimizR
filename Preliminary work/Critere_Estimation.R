@@ -69,11 +69,11 @@ Stic_Crit <- function(param_value_vec, param_name, USM, USM_list, obs_val, obs_j
 
     # print(param_value_inter)
 
-    gen_param_sti(paste0("D:/Home/Tvailhere/Interface/DonneesSticsCas1c/", USM_list[i]), param_name, param_value_inter)
-    set_codeoptim(paste0("D:/Home/Tvailhere/Interface/DonneesSticsCas1c/", USM_list[i]))
-    run_system("D:/Home/Tvailhere/Interface/JavaSTICS-1.41-stics-9.0/bin/stics_modulo", "D:/Home/Tvailhere/Interface/DonneesSticsCas1c", USM_list[i])
+    gen_param_sti(paste0(workspace_donne, USM_list[i]), param_name, param_value_inter)
+    set_codeoptim(paste0(workspace_donne, USM_list[i]))
+    run_system(workspace_modulo, workspace_donne, USM_list[i])
 
-    sim_inter<-get_daily_results(paste0("D:/Home/Tvailhere/Interface/DonneesSticsCas1c/",USM_list[i]), USM_list[i], doy_list = obs_jul[[i]])
+    sim_inter<-get_daily_results(paste0(workspace_donne, USM_list[i]), USM_list[i], doy_list = obs_jul[[i]])
     sim_value <- append(sim_value, sim_inter$lai.n.)
 
   }
@@ -124,6 +124,8 @@ USM <- list(list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1", "bo96iN+", "lu96i
 nb_rep <- 2 # Combien de fois on relance nloptr avec des paramètres différts (pour les graphiques)
 xtol_rel <- 1e-05 # Tolérance
 maxeval <- 5 # Nb max d'evaluation
+workspace_donne <- "D:/Home/Tvailhere/Interface/DonneesSticsCas1c/"
+workspace_modulo <- "D:/Home/Tvailhere/Interface/JavaSTICS-1.41-stics-9.0/bin/stics_modulo"
 
 
 # ------ Calculs automatiques (à ne pas modifier par l'utilisateur)
@@ -160,7 +162,7 @@ eps <- 1e-300
 
 # Valeurs observÃ©s (A modifier ensuite pour le cas "plusieurs variables")
 for (a in 1:length(USM_list)) {
-  obs <- getObsData(paste0("D:/Home/Tvailhere/Interface/DonneesSticsCas1c/",USM_list[a],"_csv.obs"))
+  obs <- getObsData(paste0(workspace_donne, USM_list[a],"_csv.obs"))
   val_obs[[a]] <- obs$table$lai.n.
   jul_obs[[a]] <- obs$table$jul
 
@@ -252,5 +254,5 @@ parameters for different repetitions", text(init[[i]], fin[[i]], pos=1,col="blac
 
 dev.off()
 
-
+#Workspace a rentrer par l'utilisateur
 #Après si ça marche, arranger le param_value, utiliser des apply pour réduire les for dans Stic_Crit().
