@@ -3,19 +3,19 @@ install.packages("D:/Home/Tvailhere/Interface/SticsEvalR_1.36_r1215.tar.gz",  re
 install.packages("D:/Home/Tvailhere/Interface/SticsOnR_0.1_r1445.tar.gz",  repos = NULL)
 install.packages("D:/Home/Tvailhere/Interface/Classes_1.1.tar.gz", repos = NULL)
 install.packages("dplyr")
-install.packages("lubridate")
 install.packages("XML")
 install.packages("nloptr")
-install.packages("stringr")
+install.packages("profvis")
+install.packages("lineprof")
 
 library(XML)
 library(dplyr)
-library(lubridate)
 library(SticsEvalR)
 library(SticsOnR)
 library(Classes)
 library(nloptr)
-library(stringr)
+library(profvis)
+
 
 
 # ----
@@ -36,7 +36,7 @@ crit <- function(sim,obs,flag_log){
 
 
 # ----
-Stic_Crit <- function(param_value, param_name, USM, USM_list, obs_val, obs_jul, flag_log){
+Stic_Crit <- function(param_value_vec, param_name, USM, USM_list, obs_val, obs_jul, flag_log){
 
   # USM -> List of USM groups
   # USM_list -> List of all USM
@@ -44,25 +44,30 @@ Stic_Crit <- function(param_value, param_name, USM, USM_list, obs_val, obs_jul, 
   sim_value <- vector("numeric")
   sim_inter <- vector("list")
 
+
   param_value_inter <- vector("numeric")
   for (i in 1:length(USM_list)){
-
     count=1
     for (y in 1:length(USM)){
-      if (is.null(USM[[y]])==FALSE){
+      # print(paste0("count :", count))
+      if (length(USM[[y]])!=1){
         for (z in 1:length(USM[[y]])){
-          #print(USM[y])
           if (USM_list[i] %in% USM[[y]][[z]]){
-            param_value_inter[y] <- param_value[count]
-            count=count+1          }
+            param_value_inter[y] <- param_value_vec[count]
+            count=count+1
+          } else {
+            count=count+1
+          }
         }
       } else {
-        param_value_inter[y] <- param_value[count]
+        param_value_inter[y] <- param_value_vec[count]
         count=count+1
       }
+
+
     }
 
-    #print(param_value_inter)
+    # print(param_value_inter)
 
     gen_param_sti(paste0("D:/Home/Tvailhere/Interface/DonneesSticsCas1c/", USM_list[i]), param_name, param_value_inter)
     set_codeoptim(paste0("D:/Home/Tvailhere/Interface/DonneesSticsCas1c/", USM_list[i]))
@@ -74,8 +79,8 @@ Stic_Crit <- function(param_value, param_name, USM, USM_list, obs_val, obs_jul, 
   }
 
   res <- crit(sim_value, obs_val, flag_log)
-  print(param_value)
-  print(res)
+  #print(param_value_vec)
+  #print(res)
   return(res)
 
 }
@@ -83,38 +88,55 @@ Stic_Crit <- function(param_value, param_name, USM, USM_list, obs_val, obs_jul, 
 
 # --- SCRIPT
 
-#TEST 1
+# ------ Paramètres à rentrer par l'utilisateur
+
+# TEST 1 (Ne fonctionne pas, seulement un test)
 param_name <- c("dlaimax", "durvieF", "test1", "test2", "test3")
 lb <- list(0.0005, c(50, 40), 15, c(5, 100, 30), c(0, 0))
 ub <- list(0.0025, c(400, 500), 30, c(50, 500, 60), c(10, 15))
 # Tous les USM
-USM <- list(c(),
+USM <- list(list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1", "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),
             list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1"), c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),
-            c(),
+            list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1", "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),
             list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1"), c("bo96iN+", "lu96iN+"), c("lu96iN6", "lu97iN+")),
             list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1", "bo96iN+", "lu96iN+", "lu96iN6"), c("lu97iN+")))
 
 
-#TEST 2
+# TEST 2 (Fonctionne)
 param_name <- c("dlaimax", "durvieF")
-lb <- list(0.0005, c(50, 40))
-ub <- list(0.0025, c(400, 500))
+lb <- list(0.0005, c(50, 50))
+ub <- list(0.0025, c(400, 400))
 # Tous les USM
-USM <- list(c(),
-            list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1"), c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")))
+USM <- list(list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1", "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),
+            list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"), c("bou99t3", "bou00t3", "bou99t1", "bou00t1")))
 
+
+
+# TEST 3 (Fonctionne mais plus interessant de tester avec le TEST 2)
+param_name <- c("dlaimax")
+lb <- list(0.0005)
+ub <- list(0.0025)
+# Tous les USM
+USM <- list(list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1", "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")))
+
+
+
+nb_rep <- 2 # Combien de fois on relance nloptr avec des paramètres différts (pour les graphiques)
+xtol_rel <- 1e-05 # Tolérance
+maxeval <- 5 # Nb max d'evaluation
+
+
+# ------ Calculs automatiques (à ne pas modifier par l'utilisateur)
 
 lb_vec <- unlist(lb)
 ub_vec <- unlist(ub)
 
-
-#USM_list <- vector("character")
-#for (i in 1:length(USM)){
-#if (is.list(USM[[i]])==TRUE){
-#for (y in 1:length(USM[[i]]))
-#USM_list <- append(USM_list, USM[[i]][[y]])
-#}
-#}
+param_name_plot <- vector("character")
+for (i in 1:length(lb)){
+  for (y in 1:length(lb[[i]])){
+    param_name_plot <- append(param_name_plot, param_name[i])
+  }
+}
 
 USM_list <- unlist(USM)
 
@@ -124,15 +146,6 @@ if (TRUE %in% duplicated(USM_list)){
 }
 
 
-
-
-# Pas rÃ©ussi Ã  le faire sans le "for"
-#for (i in 1:(length(USM)-1)){
-#param_name <- append(param_name, param_name[length(param_name)])
-#lb <- append(lb, lb[length(lb)])
-#ub <- append(ub, ub[length(ub)])
-#param_value <- append(param_value, runif(1,lb[length(lb)],ub[length(ub)]))
-#}
 
 val_removed <- -999.00
 flag_log <- TRUE
@@ -165,11 +178,11 @@ for (a in 1:length(USM_list)) {
 
 }
 
-# Valeurs alÃ©atoires des paramÃ¨tres
+# Valeurs aleatoires des parametres (Non necessaire je crois car fait plus tard dans la partie "Graphics")
 param_value <- list()
 for (i in 1:length(USM)){
   inter <- vector("numeric")
-  if (is.null(USM[[i]])==TRUE){
+  if (length(USM[[i]])==1){
     param_value <- append(param_value, runif(1,lb[[i]],ub[[i]]))
   } else {
     for (y in 1:length(USM[[i]])){
@@ -178,10 +191,11 @@ for (i in 1:length(USM)){
     param_value <- append(param_value, list(inter))
   }
 }
-
 param_value_vec <- unlist(param_value)
 
 
+
+# Test pour voir si Minimization marche, ne doit pas forcément être executee
 nloptr(x0 = param_value_vec, eval_f = Stic_Crit, lb = lb_vec, ub = ub_vec, opts = list("algorithm"="NLOPT_LN_NELDERMEAD", "xtol_rel"=1e-08, "maxeval"=10),
        param_name = param_name, USM = USM, USM_list = USM_list, obs_val = all_obs, obs_jul = all_jul_obs, flag_log = flag_log)
 
@@ -191,7 +205,6 @@ nloptr(x0 = param_value_vec, eval_f = Stic_Crit, lb = lb_vec, ub = ub_vec, opts 
 
 # Graphics
 
-
 init <- list()
 fin <- list()
 for (i in 1:length(lb_vec)){
@@ -199,49 +212,45 @@ for (i in 1:length(lb_vec)){
   fin[[i]] <- 0
 }
 
-T1<-Sys.time()
+# Debut calcul temps
+T1 <- Sys.time()
 
-for (z in 1:2){
+nlo <- list()
+for (z in 1:nb_rep){
   param_value_vec <- vector("numeric")
   for (i in 1:length(lb_vec)){
     param_value_vec[i] <- runif(1,lb_vec[i], ub_vec[i])
     init[[i]][z] <- param_value_vec[i]
   }
 
-  nlo <- nloptr(x0 = param_value_vec, eval_f = Stic_Crit, lb = lb_vec, ub = ub_vec, opts = list("algorithm"="NLOPT_LN_NELDERMEAD", "xtol_rel"=1e-08, "maxeval"=2),
+  nlo[[z]] <- nloptr(x0 = param_value_vec, eval_f = Stic_Crit, lb = lb_vec, ub = ub_vec, opts = list("algorithm"="NLOPT_LN_NELDERMEAD", "xtol_rel"=xtol_rel, "maxeval"=maxeval),
                 param_name = param_name, USM = USM, USM_list = USM_list, obs_val = all_obs, obs_jul = all_jul_obs, flag_log = flag_log)
 
 
   for (y in 1:length(lb_vec)){
-    fin[[y]][z] <- nlo$solution[y]
+    fin[[y]][z] <- nlo[[z]]$solution[y]
   }
 }
 
-T2<-Sys.time()
+# Fin calcul temps
+T2 <- Sys.time()
+
+# Temps total
 difftime(T2, T1)
 
+save(nlo, file = "nlo.Rdata")
 
 # PDF
-pdf(file = "graph_test.pdf", width = 9, height = 9, pointsize = 10)
+pdf(file = "graph.pdf", width = 9, height = 9, pointsize = 10)
 
 for (i in 1:length(init)) {
-  n<-which.min(init[[i]])
+  n<-which.min(fin[[i]])
   plot(init[[i]], fin[[i]], main = "Estimated vs Initial values of the
 parameters for different repetitions", text(init[[i]], fin[[i]], pos=1,col="black"), xlim = c(lb_vec[i],ub_vec[i]), ylim =   c(lb_vec[i],ub_vec[i]), xlab = paste("Initial value for", param_name_plot[i]), ylab = paste("Estimated value for", param_name_plot[i]))
   text(init[[i]][n], fin[[i]][n], labels = n, pos=1,col="red")
 }
 
 dev.off()
-
-
-
-
-
-
-
-
-
-
 
 
 #Après si ça marche, arranger le param_value, utiliser des apply pour réduire les for dans Stic_Crit().
