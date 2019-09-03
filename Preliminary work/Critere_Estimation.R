@@ -2,46 +2,32 @@
 
 # Commentaires pour Samuel :
 
-# Bug possible : Inversion dans les groupes de paramètres, à vérifier.
-# Modifier le code pour qu'il puisse traiter plusieurs variables à la fois
+# Bug possible : Inversion dans les groupes de param?tres, ? v?rifier.
+# Modifier le code pour qu'il puisse traiter plusieurs variables ? la fois
 # Faire un test sur run_system et gen param_sti renvoyer une erreur si c'est faux
-# Sortir une erreur dans Stics-crit (regarder la doc de run system et genparamsti -> False) (déja commencé, voir en bas mais rien de fonctionnel)
-# Arranger le param_value, utiliser des apply pour réduire les for dans Stic_Crit().
-# Voir si l'ordre d'installation des packages ne pose pas problème sur un ordinateur
-# sur lequel ces packages ne sont pas installés
-
-
-
+# Sortir une erreur dans Stics-crit (regarder la doc de run system et genparamsti -> False) (d?ja commenc?, voir en bas mais rien de fonctionnel)
+# Arranger le param_value, utiliser des apply pour r?duire les for dans Stic_Crit().
+# Voir si l'ordre d'installation des packages ne pose pas probl?me sur un ordinateur
+# sur lequel ces packages ne sont pas install?s
 
 #---------------------------------------------------------------------------------------------------------------
 
-
-
-
-
 # Preliminary information :
 
-# Run the Stics model once by USM and put the files created in a folder (temporary txt files, if we run the model
-# on several USM, the files will be replaced and it will remain only those of the last USM).
-# There must be a folder by USM with txt files created by Stics
-# Outside USM folders, there must be "input file" (ini, obs, tec, sta, climatic data), "USMs" file (XML document) and the folder "plant".
+# Stics inputs files for the USMs used for parameter estimation must be created before using this script.
+# They must be at the txt format and stored in one folder per USM, having the name of the USM.
+# These files are climat.txt, ficini.txt, ficplt1.txt, fictec1.txt, param.sol, station.txt, tempopar.sti, tempoparV6.sti, prof.mod, rap.mod, var.mod, ***.obs
+# The observation file (***.obs) must take the name of the USM (e.g. for USM1, obs file must be called USM1.obs)
+# These text files can be created by running the USMs one by one using JavaStics.
 
-
-
-
+# To use this script, please fill the necessay information in the following section "Input parameters given by the user"
 
 # ---------------------------------------------------------------------------------------------------------------
-
-
-
-
 
 # Input parameters given by the user
 
 
-# TEST for the entire script (parameters must be given below)
-
-# Vector of parameters names (sans doublons)
+# Vector of parameters names
 param_name <- c("dlaimax", "durvieF")
 
 # Vector of lower and upper boundaries
@@ -52,6 +38,7 @@ ub <- list(0.0025, c(400, 400)) # upper bounds
 
 # List of USMs to use for each parameter
 # If there is only one USM group for the parameter, make a list with a vector containing all USMs
+#    Hum ... in that case the same list should be put for each parameter => THIS SHOULD BE CHANGED (one list should be enough ...)
 # If there are several groups of USM for a parameter, make a list with several vectors (one per group) containing the USM of the corresponding group
 # Each parameter must have a list of vectors containing USM groups
 USM <- list(list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1", "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),
@@ -67,14 +54,18 @@ flag_log <- TRUE # TRUE -> With log ; FALSE -> Without log
 
 # Workspace_donne -> workspace directory where are USM folders
 # Write full path, relative path does not work
-workspace_donne <- "D:/Home/Tvailhere/Interface/DonneesSticsCas1c/"
+workspace_donne <- "D:/Home/sbuis/Documents/GitHub/SticsOptimizR/Preliminary work/Data/TestCase1c"
 
 # path_modulo -> directory of the executable of the JavaStics application (bin folder)
 # To find the name of the executable, check in JavaStics -> Tools -> Select/Add Stics model version -> Corresponding executable
-path_modulo <- "D:/Home/Tvailhere/Interface/JavaSTICS-1.41-stics-9.0/bin/stics_modulo"
+path_modulo <- "D:/Home/sbuis/Documents/WORK/STICS/JavaSTICS-1.41-stics-9.0/bin/stics_modulo"
 
-# path_pdf -> Path and name of graphic that will be register
-path_pdf <- "D:/Home/Tvailhere/Interface/graph.pdf"
+# path_results -> Path to the folder where to store the results
+path_results <- "D:/Home/sbuis/Documents/GitHub/SticsOptimizR/Preliminary work/Data/TestCase1c"
+
+# path_packages -> Path of the needed packages (SticsOnR, SticsEvalR, classes)
+path_packages <- "Tools"
+
 
 
 # TEST of the part "Automatic calculations" (don't Work with nloptr)
@@ -114,15 +105,15 @@ path_pdf <- "D:/Home/Tvailhere/Interface/graph.pdf"
 
 # Put the .gz files on his computer and change the path to install the 3 following packages
 if(!require("SticsEvalR")){
-  install.packages("D:/Home/Tvailhere/Interface/SticsEvalR_1.36_r1215.tar.gz",  repos = NULL)
+  install.packages(file.path(path_packages,"SticsEvalR_1.36_r1215.tar.gz"),  repos = NULL)
 }
 
 if(!require("SticsOnR")){
-  install.packages("D:/Home/Tvailhere/Interface/SticsOnR_0.1_r1445.tar.gz",  repos = NULL)
+  install.packages(file.path(path_packages,"SticsOnR_0.1_r1445.tar.gz"),  repos = NULL)
 }
 
 if(!require("Classes")){
-  install.packages("D:/Home/Tvailhere/Interface/Classes_1.1.tar.gz", repos = NULL)
+  install.packages(file.path(path_packages,"Classes_1.1.tar.gz"), repos = NULL)
 }
 
 if(!require("dplyr")){
@@ -189,6 +180,9 @@ Stic_Crit <- function(param_value_vec, param_name, USM, USM_list, obs_val, obs_j
 
   param_value_inter <- vector("numeric")
   for (i in 1:length(USM_list)){
+    
+    # print(paste("------- USM",USM_list[i]))
+    
     count=1
     for (y in 1:length(USM)){
       # print(paste0("count :", count))
@@ -210,11 +204,11 @@ Stic_Crit <- function(param_value_vec, param_name, USM, USM_list, obs_val, obs_j
     }
 
     # print(param_value_inter)
-    gen_param_sti(paste0(workspace_donne, USM_list[i]), param_name, param_value_inter)
-    set_codeoptim(paste0(workspace_donne, USM_list[i]))
+    gen_param_sti(file.path(workspace_donne, USM_list[i]), param_name, param_value_inter)
+    set_codeoptim(file.path(workspace_donne, USM_list[i]))
     run_system(path_modulo, workspace_donne, USM_list[i])
 
-    sim_inter <- get_daily_results(paste0(workspace_donne, USM_list[i]), USM_list[i], doy_list = obs_jul[[i]])
+    sim_inter <- get_daily_results(file.path(workspace_donne, USM_list[i]), USM_list[i], doy_list = obs_jul[[i]])
     sim_value <- append(sim_value, eval(parse(text = paste0("sim_inter$", variable))))
 
   }
@@ -268,7 +262,7 @@ eps <- 1e-300
 
 # Observed values
 for (a in 1:length(USM_list)) {
-  obs <- getObsData(paste0(workspace_donne, USM_list[a],".obs"))
+  obs <- getObsData(file.path(workspace_donne, USM_list[a],paste0(USM_list[a],".obs")))
   val_obs[[a]] <- eval(parse(text = paste0("obs$table$", variable)))
   jul_obs[[a]] <- obs$table$jul
 
@@ -361,13 +355,13 @@ T2 <- Sys.time()
 difftime(T2, T1)
 
 # Save the result of minimization for each repetition
-save(nlo, file = "nlo.Rdata")
+save(nlo, file = file.path(path_results,"nlo.Rdata"))
 
 # Which repetion has the smallest criterion
 min_pos<-which.min(all_crit)
 
 # PDF
-pdf(file = path_pdf, width = 9, height = 9, pointsize = 10)
+pdf(file = file.path(path_results,"EstimatedVSinit.pdf") , width = 9, height = 9, pointsize = 10)
 for (i in 1:length(param_init)) {
   plot(param_init[[i]], param_fin[[i]], main = "Estimated vs Initial values of the
 parameters for different repetitions", text(param_init[[i]], param_fin[[i]], pos=1,col="black"), xlim = c(lb_vec[i],ub_vec[i]),
@@ -379,9 +373,9 @@ dev.off()
 
 # Display of parameters for the repetion who have the smallest criterion
 for (nb_param in 1:length(param_fin)){
-  print(paste("L'estimation de", param_name_plot[nb_param], "est égal à :", param_fin[[nb_param]][min_pos]))
+  print(paste("Estimated value for", param_name_plot[nb_param], ": ", param_fin[[nb_param]][min_pos]))
 }
-print(paste("Le critère minimum est égale à :", all_crit[min_pos]))
+print(paste("Minimum value of the criterion :", all_crit[min_pos]))
 
 
 
