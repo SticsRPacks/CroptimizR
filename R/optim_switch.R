@@ -1,26 +1,51 @@
-optim_switch <- function(param_names,obs_list,crit_function,model_function,model_options,optim_options,prior_information) {
-  #' @title main function for criterion to optimize
+optim_switch <- function(param_names,obs_list,crit_function,model_function,model_options=NULL,optim_method="simplex",optim_options=NULL,prior_information) {
+  #' @title Call the required parameter estimation method
   #'
-  #' @param param_names Name(s) of parameters to force the value (optional)
+  #' @param param_names Name(s) of parameters to estimate (a parameter name must
+  #' be replicated if several groups of situations for this parameter)
   #' @param obs_list List of observed values
   #' @param crit_function Function implementing the criterion to optimize
+  #' @param model_function Crop Model wrapper function
+  #' @param model_options List of options for the Crop Model wrapper (optional)
+  #' @param optim_method Name of the parameter estimation method (optional,
+  #' simplex is the only one interfaced for the moment)
+  #' @param optim_options List of options of the parameter estimation method:
+  #' \code{nb_rep}, the number of repetitions (optional, default=1)
+  #' \code{xtol_rel}, the tolerance for the stopping criterion on relative
+  #' differences on parameters values between 2 iterations (optional, default=1e-5)
+  #' \code{maxeval}, the maximum number of criterion evaluation (optional, default=500)
+  #' \code{path_results}, the path where to store the results (optional, default=getwd())
+  #' @param prior_information Prior information on the parameters to estimate.
+  #' For the moment only uniform distribution are allowed.
+  #' Either a list containing (named) vectors of upper and lower
+  #' bounds (\code{ub} and \code{lb}), or a named list containing for each
+  #' parameter the list of situations per group (\code{sit_list})
+  #' and the vector of upper and lower bounds (one value per group) (\code{ub} and \code{lb})
   #'
-  #' @return The value of the criterion
+  #' @return Prints and graphs, depends on the parameter estimation method used
   #'
   #' @export
   #'
   #' @examples
 
+  # TO DO LIST
+  # - externalize nloptr
+  #      o see if we create one function for nloptr or one per methods included
+  #        in nloptr (depends on their genericity)
+  # - add parameter normalization step
+
   # Normalize parameters
   # TO DO
 
-  # CALL optim method
-  nb_rep=optim_options$rep_nb
-  xtol_rel=optim_options$xtol_rel
-  maxeval=optim_options$maxeval
 
-  lb_vec=prior_information$lb
-  ub_vec=prior_information$ub
+  # CALL optim method
+
+  if (is.null((nb_rep=optim_options$nb_rep))) { nb_rep=1 }
+  if (is.null((xtol_rel=optim_options$xtol_rel))) { xtol_rel=1e-5 }
+  if (is.null((maxeval=optim_options$maxeval))) { maxeval=500 }
+  if (is.null((path_results=optim_options$path_results))) { path_results=getwd() }
+
+  nb_params=length(param_names)
 
   crit_options_loc=list()
   crit_options_loc$param_names=param_names
@@ -28,55 +53,50 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
   crit_options_loc$crit_function=crit_function
   crit_options_loc$model_function=model_function
   crit_options_loc$model_options=model_options
+  crit_options_loc$prior_information=prior_information
 
-  # The initial parameters, the final parameters and the minimized criterion
-  param_init <- list()
-  param_fin <- list()
-  all_crit <- vector("numeric")
-  for (i in 1:length(lb_vec)){
-    param_init[[i]] <- 0
-    param_fin[[i]] <- 0
-  }
+  bounds=get_params_bounds(prior_information)
 
+  # Sample initial values
+  init_values=sample_params(prior_information,nb_rep)
+
+  # Run nloptr for each repetition
   nlo <- list()
-  for (z in 1:nb_rep){
+  for (irep in 1:nb_rep){
 
-    # random init values
-    param_value_vec <- vector("numeric")
-    for (i in 1:length(lb_vec)){
-      param_value_vec[i] <- runif(1,lb_vec[i], ub_vec[i])
-      param_init[[i]][z] <- param_value_vec[i]
-    }
+    nlo[[irep]] <- nloptr(x0 = init_values[irep,], eval_f = main_crit,
+                          lb = bounds$lb, ub = bounds$ub,
+                          opts = list("algorithm"="NLOPT_LN_NELDERMEAD",
+                                      "xtol_rel"=xtol_rel, "maxeval"=maxeval),
+                          crit_options=crit_options_loc)
 
-    nlo[[z]] <- nloptr(x0 = param_value_vec, eval_f = main_crit, lb = lb_vec, ub = ub_vec,
-                       opts = list("algorithm"="NLOPT_LN_NELDERMEAD", "xtol_rel"=xtol_rel, "maxeval"=maxeval),
-                       crit_options=crit_options_loc)
-
-    for (y in 1:length(lb_vec)){
-      param_fin[[y]][z] <- nlo[[z]]$solution[y]
-    }
-    all_crit[z] <- nlo[[z]]$objective
   }
+
+  # Get the estimated values
+  est_values=t(sapply(nlo,function(x) x$solution))
 
   # Which repetion has the smallest criterion
-  min_pos<-which.min(all_crit)
+  ind_min_crit=which.min(sapply(nlo, function(x) x$objective))
 
-  # PDF
-#  pdf(file = file.path(path_results,"EstimatedVSinit.pdf") , width = 9, height = 9, pointsize = 10)
-  pdf(file = "EstimatedVSinit.pdf" , width = 9, height = 9, pointsize = 10)
-  for (i in 1:length(param_init)) {
-    plot(param_init[[i]], param_fin[[i]], main = "Estimated vs Initial values of the
-         parameters for different repetitions", text(param_init[[i]], param_fin[[i]], pos=1,col="black"), xlim = c(lb_vec[i],ub_vec[i]),
-         ylim =   c(lb_vec[i],ub_vec[i]), xlab = paste("Initial value for", param_names[i]),
-         ylab = paste("Estimated value for", param_names[i]))
-    text(param_init[[i]][min_pos], param_fin[[i]][min_pos], labels = min_pos, pos=1,col="red")
+  # Graph and print the results
+  pdf(file = file.path(path_results,"EstimatedVSinit.pdf") , width = 9, height = 9, pointsize = 10)
+  for (ipar in 1:nb_params) {
+    plot(init_values[,ipar], est_values[,ipar],
+         main = "Estimated vs Initial values of the parameters for different repetitions",
+         text(init_values[,ipar], est_values[,ipar], pos=1,col="black"),
+         xlim = c(bounds$lb[ipar],bounds$ub[ipar]),
+         ylim = c(bounds$lb[ipar],bounds$ub[ipar]),
+         xlab = paste("Initial value for", param_names[ipar]),
+         ylab = paste("Estimated value for", param_names[ipar]))
+    text(init_values[ind_min_crit,ipar], est_values[ind_min_crit,ipar],
+         labels = ind_min_crit, pos=1,col="red")
   }
   dev.off()
 
   # Display of parameters for the repetion who have the smallest criterion
-  for (nb_param in 1:length(param_fin)){
-    print(paste("Estimated value for", param_names[nb_param], ": ", param_fin[[nb_param]][min_pos]))
+  for (ipar in 1:nb_params) {
+    print(paste("Estimated value for", param_names[ipar], ": ", est_values[ind_min_crit,ipar]))
   }
-  print(paste("Minimum value of the criterion :", all_crit[min_pos]))
+  print(paste("Minimum value of the criterion :", nlo[[ind_min_crit]]$objective))
 
 }

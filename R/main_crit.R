@@ -3,12 +3,18 @@ main_crit <- function(param_values,crit_options) {
   #'
   #' @param param_values Value(s) of the parameters
   #' @param crit_options A list containing the following elements:
-  #' param_names Name(s) of parameters
-  #' obs_list List of observed values
-  #' crit_function Function implementing the criterion to optimize
-  #' model_function Function implementing the criterion to optimize
-  #' model_options List of arguments to pass to model function
-  #' situation_names Name(s) of the situations to simulate
+  #' \code{param_names} Name(s) of parameters
+  #' \code{obs_list} List of observed values
+  #' \code{crit_function} Function implementing the criterion to optimize
+  #' \code{model_function} Function implementing the criterion to optimize
+  #' \code{model_options} List of arguments to pass to model function
+  #' \code{situation_names} Name(s) of the situations to simulate
+  #' \code{prior_information} Prior information on the parameters to estimate.
+  #' For the moment only uniform distribution are allowed.
+  #' Either a list containing a vector of upper and lower
+  #' bounds (\code{ub} and \code{lb}), or a list of list containing for each
+  #' parameter and group of situation the names of the situations (\code{sit_names})
+  #' and upper and lower bounds (\code{ub} and \code{lb})
   #'
   #' @return The value of the criterion
   #'
@@ -31,12 +37,13 @@ main_crit <- function(param_values,crit_options) {
   crit_function=crit_options$crit_function
   model_function=crit_options$model_function
   model_options=crit_options$model_options
+  prior_information=crit_options$prior_information
 
   names(param_values)=param_names
 
   # Call model function
   model_results=model_function(param_values=param_values,sit_var_dates=obs_list,
-                 model_options=model_options)
+                 prior_information=prior_information,model_options=model_options)
 
   # intersect sim and obs if necessary
   if (!model_results$flag_allsim) {
