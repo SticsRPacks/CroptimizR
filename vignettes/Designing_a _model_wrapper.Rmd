@@ -1,11 +1,17 @@
 ---
-title: "Designing a crop model R wrapper FOR ??? (TO BE COMPLETED)"
-author: "Patrice Lecharpentier"
+title: "Designing a crop model R wrapper for ..."
+author: 
+- name: "Patrice Lecharpentier"
+  affiliation: "INRA - Agroclim"
+- name: "Samuel Buis"
+  affiliation: "INRA - Emmah"
 date: "09/10/2019"
 output:
    html_document:
      toc: true
      toc_float: true
+params:
+   cores_nb: 2
 ---
 
 ```{r setup, include=FALSE}
@@ -55,11 +61,20 @@ The names used are just examples to illustrate.
 
 #### Variables and dates situation list
 
-- name: **site_var_dates**
+- name: **site_var_dates_mask**
 - *optional argument*
 - a `named list` (names == situations names) of tables (i.e. data.frames) containing
 measured values for the variables or a number for the desired combination var/dates
 and NA in other cases.
+
+
+#### Prior information for managing forcing parameters
+
+- name: **prior_information**
+- *optional argument*
+- a `named list` with parameters names fields containing informations used for defining what specific parameters/values to use for a given situation and/or associated parameters bounds (per parameter or parameters repetition associated to situations groups) 
+
+
 
 ####  Model options list
 
@@ -80,10 +95,17 @@ and NA in other cases.
 #' @param param_values named vector containing the value(s) and names of the
 #' parameters to force (optional)
 #'
-#' @param site_var_dates List of situations, variables and dates for which
+#' @param site_var_dates_mask List of situations, variables and dates for which
 #' simulated values should be returned. Typically a list containing the
 #' observations to which simulations should be compared
 #' (i.e. a list of variables/dates per situation)
+#'
+#' @param prior_information Prior information on the parameters to estimate.
+#' For the moment only uniform distribution are allowed.
+#' Either a list containing (named) vectors of upper and lower
+#' bounds (\code{ub} and \code{lb}), or a named list containing for each
+#' parameter the list of situations per group (\code{sit_list})
+#' and the vector of upper and lower bounds (one value per group) (\code{ub} and \code{lb})
 #'
 #' @param model_options List containing any information needed by the model.
 #' For example: the path of the model executable file,
@@ -93,8 +115,8 @@ and NA in other cases.
 #' (\code{flag_allsim}) indicating if all required situations, variables and
 #' dates were simulated.
 
-model_wrapper <- function( param_values=NULL, site_var_dates=NULL,
-                           model_options ) {
+model_wrapper <- function( param_values=NULL, site_var_dates_mask=NULL,
+                           prior_information=NULL, model_options ) {
   ...
   
 }
@@ -123,7 +145,8 @@ This is usefull for `sensitivity analysis` or `optimization` processes cases, fo
 - Additional (optional) informations modifying the wrapper behaviour    
 **For example**
    - parallel calculation management
-   - informations display management
+   - information display management (for example: runs duration)
+   - warning display management
    - ...
 
 
@@ -149,6 +172,8 @@ model_wrapper_options <- function(model_path,
   options$cores <- NA
   # duration time display switch
   options$time_display <- FALSE
+  # warning display switch
+  options$warning_display <- TRUE
   
   # Getting the options list template content
   # when running model_wrapper_options()
@@ -176,11 +201,16 @@ model_wrapper_options <- function(model_path,
 
 
 
-### Getting or producing the output mask (i.e. site_var_dates)
+### Getting or producing the output mask (i.e. site_var_dates_mask)
 
-> temporary list of data.frames containing for each situation state variables as columns and
-dates as rows. 
+#### What is the list structure ?
 
+
+#### Getting the structure from several basic informations on situations / variables / dates
+
+
+
+#### Getting the structure from observation files (evaluation, optimization processes)
 
 From a list of observation date files, a named list of data.frames is produced for 
 each situation for which the file exists.
@@ -190,25 +220,10 @@ Here is an example for a single file for `banana` observations:
 library(SticsRFiles)
 path <- system.file(file.path("extdata","obs","V9.0"), package = "SticsRFiles")
 obs_list <- read_obs_to_list(path)
-lapply(obs_list,head)
+lapply(obs_list, function(x) head(x,4))
 
 ```
 
-
-### Actions to perform before using the wrapper
-
-#### Produce inputs files for all the situations
-> In our case the wrapper (more precisely the function lauching the model using a system call )
-> we must produce all inputs data before running the wrapper function.
-
-Producing all set of input files or parameter files in advance or all configurations files of the situations.
-
-
-#### ??
-
-wheather files (forcing inputs)
-
-observation files ?
 
 
 
@@ -237,38 +252,101 @@ From the `param_values` argument, use a mechanism to force values in the model i
 
 - replacing values in original parameters file(s)
 - specific file dedicated to force parameters (exists in Stics)
-- passing parameters values thorough an interface function to the model (for example R -> cpp, fortran,... libraries)
+- passing parameters values through an interface function to the model (for example R -> cpp, fortran,... libraries)
 - ...
+
+The parameters values may be associated with data (`prior_information`) describing which values for which parameters must be applied to each situation extracted from the parameters values vector `param_values`.
+
+If `prior_information` contains the default value (NULL) the same set of parameter values is used for each situation.   
+
+- Example of information stored in `prior_information` and use:
+```{r}
+library(SticsOptimizR)
+sg=list(p1=list(sit_list=list(c("sit1","sit2","sit3"),c("sit4","sit5","sit6"))),
+        p2=list(sit_list=list(c("sit1","sit2","sit3","sit4","sit5","sit6"))))
+
+vec=c(1,2,3)
+
+names(vec) <- c("p2","p1","p1")
+
+params_sit2 <- get_params_per_sit(sg,"sit2",vec)
+
+params_sit2
+
+```
 
 
 2. Running the model
 Use a model interface function using a system call or other mechanisms to perform a model run for a situation and get back execution error status.
 
 
-3. Getting/storing output data
-
-> cases: files, function output ???
-> format: data.frame like
+3. Getting output data
 
 If the model run produces files, a function is used to read and format
-the date/variables outputs.
+the date/variables outputs. Otherwise the results may be produced directly by an R model function and are to be formatted as expected too.
 
 
 4. Selecting output data
-If the optional argument `site_var_dates` is used to filter in outputs tables
+If the optional argument `site_var_dates_mask` is used to filter data in outputs tables
 a subset based on rows dates values for columns names (i.e. variables)
+
+
+
 
 
 #### Managing optional parallel computations inside the loop
 
-Description ... package, foreach specificity ()
+- Description ... package, foreach specificity ()
 no shared variable assignment inside
 
-```{r, eval= FALSE}
+```{r}
 # Code of an example of foreach loop algo
+library("doParallel")
+print(params$cores_nb)
 
+test_parallel <- function(cores_nb = 1,
+                          pa = FALSE,
+                          max_it = 5) {
+  
+  # Launching the cluster
+  cl <- makeCluster(cores_nb)
+  registerDoParallel(cl)
+  
+  # List preallocation
+  out_pa <- vector(mode = "list", max_it)
+  
+  # Parallel loop
+  out <- foreach(i = 1:max_it) %dopar% {
+    if (pa) {
+      out_pa[[i]] <- i
+    } else {
+      return(i)
+    }
+  }
+  
+  # Stopping the cluster
+  stopCluster(cl)
+  
+  if (pa) {
+    return(out_pa)
+  } else {
+    return(out)
+  }
+  
+  
+}
+
+out <- test_parallel(params$cores_nb)
+
+out_pa <- test_parallel(params$cores_nb, TRUE)
+
+out
+
+out_pa
 
 ```
+
+- Managing warnings, display catching in parallel context
 
 
 #### Returning data for all situations
@@ -299,9 +377,10 @@ Generation of a set of folders, one for each situation.
 #### Using observations variables and dates as filter list
 ```{r, warning=F}
 library(SticsRFiles)
+library(SticsOnR)
 path <- system.file(file.path("extdata","usms_dirs","V9.0"), package = "SticsOnR")
-site_var_dates = read_obs_to_list(list.dirs(path)[-1])
-lapply(site_var_dates, head)
+site_var_dates_mask = read_obs_to_list(list.dirs(path)[-1])
+lapply(site_var_dates_mask, function(x) head(x,4))
 ```
 
 
