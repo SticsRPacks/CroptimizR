@@ -22,7 +22,8 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
   #' parameter the list of situations per group (\code{sit_list})
   #' and the vector of upper and lower bounds (one value per group) (\code{ub} and \code{lb})
   #'
-  #' @return Prints and graphs, depends on the parameter estimation method used
+  #' @return The vector of values for optimized parameters + prints and graphs,
+  #' depending on the parameter estimation method used
   #'
   #' @export
   #'
@@ -98,5 +99,9 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
     print(paste("Estimated value for", param_names[ipar], ": ", est_values[ind_min_crit,ipar]))
   }
   print(paste("Minimum value of the criterion :", nlo[[ind_min_crit]]$objective))
+
+  res=est_values[ind_min_crit,]
+  names(res)=param_names
+  return(res)
 
 }
