@@ -1,0 +1,429 @@
+---
+title: "Designing a crop model R wrapper for ..."
+author: 
+- name: "Patrice Lecharpentier"
+  affiliation: "INRA - Agroclim"
+- name: "Samuel Buis"
+  affiliation: "INRA - Emmah"
+date: "09/10/2019"
+output:
+   html_document:
+     toc: true
+     toc_float: true
+params:
+   cores_nb: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+## Introduction
+
+Talk about the contexts of use of this wrapper and // computations.
+
+
+## Definition
+The R model wrapper aims to use the original model code/executable file (or using other mechanisms depending on the model)... with specific conditions (input files or data) defined for simulations situations (i.e. local conditions as model parameters and wheather data, initializations of state variables at the simulation starting point/date).
+
+One can provide as supplemental inputs, parameters values for overloading default values (got from files, ...) and output definition list for different situations (desired variables values for dates list).
+
+
+The wrapper is composed of several functionnalities:
+
+- Using specific model options 
+
+- Forcing external parameters values
+
+- Working on multiple situations
+
+- Performing parallel calculations (optionally)
+
+- Selecting outputs or not (specific for each situation)
+
+- Running the model
+
+- Gathering all outputs
+
+
+## Writing the model wrapper
+
+### Wrapper input arguments
+The names used are just examples to illustrate.
+#### Parameters values
+
+- name: **param_values**
+- *optional argument*
+- a `named vector` of parameters to be forced in the model inputs
+
+
+#### Variables and dates situation list
+
+- name: **site_var_dates_mask**
+- *optional argument*
+- a `named list` (names == situations names) of tables (i.e. data.frames) containing
+measured values for the variables or a number for the desired combination var/dates
+and NA in other cases.
+
+
+#### Prior information for managing forcing parameters
+
+- name: **prior_information**
+- *optional argument*
+- a `named list` with parameters names fields containing informations used for defining what specific parameters/values to use for a given situation and/or associated parameters bounds (per parameter or parameters repetition associated to situations groups) 
+
+
+
+####  Model options list
+
+- name: **model_options**
+- *mandatory argument*
+- a `named list` of needed informations about the model (see next section for details)
+
+
+#### Function header example
+
+```{r}
+#' @title Running situation(s) from txt input files stored in one directory
+#' per `situation`, simulated results are returned in a list
+#'
+#' @description This function uses the model directly through a system call, can
+#' force model input parameters with values given in arguments.
+#'
+#' @param param_values named vector containing the value(s) and names of the
+#' parameters to force (optional)
+#'
+#' @param site_var_dates_mask List of situations, variables and dates for which
+#' simulated values should be returned. Typically a list containing the
+#' observations to which simulations should be compared
+#' (i.e. a list of variables/dates per situation)
+#'
+#' @param prior_information Prior information on the parameters to estimate.
+#' For the moment only uniform distribution are allowed.
+#' Either a list containing (named) vectors of upper and lower
+#' bounds (\code{ub} and \code{lb}), or a named list containing for each
+#' parameter the list of situations per group (\code{sit_list})
+#' and the vector of upper and lower bounds (one value per group) (\code{ub} and \code{lb})
+#'
+#' @param model_options List containing any information needed by the model.
+#' For example: the path of the model executable file,
+#' the path of the directory containing input data
+#'
+#' @return A list containing simulated values (\code{sim_list}) and a flag
+#' (\code{flag_allsim}) indicating if all required situations, variables and
+#' dates were simulated.
+
+model_wrapper <- function( param_values=NULL, site_var_dates_mask=NULL,
+                           prior_information=NULL, model_options ) {
+  ...
+  
+}
+
+```
+
+
+
+### Definining a model options list
+
+#### Aim
+The use of this options list is for masking model specific informations when the wrapper
+function is called automatically by functions managing parameters values forcing. In this case the options list is only transmitted to the model wrapper.
+
+This is usefull for `sensitivity analysis` or `optimization` processes cases, for example.
+
+#### List structure
+
+- Mandatory informations needed by the model for functionning    
+**For example**
+   - inputs data directory path/root path
+   - model executable location path
+   - ...
+
+
+- Additional (optional) informations modifying the wrapper behaviour    
+**For example**
+   - parallel calculation management
+   - information display management (for example: runs duration)
+   - warning display management
+   - ...
+
+
+
+#### Example of a model options interface function
+
+> Based on a model example used with a simple system call
+
+
+```{r, eval=FALSE}
+model_wrapper_options <- function(model_path,
+                                  data_dir, ... ) {
+  
+  # options list template
+  options <- list()
+  # model executable
+  options$model_path <- character(0)
+  # input data
+  options$data_dir <- character(0)
+  # parallel calculation switch
+  options$parallel <- FALSE
+  # setting cores number
+  options$cores <- NA
+  # duration time display switch
+  options$time_display <- FALSE
+  # warning display switch
+  options$warning_display <- TRUE
+  
+  # Getting the options list template content
+  # when running model_wrapper_options()
+  if (! nargs()) return(options)
+  
+  # Fixing mandatory fields values
+  options$model_path <- model_path
+  options$data_dir <- data_dir
+  
+  # Fixing optional fields:
+  # if names in given list (...) correspond
+  # to exact field names in options list
+  list_names <- names (options)
+  add_args <- list(...)
+  
+  for (n in names(add_args)) {
+    if ( n %in% list_names) {
+      options[[n]] <- add_args[[n]]
+    }
+  }
+  
+  return(options)
+}
+```
+
+
+
+### Getting or producing the output mask (i.e. site_var_dates_mask)
+
+#### What is the list structure ?
+
+
+#### Getting the structure from several basic informations on situations / variables / dates
+
+
+
+#### Getting the structure from observation files (evaluation, optimization processes)
+
+From a list of observation date files, a named list of data.frames is produced for 
+each situation for which the file exists.
+Here is an example for a single file for `banana` observations:
+
+```{r warning=FALSE}
+library(SticsRFiles)
+path <- system.file(file.path("extdata","obs","V9.0"), package = "SticsRFiles")
+obs_list <- read_obs_to_list(path)
+lapply(obs_list, function(x) head(x,4))
+
+```
+
+
+
+
+
+### Actions to be performed by the model wrapper
+
+
+#### Before the loop over situations list 
+
+
+- Managing options: checks about its content, reacting from values stored in it    
+**For example**:
+   - checking if paths exist
+   - checking the model executable, its version, ...(libraries availability, ...)
+   - storing fields contents in simple variables (easier to use)
+   - other kinds of checks or calculations (depending on the model specificities)
+
+
+
+
+#### Inside the loop over situations list
+
+1. Managing parameters forcing
+
+From the `param_values` argument, use a mechanism to force values in the model inputs:
+
+- replacing values in original parameters file(s)
+- specific file dedicated to force parameters (exists in Stics)
+- passing parameters values through an interface function to the model (for example R -> cpp, fortran,... libraries)
+- ...
+
+The parameters values may be associated with data (`prior_information`) describing which values for which parameters must be applied to each situation extracted from the parameters values vector `param_values`.
+
+If `prior_information` contains the default value (NULL) the same set of parameter values is used for each situation.   
+
+- Example of information stored in `prior_information` and use:
+```{r}
+library(SticsOptimizR)
+sg=list(p1=list(sit_list=list(c("sit1","sit2","sit3"),c("sit4","sit5","sit6"))),
+        p2=list(sit_list=list(c("sit1","sit2","sit3","sit4","sit5","sit6"))))
+
+vec=c(1,2,3)
+
+names(vec) <- c("p2","p1","p1")
+
+params_sit2 <- get_params_per_sit(sg,"sit2",vec)
+
+params_sit2
+
+```
+
+
+2. Running the model
+Use a model interface function using a system call or other mechanisms to perform a model run for a situation and get back execution error status.
+
+
+3. Getting output data
+
+If the model run produces files, a function is used to read and format
+the date/variables outputs. Otherwise the results may be produced directly by an R model function and are to be formatted as expected too.
+
+
+4. Selecting output data
+If the optional argument `site_var_dates_mask` is used to filter data in outputs tables
+a subset based on rows dates values for columns names (i.e. variables)
+
+
+
+
+
+#### Managing optional parallel computations inside the loop
+
+- Description ... package, foreach specificity ()
+no shared variable assignment inside
+
+```{r}
+# Code of an example of foreach loop algo
+library("doParallel")
+print(params$cores_nb)
+
+test_parallel <- function(cores_nb = 1,
+                          pa = FALSE,
+                          max_it = 5) {
+  
+  # Launching the cluster
+  cl <- makeCluster(cores_nb)
+  registerDoParallel(cl)
+  
+  # List preallocation
+  out_pa <- vector(mode = "list", max_it)
+  
+  # Parallel loop
+  out <- foreach(i = 1:max_it) %dopar% {
+    if (pa) {
+      out_pa[[i]] <- i
+    } else {
+      return(i)
+    }
+  }
+  
+  # Stopping the cluster
+  stopCluster(cl)
+  
+  if (pa) {
+    return(out_pa)
+  } else {
+    return(out)
+  }
+  
+  
+}
+
+out <- test_parallel(params$cores_nb)
+
+out_pa <- test_parallel(params$cores_nb, TRUE)
+
+out
+
+out_pa
+
+```
+
+- Managing warnings, display catching in parallel context
+
+
+#### Returning data for all situations
+
+> temporary structure: named list of data.frames, and simulation status flag.
+
+The wrapper return a list/collection of situation simulations outputs (filtered or not),
+for the successful simulations.
+There is also a simulation status return indicating if all simulations ran successfully or not.
+
+
+
+## Use examples of the Stics wrapper
+
+### Preparing inputs data
+#### Situation workspace folders production
+
+Generation of a set of folders, one for each situation.
+```{r}
+
+```
+
+
+#### Parameters content
+
+
+
+#### Using observations variables and dates as filter list
+```{r, warning=F}
+library(SticsRFiles)
+library(SticsOnR)
+path <- system.file(file.path("extdata","usms_dirs","V9.0"), package = "SticsOnR")
+site_var_dates_mask = read_obs_to_list(list.dirs(path)[-1])
+lapply(site_var_dates_mask, function(x) head(x,4))
+```
+
+
+
+#### Model Options list initialization
+- Minimal configuration, without //
+```{r, eval=F}
+library(SticsOnR)
+model_path <- 
+  model_options_par <- model_wrapper_options(model_path = model_path,
+                                             data_dir = data_dir)
+model_options_par
+
+```
+- For // calculation
+```{r, eval=F}
+library(SticsOnR)
+model_options_par <- model_wrapper_options(model_path = model_path,
+                                           data_dir = data_dir,
+                                           parallel = TRUE)
+model_options_par
+
+```
+
+
+
+### Running the wrapper
+
+
+#### Directly
+Cases ...
+
+
+#### Through other functions providing parameters values
+
+Typically when using methods functions for SA, optimization , and so on ...
+
+
+
+
+
+
+
+
+
+
