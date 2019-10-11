@@ -26,8 +26,12 @@ sample_params <- function(bounds_list,n) {
 
   nb_params=length(bounds$lb)
 
-  out <- lhsDesign(n, dimension=nb_params)
-  return(sapply(1:nb_params,
-                function(x) bounds$lb[x]+out$design[,x]*(bounds$ub[x]-bounds$lb[x])))
+  out <- lhsDesign(n, dimension=nb_params)$design
+  res=sapply(1:nb_params,
+             function(x) bounds$lb[x]+out[,x]*(bounds$ub[x]-bounds$lb[x]))
+  res=matrix(res,nrow=n,ncol=nb_params)
+  colnames(res)=names(bounds$lb)
+
+  return(res)
 
 }
