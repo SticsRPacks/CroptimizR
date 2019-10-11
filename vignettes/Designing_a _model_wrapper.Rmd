@@ -125,7 +125,7 @@ model_wrapper <- function( param_values=NULL, site_var_dates_mask=NULL,
 
 
 
-### Definining a model options list
+### Defining a model options list
 
 #### Aim
 The use of this options list is for masking model specific informations when the wrapper
