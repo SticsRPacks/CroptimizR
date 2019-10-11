@@ -34,7 +34,8 @@ and the vector of upper and lower bounds (one value per group) (\code{ub} and \c
 \item{param_names}{Name(s) of parameters to estimate}
 }
 \value{
-Prints and graphs, depend on the parameter estimation method used
+The vector of values for optimized parameters + prints and graphs,
+depending on the parameter estimation method used
 }
 \description{
 main function for parameter estimation
@@ -46,22 +47,79 @@ library(SticsOnR)
 library(SticsOptimizR)
 library(dplyr)
 library(nloptr)
+library(DiceDesign)
+library("doParallel")
 
+
+# TEST ON ONE SITUATION and ONE VARIABLE
+
+# Select situation and variable
+sit_name="bo96iN+"
+var_name="lai_n"
+
+# Run the model before optimization for a prior evaluation
+stics_path="D:/Home/sbuis/Documents/WORK/STICS/JavaSTICS-1.41-stics-9.0/bin/stics_modulo"  # TO ADAPT TO YOUR CASE :-) ###
+data_dir=system.file(file.path("extdata","TestCase1c"), package = "SticsOptimizR")
+model_options=stics_wrapper_options(stics_path,data_dir,parallel=FALSE)
+sim_before_optim=stics_wrapper(model_options=model_options)
+
+# Read and select the corresponding observations
+obs_list=read_obs_to_list(file.path(model_options$data_dir,"Orig Data"),
+                          obs_filenames = paste0(sit_name,".obs"))
+obs_list[[sit_name]]=obs_list[[sit_name]][,c("Date",var_name)]
+
+# Set prior information on the parameters to estimate
 prior_information=list(lb=c(dlaimax=0.0005, durvieF=50),
                        ub=c(dlaimax=0.0025, durvieF=400))
 
-
-model_options=list()
-model_options$stics_path="D:/Home/sbuis/Documents/WORK/STICS/JavaSTICS-1.41-stics-9.0/bin/stics_modulo"  # TO ADAPT TO YOUR CASE :-) ###
-model_options$data_dir=system.file(file.path("extdata","TestCase1c"), package = "SticsOptimizR")
-
+# Set options for the parameter estimation method
 optim_options=list()
 optim_options$nb_rep <- 2 # How many times we run the minimization with different parameters
 optim_options$xtol_rel <- 1e-05 # Tolerance criterion between two iterations
-optim_options$maxeval <- 3 # Maximum number of iterations executed by the function
+optim_options$maxeval <- 20 # Maximum number of iterations executed by the function
 optim_options$path_results <- model_options$data_dir # path where to store results graphs
+
+# Run the optimization
+param_est_values=main_optim(obs_list=obs_list,crit_function=concentrated_wss,
+                            model_function=stics_wrapper,
+                            model_options=model_options,
+                            optim_options=optim_options,
+                            prior_information=prior_information)
+
+# Run the model after optimzation
+sim_after_optim=stics_wrapper(param_values=param_est_values,model_options=model_options)
+
+# Plot the results
+dev.new()
+par(mfrow = c(1,2))
+Ymax=max(max(obs_list[[sit_name]][,var_name], na.rm=TRUE),
+         max(sim_before_optim$sim_list[[sit_name]][,var_name], na.rm=TRUE))
+plot(sim_before_optim$sim_list[[sit_name]][,c("Date",var_name)],type="l",
+     main="Before optimization",ylim=c(0,Ymax+Ymax*0.1))
+points(obs_list[[sit_name]],col="green")
+plot(sim_after_optim$sim_list[[sit_name]][,c("Date",var_name)],type="l",
+     main="After optimization",ylim=c(0,Ymax+Ymax*0.1))
+points(obs_list[[sit_name]],col="green")
+
+
+# TEST WITH SEVERAL SITUATIONS AND USING GROUPS OF SITUATIONS PER PARAMETER
+
+prior_information=list()
+prior_information$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1", "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),lb=0.0005,ub=0.0025)
+prior_information$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"), c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),lb=c(50,50),ub=c(400,400))
+
+stics_path="D:/Home/sbuis/Documents/WORK/STICS/JavaSTICS-1.41-stics-9.0/bin/stics_modulo"  # TO ADAPT TO YOUR CASE :-) ###
+data_dir=system.file(file.path("extdata","TestCase1c"), package = "SticsOptimizR")
+model_options=stics_wrapper_options(stics_path,data_dir, parallel=TRUE)
+
+optim_options=list()
+optim_options$nb_rep=2                              # How many times we run the minimization with different parameters
+optim_options$xtol_rel=1e-05                        # Tolerance criterion between two iterations
+optim_options$maxeval=3                             # Maximum number of iterations executed by the function
+optim_options$path_results=model_options$data_dir   # path where to store results graphs
 
 obs_list=read_obs_to_list(file.path(model_options$data_dir,"Orig Data"))
 
 main_optim(obs_list=obs_list,crit_function=concentrated_wss,model_function=stics_wrapper,model_options=model_options,optim_options=optim_options,prior_information=prior_information)
+
 }

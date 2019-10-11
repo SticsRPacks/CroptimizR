@@ -38,7 +38,8 @@ parameter the list of situations per group (\code{sit_list})
 and the vector of upper and lower bounds (one value per group) (\code{ub} and \code{lb})}
 }
 \value{
-Prints and graphs, depends on the parameter estimation method used
+The vector of values for optimized parameters + prints and graphs,
+depending on the parameter estimation method used
 }
 \description{
 Call the required parameter estimation method
