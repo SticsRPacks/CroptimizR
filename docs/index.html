@@ -107,6 +107,57 @@
 <span id="cb2-2"><a href="#cb2-2"></a>remotes<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/remotes/topics/install_github">install_github</a></span>(<span class="st">"SticsRPacks/SticsOptimizR"</span>)</span></code></pre></div>
 <p>The package is tested routinely to pass all <a href="https://CRAN.R-project.org">CRAN</a> tests using Travis-CI (linux) and AppVeyor (Windows), but it is not released to the CRAN servers because we believe SticsOptimizR users are not widespread enough to bother CRAN people and use their free server time.</p>
 </div>
+<div id="planned-features" class="section level2">
+<h2 class="hasAnchor">
+<a href="#planned-features" class="anchor"></a>Planned features</h2>
+<p><strong>Probabilistic Uncertainty analysis</strong></p>
+<p>To evaluate the uncertainty of crop models outputs resulting from the propagation of the uncertainty of their inputs for a given set of simulated situations.</p>
+<p>Main features:</p>
+<ul>
+<li><p>inputs’ uncertainties will be described by the user using (usual) probability distributions or by users’ given sample (or a mixed of both depending on the parameters),</p></li>
+<li><p>facilities will be provided to describe distributions of groups of parameters (soils, weather, farming practices, initial conditions) using map labelling techniques (i.e. distributions of identifiers of soil / weather / … files) ,</p></li>
+<li><p>description of joint probability distributions including dependencies between parameters’ uncertainties should be provided,</p></li>
+<li><p>tools for probabilistic modeling could be provided (e.g. to generate new values, from a sample given by the user, by assessing the probability distribution it is sampled from),</p></li>
+<li><p>several methods wil be available to generate the numerical design of experiment: full-factorial design, random sampling using different methods (LHS, Quasi-Monte Carlo …),</p></li>
+</ul>
+<p>Results provided: numerical (moments, quantiles …) and graphical (histograms / density plots / boxplots / violins, correlation plots, time series of quantiles for dynamic variables …) description of the sample of output variables obtained.</p>
+<p><strong>Sensitivity analysis</strong></p>
+<p>To assess how the uncertainty of crop models outputs can be allocated to the uncertainty of their inputs / to describe the effects of the variations of crop models inputs on their outputs, for a given set of simulated situations.</p>
+<p>Main features:</p>
+<ul>
+<li><p>inputs’ uncertainties will be described as for uncertainty analysis functionality,</p></li>
+<li>
+<p>several methods should be provided to cope with diverse users’ needs:</p>
+<ul>
+<li><p>Screening methods (e.g. Morris) for a quick assessment of the effect of numerous inputs,</p></li>
+<li><p>Importance measures: correlation coefficients, Variance-based methods, Moment independent methods, for a more precise assessment of their impact,</p></li>
+<li><p>Multivariate Sensitivity Analysis methods to cope with temporal outputs,</p></li>
+<li><p>Graphical methods: scatter plots, response surface, cobweb plots, …</p></li>
+<li><p>Variants of these methods adapted to dependent inputs should be provided … (at least analysis per group of parameters)</p></li>
+</ul>
+</li>
+</ul>
+<p>Results provided: numerical and graphical representations (bar plots / pie charts / temporal plots of sensitivity indices …) of the indices depending on the method</p>
+<p><strong>Parameter estimation / model calibration</strong></p>
+<p>To estimate the values of a selection of crop models parameters (soil, plant …) from observations of a set of their output variables,</p>
+<p>Main features:</p>
+<ul>
+<li><p>procedures for automatic selection of the parameters to estimate from a given list (e.g. forward selection using criterions such as AIC, MSEP …)</p></li>
+<li><p>facilities to describe and perform calibration in different steps: different parameters are estimated from different observed situations and variables at each step using different forcings (lai, phenological stages) and using the parameters values estimated at the preceding steps,</p></li>
+<li><p>facilities to describe and take into account prior information and constraints (e.g. inequality constraints) on estimated parameters and output variables,</p></li>
+<li><p>facilities to transform model outputs in case observations does not corresponds to the crop model outputs</p></li>
+<li><p>different types of criterion to compare simulations and observations (i.e. of objective function to minimize) and different ways of combining these criteria for several variables: e.g. classical ordinary least-square, weighted-least-square, concentrated-likelihood for automatic estimation of error variances, criterion that take into account error correlations … (see e.g. Wallach et al., 2011)</p></li>
+<li><p>different estimation methods:frequentists (e.g. Nelder-Meade Simplex), Bayesians (e.g. multi-chain MCMC, SIR), global optimization (Evolutionnary Algorithms, GLUE), multi-objective methods, …</p></li>
+<li><p>methods for evaluating the predictive performance of the calibrated model (cross validation …)</p></li>
+</ul>
+<p>Results provided:</p>
+<ul>
+<li><p>estimated values and uncertainties of estimated parameters,</p></li>
+<li><p>specific diagnostics depending on the estimation method used,</p></li>
+<li><p>evaluation of the predictive performance of the calibrated model,</p></li>
+<li><p>description of the calibration process followed.</p></li>
+</ul>
+</div>
 <div id="examples" class="section level2">
 <h2 class="hasAnchor">
 <a href="#examples" class="anchor"></a>Examples</h2>
