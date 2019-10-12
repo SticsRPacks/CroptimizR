@@ -1,2 +1,14 @@
 .Rproj.user
 .Rhistory
+NAMESPACE
+.Rhistory
+inst/extdata/TestCase1c/*/*.sti
+inst/extdata/TestCase1c/*.pdf
+inst/extdata/TestCase1c/*/*.tmp
+inst/extdata/TestCase1c/*/snow*
+inst/extdata/TestCase1c/*/*.log
+Preliminary work/Data/TestCase1c/*/*.sti
+Preliminary work/Data/TestCase1c/*/*.tmp
+Preliminary work/Data/TestCase1c/*/snow*
+Preliminary work/Data/TestCase1c/*/*.log
+Preliminary work/Data/TestCase1c/*.pdf
