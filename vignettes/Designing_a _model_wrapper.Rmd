@@ -201,19 +201,18 @@ model_wrapper_options <- function(model_path,
 
 
 
-### Getting or producing the output mask (i.e. site_var_dates_mask)
-
-#### What is the list structure ?
+### The output mask (i.e. site_var_dates_mask)
 
 
-#### Getting the structure from several basic informations on situations / variables / dates
+The waited structure by the wrapper is for the moment a list of data frames (one for each situation) crossing a list of variables with a list of dates, per situation.
+In the wrapper, only variables names and Dates list are used for reducing output data.frames for situations. Data.frame content is not usefull for the treament at all.
 
+At the moment, this structure is identical while produced from the observation data or made independently from those.
 
+But this structure will certainly change in the future, to minimize stored information, keeping only the usefull data for selecting output data (optimizing memory storage, process)  
 
-#### Getting the structure from observation files (evaluation, optimization processes)
+For example, from a list of observation files (useful for evaluation or optimization processes), a named list of data.frame is produced, one for each situation for which the file exists.
 
-From a list of observation date files, a named list of data.frames is produced for 
-each situation for which the file exists.
 Here is an example for a single file for `banana` observations:
 
 ```{r warning=FALSE}
@@ -224,7 +223,7 @@ lapply(obs_list, function(x) head(x,4))
 
 ```
 
-
+One can give a similar filter list structure defining a customized selection of variables and Dates, but with all values set to NA in data.frames.
 
 
 
@@ -287,8 +286,8 @@ the date/variables outputs. Otherwise the results may be produced directly by an
 
 
 4. Selecting output data
-If the optional argument `site_var_dates_mask` is used to filter data in outputs tables
-a subset based on rows dates values for columns names (i.e. variables)
+If the optional argument `site_var_dates_mask` is used to filter data in outputs situations tables, a subset based on rows dates values for columns names (i.e. variables) of site_var_dates_mask is used for each situation.
+
 
 
 
@@ -296,8 +295,9 @@ a subset based on rows dates values for columns names (i.e. variables)
 
 #### Managing optional parallel computations inside the loop
 
-- Description ... package, foreach specificity ()
-no shared variable assignment inside
+The doParallel package is used and there are specificities when doing a parallel loop especially that a pre allocated list outide of the loop is not shared between cores so return statements must be used inside.
+
+Here is an example for illustrating what happens:
 
 ```{r}
 # Code of an example of foreach loop algo
@@ -346,7 +346,9 @@ out_pa
 
 ```
 
-- Managing warnings, display catching in parallel context
+
+There are also differences with managing warnings and  displays in a parallel context.
+They must be stored in the return list and treated after the loop.
 
 
 #### Returning data for all situations
@@ -356,74 +358,6 @@ out_pa
 The wrapper return a list/collection of situation simulations outputs (filtered or not),
 for the successful simulations.
 There is also a simulation status return indicating if all simulations ran successfully or not.
-
-
-
-## Use examples of the Stics wrapper
-
-### Preparing inputs data
-#### Situation workspace folders production
-
-Generation of a set of folders, one for each situation.
-```{r}
-
-```
-
-
-#### Parameters content
-
-
-
-#### Using observations variables and dates as filter list
-```{r, warning=F}
-library(SticsRFiles)
-library(SticsOnR)
-path <- system.file(file.path("extdata","usms_dirs","V9.0"), package = "SticsOnR")
-site_var_dates_mask = read_obs_to_list(list.dirs(path)[-1])
-lapply(site_var_dates_mask, function(x) head(x,4))
-```
-
-
-
-#### Model Options list initialization
-- Minimal configuration, without //
-```{r, eval=F}
-library(SticsOnR)
-model_path <- 
-  model_options_par <- model_wrapper_options(model_path = model_path,
-                                             data_dir = data_dir)
-model_options_par
-
-```
-- For // calculation
-```{r, eval=F}
-library(SticsOnR)
-model_options_par <- model_wrapper_options(model_path = model_path,
-                                           data_dir = data_dir,
-                                           parallel = TRUE)
-model_options_par
-
-```
-
-
-
-### Running the wrapper
-
-
-#### Directly
-Cases ...
-
-
-#### Through other functions providing parameters values
-
-Typically when using methods functions for SA, optimization , and so on ...
-
-
-
-
-
-
-
 
 
 
