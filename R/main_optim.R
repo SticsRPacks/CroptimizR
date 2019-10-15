@@ -2,7 +2,7 @@
 #'
 #' @param param_names Name(s) of parameters to estimate
 #' @param obs_list List of observed values
-#' @param crit_function Function implementing the criterion to optimize
+#' @param crit_function Function implementing the criterion to optimize (optional, default=concentrated_wss)
 #' @param model_function Crop Model wrapper function
 #' @param model_options List of options for the Crop Model wrapper (optional,
 #' see help of the Crop Model wrapper used)
@@ -108,7 +108,7 @@
 
 
 
-main_optim <- function(obs_list,crit_function,model_function,model_options=NULL,optim_method="simplex",optim_options=NULL,prior_information) {
+main_optim <- function(obs_list,crit_function=concentrated_wss,model_function,model_options=NULL,optim_method="simplex",optim_options=NULL,prior_information) {
 
 
   #
