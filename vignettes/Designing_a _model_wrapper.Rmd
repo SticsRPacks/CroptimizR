@@ -1,5 +1,5 @@
 ---
-title: "Designing a crop model R wrapper for ..."
+title: "Elements for implementing a crop model R wrapper"
 author: 
 - name: "Patrice Lecharpentier"
   affiliation: "INRA - Agroclim"
@@ -50,8 +50,9 @@ The wrapper is composed of several functionnalities:
 
 ## Writing the model wrapper
 
-### Wrapper input arguments
-The names used are just examples to illustrate.
+### Function input arguments
+The names used are just examples to illustrate things.
+
 #### Parameters values
 
 - name: **param_values**
@@ -207,7 +208,8 @@ model_wrapper_options <- function(model_path,
 The waited structure by the wrapper is for the moment a list of data frames (one for each situation) crossing a list of variables with a list of dates, per situation.
 In the wrapper, only variables names and Dates list are used for reducing output data.frames for situations. Data.frame content is not usefull for the treament at all.
 
-At the moment, this structure is identical while produced from the observation data or made independently from those.
+> At the moment, this structure is identical either produced from the observations data
+> or made independently from those.
 
 But this structure will certainly change in the future, to minimize stored information, keeping only the usefull data for selecting output data (optimizing memory storage, process)  
 
@@ -276,7 +278,8 @@ params_sit2
 
 
 2. Running the model
-Use a model interface function using a system call or other mechanisms to perform a model run for a situation and get back execution error status.
+
+Using a model interface function with a system call or other mechanisms to perform a model run for a situation and get back execution error status.
 
 
 3. Getting output data
@@ -360,4 +363,8 @@ for the successful simulations.
 There is also a simulation status return indicating if all simulations ran successfully or not.
 
 
+
+## Examples of use of model wrapper
+
+TODO
 
