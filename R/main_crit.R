@@ -47,9 +47,10 @@ main_crit <- function(param_values,crit_options) {
 
   # intersect sim and obs if necessary
   obs_sim_list=list(sim_list=model_results$sim_list,obs_list=obs_list)
-  if (!model_results$flag_allsim) {
+  #if (!model_results$flag_allsim) {
+
     obs_sim_list=intersect_sim_obs(model_results$sim_list,obs_list)
-  }
+  #}
 
   # Compute criterion value
   return(crit_function(obs_sim_list$sim_list,obs_sim_list$obs_list))
