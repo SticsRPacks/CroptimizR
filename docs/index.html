@@ -113,18 +113,24 @@
 <div id="planned-features" class="section level2">
 <h2 class="hasAnchor">
 <a href="#planned-features" class="anchor"></a>Planned features</h2>
-<p><strong>Probabilistic Uncertainty analysis</strong></p>
+<div id="probabilistic-uncertainty-analysis" class="section level3">
+<h3 class="hasAnchor">
+<a href="#probabilistic-uncertainty-analysis" class="anchor"></a>Probabilistic Uncertainty analysis</h3>
 <p>To evaluate the uncertainty of crop models outputs resulting from the propagation of the uncertainty of their inputs for a given set of simulated situations.</p>
 <p>Main features:</p>
 <ul>
 <li><p>inputs’ uncertainties will be described by the user using (usual) probability distributions or by users’ given sample (or a mixed of both depending on the parameters),</p></li>
-<li><p>facilities will be provided to describe distributions of groups of parameters (soils, weather, farming practices, initial conditions) using map labelling techniques (i.e. distributions of identifiers of soil / weather / … files) ,</p></li>
-<li><p>description of joint probability distributions including dependencies between parameters’ uncertainties should be provided,</p></li>
-<li><p>tools for probabilistic modeling could be provided (e.g. to generate new values, from a sample given by the user, by assessing the probability distribution it is sampled from),</p></li>
-<li><p>several methods wil be available to generate the numerical design of experiment: full-factorial design, random sampling using different methods (LHS, Quasi-Monte Carlo …),</p></li>
+<li><p>facilities will be provided to describe distributions of <strong>groups of parameters</strong> (soils, weather, farming practices, initial conditions) using map labelling techniques (i.e. distributions of identifiers of soil / weather / … files) ,</p></li>
+<li><p>description of <strong>joint probability distributions</strong> including dependencies between parameters’ uncertainties should be provided,</p></li>
+<li><p>tools for <strong>probabilistic modeling</strong> could be provided (e.g. to generate new values, from a sample given by the user, by assessing the probability distribution it is sampled from),</p></li>
+<li><p>several methods wil be available to generate the numerical design of experiment: <strong>full-factorial design, random sampling using different methods (LHS, Quasi-Monte Carlo …)</strong>,</p></li>
 </ul>
-<p>Results provided: numerical (moments, quantiles …) and graphical (histograms / density plots / boxplots / violins, correlation plots, time series of quantiles for dynamic variables …) description of the sample of output variables obtained.</p>
-<p><strong>Sensitivity analysis</strong></p>
+<p>Results provided: numerical (moments, quantiles …) and graphical (<strong>histograms / density plots / boxplots / violins, correlation plots, time series of quantiles for dynamic variables …</strong>) description of the sample of output variables obtained.</p>
+</div>
+</div>
+<div id="sensitivity-analysis" class="section level2">
+<h2 class="hasAnchor">
+<a href="#sensitivity-analysis" class="anchor"></a>Sensitivity analysis</h2>
 <p>To assess how the uncertainty of crop models outputs can be allocated to the uncertainty of their inputs / to describe the effects of the variations of crop models inputs on their outputs, for a given set of simulated situations.</p>
 <p>Main features:</p>
 <ul>
@@ -132,26 +138,29 @@
 <li>
 <p>several methods should be provided to cope with diverse users’ needs:</p>
 <ul>
-<li><p>Screening methods (e.g. Morris) for a quick assessment of the effect of numerous inputs,</p></li>
-<li><p>Importance measures: correlation coefficients, Variance-based methods, Moment independent methods, for a more precise assessment of their impact,</p></li>
-<li><p>Multivariate Sensitivity Analysis methods to cope with temporal outputs,</p></li>
-<li><p>Graphical methods: scatter plots, response surface, cobweb plots, …</p></li>
-<li><p>Variants of these methods adapted to dependent inputs should be provided … (at least analysis per group of parameters)</p></li>
+<li><p><strong>Screening methods</strong> (e.g. Morris) for a quick assessment of the effect of numerous inputs,</p></li>
+<li><p><strong>Importance measures</strong>: correlation coefficients, Variance-based methods (Sobol, EFAST, PCE…), Moment independent methods, for a more precise assessment of their impact,</p></li>
+<li><p><strong>Multivariate Sensitivity Analysis</strong> methods to cope with temporal outputs,</p></li>
+<li><p><strong>Graphical methods</strong>: scatter plots, response surface, cobweb plots, …</p></li>
+<li><p>Variants of these methods adapted to <strong>dependent inputs</strong> should be provided … (at least analysis per group of parameters)</p></li>
 </ul>
 </li>
 </ul>
 <p>Results provided: numerical and graphical representations (bar plots / pie charts / temporal plots of sensitivity indices …) of the indices depending on the method</p>
-<p><strong>Parameter estimation / model calibration</strong></p>
+</div>
+<div id="parameter-estimation-model-calibration" class="section level2">
+<h2 class="hasAnchor">
+<a href="#parameter-estimation-model-calibration" class="anchor"></a>Parameter estimation / model calibration</h2>
 <p>To estimate the values of a selection of crop models parameters (soil, plant …) from observations of a set of their output variables,</p>
 <p>Main features:</p>
 <ul>
-<li><p>procedures for automatic selection of the parameters to estimate from a given list (e.g. forward selection using criterions such as AIC, MSEP …)</p></li>
-<li><p>facilities to describe and perform calibration in different steps: different parameters are estimated from different observed situations and variables at each step using different forcings (lai, phenological stages) and using the parameters values estimated at the preceding steps,</p></li>
-<li><p>facilities to describe and take into account prior information and constraints (e.g. inequality constraints) on estimated parameters and output variables,</p></li>
-<li><p>facilities to transform model outputs in case observations does not corresponds to the crop model outputs</p></li>
-<li><p>different types of criterion to compare simulations and observations (i.e. of objective function to minimize) and different ways of combining these criteria for several variables: e.g. classical ordinary least-square, weighted-least-square, concentrated-likelihood for automatic estimation of error variances, criterion that take into account error correlations … (see e.g. Wallach et al., 2011)</p></li>
-<li><p>different estimation methods:frequentists (e.g. Nelder-Meade Simplex), Bayesians (e.g. multi-chain MCMC, SIR), global optimization (Evolutionnary Algorithms, GLUE), multi-objective methods, …</p></li>
-<li><p>methods for evaluating the predictive performance of the calibrated model (cross validation …)</p></li>
+<li><p>procedures for <strong>automatic selection of the parameters to estimate</strong> from a given list (e.g. forward selection using criterions such as AIC, MSEP …)</p></li>
+<li><p>facilities to describe and perform <strong>calibration in different steps</strong>: different parameters are estimated from different observed situations and variables at each step using different <strong>forcings</strong> (lai, phenological stages) and using the parameters values estimated at the preceding steps,</p></li>
+<li><p>facilities to describe and take into account <strong>prior information and constraints</strong> (e.g. inequality constraints) on estimated parameters and output variables,</p></li>
+<li><p><strong>facilities to transform model outputs</strong> in case observations does not corresponds to the crop model outputs</p></li>
+<li><p><strong>different types of criterion</strong> to compare simulations and observations (i.e. of objective function to minimize) and different ways of combining these criteria for several variables: e.g. classical ordinary least-square, weighted-least-square, concentrated-likelihood for automatic estimation of error variances, criterion that take into account error correlations … (see e.g. Wallach et al., 2011)</p></li>
+<li><p>different estimation methods:<strong>frequentists (e.g. Nelder-Meade Simplex), Bayesians (e.g. multi-chain MCMC, SIR), global optimization (Evolutionnary Algorithms, GLUE), multi-objective methods, …</strong></p></li>
+<li><p>methods for evaluating the <strong>predictive performance</strong> of the calibrated model (cross validation …)</p></li>
 </ul>
 <p>Results provided:</p>
 <ul>
