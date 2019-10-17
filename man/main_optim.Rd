@@ -4,13 +4,14 @@
 \alias{main_optim}
 \title{main function for parameter estimation}
 \usage{
-main_optim(obs_list, crit_function, model_function, model_options = NULL,
-  optim_method = "simplex", optim_options = NULL, prior_information)
+main_optim(obs_list, crit_function = concentrated_wss, model_function,
+  model_options = NULL, optim_method = "simplex",
+  optim_options = NULL, prior_information)
 }
 \arguments{
 \item{obs_list}{List of observed values}
 
-\item{crit_function}{Function implementing the criterion to optimize}
+\item{crit_function}{Function implementing the criterion to optimize (optional, default=concentrated_wss)}
 
 \item{model_function}{Crop Model wrapper function}
 

@@ -44,6 +44,7 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
   if (is.null((nb_rep=optim_options$nb_rep))) { nb_rep=1 }
   if (is.null((xtol_rel=optim_options$xtol_rel))) { xtol_rel=1e-5 }
   if (is.null((maxeval=optim_options$maxeval))) { maxeval=500 }
+  if (is.null((ranseed=optim_options$ranseed))) { ranseed=NULL }
   if (is.null((path_results=optim_options$path_results))) { path_results=getwd() }
 
   nb_params=length(param_names)
@@ -59,7 +60,7 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
   bounds=get_params_bounds(prior_information)
 
   # Sample initial values
-  init_values=sample_params(prior_information,nb_rep)
+  init_values=sample_params(prior_information,nb_rep,ranseed)
 
   # Run nloptr for each repetition
   nlo <- list()
@@ -68,7 +69,8 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
     nlo[[irep]] <- nloptr(x0 = init_values[irep,], eval_f = main_crit,
                           lb = bounds$lb, ub = bounds$ub,
                           opts = list("algorithm"="NLOPT_LN_NELDERMEAD",
-                                      "xtol_rel"=xtol_rel, "maxeval"=maxeval),
+                                      "xtol_rel"=xtol_rel, "maxeval"=maxeval,
+                                      "ranseed"=ranseed),
                           crit_options=crit_options_loc)
 
   }
@@ -80,7 +82,7 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
   ind_min_crit=which.min(sapply(nlo, function(x) x$objective))
 
   # Graph and print the results
-  pdf(file = file.path(path_results,"EstimatedVSinit.pdf") , width = 9, height = 9, pointsize = 10)
+  pdf(file = file.path(path_results,"EstimatedVSinit.pdf") , width = 9, height = 9)
   for (ipar in 1:nb_params) {
     plot(init_values[,ipar], est_values[,ipar],
          main = "Estimated vs Initial values of the parameters for different repetitions",
@@ -93,6 +95,9 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
          labels = ind_min_crit, pos=1,col="red")
   }
   dev.off()
+
+  # Save the results of nloptr
+  save(nlo, file = file.path(path_results,"optim_results.Rdata"))
 
   # Display of parameters for the repetion who have the smallest criterion
   for (ipar in 1:nb_params) {
