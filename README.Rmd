@@ -120,11 +120,7 @@ Results provided:
 
 ## Examples
 
-Toy examples will be given here ...
-
-## Example data
-
-Link to example data will be given here ...
+A simple example of model calibration is given in a [vignette](https://SticsRPacks.github.io/SticsOptimizR/articles/Parameter_estimation_simple_case.html).
 
 ## Code of conduct
 

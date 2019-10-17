@@ -4,7 +4,7 @@
 \alias{sample_params}
 \title{sample values in given distribution}
 \usage{
-sample_params(bounds_list, n)
+sample_params(bounds_list, n, seed = NULL)
 }
 \arguments{
 \item{bounds_list}{Either a (optionnally named) list containing a vector of
@@ -14,6 +14,8 @@ and the vector of upper and lower bounds (one value per group) (\code{ub} and
 \code{lb})}
 
 \item{n}{The number of values to sample for each parameter}
+
+\item{seed}{The seed of the random generator (optional, default value=NULL)}
 }
 \value{
 A vector or data.frame containing the sampled values (nrow=n)
