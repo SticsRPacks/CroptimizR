@@ -64,6 +64,7 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
 
   # Run nloptr for each repetition
   nlo <- list()
+  start_time <- Sys.time()
   for (irep in 1:nb_rep){
 
     nlo[[irep]] <- nloptr(x0 = init_values[irep,], eval_f = main_crit,
@@ -73,6 +74,10 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
                                       "ranseed"=ranseed),
                           crit_options=crit_options_loc)
 
+    elapsed <- Sys.time() - start_time
+    progress <- 1.0 * irep / nb_rep
+    remaining <- elapsed / progress - elapsed
+    print(sprintf('Working: %.2f%%. ETA: %.2f', progress * 100, remaining))
   }
 
   # Get the estimated values
