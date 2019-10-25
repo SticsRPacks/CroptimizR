@@ -4,4 +4,5 @@ pkgdown_sha: ~
 articles:
   Designing_a _model_wrapper: Designing_a _model_wrapper.html
   Parameter_estimation_simple_case: Parameter_estimation_simple_case.html
+  Parameter_estimation_Specific_and_Varietal: Parameter_estimation_Specific_and_Varietal.html
 

@@ -66,6 +66,10 @@ data_dir=system.file(file.path("extdata","TestCase1c"), package = "SticsOptimizR
 In this example, observations for variables and dates contained in the observations files will all be used in the parameter estimation.
 
 ```{r eval=TRUE, message=FALSE, warning=FALSE}
+# Set the model options (see '? stics_wrapper_options' for details)
+model_options=stics_wrapper_options(params$stics_path,data_dir) 
+
+# Read observation files
 obs_list=read_obs_to_list(file.path(model_options$data_dir,"Orig Data"))
 ```
 
@@ -113,10 +117,6 @@ optim_method argument. For the moment it is the only method interfaced (others w
 Same for crit_function: a value is set by default (concentrated_wss, see wallach et al., 2011). For the moment it is the only criterion proposed (others will come soonly). The user can implement its own criterion (see inputs and outputs required in the concentrated_wss function).
 
 ```{r eval=TRUE, message=FALSE, warning=FALSE}
-# Set the model options (see '? stics_wrapper_options' for details)
-model_options=stics_wrapper_options(params$stics_path,data_dir) 
-
-# Run optimization
 param_est_values=main_optim(obs_list=obs_list,
                             model_function=stics_wrapper,
                             model_options=model_options,

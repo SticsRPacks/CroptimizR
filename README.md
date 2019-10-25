@@ -172,6 +172,10 @@ Results provided:
 A simple example of model calibration is given in a
 [vignette](https://SticsRPacks.github.io/SticsOptimizR/articles/Parameter_estimation_simple_case.html).
 
+A more complex one with simultaneous estimation of specific and varietal
+parameters is given in a
+[vignette](https://SticsRPacks.github.io/SticsOptimizR/articles/Parameter_estimation_Specific_and_Varietal.html).
+
 ## Code of conduct
 
 Please note that this project is released with a [Contributor Code of
