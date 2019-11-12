@@ -111,7 +111,8 @@
 <p>Or using the lightweight <a href="https://github.com/r-lib/remotes#readme">remotes</a> package:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># install.packages("remotes")</span></span>
 <span id="cb2-2"><a href="#cb2-2"></a>remotes<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/remotes/topics/install_github">install_github</a></span>(<span class="st">"SticsRPacks/SticsOptimizR"</span>)</span></code></pre></div>
-<p>The package is tested routinely to pass all <a href="https://CRAN.R-project.org">CRAN</a> tests using Travis-CI (linux) and AppVeyor (Windows), but it is not released to the CRAN servers because we believe SticsOptimizR users are not widespread enough to bother CRAN people and use their free server time.</p>
+<p>The package is tested routinely to pass all <a href="https://CRAN.R-project.org">CRAN</a> tests using Travis-CI (linux) and AppVeyor (Windows), but it is not yet released to the CRAN servers: SticsOptimizR is still under development and users are not yet widespread enough to bother CRAN people and use their free server time.</p>
+<p>SticsOptimizR is designed to be crop model generic: all the functionalities can be used on any crop model for which an R wrapper can be implemented. For the moment, R wrappers are available for Stics and APSIM crop models (see <a href="https://github.com/SticsRPacks/SticsOnR">SticsOnR</a> and <a href="https://github.com/hol430/ApsimOnR">ApsimOnR</a>). Guidelines for developping R model wrappers for SticsoptimizR are given in the following <a href="https://SticsRPacks.github.io/SticsOptimizR/articles/Designing_a%20_model_wrapper.html">vignette</a>.</p>
 </div>
 <div id="planned-features" class="section level2">
 <h2 class="hasAnchor">

@@ -27,7 +27,7 @@ This package will allow the user to perform, on the Stics model:
 
 * Parameter estimation / model calibration: estimate the values of a selection of Stics parameters (soil, plant .) from observations of a set of Stics output variables on a set of USMs  
 
-The package is under intensive development, so you can fill an issue or request a feature [here](https://github.com/SticsRPacks/SticsOptimizR/issues ) at any time. 
+The package is under intensive development, so you can fill an issue or request a feature [here](https://github.com/SticsRPacks/SticsOptimizR/issues) at any time. 
 
 
 ## Installation
@@ -43,7 +43,12 @@ Or using the lightweight [remotes](https://github.com/r-lib/remotes#readme) pack
 # install.packages("remotes")
 remotes::install_github("SticsRPacks/SticsOptimizR")
 ```
-The package is tested routinely to pass all [CRAN](https://CRAN.R-project.org) tests using Travis-CI (linux) and AppVeyor (Windows), but it is not released to the CRAN servers because we believe SticsOptimizR users are not widespread enough to bother CRAN people and use their free server time.
+The package is tested routinely to pass all [CRAN](https://CRAN.R-project.org) tests using Travis-CI (linux) and AppVeyor (Windows), but it is not yet released to the CRAN servers: SticsOptimizR is still under development and users are not yet widespread enough to bother CRAN people and use their free server time.
+
+SticsOptimizR is designed to be crop model generic: all the functionalities can be used on any crop model for which an R wrapper can be implemented. For the moment, R wrappers are available for Stics and APSIM crop models (see [SticsOnR](https://github.com/SticsRPacks/SticsOnR) and [ApsimOnR](https://github.com/hol430/ApsimOnR)). 
+Guidelines for developping R model wrappers for SticsoptimizR are given in the following [vignette](https://SticsRPacks.github.io/SticsOptimizR/articles/Designing_a _model_wrapper.html).
+
+
 
 ## Planned features
 
