@@ -104,14 +104,22 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
   # Save the results of nloptr
   save(nlo, file = file.path(path_results,"optim_results.Rdata"))
 
-  # Display of parameters for the repetion who have the smallest criterion
+  # Display of parameters for the repetition who have the smallest criterion
   for (ipar in 1:nb_params) {
     print(paste("Estimated value for", param_names[ipar], ": ", est_values[ind_min_crit,ipar]))
   }
   print(paste("Minimum value of the criterion :", nlo[[ind_min_crit]]$objective))
 
-  res=est_values[ind_min_crit,]
-  names(res)=param_names
+  # res=est_values[ind_min_crit,]
+  # names(res)=param_names
+
+  final_values <- est_values[ind_min_crit,]
+  names(final_values) <- param_names
+  res <- list(final_values = final_values,
+              init_values = init_values,
+              est_values = est_values,
+              ind_min_crit = ind_min_crit,
+              nlo = nlo)
   return(res)
 
 }
