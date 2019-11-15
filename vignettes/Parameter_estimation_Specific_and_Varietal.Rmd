@@ -1,0 +1,176 @@
+---
+title: "Parameter estimation with the Stics crop Model: a case with specific and varietal parameters"
+output: html_document
+params:
+  stics_path: !r file.path(getwd(),"JavaSTICS-1.41-stics-9.0/bin/stics_modulo")
+---
+
+## Study Case
+
+A case with simultaneous estimation of one specific and one varietal parameter.
+
+Data comes from a maize crop experiment (see description in Wallach et al., 2011). In this example, 8 situations (USMs in Stics language) will be used for the parameter estimation. 
+
+The parameter estimation is performed using the Nelder-Meade simplex method implemented in the nloptr package.
+
+To regulate the number of simulations (and thus the duration of execution), reduce the number of repetition of the minimization and/or the maximum number of evaluation (see section "Set options for the parameter estimation method").
+
+The execution of this Rmarkdown document requires the path to the Stics model. By default it uses 
+```{r eval=FALSE}
+file.path(getwd(),"JavaSTICS-1.41-stics-9.0/bin/stics_modulo")
+```
+(see stics_path param at the beginning of the .Rmd).
+If you want to change the value of this parameter you may use Knit->"Knit with parameters".
+
+## Initialisation step
+
+```{r setup and initializations,  eval=TRUE, message=FALSE, results=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# Install and load the needed libraries
+if(!require("SticsRFiles")){
+  devtools::install_github("SticsRPacks/SticsRFiles")
+  library("SticsRFiles")
+}
+if(!require("SticsOnR")){
+  devtools::install_github("SticsRPacks/SticsOnR")
+  library("SticsOnR")
+}
+if(!require("SticsOptimizR")){
+  devtools::install_github("SticsRPacks/SticsOptimizR")
+  library("SticsOptimizR")
+}
+if(!require("dplyr")){
+  install.packages("dplyr",repos="http://cran.irsn.fr")
+  library("dplyr")
+}
+if(!require("nloptr")){
+  install.packages("nloptr",repos="http://cran.irsn.fr")
+  library("nloptr")
+}
+if(!require("DiceDesign")){
+  install.packages("DiceDesign",repos="http://cran.irsn.fr")
+  library("DiceDesign")
+}
+if(!require("doParallel")){
+  install.packages("doParallel",repos="http://cran.irsn.fr")
+  library("doParallel")
+}
+
+# Define the paths to the needed tools and data
+data_dir=system.file(file.path("extdata","TestCase1c"), package = "SticsOptimizR") 
+```
+
+## Read and select the corresponding observations
+
+In this example, observations for variables and dates contained in the observations files will all be used in the parameter estimation.
+
+```{r eval=TRUE, message=FALSE, warning=FALSE}
+# Set the model options (see '? stics_wrapper_options' for details)
+model_options=stics_wrapper_options(params$stics_path,data_dir) 
+
+# Read observation files
+obs_list=read_obs_to_list(file.path(model_options$data_dir,"Orig Data"))
+```
+
+## Set prior information on the parameters to estimate
+
+prior_information determines the list of parameters that will be estimated in the parameter estimation process and associated prior information (only uniform distributions for the moment, others will come soon).
+It allows also to handle specific / varietal parameters here (dlaimax vs durvieF): dlaimax is defined to take the same value for all situations, whereas durvieF is defined in such a way that it may take one value for situations c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"), that correspond to a given variety, and another for situations c("bou99t3", "bou00t3", "bou99t1", "bou00t1"), that correspond to another variety, sit_list being a list of size 2.
+Please note that bounds may take different values for the different groups of situations (lb and ub are vectors of size 2 for durvieF).
+
+```{r eval=TRUE, message=FALSE, warning=FALSE}
+prior_information=list()
+prior_information$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1", "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),lb=0.0005,ub=0.0025)
+prior_information$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"), c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),lb=c(50,50),ub=c(400,400))
+```
+
+## Set options for the parameter estimation method
+
+optim_options should contain the options of the parameter estimation method.
+Here we defined a few options for the simplex method of the nloptr package (defautl method in main_optim).
+The full set of options for the simplex method can be found in the [vignette of nloptr package](https://cran.r-project.org/web/packages/nloptr/vignettes/nloptr.pdf).
+
+The number of repetitions is advised to be set to at least 5, while 10 is a reasonable maximum value.
+maxeval should be used to stop the minimization only if results have to be produced within a given duration, otherwise set it to a high value so that the minimization stops when the criterion based on xtol_rel is satisfied. 
+
+```{r eval=TRUE, message=FALSE, warning=FALSE}
+optim_options=list() 
+optim_options$nb_rep <- 10 # Number of repetitions of the minimization 
+                          # (each time starting with different initial
+                          # values for the estimated parameters) 
+optim_options$maxeval <- 1000 # Maximum number of evaluations of the 
+                            # minimized criteria 
+optim_options$xtol_rel <- 1e-04 # Tolerance criterion between two iterations
+                                # (threshold for the relative difference of
+                                # parameter values between the 2 previous 
+                                # iterations)
+optim_options$path_results <- model_options$data_dir # path where to store 
+													 # results graphs
+optim_options$ranseed <- 1234 # random seed  
+```
+
+## Run the optimization
+
+The Nelder-Meade simplex is the default method => no need to set the 
+optim_method argument. For the moment it is the only method interfaced (others will come soonly).
+Same for crit_function: a value is set by default (concentrated_wss, see wallach et al., 2011). For the moment it is the only criterion proposed (others will come soonly). The user can implement its own criterion (see inputs and outputs required in the concentrated_wss function).
+
+```{r eval=TRUE, message=FALSE, warning=FALSE}
+param_est_values=main_optim(obs_list=obs_list,
+                            model_function=stics_wrapper,
+                            model_options=model_options,
+                            optim_options=optim_options,
+                            prior_information=prior_information)
+
+print(paste("Results of the optimization were saved in",
+            optim_options$path_results," folder."))
+```
+
+The results printed in output on the R console are the following:
+```{r echo=TRUE}
+## [1] "Estimated value for dlaimax :  0.00106741475850639"
+## [1] "Estimated value for durvieF :  391.070248404957"
+## [1] "Estimated value for durvieF :  214.674867188563"
+## [1] "Minimum value of the criterion : 1.68619365090367e+35"
+```
+
+Complementary graphs and data are stored in the optim_options$path_results folder. Among them, the EstimatedVSinit.pdf file containing the following figures: 
+
+```{r echo=FALSE, image_grobs, fig.show = "hold", out.width = "45%", fig.align = "default"}
+
+knitr::include_graphics("ResultsSpecificVarietal/estimInit_dlaimax.PNG")
+
+knitr::include_graphics("ResultsSpecificVarietal/estimInit_durvieF_var1.PNG")
+
+knitr::include_graphics("ResultsSpecificVarietal/estimInit_durvieF_var2.PNG")
+
+```
+
+Figure 1: plots of estimated vs initial values of parameters dlaimax and durvieF (estimated for both varieties). Numbers represent the repetition number of the minimization. The number in red, 7 in this case, is the minimization that lead to the minimal value of the criterion among all repetitions. 
+
+The optim_options$path_results folder also contains the optim_results.Rdata file that store the nlo variable, a list containing the results of the minimization for each repetition. If we print it for repetition 7 ...
+```{r echo=TRUE, eval=FALSE}
+nlo[[7]]
+```
+... this returns:
+```{r echo=TRUE}
+## Call:
+## nloptr(x0 = init_values[irep, ], eval_f = main_crit, lb = bounds$lb, 
+##     ub = bounds$ub, opts = list(algorithm = "NLOPT_LN_NELDERMEAD", 
+##         xtol_rel = xtol_rel, maxeval = maxeval, ranseed = ranseed), 
+##     crit_options = crit_options_loc)
+## 
+## 
+## Minimization using NLopt version 2.4.2 
+## 
+## NLopt solver status: 4 ( NLOPT_XTOL_REACHED: Optimization stopped because 
+## xtol_rel or xtol_abs (above) was reached. )
+## 
+## Number of Iterations....: 98 
+## Termination conditions:  xtol_rel: 1e-04	maxeval: 1000 
+## Number of inequality constraints:  0 
+## Number of equality constraints:    0 
+## Optimal value of objective function:  1.68619365090367e+35 
+## Optimal value of controls: 0.001067415 391.0702 214.6749
+```

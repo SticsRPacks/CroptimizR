@@ -43,9 +43,19 @@ remotes::install_github("SticsRPacks/SticsOptimizR")
 
 The package is tested routinely to pass all
 [CRAN](https://CRAN.R-project.org) tests using Travis-CI (linux) and
-AppVeyor (Windows), but it is not released to the CRAN servers because
-we believe SticsOptimizR users are not widespread enough to bother CRAN
-people and use their free server time.
+AppVeyor (Windows), but it is not yet released to the CRAN servers:
+SticsOptimizR is still under development and users are not yet
+widespread enough to bother CRAN people and use their free server time.
+
+SticsOptimizR is designed to be crop model generic: all the
+functionalities can be used on any crop model for which an R wrapper can
+be implemented. For the moment, R wrappers are available for Stics and
+APSIM crop models (see
+[SticsOnR](https://github.com/SticsRPacks/SticsOnR) and
+[ApsimOnR](https://github.com/hol430/ApsimOnR)). Guidelines for
+developping R model wrappers for SticsoptimizR are given in the
+following
+[vignette](https://SticsRPacks.github.io/SticsOptimizR/articles/Designing_a%20_model_wrapper.html).
 
 ## Planned features
 
@@ -171,6 +181,10 @@ Results provided:
 
 A simple example of model calibration is given in a
 [vignette](https://SticsRPacks.github.io/SticsOptimizR/articles/Parameter_estimation_simple_case.html).
+
+A more complex one with simultaneous estimation of specific and varietal
+parameters is given in a
+[vignette](https://SticsRPacks.github.io/SticsOptimizR/articles/Parameter_estimation_Specific_and_Varietal.html).
 
 ## Code of conduct
 

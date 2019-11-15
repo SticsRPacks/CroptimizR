@@ -14,6 +14,11 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
   #' \code{xtol_rel}, the tolerance for the stopping criterion on relative
   #' differences on parameters values between 2 iterations (optional, default=1e-5)
   #' \code{maxeval}, the maximum number of criterion evaluation (optional, default=500)
+  #' \code{init_values}, A (column named) vector or data.frame containing initial
+  #' values to test for the parameters (optional, if not provided (or if less values
+  #' than number of repetitions of the minimization are provided), the (or part
+  #' of the) initial values will be randomly generated using LHS sampling within
+  #' parameter bounds.
   #' \code{path_results}, the path where to store the results (optional, default=getwd())
   #' @param prior_information Prior information on the parameters to estimate.
   #' For the moment only uniform distribution are allowed.
@@ -45,6 +50,11 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
   if (is.null((xtol_rel=optim_options$xtol_rel))) { xtol_rel=1e-5 }
   if (is.null((maxeval=optim_options$maxeval))) { maxeval=500 }
   if (is.null((ranseed=optim_options$ranseed))) { ranseed=NULL }
+  if (is.null(optim_options$init_values))
+    { init_values=NULL }
+  else
+    { init_values=matrix(optim_options$init_values,
+                       ncol=length(names(optim_options$init_values))) }
   if (is.null((path_results=optim_options$path_results))) { path_results=getwd() }
 
   nb_params=length(param_names)
@@ -60,7 +70,11 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
   bounds=get_params_bounds(prior_information)
 
   # Sample initial values
-  init_values=sample_params(prior_information,nb_rep,ranseed)
+  sample_sz=nb_rep-NROW(init_values)
+  if (sample_sz>0) {
+    complem_init_values=sample_params(prior_information,sample_sz,ranseed)
+    init_values=rbind(init_values,complem_init_values)
+  }
 
   # Run nloptr for each repetition
   nlo <- list()
