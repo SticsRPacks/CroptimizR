@@ -55,7 +55,7 @@ APSIM crop models (see
 [ApsimOnR](https://github.com/hol430/ApsimOnR)). Guidelines for
 developping R model wrappers for SticsoptimizR are given in the
 following
-[vignette](https://SticsRPacks.github.io/SticsOptimizR/articles/Designing_a%20_model_wrapper.html).
+[vignette](https://SticsRPacks.github.io/SticsOptimizR/articles/Designing_a_model_wrapper.html).
 
 ## Planned features
 
