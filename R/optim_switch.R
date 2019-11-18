@@ -134,7 +134,7 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
   #        ylab = paste("Estimated value for", param_names[ipar]))
   #   text(init_values[ind_min_crit,ipar], est_values[ind_min_crit,ipar],
   #        labels = ind_min_crit, pos=1,col="red")
-  }
+  #}
   dev.off()
 
 
