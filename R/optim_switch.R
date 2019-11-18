@@ -14,18 +14,22 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
   #' \code{xtol_rel}, the tolerance for the stopping criterion on relative
   #' differences on parameters values between 2 iterations (optional, default=1e-5)
   #' \code{maxeval}, the maximum number of criterion evaluation (optional, default=500)
-  #' \code{init_values}, A (column named) vector or data.frame containing initial
+  #' \code{path_results}, the path where to store the results (optional, default=getwd())
+  #' @param prior_information Prior information on the parameters to estimate.
+  #' For the moment only uniform distribution are allowed.
+  #' Either
+  #' a list containing:
+  #'    - (named) vectors of upper and lower bounds (\code{ub} and \code{lb}),
+  #'    - \code{init_values}, A (column named) vector or data.frame containing initial
   #' values to test for the parameters (optional, if not provided (or if less values
   #' than number of repetitions of the minimization are provided), the (or part
   #' of the) initial values will be randomly generated using LHS sampling within
   #' parameter bounds.
-  #' \code{path_results}, the path where to store the results (optional, default=getwd())
-  #' @param prior_information Prior information on the parameters to estimate.
-  #' For the moment only uniform distribution are allowed.
-  #' Either a list containing (named) vectors of upper and lower
-  #' bounds (\code{ub} and \code{lb}), or a named list containing for each
-  #' parameter the list of situations per group (\code{sit_list})
-  #' and the vector of upper and lower bounds (one value per group) (\code{ub} and \code{lb})
+  #'
+  #' or
+  #' a named list containing for each parameter the list of situations per group
+  #' (\code{sit_list}), the vector of upper and lower bounds (one value per group)
+  #' (\code{ub} and \code{lb}) and \code{init_values} (one column per group)
   #'
   #' @return The vector of values for optimized parameters + prints and graphs,
   #' depending on the parameter estimation method used
@@ -55,6 +59,10 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
   else
     { init_values=matrix(optim_options$init_values,
                        ncol=length(names(optim_options$init_values))) }
+  ##
+  ## TODO : init_values should be defined in prior_information? (possibly defined per sit group ...)
+  ##
+
   if (is.null((path_results=optim_options$path_results))) { path_results=getwd() }
 
   nb_params=length(param_names)
@@ -115,6 +123,21 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
   }
   dev.off()
 
+  # pdf(file = file.path(path_results,"ConvergencePlots.pdf") , width = 9, height = 9)
+  # for (ipar in 1:(nb_params+1)) {
+  #   plot(init_values[,ipar], est_values[,ipar],
+  #        main = "Estimated vs Initial values of the parameters for different repetitions",
+  #        text(init_values[,ipar], est_values[,ipar], pos=1,col="black"),
+  #        xlim = c(bounds$lb[ipar],bounds$ub[ipar]),
+  #        ylim = c(bounds$lb[ipar],bounds$ub[ipar]),
+  #        xlab = paste("Initial value for", param_names[ipar]),
+  #        ylab = paste("Estimated value for", param_names[ipar]))
+  #   text(init_values[ind_min_crit,ipar], est_values[ind_min_crit,ipar],
+  #        labels = ind_min_crit, pos=1,col="red")
+  }
+  dev.off()
+
+
   # Save the results of nloptr
   save(nlo, file = file.path(path_results,"optim_results.Rdata"))
 
@@ -124,8 +147,8 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
   }
   print(paste("Minimum value of the criterion :", nlo[[ind_min_crit]]$objective))
 
-  # res=est_values[ind_min_crit,]
-  # names(res)=param_names
+ # res=est_values[ind_min_crit,]
+ # names(res)=param_names
 
   final_values <- est_values[ind_min_crit,]
   names(final_values) <- param_names

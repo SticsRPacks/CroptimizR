@@ -3,7 +3,7 @@ title: "Parameter estimation with the ApsimX crop Model: a simple case"
 output: html_document
 params:
   apsimx_path: !r  system("which Models", intern = TRUE)
-  path_results: "/home/plecharpent/tmp/tests_SticsOptimizR/ApsimX_param_est_simple"
+  path_results: !r getwd()
 ---
 
 
@@ -11,7 +11,7 @@ params:
 
 # set global chunk options: 
 library(knitr)
-opts_chunk$set(cache=TRUE, autodep = TRUE)
+opts_chunk$set(cache=FALSE, autodep = TRUE)
 dep_auto()
 ```
 
@@ -43,7 +43,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # Install and load the needed libraries
 if(!require("ApsimOnR")){
   devtools::install_github("ApsimOnR")
-  library("ApsiOnR")
+  library("ApsimOnR")
 }
 if(!require("SticsOptimizR")){
   devtools::install_github("SticsRPacks/SticsOptimizR")
@@ -96,6 +96,7 @@ In this case, the argument `param_values` of the wrapper is not set: the values 
 # For a linux OS : apsimx_path="/usr/local/bin/Models"
 # For a Windows OS: apsimx_path="C:/path/to/apsimx/bin/Models.exe"
 apsimx_path <- params$apsimx_path
+apsimx_path <- "D:\\Home\\sbuis\\Documents\\OUTILS\\APSIM2019.11.11.4317\\Bin\\Models.exe"
 
 files_path <- system.file(file.path("extdata","apsimx_files"),package = "ApsimOnR")
 apsimx_file <- file.path(files_path, "template.apsimx")
@@ -188,7 +189,7 @@ optim_options$xtol_rel <- 1e-05 # Tolerance criterion between two iterations
 #  optim_options$path_results <- "/path/to/results/dir"
 optim_options$path_results <- params$path_results
 
-#optim_options$ranseed <- 1234 # random seed  
+optim_options$ranseed <- 1234 # random seed  
 
 
 ```

@@ -1,0 +1,11 @@
+base
+knitr
+ApsimOnR
+SticsOptimizR
+dplyr
+nloptr
+DiceDesign
+foreach
+iterators
+doParallel
+bindrcpp

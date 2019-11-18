@@ -1,0 +1,179 @@
+---
+title: "Sensitivity Analysis on Stics model using Morris Method"
+output: html_document
+---
+
+## Initialisation step
+
+```{r setup and initializations, message=FALSE, results=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# Install and load the needed libraries
+if(!require("SticsOnRTemp")){
+  install.packages(file.path(getwd(),"SticsOnRTemp_0.1_R1602.tar.gz"), repos = NULL, type = "source")
+  require("SticsOnRTemp")
+}
+if(!require("Classes")){
+  install.packages(file.path(getwd(),"Classes_1.1_R1553.tar.gz"), repos = NULL, type = "source")
+  require("Classes")
+}
+if(!require("sensitivity")){
+  install.packages("sensitivity",repos="http://cran.irsn.fr")
+  require("sensitivity")
+}
+if(!require("dplyr")){
+  install.packages("dplyr",repos="http://cran.irsn.fr")
+  require("dplyr")
+}
+
+# Define the paths to the needed tools and data
+stics_path=file.path(getwd(),"JavaSTICS-1.40-stics-8.50")
+data_path=file.path(getwd(),"data")
+
+# Set the random generation seed => each run of this script should give the same results
+set.seed(1234)  
+
+```
+
+## Study Case
+
+Morris Sensitivity analyses on datasets from the AgMIP calibration exercise (French data set, ARVALIS, see [(Wallach et al, 2019)](https://www.biorxiv.org/content/10.1101/708578v1).
+
+To regulate the number of simulations, if needed, select a subset of the list of USMs (see next section) and/or reduce the number of repetitions of the Morris design r (see section "Morris Sensitivity analysis")
+
+### List of situations and variables to consider
+
+```{r message=FALSE, warning=FALSE}
+# Fill list of USMs to consider
+usm_list=get_usms_list(data_path,xml_name="usms.xml")
+# a short sublist for quick tests, COMMENT NEXT LINE FOR LARGE TEST -------
+usm_list= c("FORE-Ap-12-122210","MERY-Ap-10-116375")
+print(usm_list)
+
+# Analyzed variables: AMF and LAX stages
+var_names=c("iamfs","ilaxs")
+print(var_names)
+
+# DOYs of the variables to analyze per USM
+doys=rep(729,length(usm_list))
+print(doys)
+```
+
+
+
+## Sensitivity Analyses
+
+
+### Stics R interface
+
+Hum ... not generic, only designed for this test case with 1 date per USM ... more flexible things will be done when SticsRpacks V0 will be available.
+
+```{r message=FALSE, warning=FALSE}
+SticsR <- function(param_values, param_names, USM_list, var_names, doys, stics_path, data_path){
+#
+#  param_values : 2Darray or equivalent of parameters values to prescribe to the Stics model (their given values will overwrite these read in the Stics inputs files), in column the different parameters (of names defined in param_names argument), in row the different values of the parameters
+# var_names: names of output variables to simulate
+# doys: 1 Day-Of-the-Year number per USM
+#
+# Returns a 3D array containing the values of the simulated variables for each values of the parameters, USM and variables at the given DOY.
+  
+  N=nrow(param_values)
+  res=array(dim=c(N,length(var_names),length(USM_list)))
+  
+  for (i in 1:N){
+    
+    gen_param_sti(data_path, param_names, param_values[i,])
+    
+    for (iUsm in 1:length(USM_list)){
+      
+      run_java(stics_path,javastics_workspace_path=data_path,
+               usms_list=USM_list[iUsm], optim=TRUE)
+      
+      tmp=get_daily_results(data_path, USM_list[iUsm], var_list=var_names, doy_list = doys[iUsm])
+      res[i,,iUsm]=t(tmp[,var_names])
+    }
+    
+  }
+  dimnames(res)[[2]]=var_names
+  dimnames(res)[[3]]=USM_list
+  return(res)
+  
+}
+```
+
+
+### List of parameters to consider
+
+22 parameters selected by Marie for their impact on amf and lax stages.
+In fact all Stics parameters could have been selected since the development of vegetation impact on crop temperature and thus on the cumulative temperature taken into account for calculating the phenological stages.
+
+Uncertainties for these parameters follow uniform distributions of intervals[ max( 0.9*min(param), param_global_min ), min( 1.1*max(param), param_global_max ) ], where param is the value (or set of values if varietal parameter) in the plant file and param_global_min/param_global_max are the bounds of the parameters defined in the plant file.
+
+
+```{r message=FALSE, warning=FALSE}
+
+# List of parameters to consider
+param_names=c("tdmin","tdmax","tcxstop","stlevamf","stamflax","stressdev","phobase","phosat",
+             "sensiphot","jvc","jvcmini","julvernal","tfroid","ampfroid","tgmin","stpltger",
+             "sensrsec","belong","celong","elmax","hautbase","hautmax")
+param_nb=length(param_names)
+
+# Get their values and bounds
+d<-xmldocument(file = paste0(stics_path,"/plant/wheat_plt.xml"))
+param_values=lapply(param_names,function(x) get_param_value(d,x))
+param_global_min=lapply(param_names,
+                 function(x) as.numeric(getAttrsValues(d,paste0("//param[@nom=\"",x,"\"]"),"min")))
+param_global_max=lapply(param_names,
+                 function(x) as.numeric(getAttrsValues(d,paste0("//param[@nom=\"",x,"\"]"),"max")))
+# uncert = U[ max( 0.9*min(param), param_global_min ), min( 1.1*max(param), param_global_max )
+param_min=sapply(1:param_nb, function(x) max(0.9*min(param_values[[x]]), param_global_min[[x]]))
+param_max=sapply(1:param_nb, function(x) min(1.1*max(param_values[[x]]), param_global_max[[x]]))
+ind=which(param_min>=param_max)
+param_min[ind]=sapply(ind, function(x)
+  max(param_values[[x]]-0.1*(param_global_max[[x]]-param_global_min[[x]]), param_global_min[[x]]))
+param_max[ind]=sapply(ind, function(x)
+  min(param_values[[x]]+0.1*(param_global_max[[x]]-param_global_min[[x]]), param_global_max[[x]]))
+
+# data.frame containing list of parameters and their uncertainty bounds
+param=data.frame(names=param_names, min=param_min, max=param_max)    
+print(param)
+```
+
+
+### Morris Sensitivity analysis
+
+```{r message=FALSE, warning=FALSE}
+# Number of repetitions of the Morris design (nb simulations = r*(p+1), where p is the number of parameters), typically r=50->100 to get realistics values. Set to 2 for quick tests
+r=2  
+
+# Generate the Design-Of-Experiment
+morris_DOE <- morris(mode = NULL, factors = param_names, binf=param$min, bsup=param$max, r = r,
+                     design = list(type = "oat", levels=2))
+# Run the simulations on the DOE
+model_responses=SticsR(param_values=morris_DOE$X, param_names=param_names, USM_list = usm_list,
+                       var_names=var_names, doys=doys, stics_path=stics_path, data_path = data_path)
+# Compute the Morris Sensitivity Indices
+morris_res=tell(morris_DOE, model_responses)
+
+# Post-treatment of the results
+mu <- sapply(1:dim(morris_res$ee)[4], function(i){
+  apply(morris_res$ee[, , , i, drop = FALSE], 3, function(M){
+    apply(M, 2, mean)
+  })
+}, simplify = "array")
+mu.star <- sapply(1:dim(morris_res$ee)[4], function(i){
+  apply(abs(morris_res$ee)[, , , i, drop = FALSE], 3, function(M){
+    apply(M, 2, mean)
+  })
+}, simplify = "array")
+sigma <- sapply(1:dim(morris_res$ee)[4], function(i){
+  apply(morris_res$ee[, , , i, drop = FALSE], 3, function(M){
+    apply(M, 2, sd)
+  })
+}, simplify = "array")
+
+# Save the results in RData format
+save(morris_res, mu, mu.star, sigma, file = "Morris_results.RData")
+
+print(paste0("SA Results saved in ",file.path(getwd(),"Morris_results.RData")," file"))
+```

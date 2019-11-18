@@ -32,10 +32,21 @@ differences on parameters values between 2 iterations (optional, default=1e-5)
 
 \item{prior_information}{Prior information on the parameters to estimate.
 For the moment only uniform distribution are allowed.
-Either a list containing (named) vectors of upper and lower
-bounds (\code{ub} and \code{lb}), or a named list containing for each
-parameter the list of situations per group (\code{sit_list})
-and the vector of upper and lower bounds (one value per group) (\code{ub} and \code{lb})}
+Either
+a list containing:
+   - (named) vectors of upper and lower bounds (\code{ub} and \code{lb}),
+   - \code{init_values}, A (column named) vector or data.frame containing initial
+values to test for the parameters (optional, if not provided (or if less values
+than number of repetitions of the minimization are provided), the (or part
+of the) initial values will be randomly generated using LHS sampling within
+parameter bounds.
+
+or
+a named list containing for each parameter the list of situations per group
+(\code{sit_list}), the vector of upper and lower bounds (one value per group)
+(\code{ub} and \code{lb}) and \code{init_values} (one column per group)
+
+NE PEUT-ON PAS FAIRE PLUS SIMPLE ET HOMOGENE ENTRE LES 2 CAS ??????}
 }
 \value{
 The vector of values for optimized parameters + prints and graphs,
