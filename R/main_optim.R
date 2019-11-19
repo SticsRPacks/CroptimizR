@@ -18,8 +18,8 @@
 #' parameter the list of situations per group (\code{sit_list})
 #' and the vector of upper and lower bounds (one value per group) (\code{ub} and \code{lb})
 #'
-#' @return The vector of values for optimized parameters + prints and graphs,
-#' depending on the parameter estimation method used
+#' @return prints, graphs and a list containing the results of the parameter estimation.
+#' which content depends on the method used.
 #'
 #' @export
 #'
