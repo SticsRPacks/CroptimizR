@@ -394,7 +394,7 @@ optim_options$ranseed &lt;- 1234 # random seed  </code></pre>
 <div id="run-the-optimization" class="section level2">
 <h2>Run the optimization</h2>
 <p>The Nelder-Meade simplex is the default method =&gt; no need to set the optim_method argument. For the moment it is the only method interfaced (others will come soonly). Same for crit_function: a value is set by default (concentrated_wss, see wallach et al., 2011). For the moment it is the only criterion proposed (others will come soonly). The user can implement its own criterion (see inputs and outputs required in the concentrated_wss function).</p>
-<pre class="r"><code>param_est_values=main_optim(obs_list=obs_list,
+<pre class="r"><code>optim_results=main_optim(obs_list=obs_list,
                             model_function=stics_wrapper,
                             model_options=model_options,
                             optim_options=optim_options,

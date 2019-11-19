@@ -16,7 +16,7 @@ The parameter estimation is performed using the Nelder-Meade simplex method impl
 To regulate the number of simulations (and thus the duration of execution), reduce the number of repetition of the minimization and/or the maximum number of evaluation (see section "Set options for the parameter estimation method").
 
 The execution of this Rmarkdown document requires the path to the Stics model. By default it uses 
-```{r eval=FALSE}
+```{r eval=TRUE}
 file.path(getwd(),"JavaSTICS-1.41-stics-9.0/bin/stics_modulo")
 ```
 (see stics_path param at the beginning of the .Rmd).
@@ -117,7 +117,7 @@ optim_method argument. For the moment it is the only method interfaced (others w
 Same for crit_function: a value is set by default (concentrated_wss, see wallach et al., 2011). For the moment it is the only criterion proposed (others will come soonly). The user can implement its own criterion (see inputs and outputs required in the concentrated_wss function).
 
 ```{r eval=TRUE, message=FALSE, warning=FALSE}
-param_est_values=main_optim(obs_list=obs_list,
+optim_results=main_optim(obs_list=obs_list,
                             model_function=stics_wrapper,
                             model_options=model_options,
                             optim_options=optim_options,

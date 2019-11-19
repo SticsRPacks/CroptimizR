@@ -16,7 +16,7 @@ The parameter estimation is performed using the Nelder-Meade simplex method impl
 To regulate the number of simulations (and thus the duration of execution), reduce the number of repetition of the minimization and/or the maximum number of evaluation (see section "Set options for the parameter estimation method").
 
 The execution of this Rmarkdown document requires the path to the Stics model. By default it uses 
-```{r eval=FALSE}
+```{r eval=TRUE}
 file.path(getwd(),"JavaSTICS-1.41-stics-9.0/bin/stics_modulo")
 ```
 (see stics_path param at the beginning of the .Rmd).
@@ -24,7 +24,7 @@ If you want to change the value of this parameter you may use Knit->"Knit with p
 
 ## Initialisation step
 
-```{r setup and initializations,  eval=FALSE, message=FALSE, results=FALSE, warning=FALSE}
+```{r setup and initializations,  eval=TRUE, message=FALSE, results=FALSE, warning=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
 # Install and load the needed libraries
@@ -63,7 +63,7 @@ data_dir=system.file(file.path("extdata","TestCase1c"), package = "SticsOptimizR
 
 ## List of situations and variables to consider
 
-```{r  eval=FALSE, message=FALSE, warning=FALSE}
+```{r  eval=TRUE, message=FALSE, warning=FALSE}
 
 sit_name="bo96iN+"  ## among bo96iN+, bou00t1, bou00t3, bou99t1, bou99t3,
                     ## lu96iN+, lu96iN6 or lu97iN+
@@ -76,7 +76,7 @@ var_name="lai_n"    ## lai_n or masec_n
 
 In this case, the argument param_values of the wrapper is not set: the values of the model input parameters are all read in the model input files.
 
-```{r eval=FALSE, message=FALSE, warning=FALSE}
+```{r eval=TRUE, message=FALSE, warning=FALSE}
 
 # Set the model options (see '? stics_wrapper_options' for details)
 model_options=stics_wrapper_options(params$stics_path,data_dir,
@@ -91,7 +91,7 @@ sim_before_optim=stics_wrapper(model_options=model_options)
 
 We only keep observations for situation sit_name and variable var_name (obs_list define the list of situations and variables that will be used in the parameter estimation process).
 
-```{r eval=FALSE, message=FALSE, warning=FALSE}
+```{r eval=TRUE, message=FALSE, warning=FALSE}
 obs_list=read_obs_to_list(file.path(model_options$data_dir,"Orig Data"), 
                           obs_filenames = paste0(sit_name,".obs"))
 obs_list[[sit_name]]=obs_list[[sit_name]][,c("Date",var_name)]
@@ -102,7 +102,7 @@ obs_list[[sit_name]]=obs_list[[sit_name]][,c("Date",var_name)]
 
 prior_information determines the list of parameters that will be estimated in the parameter estimation process and associated prior information (only uniform distributions for the moment, others will come soon).
 
-```{r eval=FALSE, message=FALSE, warning=FALSE}
+```{r eval=TRUE, message=FALSE, warning=FALSE}
 # 2 parameters here: dlaimax and durvieF, of prior distributions U([0.0005,0.0025]) and U([50,400])
 # This is also used to set the list of parameters to estimate
 prior_information=list(lb=c(dlaimax=0.0005, durvieF=50),
@@ -118,7 +118,7 @@ The full set of options for the simplex method can be found in the [vignette of 
 The number of repetitions is advised to be set to at least 5, while 10 is a reasonable maximum value.
 maxeval should be used to stop the minimization only if results have to be produced within a given duration, otherwise set it to a high value so that the minimization stops when the criterion based on xtol_rel is satisfied. 
 
-```{r eval=FALSE, message=FALSE, warning=FALSE}
+```{r eval=TRUE, message=FALSE, warning=FALSE}
 optim_options=list() 
 optim_options$nb_rep <- 7 # Number of repetitions of the minimization 
                           # (each time starting with different initial
@@ -141,8 +141,8 @@ The Nelder-Meade simplex is the default method => no need to set the
 optim_method argument. For the moment it is the only method interfaced (others will come soonly).
 Same for crit_function: a value is set by default (concentrated_wss, see wallach et al., 2011). For the moment it is the only criterion proposed (others will come soonly). The user can implement its own criterion (see inputs and outputs required in the concentrated_wss function).
 
-```{r eval=FALSE, message=FALSE, warning=FALSE}
-param_est_values=main_optim(obs_list=obs_list,
+```{r eval=TRUE, message=FALSE, warning=FALSE}
+optim_results=main_optim(obs_list=obs_list,
                             model_function=stics_wrapper,
                             model_options=model_options,
                             optim_options=optim_options,
@@ -202,14 +202,14 @@ nlo[[2]]
 
 In this case, the param_values argument is set so that estimated values of the parameters overwrite the values defined in the model input files.
 
-```{r eval=FALSE, message=FALSE, warning=FALSE}
-sim_after_optim=stics_wrapper(param_values=param_est_values,
+```{r eval=TRUE, message=FALSE, warning=FALSE}
+sim_after_optim=stics_wrapper(param_values=optim_results$final_values,
                               model_options=model_options)
 ```
 
 ## Plot the results
 
-```{r eval=FALSE, message=FALSE, warning=FALSE}
+```{r eval=TRUE, message=FALSE, warning=FALSE}
 png(file.path(optim_options$path_results,"sim_obs_plots.png"),
     width = 15, height = 10, units = "cm", res=1000)
 par(mfrow = c(1,2))
