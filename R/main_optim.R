@@ -63,14 +63,14 @@
 #' optim_options$path_results <- model_options$data_dir # path where to store results graphs
 #'
 #' # Run the optimization
-#' param_est_values=main_optim(obs_list=obs_list,crit_function=concentrated_wss,
-#'                             model_function=stics_wrapper,
-#'                             model_options=model_options,
-#'                             optim_options=optim_options,
-#'                             prior_information=prior_information)
+#' optim_results=main_optim(obs_list=obs_list,crit_function=concentrated_wss,
+#'                          model_function=stics_wrapper,
+#'                          model_options=model_options,
+#'                          optim_options=optim_options,
+#'                          prior_information=prior_information)
 #'
 #' # Run the model after optimzation
-#' sim_after_optim=stics_wrapper(param_values=param_est_values,model_options=model_options)
+#' sim_after_optim=stics_wrapper(param_values=optim_results$final_values,model_options=model_options)
 #'
 #' # Plot the results
 #' dev.new()
@@ -103,7 +103,7 @@
 #'
 #' obs_list=read_obs_to_list(file.path(model_options$data_dir,"Orig Data"))
 #'
-#' main_optim(obs_list=obs_list,crit_function=concentrated_wss,model_function=stics_wrapper,model_options=model_options,optim_options=optim_options,prior_information=prior_information)
+#' optim_results=main_optim(obs_list=obs_list,crit_function=concentrated_wss,model_function=stics_wrapper,model_options=model_options,optim_options=optim_options,prior_information=prior_information)
 #'
 
 
