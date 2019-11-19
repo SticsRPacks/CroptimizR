@@ -49,8 +49,17 @@ a named list containing for each parameter the list of situations per group
 NE PEUT-ON PAS FAIRE PLUS SIMPLE ET HOMOGENE ENTRE LES 2 CAS ??????}
 }
 \value{
-The vector of values for optimized parameters + prints and graphs,
-depending on the parameter estimation method used
+prints, graphs and a list containing the results of the parameter estimation.
+which content depends on the method used.
+  e.g. for Nelder meade simplex in nloptr, this list contains
+\code{final_values}, the vector of estimated values for optimized parameters
+for the repetition that lead to the lowest value of the criterion
+\code{init_values}, the vector of initial values for optimized parameters
+\code{est_values}, the vector of estimated values for optimized parameters
+for all repetitions
+\code{ind_min_crit}, the index of the repetition that lead to the lowest value
+of the criterion
+\code{nlo}, the data structure returned by nloptr
 }
 \description{
 Call the required parameter estimation method

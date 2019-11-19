@@ -35,8 +35,8 @@ and the vector of upper and lower bounds (one value per group) (\code{ub} and \c
 \item{param_names}{Name(s) of parameters to estimate}
 }
 \value{
-The vector of values for optimized parameters + prints and graphs,
-depending on the parameter estimation method used
+prints, graphs and a list containing the results of the parameter estimation.
+which content depends on the method used.
 }
 \description{
 main function for parameter estimation
@@ -81,14 +81,14 @@ optim_options$maxeval <- 20 # Maximum number of iterations executed by the funct
 optim_options$path_results <- model_options$data_dir # path where to store results graphs
 
 # Run the optimization
-param_est_values=main_optim(obs_list=obs_list,crit_function=concentrated_wss,
-                            model_function=stics_wrapper,
-                            model_options=model_options,
-                            optim_options=optim_options,
-                            prior_information=prior_information)
+optim_results=main_optim(obs_list=obs_list,crit_function=concentrated_wss,
+                         model_function=stics_wrapper,
+                         model_options=model_options,
+                         optim_options=optim_options,
+                         prior_information=prior_information)
 
 # Run the model after optimzation
-sim_after_optim=stics_wrapper(param_values=param_est_values,model_options=model_options)
+sim_after_optim=stics_wrapper(param_values=optim_results$final_values,model_options=model_options)
 
 # Plot the results
 dev.new()
@@ -121,6 +121,6 @@ optim_options$path_results=model_options$data_dir   # path where to store result
 
 obs_list=read_obs_to_list(file.path(model_options$data_dir,"Orig Data"))
 
-main_optim(obs_list=obs_list,crit_function=concentrated_wss,model_function=stics_wrapper,model_options=model_options,optim_options=optim_options,prior_information=prior_information)
+optim_results=main_optim(obs_list=obs_list,crit_function=concentrated_wss,model_function=stics_wrapper,model_options=model_options,optim_options=optim_options,prior_information=prior_information)
 
 }
