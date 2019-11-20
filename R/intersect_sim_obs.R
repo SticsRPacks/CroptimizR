@@ -21,7 +21,10 @@ intersect_sim_obs <- function(sim_list,obs_list) {
   list_vars=sapply(situations,
                    function (x) intersect(colnames(sim_list[[x]]),
                                colnames(obs_list[[x]])),simplify = F)
-  if (is.null(nrow(list_vars))) {
+  idx=sapply(list_vars, function(x) length(x)>=2)  # keep situations with common variables
+  situations=situations[idx]
+  list_vars=list_vars[situations]
+  if (length(list_vars)==0) {
     warning("Simulations and observations do not contain common variables.")
     return(NA)
   }
@@ -32,8 +35,11 @@ intersect_sim_obs <- function(sim_list,obs_list) {
                   function(x) obs_list[[x]][,is.element(colnames(obs_list[[x]]),list_vars[[x]])], simplify = F)
   list_dates=sapply(situations,
                     function (x) intersect(sim_list[[x]]$Date,obs_list[[x]]$Date), simplify = F)
-  if (is.null(nrow(list_dates))) {
-    warning("Simulations and observations do not contain common dates.")
+  idx=sapply(list_dates, function(x) length(x)>0)  # keep situations with common dates
+  situations=situations[idx]
+  list_dates=list_dates[situations]
+  if (length(list_dates)==0) {
+    warning("Simulations and observations do not contain common dates")
     return(NA)
   }
 
