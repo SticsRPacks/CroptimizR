@@ -50,6 +50,9 @@ main_crit <- function(param_values,crit_options) {
   #if (!model_results$flag_allsim) {
 
     obs_sim_list=intersect_sim_obs(model_results$sim_list,obs_list)
+    if (is.na(obs_sim_list)) {
+      stop("Error: intersection of simulations and observations is empty (no date and/or variable in common)!")
+    }
   #}
 
   # Compute criterion value
