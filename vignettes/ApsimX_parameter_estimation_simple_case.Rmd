@@ -2,11 +2,11 @@
 title: "Parameter estimation with the ApsimX crop Model: a simple case"
 output: html_document
 params:
-  apsimx_path: !r  system("which Models", intern = TRUE)
+  apsimx_path: !r  Sys.which("Models")
   path_results: !r getwd()
 ---
 
-
+  
 ```{r setup, echo=FALSE}
 
 # set global chunk options: 
@@ -17,23 +17,28 @@ dep_auto()
 
 ## Study Case
 
-A simple parameter estimation with a single situation, a single observed variable and 2 estimated parameters, just to illustrate how to use the package.
+A simple parameter estimation with a single situation, a single observed variable and 2 estimated parameters, just to illustrate how to use the package with the APSIMX model.
 
-> TODO : Data comes from a ... experiment (see description in apsimx file / interface...).
+> TODO : add a brief description of the origin of the dataset (see same vignette but for Stics)
 
 The parameter estimation is performed using the Nelder-Meade simplex method implemented in the `nloptr` package.
 
 To regulate the number of simulations (and thus the duration of execution), reduce the number of repetition of the minimization and/or the maximum number of evaluation (see section "Set options for the parameter estimation method").
 
-The execution of this Rmarkdown document requires the path to the ApsimX model. By default it uses the one calculated in this document header stored in `params$apsimx_file`
-```{r}
+The execution of this Rmarkdown document requires the path to the ApsimX model. On linux system, by default it uses the one calculated in this document header, stored in `params$apsimx_path`. 
 
+**On windows system (or if you want to change the default path computed on linux system):** 
+
+* **use Knit->“Knit with parameters” (and specify something like C:/path/to/apsimx/bin/Models.exe on windows, or /usr/local/bin/Models on linux, for apsimx_path parameter),**
+
+**or** 
+
+* **change the variable apsimx_path in the following r chunk, to set the path to APSIM_X model executable (something like apsimx_path <- "C:/path/to/apsimx/bin/Models.exe" on windows and apsimx_path <- "/usr/local/bin/Models" on linux).**
+
+```{r}
 apsimx_path <- params$apsimx_path
 apsimx_path
-
 ```
-
-If you want to change the value of this parameter you may use Knit, then *"Knit with parameters"* or set it manually in a chunk (`apsimx_path <- path/to/exe/file`) .
 
 ## Initialisation step
 
@@ -73,11 +78,12 @@ if(!require("doParallel")){
 
 ## List of situations and variables to consider
 
+
 ```{r  eval=TRUE, message=FALSE, warning=FALSE}
 
 sit_name="GattonRowSpacingRowSpace25cm"  # among "GattonRowSpacingRowSpace25cm", "GattonRowSpacingRowSpace50cm","GattonRowSpacingRowSpaceN0"
 
-var_name = c("Wheat.Leaf.LAI","Clock.Today") # or "Wheat.AboveGround.Wt"
+var_name = c("Wheat.Leaf.LAI") # or "Wheat.AboveGround.Wt"
 
 ```
 
@@ -90,14 +96,6 @@ In this case, the argument `param_values` of the wrapper is not set: the values 
 
 
 # Set the model options (see '? apsimx_wrapper_options' for details)
-#
-# Normally apsimx_path has been set in Rmarkdown doc header (see params list).
-# But it can be overrided here, or using the feature "Knit with parameters"
-# For a linux OS : apsimx_path="/usr/local/bin/Models"
-# For a Windows OS: apsimx_path="C:/path/to/apsimx/bin/Models.exe"
-apsimx_path <- params$apsimx_path
-apsimx_path <- "D:\\Home\\sbuis\\Documents\\OUTILS\\APSIM2019.11.11.4317\\Bin\\Models.exe"
-
 files_path <- system.file(file.path("extdata","apsimx_files"),package = "ApsimOnR")
 apsimx_file <- file.path(files_path, "template.apsimx")
 
@@ -137,9 +135,6 @@ obs_list <- read_apsimx_output(sim_before_optim$db_file_name,
                                model_options$observed_table_name,
                                model_options$variable_names,
                                names(sim_before_optim$sim_list))
-
-sit_name="GattonRowSpacingRowSpace25cm"
-
 obs_list=obs_list[sit_name]
 names(obs_list) <- sit_name
 
@@ -174,23 +169,23 @@ The number of repetitions `nb_rep` is advised to be set at least to 5, while 10 
 ```{r eval=TRUE, message=FALSE, warning=FALSE}
 
 optim_options=list() 
-optim_options$nb_rep <- 2 # Number of repetitions of the minimization 
+optim_options$nb_rep <- 7 # Number of repetitions of the minimization 
 # (each time starting with different initial
 # values for the estimated parameters) 
-optim_options$maxeval <- 10 # Maximum number of evaluations of the 
+optim_options$maxeval <- 100 # Maximum number of evaluations of the 
 # minimized criteria 
-optim_options$xtol_rel <- 1e-05 # Tolerance criterion between two iterations
+optim_options$xtol_rel <- 1e-03 # Tolerance criterion between two iterations
 # (threshold for the relative difference ofparameter values between the 2 previous 
 # iterations)
 #
 # path of results directory
 # Normally path_results has been set in Rmarkdown doc header (see params list).
-# But it can be overrided here, or using the feature "Knit with parameters"
-#  optim_options$path_results <- "/path/to/results/dir"
+# But it can be overwritten here (write optim_options$path_results <- "/path/to/results/dir" after next line), 
+# or using the feature "Knit with parameters"
+ 
 optim_options$path_results <- params$path_results
 
-optim_options$ranseed <- 1234 # random seed  
-
+optim_options$ranseed <- 1234 # random seed (comment if you want to randomize the results) 
 
 ```
 
@@ -201,8 +196,7 @@ Same for `crit_function`: a value is set by default (`concentrated_wss`, see Wal
 
 ```{r eval=TRUE, message=FALSE, warning=FALSE}
 
-param_est_values=main_optim(obs_list=obs_list,
-                            crit_function=concentrated_wss,
+optim_results=main_optim(obs_list=obs_list,
                             model_function=apsimx_wrapper,
                             model_options=model_options,
                             optim_options=optim_options,
@@ -218,29 +212,29 @@ print(paste("Results of the optimization were saved in",
 The results printed in output on the R console are the following:
 ```{r echo=TRUE, eval=TRUE}
 # ExtinctionCoeff and RUE
-param_est_values$final_values
+optim_results$final_values
 
 
 ```
 
-Complementary graphs and data are stored in the **`r optim_options$path_results`** folder. Among them, the `EstimatedVSinit.pdf` file contains the following figures: 
+Complementary graphs and data are stored in the results folder which path is given above. Among them, the `EstimatedVSinit.pdf` file contains the following figures: 
 
 ```{r echo=FALSE, image_grobs, fig.show = "hold", out.width = "45%", fig.align = "default"}
 
 #print("ALL data from main_optim...")
 
 #print("init values")
-init_values <- param_est_values$init_values
+init_values <- optim_results$init_values
 #init_values
 #print("est values")
-est_values <- param_est_values$est_values
+est_values <- optim_results$est_values
 #est_values
 #print("final values")
-final_values <- param_est_values$final_values
+final_values <- optim_results$final_values
 #final_values
-param_names <- names(param_est_values$final_values)
+param_names <- names(optim_results$final_values)
 #print("min index")
-ind_min_crit <- param_est_values$ind_min_crit
+ind_min_crit <- optim_results$ind_min_crit
 #ind_min_crit
 
 bounds=get_params_bounds(prior_information)
@@ -259,19 +253,17 @@ for (ipar in 1:length(param_names)) {
 
 ```
 
-Figure 1:  plots of estimated vs initial values of parameters *ExtinctionCoeff* and *RUE*. Numbers represent the repetition number of the minimization. The number in red, 2 in this case, is the minimization that lead to the minimal value of the criterion among all repetitions. In this case, minimizations converge towards 2 different values for one of the *RUE* parameter , which indicates the presence of a local minimum. Values of *ExtinctionCoeff* are relatively close to the lower bound value. In realistic calibration cases this may indicate the presence of a large error in the observation values or in the model output values simulated (this simple case with only one situation does not allow to derive such conclusion).
+Figure 1:  plots of estimated vs initial values of parameters *ExtinctionCoeff* and *RUE*. Numbers represent the repetition number of the minimization. The number in red, `r ind_min_crit` in this case, is the minimization that lead to the minimal value of the criterion among all repetitions. In this case, minimizations converge towards different values for the parameters (3 for *ExtinctionCoeff* and 2 for *RUE*), which indicates the presence of local minima. Values of *RUE* are very close to the upper bound value. In realistic calibration cases this may indicate the presence of a large error in the observation values or in the simulated output values (this simple case with only one situation does not allow to derive such conclusion).
 
 ```{r echo=FALSE }
 #load(file.path(optim_options$path_results,"optim_results.Rdata"))
-nlo <- param_est_values$nlo
-last_rep <- length(nlo)
+nlo <- optim_results$nlo
 ```
 
-
-The **`r optim_options$path_results`** folder also contains the `optim_results.Rdata` file that store the nlo variable, a list containing the results of the minimization for each repetition. Here after are displayed the results for the repetition `r last_rep`:
+The results folder (defined in optim_options$path_results) also contains the `optim_results.Rdata` file that store the nlo variable, a list containing the results of the minimization for each repetition. Here after are displayed the results for the repetition `r ind_min_crit` that lead to the lowest value of the criterion:
 
 ```{r echo=TRUE, eval=TRUE}
-nlo[[last_rep]]
+nlo[[ind_min_crit]]
 
 ```
 
@@ -281,7 +273,7 @@ In this case, the `param_values` argument is set so that estimated values of the
 
 ```{r eval=TRUE, message=FALSE, warning=FALSE}
 
-sim_after_optim=apsimx_wrapper(param_values=param_est_values$final_values,
+sim_after_optim=apsimx_wrapper(param_values=optim_results$final_values,
                                model_options=model_options)
 
 ```
