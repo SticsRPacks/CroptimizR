@@ -57,8 +57,15 @@ if(!require("doParallel")){
   library("doParallel")
 }
 
-# Define the paths to the needed tools and data
-data_dir=system.file(file.path("extdata","TestCase1c"), package = "SticsOptimizR") 
+
+# Download the example USMs:
+data_dir= normalizePath(tempdir(), winslash = "/", mustWork = FALSE)
+data_dir_zip= normalizePath(file.path(data_dir,"master.zip"), winslash = "/", mustWork = FALSE)
+download.file("https://github.com/SticsRPacks/data/archive/master.zip", data_dir_zip)
+unzip(data_dir_zip, exdir = data_dir)
+unlink(data_dir_zip)
+data_dir= file.path(normalizePath(list.dirs(data_dir)[2], winslash = "/"),"study_case_1")
+# NB: all examples are now in data_dir
 ```
 
 ## List of situations and variables to consider
