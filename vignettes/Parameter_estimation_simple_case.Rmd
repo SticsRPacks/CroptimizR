@@ -2,7 +2,7 @@
 title: "Parameter estimation with the Stics crop Model: a simple case"
 output: html_document
 params:
-  stics_path: !r file.path(getwd(),"JavaSTICS-1.41-stics-9.0/bin/stics_modulo")
+  stics_path: !r file.path(getwd(),"JavaSTICS-1.41-stics-9.0/bin/stics_modulo.exe")
 ---
 
 ## Study Case
