@@ -1,13 +1,14 @@
 Package: SticsOptimizR
 Type: Package
-Title: A package for parameter estimation, uncertainty and sensitivity analysis for the Stics model  https://github.com/SticsRPacks/SticsOptimizR
+Title: A Package for Parameter Estimation, Uncertainty and Sensitivity Analysis for the Stics Model  https://github.com/SticsRPacks/SticsOptimizR
 Date: 2019-06-24
 Version: 0.0.0.9000
 Authors@R: c(person("Samuel", "Buis",, "samuel.buis@inra.fr", c("aut", "cre")),
  person("Michel", "Giner",, "michel.giner@cirad.fr", c("aut")),
  person("Patrice", "Lecharpentier",, "patrice.lecharpentier@inra.fr", c("aut")),
  person("Julie", "Constantin",, "julie.constantin@inra.fr", c("rev")),
- person("Benjamin", "Dumont",, "benjamin.dumont@uliege.be", c("rev")))
+ person("Benjamin", "Dumont",, "benjamin.dumont@uliege.be", c("rev")),
+ person("SticsRpacks",role=c("aut","cph")))
 Description: SticsOptimizR allow users to perform parameter estimation, uncertainty and sensitivity analysis for the Stics model. Learn more ar https://SticsRPacks.github.io/SticsOptimizR/.
 URL: https://github.com/SticsRPacks/SticsOptimizR
 BugReports: https://github.com/SticsRPacks/SticsOptimizR/issues
