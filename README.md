@@ -3,6 +3,14 @@
 
 # SticsOptimizR: An R package for parameter estimation, uncertainty and sensitivity analysis for the [STICS](https://www6.paca.inra.fr/stics_eng/) model <img src="man/figures/logo.png" alt="logo" width="150" align="right" />
 
+[![Project Status: WIP – Initial development is in progress, but there
+has not yet been a stable, usable release suitable for the
+public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+[![Travis build
+status](https://travis-ci.org/SticsRPacks/SticsOptimizR.svg?branch=master)](https://travis-ci.org/SticsRPacks/SticsOptimizR)
+[![Codecov test
+coverage](https://codecov.io/gh/SticsRPacks/SticsOptimizR/branch/master/graph/badge.svg)](https://codecov.io/gh/SticsRPacks/SticsOptimizR?branch=master)
+
 ## Overview
 
 This package will allow the user to perform, on the Stics model:
