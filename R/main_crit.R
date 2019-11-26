@@ -3,18 +3,18 @@ main_crit <- function(param_values,crit_options) {
   #'
   #' @param param_values Value(s) of the parameters
   #' @param crit_options A list containing the following elements:
-  #' \code{param_names} Name(s) of parameters
-  #' \code{obs_list} List of observed values
-  #' \code{crit_function} Function implementing the criterion to optimize
-  #' \code{model_function} Function implementing the criterion to optimize
-  #' \code{model_options} List of arguments to pass to model function
-  #' \code{situation_names} Name(s) of the situations to simulate
-  #' \code{prior_information} Prior information on the parameters to estimate.
+  #' `param_names` Name(s) of parameters
+  #' `obs_list` List of observed values
+  #' `crit_function` Function implementing the criterion to optimize
+  #' `model_function` Function implementing the criterion to optimize
+  #' `model_options` List of arguments to pass to model function
+  #' `situation_names` Name(s) of the situations to simulate
+  #' `prior_information` Prior information on the parameters to estimate.
   #' For the moment only uniform distribution are allowed.
   #' Either a list containing a vector of upper and lower
-  #' bounds (\code{ub} and \code{lb}), or a list of list containing for each
-  #' parameter and group of situation the names of the situations (\code{sit_names})
-  #' and upper and lower bounds (\code{ub} and \code{lb})
+  #' bounds (`ub` and `lb`), or a list of list containing for each
+  #' parameter and group of situation the names of the situations (`sit_names`)
+  #' and upper and lower bounds (`ub` and `lb`)
   #'
   #' @return The value of the criterion
   #'
@@ -50,7 +50,7 @@ main_crit <- function(param_values,crit_options) {
   #if (!model_results$flag_allsim) {
 
     obs_sim_list=intersect_sim_obs(model_results$sim_list,obs_list)
-    if (is.na(obs_sim_list)) {
+    if (!is.list(obs_sim_list)) {
       stop("Error: intersection of simulations and observations is empty (no date and/or variable in common)!")
     }
   #}

@@ -10,38 +10,38 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
   #' @param optim_method Name of the parameter estimation method (optional,
   #' simplex is the only one interfaced for the moment)
   #' @param optim_options List of options of the parameter estimation method:
-  #' \code{nb_rep}, the number of repetitions (optional, default=1)
-  #' \code{xtol_rel}, the tolerance for the stopping criterion on relative
+  #' `nb_rep`, the number of repetitions (optional, default=1)
+  #' `xtol_rel`, the tolerance for the stopping criterion on relative
   #' differences on parameters values between 2 iterations (optional, default=1e-5)
-  #' \code{maxeval}, the maximum number of criterion evaluation (optional, default=500)
-  #' \code{path_results}, the path where to store the results (optional, default=getwd())
+  #' `maxeval`, the maximum number of criterion evaluation (optional, default=500)
+  #' `path_results`, the path where to store the results (optional, default=getwd())
   #' @param prior_information Prior information on the parameters to estimate.
   #' For the moment only uniform distribution are allowed.
   #' Either
   #' a list containing:
-  #'    - (named) vectors of upper and lower bounds (\code{ub} and \code{lb}),
-  #'    - \code{init_values}, A (column named) vector or data.frame containing initial
+  #'    - (named) vectors of upper and lower bounds (`ub` and `lb`),
+  #'    - `init_values`, A (column named) vector or data.frame containing initial
   #' values to test for the parameters (optional, if not provided (or if less values
   #' than number of repetitions of the minimization are provided), the (or part
   #' of the) initial values will be randomly generated using LHS sampling within
   #' parameter bounds.
-  #'
   #' or
   #' a named list containing for each parameter the list of situations per group
-  #' (\code{sit_list}), the vector of upper and lower bounds (one value per group)
-  #' (\code{ub} and \code{lb}) and \code{init_values} (one column per group)
+  #' (`sit_list`), the vector of upper and lower bounds (one value per group)
+  #' (`ub` and `lb`) and the list of initial values per group
+  #' `init_values` (column named vector or data.frame per group).
   #'
   #' @return prints, graphs and a list containing the results of the parameter estimation.
   #' which content depends on the method used.
   #'   e.g. for Nelder meade simplex in nloptr, this list contains
-  #' \code{final_values}, the vector of estimated values for optimized parameters
+  #' `final_values`, the vector of estimated values for optimized parameters
   #' for the repetition that lead to the lowest value of the criterion
-  #' \code{init_values}, the vector of initial values for optimized parameters
-  #' \code{est_values}, the vector of estimated values for optimized parameters
+  #' `init_values`, the vector of initial values for optimized parameters
+  #' `est_values`, the vector of estimated values for optimized parameters
   #' for all repetitions
-  #' \code{ind_min_crit}, the index of the repetition that lead to the lowest value
+  #' `ind_min_crit`, the index of the repetition that lead to the lowest value
   #' of the criterion
-  #' \code{nlo}, the data structure returned by nloptr
+  #' `nlo`, the data structure returned by nloptr
   #'
   #' @export
   #'
@@ -63,15 +63,6 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
   if (is.null((xtol_rel=optim_options$xtol_rel))) { xtol_rel=1e-5 }
   if (is.null((maxeval=optim_options$maxeval))) { maxeval=500 }
   if (is.null((ranseed=optim_options$ranseed))) { ranseed=NULL }
-  if (is.null(optim_options$init_values))
-    { init_values=NULL }
-  else
-    { init_values=matrix(optim_options$init_values,
-                       ncol=length(names(optim_options$init_values))) }
-  ##
-  ## TODO : init_values should be defined in prior_information? (possibly defined per sit group ...)
-  ##
-
   if (is.null((path_results=optim_options$path_results))) { path_results=getwd() }
 
   nb_params=length(param_names)
@@ -85,6 +76,7 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
   crit_options_loc$prior_information=prior_information
 
   bounds=get_params_bounds(prior_information)
+  init_values=get_params_init_values(prior_information)
 
   # Sample initial values
   sample_sz=nb_rep-NROW(init_values)
@@ -98,7 +90,7 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
   start_time <- Sys.time()
   for (irep in 1:nb_rep){
 
-    nlo[[irep]] <- nloptr(x0 = init_values[irep,], eval_f = main_crit,
+    nlo[[irep]] <- nloptr(x0 = as.numeric(init_values[irep,]), eval_f = main_crit,
                           lb = bounds$lb, ub = bounds$ub,
                           opts = list("algorithm"="NLOPT_LN_NELDERMEAD",
                                       "xtol_rel"=xtol_rel, "maxeval"=maxeval,

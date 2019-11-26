@@ -2,21 +2,31 @@
 #'
 #' @param param_names Name(s) of parameters to estimate
 #' @param obs_list List of observed values
-#' @param crit_function Function implementing the criterion to optimize (optional, default=concentrated_wss)
+#' @param crit_function Function implementing the criterion to optimize
+#' (optional, default=log_concentrated_wss)
 #' @param model_function Crop Model wrapper function
 #' @param model_options List of options for the Crop Model wrapper (optional,
 #' see help of the Crop Model wrapper used)
 #' @param optim_method Name of the parameter estimation method (optional,
 #' see help of optim_switch function)
 #' @param optim_options List of options of the parameter estimation method:
-#' \code{nb_rep}, the number of repetitions (optional, default=1)
+#' `nb_rep`, the number of repetitions (optional, default=1)
 #' (see help of optim_switch function))
 #' @param prior_information Prior information on the parameters to estimate.
 #' For the moment only uniform distribution are allowed.
-#' Either a list containing (named) vectors of upper and lower
-#' bounds (\code{ub} and \code{lb}), or a named list containing for each
-#' parameter the list of situations per group (\code{sit_list})
-#' and the vector of upper and lower bounds (one value per group) (\code{ub} and \code{lb})
+#' Either
+#' a list containing:
+#'    - (named) vectors of upper and lower bounds (`ub` and `lb`),
+#'    - `init_values`, A (column named) vector or data.frame containing initial
+#' values to test for the parameters (optional, if not provided (or if less values
+#' than number of repetitions of the minimization are provided), the (or part
+#' of the) initial values will be randomly generated using LHS sampling within
+#' parameter bounds.
+#' or
+#' a named list containing for each parameter the list of situations per group
+#' (`sit_list`), the vector of upper and lower bounds (one value per group)
+#' (`ub` and `lb`) and the list of initial values per group
+#' `init_values` (vector or data.frame, one column per group).
 #'
 #' @return prints, graphs and a list containing the results of the parameter estimation.
 #' which content depends on the method used.
@@ -24,7 +34,7 @@
 #' @export
 #'
 #' @examples
-#'
+#' \dontrun{
 #' library(SticsRFiles)
 #' library(SticsOnR)
 #' library(SticsOptimizR)
@@ -53,24 +63,26 @@
 #'
 #' # Set prior information on the parameters to estimate
 #' prior_information=list(lb=c(dlaimax=0.0005, durvieF=50),
-#'                        ub=c(dlaimax=0.0025, durvieF=400))
+#'                        ub=c(dlaimax=0.0025, durvieF=400),
+#'                        init_values=data.frame(dlaimax=c(0.0015), durvieF=c(225)))
 #'
 #' # Set options for the parameter estimation method
 #' optim_options=list()
-#' optim_options$nb_rep <- 2 # How many times we run the minimization with different parameters
+#' optim_options$nb_rep <- 5 # How many times we run the minimization with different parameters
 #' optim_options$xtol_rel <- 1e-05 # Tolerance criterion between two iterations
 #' optim_options$maxeval <- 20 # Maximum number of iterations executed by the function
 #' optim_options$path_results <- model_options$data_dir # path where to store results graphs
 #'
 #' # Run the optimization
-#' optim_results=main_optim(obs_list=obs_list,crit_function=concentrated_wss,
+#' optim_results=main_optim(obs_list=obs_list,
 #'                          model_function=stics_wrapper,
 #'                          model_options=model_options,
 #'                          optim_options=optim_options,
 #'                          prior_information=prior_information)
 #'
 #' # Run the model after optimzation
-#' sim_after_optim=stics_wrapper(param_values=optim_results$final_values,model_options=model_options)
+#' sim_after_optim=stics_wrapper(param_values=optim_results$final_values,
+#'                               model_options=model_options)
 #'
 #' # Plot the results
 #' dev.new()
@@ -88,8 +100,12 @@
 #' # TEST WITH SEVERAL SITUATIONS AND USING GROUPS OF SITUATIONS PER PARAMETER
 #'
 #' prior_information=list()
-#' prior_information$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1", "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),lb=0.0005,ub=0.0025)
-#' prior_information$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"), c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),lb=c(50,50),ub=c(400,400))
+#' prior_information$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1", "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),
+#'                                lb=0.0005,ub=0.0025,
+#'                                init_values=0.001)
+#' prior_information$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"), c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),
+#'                                lb=c(50,50),ub=c(400,400),
+#'                                init_values=c(200,300))
 #'
 #' stics_path="D:/Home/sbuis/Documents/WORK/STICS/JavaSTICS-1.41-stics-9.0/bin/stics_modulo"  # TO ADAPT TO YOUR CASE :-) ###
 #' data_dir=system.file(file.path("extdata","TestCase1c"), package = "SticsOptimizR")
@@ -103,12 +119,15 @@
 #'
 #' obs_list=read_obs_to_list(file.path(model_options$data_dir,"Orig Data"))
 #'
-#' optim_results=main_optim(obs_list=obs_list,crit_function=concentrated_wss,model_function=stics_wrapper,model_options=model_options,optim_options=optim_options,prior_information=prior_information)
-#'
+#' optim_results=main_optim(obs_list=obs_list, model_function=stics_wrapper,
+#'                          model_options=model_options,
+#'                          optim_options=optim_options,
+#'                          prior_information=prior_information)
+#' }
 
 
 
-main_optim <- function(obs_list,crit_function=concentrated_wss,model_function,model_options=NULL,optim_method="simplex",optim_options=NULL,prior_information) {
+main_optim <- function(obs_list,crit_function=log_concentrated_wss,model_function,model_options=NULL,optim_method="simplex",optim_options=NULL,prior_information) {
 
 
   #

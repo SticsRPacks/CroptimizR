@@ -3,14 +3,14 @@
 #' @param prior_information Prior information on the parameters to estimate.
 #' For the moment only uniform distribution are allowed.
 #' Either a list containing (named) vectors of upper and lower
-#' bounds (\code{ub} and \code{lb}), or a named list containing for each
-#' parameter the list of situations per group (\code{sit_list})
-#' and the vector of upper and lower bounds (one value per group) (\code{ub} and \code{lb})
+#' bounds (`ub` and `lb`), or a named list containing for each
+#' parameter the list of situations per group (`sit_list`)
+#' and the vector of upper and lower bounds (one value per group) (`ub` and `lb`)
 #'
 #' @details For the moment only works with uniform distributions but will be
 #' hopefully soon extended to any distribution
 #'
-#' @return A list containing the vectors of lower and upper bounds (\code{ub} and \code{lb})
+#' @return A list containing the vectors of lower and upper bounds (`ub` and `lb`)
 #'
 #' @export
 #'

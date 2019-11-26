@@ -1,0 +1,83 @@
+#' @title Extract parameter initial values from prior information
+#'
+#' @param prior_information
+#'
+#' @return A dataframe containing initial values for the different parameters to
+#' estimated (one column per parameter)
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # Simple cases
+#' prior_information=list(init_values=c(dlaimax=0.001, durvieF=200),
+#'                        lb=c(dlaimax=0.0001, durvieF=50),
+#'                        ub=c(dlaimax=0.01, durvieF=400))
+#' get_params_init_values(prior_information)
+#'
+#' prior_information=list(init_values=data.frame(dlaimax=c(0.001,0.002), durvieF=c(50,200)),
+#'                        lb=c(dlaimax=0.0001, durvieF=50),
+#'                        ub=c(dlaimax=0.01, durvieF=400))
+#' get_params_init_values(prior_information)
+#'
+#' Cases with groups of situations per parameter
+#' prior_information=list()
+#' prior_information$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1", "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),
+#'                                init_values=0.001,lb=0.0001,ub=0.1)
+#' prior_information$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"), c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),
+#'                                init_values=c(200,300),lb=50,ub=400)
+#' get_params_init_values(prior_information)
+#'
+#' prior_information=list()
+#' prior_information$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1", "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),
+#'                                init_values=c(0.001,0.002),lb=0.0001,ub=0.1)
+#' prior_information$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"), c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),
+#'                                init_values=data.frame(c(200,300),c(250,350)),lb=50,ub=400)
+#' get_params_init_values(prior_information)
+#' }
+
+get_params_init_values <- function(prior_information) {
+
+  init_values=NULL
+  params_names=get_params_names(prior_information)
+
+  if (!is.null(prior_information$init_values)) {
+
+    init_values=prior_information$init_values
+
+    # in case the user give a vector instead of a one-column data.frame
+    if (is.vector(init_values) && length(params_names)!=length(init_values) ) {
+      init_values=t(as.data.frame(init_values))
+      names(init_values)=params_names
+    }
+
+  } else if (is.list(prior_information[[1]]) &&
+             !is.null(prior_information[[1]]$init_values)) {
+
+    # in case the user give a vector instead of a one-column data.frame
+    for (i in 1:length(prior_information)) {
+
+      if ( is.vector(prior_information[[i]]$init_values) &&
+           length(prior_information[[i]]$sit_list) !=
+           length(prior_information[[i]]$init_values) ) {
+
+          prior_information[[i]]$init_values=
+            as.data.frame(prior_information[[i]]$init_values)
+
+      }
+
+    }
+
+    if (is.vector(prior_information[[1]]$init_values)) {
+      init_values=do.call(c, sapply(prior_information, function(x) x$init_values))
+      init_values=t(as.data.frame(init_values,optional = TRUE))
+    } else {
+      init_values=do.call(cbind, sapply(prior_information, function(x) x$init_values))
+    }
+
+  }
+
+  colnames(init_values)=params_names
+  return(init_values)
+
+}

@@ -2,6 +2,7 @@
 
 export(concentrated_wss)
 export(get_params_bounds)
+export(get_params_init_values)
 export(get_params_names)
 export(get_params_per_sit)
 export(intersect_sim_obs)

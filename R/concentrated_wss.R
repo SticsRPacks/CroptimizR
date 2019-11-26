@@ -4,7 +4,7 @@ concentrated_wss <- function(sim_list,obs_list) {
   #' @param sim_list List of simulated variables
   #' @param obs_list List of observed variables
   #'
-  #' @details \code{sim_list} and \code{obs_list} must have the same structure (i.e. same number of variables, dates, situations, ... use intersect_sim_obs for that).
+  #' @details `sim_list` and `obs_list` must have the same structure (i.e. same number of variables, dates, situations, ... use intersect_sim_obs for that).
   #'
   #' @return The value of the concentrated weighted sum of squares (see Wallach et al. 2011, eq. 5)
   #'
