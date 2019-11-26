@@ -54,7 +54,7 @@ which content depends on the method used.
 main function for parameter estimation
 }
 \examples{
-
+\dontrun{
 library(SticsRFiles)
 library(SticsOnR)
 library(SticsOptimizR)
@@ -143,5 +143,5 @@ optim_results=main_optim(obs_list=obs_list, model_function=stics_wrapper,
                          model_options=model_options,
                          optim_options=optim_options,
                          prior_information=prior_information)
-
+}
 }
