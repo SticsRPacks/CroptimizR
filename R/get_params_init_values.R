@@ -5,8 +5,6 @@
 #' @return A dataframe containing initial values for the different parameters to
 #' estimated (one column per parameter)
 #'
-#' @export
-#'
 #' @examples
 #' # Simple cases
 #' prior_information=list(init_values=c(dlaimax=0.001, durvieF=200),

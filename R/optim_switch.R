@@ -43,8 +43,6 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
   #' of the criterion
   #' `nlo`, the data structure returned by nloptr
   #'
-  #' @export
-  #'
   #' @examples
 
   # TO DO LIST

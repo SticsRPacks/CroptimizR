@@ -14,8 +14,6 @@
 #'
 #' @return A vector or data.frame containing the sampled values (nrow=n)
 #'
-#' @export
-#'
 #' @examples
 #' library(DiceDesign)
 #' bounds_list=list(lb=c(0,1,2),ub=c(1,2,3))

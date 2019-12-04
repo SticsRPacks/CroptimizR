@@ -13,8 +13,6 @@
 #'
 #' @return A vector of parameter names
 #'
-#' @export
-#'
 #' @examples
 #' # A simple case
 #' prior_information=list(lb=c(dlaimax=0.0005, durvieF=50),

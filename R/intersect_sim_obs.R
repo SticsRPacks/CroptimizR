@@ -5,8 +5,6 @@
 #'
 #' @return A list containing the new obs and sim lists having same situations, variables, dates
 #'
-#' @export
-#'
 #' @examples
 intersect_sim_obs <- function(sim_list,obs_list) {
 

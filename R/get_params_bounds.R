@@ -12,8 +12,6 @@
 #'
 #' @return A list containing the vectors of lower and upper bounds (`ub` and `lb`)
 #'
-#' @export
-#'
 #' @examples
 #' # A simple case
 #' prior_information=list(lb=c(dlaimax=0.0005, durvieF=50),
