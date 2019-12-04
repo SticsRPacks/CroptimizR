@@ -41,43 +41,59 @@ get_params_init_values <- function(prior_information) {
   init_values=NULL
   params_names=get_params_names(prior_information)
 
+
+  # Simple case, no simultaneous estimation of varietal and specific parameters
   if (!is.null(prior_information$init_values)) {
 
-    init_values=prior_information$init_values
+    init_values=as.data.frame(prior_information$init_values)
 
-    # in case the user give a vector instead of a one-column data.frame
-    if (is.vector(init_values) && length(params_names)!=length(init_values) ) {
-      init_values=t(as.data.frame(init_values))
+    # check if colnames were set to params_names, if not set them
+    # and handle translation if necessary
+    if (is.element(rownames(init_values)[1],params_names)) {
+      init_values=t(init_values)
+      rownames(init_values)=1:nrow(init_values)
+    } else if (!is.element(colnames(init_values)[1],params_names)) {
+      if (ncol(init_values)!=length(params_names)) {
+        init_values=t(init_values)
+      }
       names(init_values)=params_names
+      rownames(init_values)=1:nrow(init_values)
     }
 
-  } else if (is.list(prior_information[[1]]) &&
-             !is.null(prior_information[[1]]$init_values)) {
+  # Case of simultaneous estimation of varietal and specific parameters
+  } else if (is.list(prior_information[[1]])) {
 
-    # in case the user give a vector instead of a one-column data.frame
+    # check if colnames were set to params_names, if not set them
+    # and handle translation if necessary
     for (i in 1:length(prior_information)) {
 
-      if ( is.vector(prior_information[[i]]$init_values) &&
-           length(prior_information[[i]]$sit_list) !=
-           length(prior_information[[i]]$init_values) ) {
+      if (!is.null(prior_information[[i]]$init_values)) {
 
-          prior_information[[i]]$init_values=
-            as.data.frame(prior_information[[i]]$init_values)
+        prior_information[[i]]$init_values=
+          as.data.frame(prior_information[[i]]$init_values)
+
+        if (ncol(prior_information[[i]]$init_values) !=
+            length(prior_information[[i]]$sit_list)) {
+
+          prior_information[[i]]$init_values=t(prior_information[[i]]$init_values)
+          rownames(prior_information[[i]]$init_values)=
+            1:nrow(prior_information[[i]]$init_values)
+
+        }
+
+      } else {
+
+        prior_information[[i]]$init_values=data.frame(NA)
 
       }
 
     }
 
-    if (is.vector(prior_information[[1]]$init_values)) {
-      init_values=do.call(c, sapply(prior_information, function(x) x$init_values))
-      init_values=t(as.data.frame(init_values,optional = TRUE))
-    } else {
-      init_values=do.call(cbind, sapply(prior_information, function(x) x$init_values))
-    }
+    init_values=do.call(cbind, sapply(prior_information, function(x) x$init_values))
+    colnames(init_values)=params_names
 
   }
 
-  colnames(init_values)=params_names
   return(init_values)
 
 }
