@@ -76,12 +76,18 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
   crit_options_loc$prior_information=prior_information
 
   bounds=get_params_bounds(prior_information)
-  init_values=get_params_init_values(prior_information)
+  user_init_values=get_params_init_values(prior_information)
 
-  # Sample initial values
+  # Sample initial values and include user provided ones
+  init_values=sample_params(prior_information,nb_rep,ranseed)
+  for (param in param_names) {
+    idx=which(!is.na(user_init_values[,param]))
+    init_values[idx,param]=user_init_values[idx,param]
+  }
+
+
   sample_sz=nb_rep-NROW(init_values)
   if (sample_sz>0) {
-    complem_init_values=sample_params(prior_information,sample_sz,ranseed)
     init_values=rbind(init_values,complem_init_values)
   }
 

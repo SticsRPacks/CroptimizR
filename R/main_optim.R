@@ -17,7 +17,7 @@
 #' Either
 #' a list containing:
 #'    - (named) vectors of upper and lower bounds (`ub` and `lb`),
-#'    - `init_values`, A (column named) vector or data.frame containing initial
+#'    - `init_values`, A data.frame containing initial
 #' values to test for the parameters (optional, if not provided (or if less values
 #' than number of repetitions of the minimization are provided), the (or part
 #' of the) initial values will be randomly generated using LHS sampling within
@@ -26,7 +26,7 @@
 #' a named list containing for each parameter the list of situations per group
 #' (`sit_list`), the vector of upper and lower bounds (one value per group)
 #' (`ub` and `lb`) and the list of initial values per group
-#' `init_values` (vector or data.frame, one column per group).
+#' `init_values` (data.frame, one column per group).
 #'
 #' @return prints, graphs and a list containing the results of the parameter estimation.
 #' which content depends on the method used.
@@ -102,10 +102,10 @@
 #' prior_information=list()
 #' prior_information$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1", "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),
 #'                                lb=0.0005,ub=0.0025,
-#'                                init_values=0.001)
+#'                                init_values=data.frame(0.001))
 #' prior_information$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"), c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),
 #'                                lb=c(50,50),ub=c(400,400),
-#'                                init_values=c(200,300))
+#'                                init_values=data.frame(c(200),c(300)))
 #'
 #' stics_path="D:/Home/sbuis/Documents/WORK/STICS/JavaSTICS-1.41-stics-9.0/bin/stics_modulo"  # TO ADAPT TO YOUR CASE :-) ###
 #' data_dir=system.file(file.path("extdata","TestCase1c"), package = "SticsOptimizR")
