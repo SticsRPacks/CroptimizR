@@ -50,12 +50,17 @@ get_params_init_values <- function(prior_information) {
     if (is.element(rownames(init_values)[1],params_names)) {
       init_values=t(init_values)
       rownames(init_values)=1:nrow(init_values)
+      init_values=init_values[,params_names]  # to ensure that params_names and
+                                              # init_values have columns in same order
     } else if (!is.element(colnames(init_values)[1],params_names)) {
       if (ncol(init_values)!=length(params_names)) {
         init_values=t(init_values)
       }
       names(init_values)=params_names
       rownames(init_values)=1:nrow(init_values)
+    } else {
+      init_values=init_values[,params_names] # to ensure that params_names and
+                                             # init_values have columns in same order
     }
 
   # Case of simultaneous estimation of varietal and specific parameters
