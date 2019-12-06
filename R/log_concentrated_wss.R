@@ -1,16 +1,15 @@
 log_concentrated_wss <- function(sim_list,obs_list) {
-  #' @title Compute log of concentrated weighted sum of squares from simulation and observation list
+  #' @title Compute log transformation of concentrated version of weighted sum of squares (see function concentrated_wss) from simulation and observation list
   #'
   #' @param sim_list List of simulated variables
   #' @param obs_list List of observed variables
   #'
-  #' @details `sim_list` and `obs_list` must have the same structure (i.e. same number of variables, dates, situations, ... use intersect_sim_obs for that).
+  #' @details This criterion can be useful in place of concentrated_wss if the sum of residues are null for a given situation (e.g. when one optimize on integers such as phenological stages days ...)
+  #' `sim_list` and `obs_list` must have the same structure (i.e. same number of variables, dates, situations, ... use intersect_sim_obs for that).
   #'
-  #' @return The value of the log of the concentrated weighted sum of squares (see Wallach et al. 2011, eq. 5)
+  #' @return The value of the log of the concentrated weighted sum of squares
   #'
   #' @export
-  #'
-  #' @examples
 
   var_list=unique(unlist(lapply(obs_list,function (x) colnames(x))))
   var_list=setdiff(var_list,"Date")

@@ -2,7 +2,7 @@
 % Please edit documentation in R/log_concentrated_wss.R
 \name{log_concentrated_wss}
 \alias{log_concentrated_wss}
-\title{Compute log of concentrated weighted sum of squares from simulation and observation list}
+\title{Compute log transformation of concentrated version of weighted sum of squares (see function concentrated_wss) from simulation and observation list}
 \usage{
 log_concentrated_wss(sim_list, obs_list)
 }
@@ -12,11 +12,12 @@ log_concentrated_wss(sim_list, obs_list)
 \item{obs_list}{List of observed variables}
 }
 \value{
-The value of the log of the concentrated weighted sum of squares (see Wallach et al. 2011, eq. 5)
+The value of the log of the concentrated weighted sum of squares
 }
 \description{
-Compute log of concentrated weighted sum of squares from simulation and observation list
+Compute log transformation of concentrated version of weighted sum of squares (see function concentrated_wss) from simulation and observation list
 }
 \details{
+This criterion can be useful in place of concentrated_wss if the sum of residues are null for a given situation (e.g. when one optimize on integers such as phenological stages days ...)
 \code{sim_list} and \code{obs_list} must have the same structure (i.e. same number of variables, dates, situations, ... use intersect_sim_obs for that).
 }
