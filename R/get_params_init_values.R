@@ -91,7 +91,11 @@ get_params_init_values <- function(prior_information) {
     }
 
     init_values=do.call(cbind, sapply(prior_information, function(x) x$init_values))
-    colnames(init_values)=params_names
+    if (all(is.na(init_values))) {
+      init_values=NULL
+    } else {
+      colnames(init_values)=params_names
+    }
 
   }
 
