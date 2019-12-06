@@ -1,4 +1,4 @@
-optim_switch <- function(param_names,obs_list,crit_function,model_function,model_options=NULL,optim_method="simplex",optim_options=NULL,prior_information) {
+optim_switch <- function(param_names,obs_list,crit_function,model_function,model_options=NULL,optim_method="nloptr.simplex",optim_options=NULL,prior_information) {
   #' @title Call the required parameter estimation method
   #'
   #' @param param_names Name(s) of parameters to estimate (a parameter name must

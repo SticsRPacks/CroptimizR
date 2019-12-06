@@ -5,7 +5,7 @@
 \title{Call the required parameter estimation method}
 \usage{
 optim_switch(param_names, obs_list, crit_function, model_function,
-  model_options = NULL, optim_method = "simplex",
+  model_options = NULL, optim_method = "nloptr.simplex",
   optim_options = NULL, prior_information)
 }
 \arguments{
