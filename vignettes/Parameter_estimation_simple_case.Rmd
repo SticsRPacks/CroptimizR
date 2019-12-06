@@ -2,29 +2,25 @@
 title: "Parameter estimation with the Stics crop Model: a simple case"
 output: html_document
 params:
-  stics_path: !r file.path(getwd(),"JavaSTICS-1.41-stics-9.0/bin/stics_modulo.exe")
+  eval_rmd: FALSE
 ---
+
+```{r setup, eval=TRUE, include=FALSE}
+# Global options
+knitr::opts_chunk$set(eval = params$eval_rmd)
+```
 
 ## Study Case
 
-A simple parameter estimation with a single situation, a single observed variable and 2 estimated parameters, just to illustrate how to use the package.
+This document presents an example of a simple parameter estimation using the stics model with a single situation, a single observed variable and 2 estimated parameters, just to illustrate how to use the package.
 
 Data comes from a maize crop experiment (see description in Wallach et al., 2011).
 
 The parameter estimation is performed using the Nelder-Meade simplex method implemented in the nloptr package.
 
-To regulate the number of simulations (and thus the duration of execution), reduce the number of repetition of the minimization and/or the maximum number of evaluation (see section "Set options for the parameter estimation method").
-
-The execution of this Rmarkdown document requires the path to the Stics model. By default it uses 
-```{r eval=TRUE}
-file.path(getwd(),"JavaSTICS-1.41-stics-9.0/bin/stics_modulo")
-```
-(see stics_path param at the beginning of the .Rmd).
-If you want to change the value of this parameter you may use Knit->"Knit with parameters".
-
 ## Initialisation step
 
-```{r setup and initializations,  eval=TRUE, message=FALSE, results=FALSE, warning=FALSE}
+```{r setup and initializations,  message=FALSE, results=FALSE, warning=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
 # Install and load the needed libraries
@@ -64,43 +60,61 @@ data_dir_zip= normalizePath(file.path(data_dir,"master.zip"), winslash = "/", mu
 download.file("https://github.com/SticsRPacks/data/archive/master.zip", data_dir_zip)
 unzip(data_dir_zip, exdir = data_dir)
 unlink(data_dir_zip)
-data_dir= file.path(normalizePath(list.dirs(data_dir)[2], winslash = "/"),"study_case_1")
+data_dir= file.path(normalizePath(list.dirs(data_dir)[2], winslash = "/"),"study_case_1","V9.0")
 # NB: all examples are now in data_dir
+
+# Define the path to the local version of JavaStics 
+javastics_path=file.path(getwd(),"JavaSTICS-1.41-stics-9.0")
+stics_path=file.path(javastics_path,"bin/stics_modulo.exe")
 ```
 
-## List of situations and variables to consider
+## Generate Stics input files from JavaStics input files
 
-```{r  eval=TRUE, message=FALSE, warning=FALSE}
+The Stics wrapper function used in CroptimizR works on text formatted input files (new_travail.usm, 
+climat.txt, ...) stored per USMs in different directories. If you start from xml formatted input files (JavaStics format: usms.xml, sols.xml, ...)
+the following lines allow generating txt files from xml files.
+In this case, xml files are stored in file.path(data_dir,"XmlFiles").
 
-sit_name="bo96iN+"  ## among bo96iN+, bou00t1, bou00t3, bou99t1, bou99t3,
-                    ## lu96iN+, lu96iN6 or lu97iN+
-var_name="lai_n"    ## lai_n or masec_n
+```{r  results='hide', message=FALSE, warning=FALSE}
+stics_inputs_path=file.path(data_dir,"TxtFiles")
+dir.create(stics_inputs_path)
+
+gen_usms_dirs(javastics_path = javastics_path, javastics_workspace_path = file.path(data_dir,"XmlFiles"),
+  target_path = stics_inputs_path, display = TRUE)
 
 ```
 
 
 ## Run the model before optimization for a prior evaluation
 
-In this case, the argument param_values of the wrapper is not set: the values of the model input parameters are all read in the model input files.
+Here model parameters values are read in the model input files. 
 
-```{r eval=TRUE, message=FALSE, warning=FALSE}
+```{r results='hide', message=FALSE, warning=FALSE}
 
 # Set the model options (see '? stics_wrapper_options' for details)
-model_options=stics_wrapper_options(params$stics_path,data_dir,
+model_options=stics_wrapper_options(stics_path,stics_inputs_path,
                                     parallel=FALSE) 
 
-# Run the model (on all situations found in data_dir)
+# Run the model on all situations found in stics_inputs_path
 sim_before_optim=stics_wrapper(model_options=model_options)
 
 ```
 
-## Read and select the corresponding observations
+## Read and select the observations for the parameter estimation
 
-We only keep observations for situation sit_name and variable var_name (obs_list define the list of situations and variables that will be used in the parameter estimation process).
+We only keep observations for situation (i.e. USM for Stics) sit_name and variable var_name (obs_list variable defines the list of situations and variables that will be used in the parameter estimation process).
 
-```{r eval=TRUE, message=FALSE, warning=FALSE}
-obs_list=read_obs_to_list(file.path(model_options$data_dir,"Orig Data"), 
+```{r message=FALSE, warning=FALSE}
+
+sit_name="bo96iN+"  ## among bo96iN+, bou00t1, bou00t3, bou99t1, bou99t3,
+                    ## lu96iN+, lu96iN6 or lu97iN+
+
+# For the moment read_obs_to_list is only able to read obs files in one folder ...
+# this will change in future release of sticsRfiles
+obs_list=read_obs_to_list(file.path(data_dir,"XmlFiles"), 
                           obs_filenames = paste0(sit_name,".obs"))
+
+var_name="lai_n"    ## lai_n or masec_n
 obs_list[[sit_name]]=obs_list[[sit_name]][,c("Date",var_name)]
 
 ```
@@ -109,9 +123,8 @@ obs_list[[sit_name]]=obs_list[[sit_name]][,c("Date",var_name)]
 
 prior_information determines the list of parameters that will be estimated in the parameter estimation process and associated prior information (only uniform distributions for the moment, others will come soon).
 
-```{r eval=TRUE, message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE}
 # 2 parameters here: dlaimax and durvieF, of prior distributions U([0.0005,0.0025]) and U([50,400])
-# This is also used to set the list of parameters to estimate
 prior_information=list(lb=c(dlaimax=0.0005, durvieF=50),
                        ub=c(dlaimax=0.0025, durvieF=400))
 ```
@@ -119,26 +132,26 @@ prior_information=list(lb=c(dlaimax=0.0005, durvieF=50),
 ## Set options for the parameter estimation method
 
 optim_options should contain the options of the parameter estimation method.
-Here we defined a few options for the simplex method of the nloptr package (defautl method in main_optim).
+Here we defined a few options for the simplex method of the nloptr package (default method in main_optim).
 The full set of options for the simplex method can be found in the [vignette of nloptr package](https://cran.r-project.org/web/packages/nloptr/vignettes/nloptr.pdf).
 
 The number of repetitions is advised to be set to at least 5, while 10 is a reasonable maximum value.
 maxeval should be used to stop the minimization only if results have to be produced within a given duration, otherwise set it to a high value so that the minimization stops when the criterion based on xtol_rel is satisfied. 
 
-```{r eval=TRUE, message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE}
 optim_options=list() 
 optim_options$nb_rep <- 7 # Number of repetitions of the minimization 
                           # (each time starting with different initial
                           # values for the estimated parameters) 
 optim_options$maxeval <- 500 # Maximum number of evaluations of the 
-                            # minimized criteria 
+                             # minimized criteria 
 optim_options$xtol_rel <- 1e-03 # Tolerance criterion between two iterations
                                 # (threshold for the relative difference of
                                 # parameter values between the 2 previous 
                                 # iterations)
-optim_options$path_results <- model_options$data_dir # path where to store 
-													 # results graphs
-optim_options$ranseed <- 1234 # random seed  
+optim_options$path_results <- getwd() # path where to store the results (graph and Rdata)
+optim_options$ranseed <- 1234 # set random seed so that each execution give the same results
+                              # If you want randomization, don't set it.
 
 ```
 
@@ -146,17 +159,15 @@ optim_options$ranseed <- 1234 # random seed
 
 The Nelder-Meade simplex is the default method => no need to set the 
 optim_method argument. For the moment it is the only method interfaced (others will come soonly).
-Same for crit_function: a value is set by default (concentrated_wss, see wallach et al., 2011). For the moment it is the only criterion proposed (others will come soonly). The user can implement its own criterion (see inputs and outputs required in the concentrated_wss function).
+Same for crit_function: a value is set by default (log_concentrated_wss, see wallach et al., 2011). For the moment only 2 criterion are proposed (log_concentrated_wss and concentrated_wss, others will be proposed in next versions of CroptimizR. The user can implement its own criterion (see inputs and outputs required in the concentrated_wss function).
 
-```{r eval=TRUE, message=FALSE, warning=FALSE}
+```{r results='hide', message=FALSE, warning=FALSE}
 optim_results=main_optim(obs_list=obs_list,
                             model_function=stics_wrapper,
                             model_options=model_options,
                             optim_options=optim_options,
                             prior_information=prior_information)
 
-print(paste("Results of the optimization were saved in",
-            optim_options$path_results," folder."))
 ```
 
 The results printed in output on the R console are the following:
@@ -168,7 +179,7 @@ The results printed in output on the R console are the following:
 
 Complementary graphs and data are stored in the optim_options$path_results folder. Among them, the EstimatedVSinit.pdf file containing the following figures: 
 
-```{r echo=FALSE, image_grobs, fig.show = "hold", out.width = "45%", fig.align = "default"}
+```{r eval=TRUE, echo=FALSE, image_grobs, fig.show = "hold", out.width = "45%", fig.align = "default"}
 
 knitr::include_graphics("ResultsSimpleCase/estimInit_dlaimax.PNG")
 
@@ -176,10 +187,11 @@ knitr::include_graphics("ResultsSimpleCase/estimInit_durvieF.PNG")
 
 ```
 
-Figure 1: plots of estimated vs initial values of parameters dlaimax and durvieF. Numbers represent the repetition number of the minimization. The number in red, 2 in this case, is the minimization that lead to the minimal value of the criterion among all repetitions. In this case, the minimizations converge towards 2 different values for the parameters, which indicates the presence of a local minimum. Values of durvieF are close to the bounds. In realistic calibration cases this may indicate the presence of a large error in the observation values or in the model output values simulated (this simple case with only one situation does not allow to derive such conclusion).
+Figure 1: plots of estimated vs initial values of parameters dlaimax and durvieF. Numbers represent the repetition number of the minimization. The number in red, 2 in this case, is the minimization that lead to the minimal value of the criterion among all repetitions. In this case, the minimizations converge towards 2 different values for the parameters, which indicates the presence of a local minimum. Values of durvieF are close to the bounds. In realistic calibration cases with many observed situations / variables / dates this may indicate the presence of biases in the observation values or in the model output values simulated (this simple case with only one situation does not allow to derive such conclusion).
 
 The optim_options$path_results folder also contains the optim_results.Rdata file that store the nlo variable, a list containing the results of the minimization for each repetition. If we print it for repetition 2 ...
-```{r echo=TRUE, eval=FALSE}
+```{r eval=FALSE, echo=TRUE}
+load(file.path(optim_options$path_results,"optim_results.Rdata"))
 nlo[[2]]
 ```
 ... this returns:
@@ -207,16 +219,18 @@ nlo[[2]]
 
 ## Run the model after optimization
 
-In this case, the param_values argument is set so that estimated values of the parameters overwrite the values defined in the model input files.
+We run here the Stics model using the estimated values of the parameters.
+In this case, the param_values argument of the stics_wrapper function is thus set so that estimated values of the parameters overwrite the values defined in the model input files.
 
-```{r eval=TRUE, message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE}
 sim_after_optim=stics_wrapper(param_values=optim_results$final_values,
                               model_options=model_options)
 ```
 
 ## Plot the results
 
-```{r eval=TRUE, message=FALSE, warning=FALSE}
+
+```{r results='hide', warning=FALSE, message=FALSE}
 png(file.path(optim_options$path_results,"sim_obs_plots.png"),
     width = 15, height = 10, units = "cm", res=1000)
 par(mfrow = c(1,2))
@@ -236,7 +250,9 @@ points(obs_list[[sit_name]],col="green")
 dev.off()
 ```
 
-```{r echo=FALSE,out.width = '80%', fig.cap="Figure 2: plots of simulated and observed target variable before and after optimization. The gap between simulated and observed values has been drastically reduced: the minimizer has done its job!"}
+This gives:
+
+```{r eval=TRUE, echo=FALSE, message=FALSE, out.width = '80%', fig.cap="Figure 2: plots of simulated and observed target variable before and after optimization. The gap between simulated and observed values has been drastically reduced: the minimizer has done its job!"}
 knitr::include_graphics("ResultsSimpleCase/sim_obs_plots.png")
 ```
 
