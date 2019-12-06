@@ -18,7 +18,9 @@ Sensitivity analysis and Parameter estimation for crop models.
 
 It is under intensive development, so you can fill an issue or request a
 feature [here](https://github.com/SticsRPacks/SticsOptimizR/issues) at
-any time.
+any time. The list of functions accessible to the users is provided in
+this
+[webpage](https://sticsrpacks.github.io/SticsOptimizR/reference/index.html).
 
 For the moment, only parameter estimation functions have been
 developped. The ([`main_optim`](R/main_optim.R)) function can be used to
