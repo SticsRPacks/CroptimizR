@@ -23,35 +23,19 @@ options(tibble.print_min = 5, tibble.print_max = 5)
 
 ## Overview
 
-This package will allow the user to perform, on the Stics model: 
+This package is dedicated to Probabilistic Uncertainty analysis, Sensitivity analysis and Parameter estimation for crop models.
 
-* Probabilistic Uncertainty analysis: evaluate the uncertainty of Stics outputs resulting from the propagation of the uncertainty of its inputs for a set of USMs  
+It is under intensive development, so you can fill an issue or request a feature [here](https://github.com/SticsRPacks/SticsOptimizR/issues) at any time. 
 
-* Sensitivity analysis: assess how the uncertainty of Stics outputs can be allocated to the uncertainty of its inputs / describe the effects of the variations of Stics inputs on its outputs, for a set of USMs, 
+For the moment, only parameter estimation functions have been developped. The ([`main_optim`](R/main_optim.R)) function can be used to perform parameter estimation using multi-start Nelder-Meade simplexe minimization of different criterion ([concentrated version of weighted sum of square](R/concentrated_wss.R) and [its log-transformed version](R/log_concentrated_wss.R)). 
 
-* Parameter estimation / model calibration: estimate the values of a selection of Stics parameters (soil, plant .) from observations of a set of Stics output variables on a set of USMs  
+Functionnalities for simultaneous estimation of varietal and specific parameters are provided (see [here](https://SticsRPacks.github.io/SticsOptimizR/articles/Parameter_estimation_Specific_and_Varietal.html) for an example).
 
-The package is under intensive development, so you can fill an issue or request a feature [here](https://github.com/SticsRPacks/SticsOptimizR/issues) at any time. 
+SticsOptimizR is designed to be crop model generic: all the functionalities can be used on any crop model for which an R wrapper can be implemented. For the moment, R wrappers are available for Stics and APSIM crop models (see [SticsOnR](https://github.com/SticsRPacks/SticsOnR) and [ApsimOnR](https://github.com/hol430/ApsimOnR)). A wrapper for SiriusQuality is under development.
 
+Guidelines for developping a wrapper for your favourite crop model are given in the following [vignette](https://SticsRPacks.github.io/SticsOptimizR/articles/Designing_a_model_wrapper.html).
 
-## Installation
-
-The development version from [GitHub](https://github.com/) can be installed with:
-
-``` r
-devtools::install_github("SticsRPacks/SticsOptimizR")
-```
-Or using the lightweight [remotes](https://github.com/r-lib/remotes#readme) package: 
-
-``` r
-# install.packages("remotes")
-remotes::install_github("SticsRPacks/SticsOptimizR")
-```
-The package is tested routinely to pass all [CRAN](https://CRAN.R-project.org) tests using Travis-CI (linux) and AppVeyor (Windows), but it is not yet released to the CRAN servers: SticsOptimizR is still under development and users are not yet widespread enough to bother CRAN people and use their free server time.
-
-SticsOptimizR is designed to be crop model generic: all the functionalities can be used on any crop model for which an R wrapper can be implemented. For the moment, R wrappers are available for Stics and APSIM crop models (see [SticsOnR](https://github.com/SticsRPacks/SticsOnR) and [ApsimOnR](https://github.com/hol430/ApsimOnR)). 
-Guidelines for developping R model wrappers for SticsoptimizR are given in the following [vignette](https://SticsRPacks.github.io/SticsOptimizR/articles/Designing_a_model_wrapper.html).
-
+Planned features, installation and examples of use are described in the following sections.
 
 
 ## Planned features
@@ -74,7 +58,7 @@ Main features:
 
 Results provided: numerical (moments, quantiles …) and graphical (**histograms / density plots / boxplots / violins, correlation plots, time series of quantiles for dynamic variables …**) description of the sample of output variables obtained. 
 
-## Sensitivity analysis
+### Sensitivity analysis
 
 To assess how the uncertainty of crop models outputs can be allocated to the uncertainty of their inputs /  to describe the effects of the variations of crop models inputs on their outputs, for a given set of simulated situations.
 
@@ -96,7 +80,7 @@ Main features:
 
 Results provided: numerical and graphical representations (bar plots / pie charts / temporal plots of sensitivity indices …) of the indices depending on the method
 
-## Parameter estimation / model calibration
+### Parameter estimation / model calibration
 
 To estimate the values of a selection of crop models parameters (soil, plant …) from observations of a set of their output variables, 
 
@@ -127,11 +111,30 @@ Results provided:
 *	description of the calibration process followed.
 
 
+## Installation
+
+The development version from [GitHub](https://github.com/) can be installed with:
+
+``` r
+devtools::install_github("SticsRPacks/SticsOptimizR")
+```
+Or using the lightweight [remotes](https://github.com/r-lib/remotes#readme) package: 
+
+``` r
+# install.packages("remotes")
+remotes::install_github("SticsRPacks/SticsOptimizR")
+```
+The package is tested routinely to pass all [CRAN](https://CRAN.R-project.org) tests using Travis-CI (linux) and AppVeyor (Windows), but it is not yet released to the CRAN servers: SticsOptimizR is still under development and users are not yet widespread enough to bother CRAN people and use their free server time.
+
 ## Examples
 
-A simple example of model calibration is given in a [vignette](https://SticsRPacks.github.io/SticsOptimizR/articles/Parameter_estimation_simple_case.html).
+A simple introductory example of model calibration using the Stics model is given in this [vignette](https://SticsRPacks.github.io/SticsOptimizR/articles/Parameter_estimation_simple_case.html).
 
-A more complex one with simultaneous estimation of specific and varietal parameters is given in a [vignette](https://SticsRPacks.github.io/SticsOptimizR/articles/Parameter_estimation_Specific_and_Varietal.html).
+A more complex one with simultaneous estimation of specific and varietal parameters is given  [here](https://SticsRPacks.github.io/SticsOptimizR/articles/Parameter_estimation_Specific_and_Varietal.html).
+
+An example using the ApsimX model is detailed [here](https://SticsRPacks.github.io/SticsOptimizR/articles/ApsimX_parameter_estimation_simple_case.html).
+
+See [here](R/main_optim.R) for a detailed description of the input and output arguments of the main_optim function (or type "? main_optim" in an R console after having installed and loaded the SticsOptimizR package).
 
 ## Code of conduct
 
