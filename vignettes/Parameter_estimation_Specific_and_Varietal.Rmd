@@ -95,7 +95,7 @@ obs_list=lapply(obs_list,"[",c("Date","lai_n"))
 
 ## Set prior information on the parameters to estimate
 
-prior_information allows handling specific / varietal parameters (dlaimax vs durvieF parameters in this example): dlaimax is defined to take the same value for all situations, whereas durvieF is defined in such a way that it may take one value for situations c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"), that correspond to a given variety, and another for situations c("bou99t3", "bou00t3", "bou99t1", "bou00t1"), that correspond to another variety, sit_list being a list of size 2.
+**Prior information allows handling specific / varietal parameters** (dlaimax vs durvieF parameters in this example): dlaimax is defined to take the same value for all situations, whereas durvieF is defined in such a way that it may take one value for situations c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"), that correspond to a given variety, and another for situations c("bou99t3", "bou00t3", "bou99t1", "bou00t1"), that correspond to another variety, sit_list being in this case a list of size 2 (see code below).
 Please note that bounds can take different values for the different groups of situations (lb and ub are vectors of size 2 for durvieF).
 
 ```{r message=FALSE, warning=FALSE}
@@ -108,10 +108,10 @@ prior_information$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", 
 
 ```{r message=FALSE, warning=FALSE}
 optim_options=list() 
-optim_options$nb_rep <- 2 # 10 # Number of repetitions of the minimization 
+optim_options$nb_rep <- 7 # Number of repetitions of the minimization 
                           # (each time starting with different initial
                           # values for the estimated parameters) 
-optim_options$maxeval <- 2 # 1000 # Maximum number of evaluations of the 
+optim_options$maxeval <- 1000 # Maximum number of evaluations of the 
                             # minimized criteria 
 optim_options$xtol_rel <- 1e-04 # Tolerance criterion between two iterations
                                 # (threshold for the relative difference of
@@ -125,7 +125,7 @@ optim_options$ranseed <- 1234 # random seed
 
 ```{r results='hide', message=FALSE, warning=FALSE}
 # Set the model options (see '? stics_wrapper_options' for details)
-model_options=stics_wrapper_options(stics_path,data_dir) 
+model_options=stics_wrapper_options(stics_path,data_dir, parallel=TRUE) 
 
 # Run the optimization
 optim_results=main_optim(obs_list=obs_list,
@@ -138,13 +138,13 @@ optim_results=main_optim(obs_list=obs_list,
 
 The results printed in output on the R console are the following:
 ```{r eval=FALSE, echo=TRUE}
-## [1] "Estimated value for dlaimax :  0.00106741475850639"
-## [1] "Estimated value for durvieF :  391.070248404957"
-## [1] "Estimated value for durvieF :  214.674867188563"
-## [1] "Minimum value of the criterion : 1.68619365090367e+35"
+## [1] "Estimated value for dlaimax :  0.001111705"
+## [1] "Estimated value for durvieF1 :  359.7516"
+## [1] "Estimated value for durvieF2 :  384.4479"
+## [1] "Minimum value of the criterion : 7.98187472584448"
 ```
 
-Complementary graphs and data are stored in the optim_options$path_results folder. Among them, the EstimatedVSinit.pdf file containing the following figures: 
+Complementary graphs and data are stored in the optim_options$path_results folder. Among them, the EstimatedVSinit.pdf file contains the following figures: 
 
 ```{r eval=TRUE, echo=FALSE, image_grobs, fig.show = "hold", out.width = "45%", fig.align = "default"}
 
@@ -160,6 +160,8 @@ Figure 1: plots of estimated vs initial values of parameters dlaimax and durvieF
 
 
 ## Compare simulations and observations before and after optimization
+
+A couple of plots to check if the calibration reduced the difference between simulations and observations.
 
 ```{r message=FALSE, warning=FALSE}
 # Run the model without and with forcing the optimized values of the parameters
@@ -183,7 +185,8 @@ rmse_before = rmse(sim_before_obs_df$LAI_obs,sim_before_obs_df$LAI_sim)
 rmse_after = rmse(sim_after_obs_df$LAI_obs,sim_after_obs_df$LAI_sim)
 
 # Plot the graphs
-maxLAI=max(c(sim_before_obs_df$LAI_obs,sim_before_obs_df$LAI_sim,sim_after_obs_df$LAI_sim,na.rm=TRUE),na.rm=TRUE)
+max_LAI_sim=max(c(sim_before_obs_df$LAI_sim,sim_after_obs_df$LAI_sim,na.rm=TRUE),na.rm=TRUE)
+max_LAI_obs=max(sim_before_obs_df$LAI_obs,na.rm=TRUE)
 
 p1=ggplot(sim_before_obs_df, aes(x = LAI_obs, y = LAI_sim)) + 
   geom_point(shape=21, size = 3, color = 'blue',
@@ -192,7 +195,7 @@ p1=ggplot(sim_before_obs_df, aes(x = LAI_obs, y = LAI_sim)) +
   theme(aspect.ratio=1) +
   labs(x = "Observed LAI", y = "Simulated LAI") +
   geom_abline(intercept = 0, slope = 1, size = 0.5, color = "blue") +
-  xlim(0,maxLAI) +  ylim(0,maxLAI) +
+  xlim(0,max_LAI_obs) +  ylim(0,max_LAI_sim) +
   ggtitle(paste("Before optimization \n RMSE=",round(rmse_before,2))) +
   theme(plot.title = element_text(hjust = 0.5))
 
@@ -203,15 +206,23 @@ p2=ggplot(sim_after_obs_df, aes(x = LAI_obs, y = LAI_sim)) +
   theme(aspect.ratio=1) +
   labs(x = "Observed LAI", y = "Simulated LAI") +
   geom_abline(intercept = 0, slope = 1, size = 0.5, color = "blue") +
-  xlim(0,maxLAI+0.1*maxLAI) +  ylim(0,maxLAI+0.1*maxLAI) +
+  xlim(0,max_LAI_obs) +  ylim(0,max_LAI_sim) +
   ggtitle(paste("After optimization \n RMSE=",round(rmse_after,2))) +
   theme(plot.title = element_text(hjust = 0.5))
 
-grid.arrange(grobs=list(p1,p2), nrow=1, ncol=2)
+p=grid.arrange(grobs=list(p1,p2), nrow=1, ncol=2)
 
 # Save the graph
 ggsave(file.path(optim_options$path_results,
-                 paste0("sim_obs",".png")))
+                 paste0("sim_obs",".png")), plot=p)
 
   
 ```
+
+
+This gives:
+
+```{r eval=TRUE, echo=FALSE, message=FALSE, out.width = '80%', fig.cap="Figure 2: plots of simulated vs observed LAI before and after optimization. The gap between simulated and observed values has been drastically reduced: the minimizer has done its job!"}
+knitr::include_graphics("ResultsSpecificVarietal/sim_obs.png")
+```
+
