@@ -4,7 +4,7 @@ library(SticsOptimizR)
 library(dplyr)
 
 # Test case 1c
-obs_list=read_obs_to_list("D:/Home/sbuis/Documents/GitHub/SticsOptimizR/Preliminary work/Data/TestCase1c/Orig Data")
+obs_list=read_obs("D:/Home/sbuis/Documents/GitHub/SticsOptimizR/Preliminary work/Data/TestCase1c/Orig Data")
 model_options=list(stics_path="D:/Home/sbuis/Documents/WORK/STICS/JavaSTICS-1.41-stics-9.0/bin/stics_modulo",
   data_dir="D:/Home/sbuis/Documents/GitHub/SticsOptimizR/Preliminary work/Data/TestCase1c")
 res_sim_list=stics_wrapper(param_values=NULL,sit_var_dates=obs_list, model_options=model_options)
@@ -14,7 +14,7 @@ concentrated_wss(list_obs_sim$sim_list,list_obs_sim$obs_list)
 
 # Tests concentrated_wss
 
-obs_list=read_obs_to_list("D:/Home/sbuis/Documents/GitHub/SticsOptimizR/Preliminary work/Data/TestCase1c/Orig Data")
+obs_list=read_obs("D:/Home/sbuis/Documents/GitHub/SticsOptimizR/Preliminary work/Data/TestCase1c/Orig Data")
 model_options=list()
 model_options$stics_path="D:/Home/sbuis/Documents/WORK/STICS/JavaSTICS-1.41-stics-9.0/bin/stics_modulo"
 model_options$data_dir="D:/Home/sbuis/Documents/GitHub/SticsOptimizR/Preliminary work/Data/TestCase1c"
@@ -54,7 +54,7 @@ optim_options$xtol_rel <- 1e-05 # Tolerance criterion between two iterations
 optim_options$maxeval <- 3 # Maximum number of iterations executed by the function
 optim_options$path_results <- model_options$data_dir # path where to store results graphs
 
-obs_list=read_obs_to_list("D:/Home/sbuis/Documents/GitHub/SticsOptimizR/Preliminary work/Data/TestCase1c/Orig Data")
+obs_list=read_obs("D:/Home/sbuis/Documents/GitHub/SticsOptimizR/Preliminary work/Data/TestCase1c/Orig Data")
 
 main_optim(obs_list=obs_list,crit_function=concentrated_wss,model_function=stics_wrapper,model_options=model_options,optim_options=optim_options,prior_information=prior_information)
 
@@ -78,6 +78,6 @@ optim_options$xtol_rel <- 1e-05 # Tolerance criterion between two iterations
 optim_options$maxeval <- 3 # Maximum number of iterations executed by the function
 optim_options$path_results <- model_options$data_dir # path where to store results graphs
 
-obs_list=read_obs_to_list("D:/Home/sbuis/Documents/GitHub/SticsOptimizR/Preliminary work/Data/TestCase1c/Orig Data")
+obs_list=read_obs("D:/Home/sbuis/Documents/GitHub/SticsOptimizR/Preliminary work/Data/TestCase1c/Orig Data")
 
 main_optim(obs_list=obs_list,crit_function=concentrated_wss,model_function=stics_wrapper,model_options=model_options,optim_options=optim_options,prior_information=prior_information)
