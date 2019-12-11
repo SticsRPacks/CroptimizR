@@ -23,7 +23,7 @@ The parameter estimation is performed using the Nelder-Meade simplex method impl
 
 This part is not shown here, it is the same as this of the [introductory example](https://sticsrpacks.github.io/SticsOptimizR/articles/Parameter_estimation_simple_case.html). 
 
-```{r setup and initializations,  echo=FALSE, message=FALSE, results=FALSE, warning=FALSE}
+```{r setup_initializations,  echo=FALSE, message=FALSE, results=FALSE, warning=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
 # Install and load the needed libraries

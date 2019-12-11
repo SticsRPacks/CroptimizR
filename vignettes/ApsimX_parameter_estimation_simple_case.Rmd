@@ -42,7 +42,7 @@ apsimx_path
 
 ## Initialisation step
 
-```{r setup and initializations, message=FALSE, results=FALSE, warning=FALSE}
+```{r setup_initializations, message=FALSE, results=FALSE, warning=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
 # Install and load the needed libraries

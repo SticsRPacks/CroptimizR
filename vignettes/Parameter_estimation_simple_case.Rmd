@@ -20,7 +20,7 @@ The parameter estimation is performed using the Nelder-Meade simplex method impl
 
 ## Initialisation step
 
-```{r setup and initializations,  message=FALSE, results=FALSE, warning=FALSE}
+```{r setup_initializations,  message=FALSE, results=FALSE, warning=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
 # Install and load the needed libraries
@@ -75,7 +75,7 @@ climat.txt, ...) stored per USMs in different directories. If you start from xml
 the following lines allow generating txt files from xml files.
 In this case, xml files are stored in file.path(data_dir,"XmlFiles").
 
-```{r  results='hide', message=FALSE, warning=FALSE}
+```{r  gen_dirs results='hide', message=FALSE, warning=FALSE}
 stics_inputs_path=file.path(data_dir,"TxtFiles")
 dir.create(stics_inputs_path)
 
