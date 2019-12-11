@@ -7,7 +7,7 @@
 #'
 #' @export
 #'
-#' @examples
+# @examples
 intersect_sim_obs <- function(sim_list,obs_list) {
 
   situations=intersect(names(sim_list),names(obs_list))

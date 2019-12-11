@@ -10,7 +10,7 @@ concentrated_wss <- function(sim_list,obs_list) {
   #'
   #' @export
   #'
-  #' @examples
+  # @examples
 
   var_list=unique(unlist(lapply(obs_list,function (x) colnames(x))))
   var_list=setdiff(var_list,"Date")

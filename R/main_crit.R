@@ -20,7 +20,7 @@ main_crit <- function(param_values,crit_options) {
   #'
   #' @export
   #'
-  #' @examples
+  # @examples
 
   # Denormalize parameters
   # TO DO

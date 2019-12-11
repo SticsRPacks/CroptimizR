@@ -36,7 +36,7 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
   #'
   #' @export
   #'
-  #' @examples
+  # @examples
 
   # TO DO LIST
   # - externalize nloptr
