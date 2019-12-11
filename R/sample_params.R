@@ -1,10 +1,10 @@
 #' @title sample values in given distribution
 #'
 #' @param bounds_list Either a (optionnally named) list containing a vector of
-#' upper and lower bounds (\code{ub} and \code{lb}), or a named list containing
-#' for each parameter the list of situations per group (\code{sit_list})
-#' and the vector of upper and lower bounds (one value per group) (\code{ub} and
-#' \code{lb})
+#' upper and lower bounds (`ub` and `lb`), or a named list containing
+#' for each parameter the list of situations per group (`sit_list`)
+#' and the vector of upper and lower bounds (one value per group) (`ub` and
+#' `lb`)
 #' @param n The number of values to sample for each parameter
 #' @param seed The seed of the random generator (optional, default value=NULL)
 #'
@@ -13,8 +13,6 @@
 #' DiceDesign package)
 #'
 #' @return A vector or data.frame containing the sampled values (nrow=n)
-#'
-#' @export
 #'
 #' @examples
 #' library(DiceDesign)

@@ -3,13 +3,15 @@
 #' @param prior_information Prior information on the parameters to estimate.
 #' For the moment only uniform distribution are allowed.
 #' Either a list containing (named) vectors of upper and lower
-#' bounds (\code{ub} and \code{lb}), or a named list containing for each
-#' parameter the list of situations per group (\code{sit_list})
-#' and the vector of upper and lower bounds (one value per group) (\code{ub} and \code{lb})
+#' bounds (`ub` and `lb`), or a named list containing for each
+#' parameter the list of situations per group (`sit_list`)
+#' and the vector of upper and lower bounds (one value per group) (`ub` and `lb`)
+#'
+#' @param short_list TRUE to return a list without replicated parameters which
+#' happens for simultaneous estimation of specific and varietal parameters
+#' (optional, default=FALSE)
 #'
 #' @return A vector of parameter names
-#'
-#' @export
 #'
 #' @examples
 #' # A simple case
@@ -23,7 +25,7 @@
 #' prior_information$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"), c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),lb=c(50,50),ub=c(400,400))
 #' get_params_names(prior_information)
 
-get_params_names <- function(prior_information) {
+get_params_names <- function(prior_information, short_list=FALSE) {
 
   if (!is.null(prior_information$lb) && !is.null(prior_information$ub)) {
 
@@ -31,10 +33,27 @@ get_params_names <- function(prior_information) {
 
   } else {
 
-    nb_groups=sapply(prior_information, function (x) length(x$sit_list))
+    if (short_list) {
 
-    # The name of the parameter is replicated by its number of groups
-    res=names(prior_information)[unlist(sapply(1:length(nb_groups),function(x) rep(x,nb_groups[x])))]
+      res=names(prior_information)
+
+    } else {
+
+      nb_groups=sapply(prior_information, function (x) length(x$sit_list))
+
+      # build suffix
+      suffix=rep("",sum(nb_groups))
+      for (i in 1:length(nb_groups)) {
+          if (nb_groups[i]>1) {
+            suffix[(sum(nb_groups[1:(i-1)])+1):sum(nb_groups[1:i])]=as.character(1:nb_groups[i])
+          }
+      }
+
+      # The name of the parameter is replicated by its number of groups and a number is added
+      res=names(prior_information)[unlist(sapply(1:length(nb_groups),function(x) rep(x,nb_groups[x])))]
+      res=paste0(res,suffix)
+
+    }
 
     return(res)
 

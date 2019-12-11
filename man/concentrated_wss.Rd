@@ -2,7 +2,7 @@
 % Please edit documentation in R/concentrated_wss.R
 \name{concentrated_wss}
 \alias{concentrated_wss}
-\title{Compute concentrated weighted sum of squares from simulation and observation list}
+\title{Compute concentrated version of weighted sum of squares from simulation and observation list. More details about this criterion are given in Wallach et al., 2011 (equation 5).}
 \usage{
 concentrated_wss(sim_list, obs_list)
 }
@@ -12,10 +12,10 @@ concentrated_wss(sim_list, obs_list)
 \item{obs_list}{List of observed variables}
 }
 \value{
-The value of the concentrated weighted sum of squares (see Wallach et al. 2011, eq. 5)
+The value of the concentrated weighted sum of squares
 }
 \description{
-Compute concentrated weighted sum of squares from simulation and observation list
+Compute concentrated version of weighted sum of squares from simulation and observation list. More details about this criterion are given in Wallach et al., 2011 (equation 5).
 }
 \details{
 \code{sim_list} and \code{obs_list} must have the same structure (i.e. same number of variables, dates, situations, ... use intersect_sim_obs for that).

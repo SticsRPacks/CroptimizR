@@ -4,6 +4,7 @@
 \alias{main_optim}
 \title{main function for parameter estimation}
 \usage{
+<<<<<<< HEAD
 main_optim(
   obs_list,
   crit_function = concentrated_wss,
@@ -13,42 +14,65 @@ main_optim(
   optim_options = NULL,
   prior_information
 )
+=======
+main_optim(obs_list, crit_function = concentrated_wss, model_function,
+  model_options = NULL, optim_method = "nloptr.simplex",
+  optim_options = NULL, prior_information)
+>>>>>>> e9a0a229ad947ebd9937be214affa5a012f64c5b
 }
 \arguments{
-\item{obs_list}{List of observed values}
+\item{obs_list}{List of observed values to use for parameter estimation}
 
-\item{crit_function}{Function implementing the criterion to optimize (optional, default=concentrated_wss)}
+\item{crit_function}{Function implementing the criterion to optimize
+(optional, default=concentrated_wss)}
 
-\item{model_function}{Crop Model wrapper function}
+\item{model_function}{Crop Model wrapper function to use}
 
 \item{model_options}{List of options for the Crop Model wrapper (optional,
-see help of the Crop Model wrapper used)}
+see help of the Crop Model wrapper function used)}
 
-\item{optim_method}{Name of the parameter estimation method (optional,
-see help of optim_switch function)}
+\item{optim_method}{Name of the parameter estimation method to use (optional,
+default="nloptr.simplex", the only one available for the moment)}
 
 \item{optim_options}{List of options of the parameter estimation method:
 \code{nb_rep}, the number of repetitions (optional, default=1)
-(see help of optim_switch function))}
+\code{xtol_rel}, the tolerance for the stopping criterion on relative
+differences on parameters values between 2 iterations (optional, default=1e-5)
+\code{maxeval}, the maximum number of criterion evaluation (optional, default=500)
+\code{path_results}, the path where to store the results (optional, default=getwd())}
 
 \item{prior_information}{Prior information on the parameters to estimate.
 For the moment only uniform distribution are allowed.
-Either a list containing (named) vectors of upper and lower
-bounds (\code{ub} and \code{lb}), or a named list containing for each
-parameter the list of situations per group (\code{sit_list})
-and the vector of upper and lower bounds (one value per group) (\code{ub} and \code{lb})}
-
-\item{param_names}{Name(s) of parameters to estimate}
+Either
+a list containing:
+\itemize{
+\item (named) vectors of upper and lower bounds (\code{ub} and \code{lb}),
+\item \code{init_values}, A data.frame containing initial
+values to test for the parameters (optional, if not provided (or if less values
+than number of repetitions of the minimization are provided), the (or part
+of the) initial values will be randomly generated using LHS sampling within
+parameter bounds.
+or
+a named list containing for each parameter the list of situations per group
+(\code{sit_list}), the vector of upper and lower bounds (one value per group)
+(\code{ub} and \code{lb}) and the list of initial values per group
+\code{init_values} (data.frame, one column per group).
+}}
 }
 \value{
-The vector of values for optimized parameters + prints and graphs,
-depending on the parameter estimation method used
+prints, graphs and a list containing the results of the parameter estimation.
+which content depends on the method used, all that saved in \code{optim_options.path_results}
 }
 \description{
 main function for parameter estimation
 }
 \examples{
+\dontrun{
 
+# Example one one situation and one variable with the Stics model
+# Version 9.* of Stics is needed to run this example
+
+# Load the needed packages
 library(SticsRFiles)
 library(SticsOnR)
 library(SticsOptimizR)
@@ -57,76 +81,53 @@ library(nloptr)
 library(DiceDesign)
 library("doParallel")
 
+# Download the data for the example (Stics input files in txt format, one folder per USM)
+data_dir= normalizePath(tempdir(), winslash = "/", mustWork = FALSE)
+data_dir_zip= normalizePath(file.path(data_dir,"master.zip"), winslash = "/", mustWork = FALSE)
+download.file("https://github.com/SticsRPacks/data/archive/master.zip", data_dir_zip)
+unzip(data_dir_zip, exdir = data_dir)
+unlink(data_dir_zip)
+data_dir= file.path(normalizePath(list.dirs(data_dir)[2], winslash = "/"),"study_case_1","V9.0")
+# NB: all examples are now in data_dir
 
-# TEST ON ONE SITUATION and ONE VARIABLE
+# Define the path to the locally installed version of JavaStics
+# THIS SHOULD BE ADAPTED TO YOUR CASE !!!
+javastics_path=file.path(getwd(),"JavaSTICS-1.41-stics-9.0")
+stics_path=file.path(javastics_path,"bin/stics_modulo.exe")
 
-# Select situation and variable
+# Read and select the observations for the parameter estimation
 sit_name="bo96iN+"
-var_name="lai_n"
-
-# Run the model before optimization for a prior evaluation
-stics_path="D:/Home/sbuis/Documents/WORK/STICS/JavaSTICS-1.41-stics-9.0/bin/stics_modulo"  # TO ADAPT TO YOUR CASE :-) ###
-data_dir=system.file(file.path("extdata","TestCase1c"), package = "SticsOptimizR")
-model_options=stics_wrapper_options(stics_path,data_dir,parallel=FALSE)
-sim_before_optim=stics_wrapper(model_options=model_options)
-
-# Read and select the corresponding observations
-obs_list=read_obs(file.path(model_options$data_dir,"Orig Data"),
+obs_list=read_obs_to_list(file.path(data_dir,"XmlFiles"),
                           obs_filenames = paste0(sit_name,".obs"))
+var_name="lai_n"
 obs_list[[sit_name]]=obs_list[[sit_name]][,c("Date",var_name)]
 
 # Set prior information on the parameters to estimate
 prior_information=list(lb=c(dlaimax=0.0005, durvieF=50),
-                       ub=c(dlaimax=0.0025, durvieF=400))
+                       ub=c(dlaimax=0.0025, durvieF=400),
+                       init_values=data.frame(dlaimax=c(0.0015), durvieF=c(225)))
 
 # Set options for the parameter estimation method
 optim_options=list()
 optim_options$nb_rep <- 2 # How many times we run the minimization with different parameters
 optim_options$xtol_rel <- 1e-05 # Tolerance criterion between two iterations
-optim_options$maxeval <- 20 # Maximum number of iterations executed by the function
-optim_options$path_results <- model_options$data_dir # path where to store results graphs
+optim_options$maxeval <- 5 # Maximum number of iterations executed by the function
+optim_options$path_results <- data_dir # path where to store results graphs
+
+# Set the model options (see '? stics_wrapper_options' for details)
+model_options=stics_wrapper_options(stics_path,data_dir,
+                                    parallel=FALSE)
 
 # Run the optimization
-param_est_values=main_optim(obs_list=obs_list,crit_function=concentrated_wss,
-                            model_function=stics_wrapper,
-                            model_options=model_options,
-                            optim_options=optim_options,
-                            prior_information=prior_information)
+optim_results=main_optim(obs_list=obs_list,
+                         model_function=stics_wrapper,
+                         model_options=model_options,
+                         optim_options=optim_options,
+                         prior_information=prior_information)
 
-# Run the model after optimzation
-sim_after_optim=stics_wrapper(param_values=param_est_values,model_options=model_options)
+# See results (graph and Rdata) stored in optim_options$path_results
 
-# Plot the results
-dev.new()
-par(mfrow = c(1,2))
-Ymax=max(max(obs_list[[sit_name]][,var_name], na.rm=TRUE),
-         max(sim_before_optim$sim_list[[sit_name]][,var_name], na.rm=TRUE))
-plot(sim_before_optim$sim_list[[sit_name]][,c("Date",var_name)],type="l",
-     main="Before optimization",ylim=c(0,Ymax+Ymax*0.1))
-points(obs_list[[sit_name]],col="green")
-plot(sim_after_optim$sim_list[[sit_name]][,c("Date",var_name)],type="l",
-     main="After optimization",ylim=c(0,Ymax+Ymax*0.1))
-points(obs_list[[sit_name]],col="green")
-
-
-# TEST WITH SEVERAL SITUATIONS AND USING GROUPS OF SITUATIONS PER PARAMETER
-
-prior_information=list()
-prior_information$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1", "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),lb=0.0005,ub=0.0025)
-prior_information$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"), c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),lb=c(50,50),ub=c(400,400))
-
-stics_path="D:/Home/sbuis/Documents/WORK/STICS/JavaSTICS-1.41-stics-9.0/bin/stics_modulo"  # TO ADAPT TO YOUR CASE :-) ###
-data_dir=system.file(file.path("extdata","TestCase1c"), package = "SticsOptimizR")
-model_options=stics_wrapper_options(stics_path,data_dir, parallel=TRUE)
-
-optim_options=list()
-optim_options$nb_rep=2                              # How many times we run the minimization with different parameters
-optim_options$xtol_rel=1e-05                        # Tolerance criterion between two iterations
-optim_options$maxeval=3                             # Maximum number of iterations executed by the function
-optim_options$path_results=model_options$data_dir   # path where to store results graphs
-
-obs_list=read_obs(file.path(model_options$data_dir,"Orig Data"))
-
-main_optim(obs_list=obs_list,crit_function=concentrated_wss,model_function=stics_wrapper,model_options=model_options,optim_options=optim_options,prior_information=prior_information)
-
+# See the different vignettes in [CroptimizR website](https://sticsrpacks.github.io/SticsOptimizR/)
+for more details and examples.
+}
 }

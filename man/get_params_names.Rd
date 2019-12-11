@@ -4,7 +4,7 @@
 \alias{get_params_names}
 \title{Extract param names from prior information}
 \usage{
-get_params_names(prior_information)
+get_params_names(prior_information, short_list = FALSE)
 }
 \arguments{
 \item{prior_information}{Prior information on the parameters to estimate.
@@ -13,6 +13,10 @@ Either a list containing (named) vectors of upper and lower
 bounds (\code{ub} and \code{lb}), or a named list containing for each
 parameter the list of situations per group (\code{sit_list})
 and the vector of upper and lower bounds (one value per group) (\code{ub} and \code{lb})}
+
+\item{short_list}{TRUE to return a list without replicated parameters which
+happens for simultaneous estimation of specific and varietal parameters
+(optional, default=FALSE)}
 }
 \value{
 A vector of parameter names

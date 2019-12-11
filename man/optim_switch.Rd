@@ -5,7 +5,7 @@
 \title{Call the required parameter estimation method}
 \usage{
 optim_switch(param_names, obs_list, crit_function, model_function,
-  model_options = NULL, optim_method = "simplex",
+  model_options = NULL, optim_method = "nloptr.simplex",
   optim_options = NULL, prior_information)
 }
 \arguments{
@@ -34,23 +34,32 @@ differences on parameters values between 2 iterations (optional, default=1e-5)
 For the moment only uniform distribution are allowed.
 Either
 a list containing:
-   - (named) vectors of upper and lower bounds (\code{ub} and \code{lb}),
-   - \code{init_values}, A (column named) vector or data.frame containing initial
+\itemize{
+\item (named) vectors of upper and lower bounds (\code{ub} and \code{lb}),
+\item \code{init_values}, A (column named) vector or data.frame containing initial
 values to test for the parameters (optional, if not provided (or if less values
 than number of repetitions of the minimization are provided), the (or part
 of the) initial values will be randomly generated using LHS sampling within
 parameter bounds.
-
 or
 a named list containing for each parameter the list of situations per group
 (\code{sit_list}), the vector of upper and lower bounds (one value per group)
-(\code{ub} and \code{lb}) and \code{init_values} (one column per group)
-
-NE PEUT-ON PAS FAIRE PLUS SIMPLE ET HOMOGENE ENTRE LES 2 CAS ??????}
+(\code{ub} and \code{lb}) and the list of initial values per group
+\code{init_values} (column named vector or data.frame per group).
+}}
 }
 \value{
-The vector of values for optimized parameters + prints and graphs,
-depending on the parameter estimation method used
+prints, graphs and a list containing the results of the parameter estimation.
+which content depends on the method used.
+e.g. for Nelder meade simplex in nloptr, this list contains
+\code{final_values}, the vector of estimated values for optimized parameters
+for the repetition that lead to the lowest value of the criterion
+\code{init_values}, the vector of initial values for optimized parameters
+\code{est_values}, the vector of estimated values for optimized parameters
+for all repetitions
+\code{ind_min_crit}, the index of the repetition that lead to the lowest value
+of the criterion
+\code{nlo}, the data structure returned by nloptr
 }
 \description{
 Call the required parameter estimation method
