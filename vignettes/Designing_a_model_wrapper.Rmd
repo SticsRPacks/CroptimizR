@@ -220,7 +220,7 @@ Here is an example for a single file for `banana` observations:
 ```{r warning=FALSE}
 library(SticsRFiles)
 path <- system.file(file.path("extdata","obs","V9.0"), package = "SticsRFiles")
-obs_list <- read_obs_to_list(path)
+obs_list <- read_obs(path)
 lapply(obs_list, function(x) head(x,4))
 
 ```

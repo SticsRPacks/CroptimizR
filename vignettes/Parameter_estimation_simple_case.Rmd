@@ -92,7 +92,7 @@ sim_before_optim=stics_wrapper(model_options=model_options)
 We only keep observations for situation sit_name and variable var_name (obs_list define the list of situations and variables that will be used in the parameter estimation process).
 
 ```{r eval=FALSE, message=FALSE, warning=FALSE}
-obs_list=read_obs_to_list(file.path(model_options$data_dir,"Orig Data"), 
+obs_list=read_obs(file.path(model_options$data_dir,"Orig Data"), 
                           obs_filenames = paste0(sit_name,".obs"))
 obs_list[[sit_name]]=obs_list[[sit_name]][,c("Date",var_name)]
 

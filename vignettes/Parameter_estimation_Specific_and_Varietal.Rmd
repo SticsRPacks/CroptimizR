@@ -70,7 +70,7 @@ In this example, observations for variables and dates contained in the observati
 model_options=stics_wrapper_options(params$stics_path,data_dir) 
 
 # Read observation files
-obs_list=read_obs_to_list(file.path(model_options$data_dir,"Orig Data"))
+obs_list=read_obs(file.path(model_options$data_dir,"Orig Data"))
 ```
 
 ## Set prior information on the parameters to estimate

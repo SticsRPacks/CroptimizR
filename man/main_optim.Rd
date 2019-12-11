@@ -4,9 +4,15 @@
 \alias{main_optim}
 \title{main function for parameter estimation}
 \usage{
-main_optim(obs_list, crit_function = concentrated_wss, model_function,
-  model_options = NULL, optim_method = "simplex",
-  optim_options = NULL, prior_information)
+main_optim(
+  obs_list,
+  crit_function = concentrated_wss,
+  model_function,
+  model_options = NULL,
+  optim_method = "simplex",
+  optim_options = NULL,
+  prior_information
+)
 }
 \arguments{
 \item{obs_list}{List of observed values}
@@ -65,7 +71,7 @@ model_options=stics_wrapper_options(stics_path,data_dir,parallel=FALSE)
 sim_before_optim=stics_wrapper(model_options=model_options)
 
 # Read and select the corresponding observations
-obs_list=read_obs_to_list(file.path(model_options$data_dir,"Orig Data"),
+obs_list=read_obs(file.path(model_options$data_dir,"Orig Data"),
                           obs_filenames = paste0(sit_name,".obs"))
 obs_list[[sit_name]]=obs_list[[sit_name]][,c("Date",var_name)]
 
@@ -119,7 +125,7 @@ optim_options$xtol_rel=1e-05                        # Tolerance criterion betwee
 optim_options$maxeval=3                             # Maximum number of iterations executed by the function
 optim_options$path_results=model_options$data_dir   # path where to store results graphs
 
-obs_list=read_obs_to_list(file.path(model_options$data_dir,"Orig Data"))
+obs_list=read_obs(file.path(model_options$data_dir,"Orig Data"))
 
 main_optim(obs_list=obs_list,crit_function=concentrated_wss,model_function=stics_wrapper,model_options=model_options,optim_options=optim_options,prior_information=prior_information)
 
