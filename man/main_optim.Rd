@@ -4,21 +4,15 @@
 \alias{main_optim}
 \title{main function for parameter estimation}
 \usage{
-<<<<<<< HEAD
 main_optim(
   obs_list,
   crit_function = concentrated_wss,
   model_function,
   model_options = NULL,
-  optim_method = "simplex",
+  optim_method = "nloptr.simplex",
   optim_options = NULL,
   prior_information
 )
-=======
-main_optim(obs_list, crit_function = concentrated_wss, model_function,
-  model_options = NULL, optim_method = "nloptr.simplex",
-  optim_options = NULL, prior_information)
->>>>>>> e9a0a229ad947ebd9937be214affa5a012f64c5b
 }
 \arguments{
 \item{obs_list}{List of observed values to use for parameter estimation}
@@ -97,7 +91,7 @@ stics_path=file.path(javastics_path,"bin/stics_modulo.exe")
 
 # Read and select the observations for the parameter estimation
 sit_name="bo96iN+"
-obs_list=read_obs_to_list(file.path(data_dir,"XmlFiles"),
+obs_list=read_obs(file.path(data_dir,"XmlFiles"),
                           obs_filenames = paste0(sit_name,".obs"))
 var_name="lai_n"
 obs_list[[sit_name]]=obs_list[[sit_name]][,c("Date",var_name)]
