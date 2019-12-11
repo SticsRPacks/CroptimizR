@@ -25,6 +25,7 @@ A vector of parameter names
 Extract param names from prior information
 }
 \examples{
+\dontrun{
 # A simple case
 prior_information=list(lb=c(dlaimax=0.0005, durvieF=50),
                        ub=c(dlaimax=0.0025, durvieF=400))
@@ -35,4 +36,5 @@ prior_information=list()
 prior_information$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1", "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),lb=0.0005,ub=0.0025)
 prior_information$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"), c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),lb=c(50,50),ub=c(400,400))
 get_params_names(prior_information)
+}
 }

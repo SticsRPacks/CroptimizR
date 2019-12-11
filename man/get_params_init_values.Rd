@@ -17,6 +17,7 @@ estimated (one column per parameter)
 Extract parameter initial values from prior information
 }
 \examples{
+\dontrun{
 # Simple cases
 prior_information=list(init_values=c(dlaimax=0.001, durvieF=200),
                        lb=c(dlaimax=0.0001, durvieF=50),
@@ -42,4 +43,5 @@ prior_information$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", 
 prior_information$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"), c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),
                                init_values=data.frame(c(200,300),c(250,350)),lb=50,ub=400)
 get_params_init_values(prior_information)
+}
 }
