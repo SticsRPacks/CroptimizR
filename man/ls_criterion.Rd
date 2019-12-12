@@ -23,10 +23,10 @@ Provide several least squares criterion to estimate parameters by minimizing the
 difference between observed and simulated values of model output variables.
 }
 \details{
-The following criterion are proposed (\href{https://sticsrpacks.github.io/SticsOptimizR/reference/index.html}{see html version} for a better rendering of equations):
+The following criterion are proposed (\href{https://sticsrpacks.github.io/SticsOptimizR/reference/ls_criterion.html}{see html version} for a better rendering of equations):
 \itemize{
 \item \code{concentrated_wss}: concentrated version of weighted sum of squares
-\deqn{ \prod_{j} {(\frac{1}{n_j} \sum_{i,k} [Y_{ijk}-f_{jk}(X_i;\theta)]^2 )} }
+\deqn{ \prod_{j} {(\frac{1}{n_j} \sum_{i,k} [Y_{ijk}-f_{jk}(X_i;\theta)]^2 )} }^{n_j/2}
 where \eqn{ Y_{ijk} } is the observed value for the \eqn{k^{th}} time point of the \eqn{j^{th}} variable in the \eqn{i^{th}}
 situation,
 \eqn{ f_{jk}(X_i;\theta) } the corresponding model prediction, and \eqn{n_j} the number of measurements of variable \eqn{j}. \cr
