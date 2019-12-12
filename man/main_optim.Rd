@@ -4,21 +4,20 @@
 \alias{main_optim}
 \title{main function for parameter estimation}
 \usage{
-main_optim(
-  obs_list,
-  crit_function = concentrated_wss,
-  model_function,
-  model_options = NULL,
-  optim_method = "nloptr.simplex",
-  optim_options = NULL,
-  prior_information
-)
+main_optim(obs_list, crit_function = concentrated_wss, model_function,
+  model_options = NULL, optim_method = "nloptr.simplex",
+  optim_options = NULL, prior_information)
 }
 \arguments{
-\item{obs_list}{List of observed values to use for parameter estimation}
+\item{obs_list}{List of observed values to use for parameter estimation
+A \code{named list} (names = situations names) of data.frame containing
+one column named Date with the dates (POSIXct format) of the different observations
+and one column per observed variables with either the measured values or NA, if
+the variable is not observed at the given date.}
 
 \item{crit_function}{Function implementing the criterion to optimize
-(optional, default=concentrated_wss)}
+(optional, default=concentrated_wss). See ? concentrated_wss for more details about
+the list of proposed criterion.}
 
 \item{model_function}{Crop Model wrapper function to use}
 
@@ -54,8 +53,9 @@ a named list containing for each parameter the list of situations per group
 }}
 }
 \value{
-prints, graphs and a list containing the results of the parameter estimation.
-which content depends on the method used, all that saved in \code{optim_options.path_results}
+prints, graphs and a list containing the results of the parameter estimation,
+which content depends on the method used, all that saved in the defined in
+\code{optim_options.path_results}
 }
 \description{
 main function for parameter estimation
@@ -124,4 +124,8 @@ optim_results=main_optim(obs_list=obs_list,
 # See the different vignettes in [CroptimizR website](https://sticsrpacks.github.io/SticsOptimizR/)
 for more details and examples.
 }
+}
+\seealso{
+For more detail and examples, see the different vignettes in
+\href{https://sticsrpacks.github.io/SticsOptimizR/}{CroptimizR website}
 }

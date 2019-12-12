@@ -1,8 +1,13 @@
 #' @title main function for parameter estimation
 #'
 #' @param obs_list List of observed values to use for parameter estimation
+#' A `named list` (names = situations names) of data.frame containing
+#' one column named Date with the dates (POSIXct format) of the different observations 
+#' and one column per observed variables with either the measured values or NA, if 
+#' the variable is not observed at the given date.
 #' @param crit_function Function implementing the criterion to optimize
-#' (optional, default=concentrated_wss)
+#' (optional, default=concentrated_wss). See ? concentrated_wss for more details about 
+#' the list of proposed criterion.
 #' @param model_function Crop Model wrapper function to use
 #' @param model_options List of options for the Crop Model wrapper (optional,
 #' see help of the Crop Model wrapper function used)
@@ -30,9 +35,13 @@
 #' (`ub` and `lb`) and the list of initial values per group
 #' `init_values` (data.frame, one column per group).
 #'
-#' @return prints, graphs and a list containing the results of the parameter estimation.
-#' which content depends on the method used, all that saved in `optim_options.path_results`
+#' @return prints, graphs and a list containing the results of the parameter estimation,
+#' which content depends on the method used, all that saved in the defined in 
+#' `optim_options.path_results`
 #'
+#' @seealso For more detail and examples, see the different vignettes in 
+#' [CroptimizR website](https://sticsrpacks.github.io/SticsOptimizR/)
+#' 
 #' @export
 #'
 #' @examples
