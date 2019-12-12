@@ -21,7 +21,6 @@ The parameter estimation is performed using the Nelder-Meade simplex method impl
 ## Initialisation step
 
 ```{r setup_initializations,  message=FALSE, results=FALSE, warning=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
 
 # Install and load the needed libraries
 if(!require("SticsRFiles")){
@@ -75,7 +74,7 @@ climat.txt, ...) stored per USMs in different directories. If you start from xml
 the following lines allow generating txt files from xml files.
 In this case, xml files are stored in file.path(data_dir,"XmlFiles").
 
-```{r  gen_dirs results='hide', message=FALSE, warning=FALSE}
+```{r  gen_dirs, results='hide', message=FALSE, warning=FALSE}
 stics_inputs_path=file.path(data_dir,"TxtFiles")
 dir.create(stics_inputs_path)
 
@@ -159,7 +158,7 @@ optim_options$ranseed <- 1234 # set random seed so that each execution give the 
 
 The Nelder-Meade simplex is the default method => no need to set the 
 optim_method argument. For the moment it is the only method interfaced (others will come soonly).
-Same for crit_function: a value is set by default (log_concentrated_wss, see wallach et al., 2011). For the moment only 2 criterion are proposed (log_concentrated_wss and concentrated_wss, others will be proposed in next versions of CroptimizR. The user can implement its own criterion (see inputs and outputs required in the concentrated_wss function).
+Same for crit_function: a value is set by default (concentrated_wss, see wallach et al., 2011). For the moment only 2 criterion are proposed (log_concentrated_wss and concentrated_wss), others will be proposed in next versions of CroptimizR. The user can implement its own criterion (see inputs and outputs required in the concentrated_wss function).
 
 ```{r results='hide', message=FALSE, warning=FALSE}
 optim_results=main_optim(obs_list=obs_list,
@@ -179,7 +178,7 @@ The results printed in output on the R console are the following:
 
 Complementary graphs and data are stored in the optim_options$path_results folder. Among them, the EstimatedVSinit.pdf file containing the following figures: 
 
-```{r eval=TRUE, echo=FALSE, image_grobs, fig.show = "hold", out.width = "45%", fig.align = "default"}
+```{r eval=TRUE, echo=FALSE, out.width = '50%'}
 
 knitr::include_graphics("ResultsSimpleCase/estimInit_dlaimax.PNG")
 
@@ -195,25 +194,9 @@ load(file.path(optim_options$path_results,"optim_results.Rdata"))
 nlo[[2]]
 ```
 ... this returns:
-```{r echo=TRUE, eval=FALSE}
-## Call:
-## 
-## nloptr(x0 = init_values[irep, ], eval_f = main_crit, lb = bounds$lb, 
-##     ub = bounds$ub, opts = list(algorithm = "NLOPT_LN_NELDERMEAD", 
-##         xtol_rel = xtol_rel, maxeval = maxeval, ranseed = ranseed), ## 
-##     crit_options = crit_options_loc)
-## 
-## 
-## Minimization using NLopt version 2.4.2 
-## 
-## NLopt solver status: 4 ( NLOPT_XTOL_REACHED: Optimization stopped ## because xtol_rel or xtol_abs (above) was reached. )
-## 
-## Number of Iterations....: 44 
-## Termination conditions:  xtol_rel: 0.001	maxeval: 500 
-## Number of inequality constraints:  0 
-## Number of equality constraints:    0 
-## Optimal value of objective function:  112.530331140718 
-## Optimal value of controls: 0.001696149 53.96913
+```{r echo=FALSE, eval=TRUE}
+load(file.path("ResultsSimpleCase","optim_results.Rdata"))
+print(nlo[[2]])
 ```
 
 

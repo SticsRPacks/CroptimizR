@@ -1,8 +1,0 @@
-unnamed-chunk-1	$	params
-setup and initializations	!	$	::	if	install.packages	library	require
-unnamed-chunk-2	c
-unnamed-chunk-3	$	apsimx_wrapper	apsimx_wrapper_options	file.path	params	system.file	var_name
-unnamed-chunk-4	$	model_options	names	names<-	read_apsimx_output	sim_before_optim
-unnamed-chunk-5	c	list
-unnamed-chunk-6	$	$<-	list	params
-unnamed-chunk-7	$	apsimx_wrapper	concentrated_wss	main_optim	model_options	obs_list	optim_options	paste	print	prior_information

@@ -146,7 +146,7 @@ The results printed in output on the R console are the following:
 
 Complementary graphs and data are stored in the optim_options$path_results folder. Among them, the EstimatedVSinit.pdf file contains the following figures: 
 
-```{r eval=TRUE, echo=FALSE, image_grobs, fig.show = "hold", out.width = "45%", fig.align = "default"}
+```{r eval=TRUE, echo=FALSE, out.width = '50%'}
 
 knitr::include_graphics("ResultsSpecificVarietal/estimInit_dlaimax.PNG")
 
