@@ -23,11 +23,11 @@ this
 [webpage](https://sticsrpacks.github.io/SticsOptimizR/reference/index.html).
 
 For the moment, only parameter estimation functions have been
-developped. The ([`main_optim`](R/main_optim.R)) function can be used to
-perform parameter estimation using multi-start Nelder-Meade simplexe
-minimization of different criterion ([concentrated version of weighted
-sum of square](R/concentrated_wss.R) and [its log-transformed
-version](R/log_concentrated_wss.R)).
+developped. The
+([`main_optim`](https://sticsrpacks.github.io/SticsOptimizR/reference/main_optim.html))
+function can be used to perform parameter estimation using multi-start
+Nelder-Meade simplexe minimization of [different least square
+criterion](https://sticsrpacks.github.io/SticsOptimizR/reference/ls_criterion.html).
 
 Functionnalities for simultaneous estimation of varietal and specific
 parameters are provided (see
