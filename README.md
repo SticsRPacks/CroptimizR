@@ -205,10 +205,11 @@ parameters is given
 An example using the ApsimX model is detailed
 [here](https://SticsRPacks.github.io/SticsOptimizR/articles/ApsimX_parameter_estimation_simple_case.html).
 
-See [here](R/main_optim.R) for a detailed description of the input and
-output arguments of the main\_optim function (or type “? main\_optim” in
-an R console after having installed and loaded the SticsOptimizR
-package).
+See
+[here](https://sticsrpacks.github.io/SticsOptimizR/reference/main_optim.html)
+for a detailed description of the input and output arguments of the
+main\_optim function (or type “? main\_optim” in an R console after
+having installed and loaded the SticsOptimizR package).
 
 ## Code of conduct
 

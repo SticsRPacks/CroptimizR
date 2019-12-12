@@ -6,8 +6,9 @@
 #' and one column per observed variables with either the measured values or NA, if 
 #' the variable is not observed at the given date.
 #' @param crit_function Function implementing the criterion to optimize
-#' (optional, default=concentrated_wss). See ? concentrated_wss for more details about 
-#' the list of proposed criterion.
+#' (optional, default=concentrated_wss). See 
+#' [here](https://sticsrpacks.github.io/SticsOptimizR/reference/ls_criterion.html) 
+#' for more details about the list of proposed criterion.
 #' @param model_function Crop Model wrapper function to use
 #' @param model_options List of options for the Crop Model wrapper (optional,
 #' see help of the Crop Model wrapper function used)

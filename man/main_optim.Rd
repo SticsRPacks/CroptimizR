@@ -16,8 +16,9 @@ and one column per observed variables with either the measured values or NA, if
 the variable is not observed at the given date.}
 
 \item{crit_function}{Function implementing the criterion to optimize
-(optional, default=concentrated_wss). See ? concentrated_wss for more details about
-the list of proposed criterion.}
+(optional, default=concentrated_wss). See
+\href{https://sticsrpacks.github.io/SticsOptimizR/reference/ls_criterion.html}{here}
+for more details about the list of proposed criterion.}
 
 \item{model_function}{Crop Model wrapper function to use}
 
