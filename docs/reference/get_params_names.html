@@ -8,6 +8,13 @@
 
 <title>Extract param names from prior information — get_params_names • SticsOptimizR</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
@@ -88,7 +95,13 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/Designing_a _model_wrapper.html">Elements for implementing a crop model R wrapper</a>
+      <a href="../articles/ApsimX_parameter_estimation_simple_case.html">Parameter estimation with the ApsimX crop Model: a simple case</a>
+    </li>
+    <li>
+      <a href="../articles/Designing_a_model_wrapper.html">Elements for implementing a crop model R wrapper</a>
+    </li>
+    <li>
+      <a href="../articles/Designing_a_model_wrapper_SAM.html">Elements for implementing a crop model R wrapper</a>
     </li>
     <li>
       <a href="../articles/Parameter_estimation_simple_case.html">Parameter estimation with the Stics crop Model: a simple case</a>
@@ -130,7 +143,7 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>get_params_names</span>(<span class='no'>prior_information</span>)</pre>
+    <pre class="usage"><span class='fu'>get_params_names</span>(<span class='no'>prior_information</span>, <span class='kw'>short_list</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -144,6 +157,12 @@ bounds (<code>ub</code> and <code>lb</code>), or a named list containing for eac
 parameter the list of situations per group (<code>sit_list</code>)
 and the vector of upper and lower bounds (one value per group) (<code>ub</code> and <code>lb</code>)</p></td>
     </tr>
+    <tr>
+      <th>short_list</th>
+      <td><p>TRUE to return a list without replicated parameters which
+happens for simultaneous estimation of specific and varietal parameters
+(optional, default=FALSE)</p></td>
+    </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -152,15 +171,18 @@ and the vector of upper and lower bounds (one value per group) (<code>ub</code> 
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># A simple case</span>
+    <pre class="examples"><span class='co'># NOT RUN {</span>
+<span class='co'># A simple case</span>
 <span class='no'>prior_information</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>lb</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='kw'>dlaimax</span><span class='kw'>=</span><span class='fl'>0.0005</span>, <span class='kw'>durvieF</span><span class='kw'>=</span><span class='fl'>50</span>),
                        <span class='kw'>ub</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='kw'>dlaimax</span><span class='kw'>=</span><span class='fl'>0.0025</span>, <span class='kw'>durvieF</span><span class='kw'>=</span><span class='fl'>400</span>))
-<span class='fu'>get_params_names</span>(<span class='no'>prior_information</span>)</div><div class='output co'>#&gt; [1] "dlaimax" "durvieF"</div><div class='input'>
+<span class='fu'>get_params_names</span>(<span class='no'>prior_information</span>)
+
 <span class='co'># A case with groups of situations per parameter</span>
 <span class='no'>prior_information</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>()
 <span class='no'>prior_information</span>$<span class='no'>dlaimax</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>sit_list</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"bou99t3"</span>, <span class='st'>"bou00t3"</span>, <span class='st'>"bou99t1"</span>, <span class='st'>"bou00t1"</span>, <span class='st'>"bo96iN+"</span>, <span class='st'>"lu96iN+"</span>, <span class='st'>"lu96iN6"</span>, <span class='st'>"lu97iN+"</span>)),<span class='kw'>lb</span><span class='kw'>=</span><span class='fl'>0.0005</span>,<span class='kw'>ub</span><span class='kw'>=</span><span class='fl'>0.0025</span>)
 <span class='no'>prior_information</span>$<span class='no'>durvieF</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>sit_list</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"bo96iN+"</span>, <span class='st'>"lu96iN+"</span>, <span class='st'>"lu96iN6"</span>, <span class='st'>"lu97iN+"</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"bou99t3"</span>, <span class='st'>"bou00t3"</span>, <span class='st'>"bou99t1"</span>, <span class='st'>"bou00t1"</span>)),<span class='kw'>lb</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>50</span>,<span class='fl'>50</span>),<span class='kw'>ub</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>400</span>,<span class='fl'>400</span>))
-<span class='fu'>get_params_names</span>(<span class='no'>prior_information</span>)</div><div class='output co'>#&gt; [1] "dlaimax" "durvieF" "durvieF"</div></pre>
+<span class='kw pkg'>SticsOptimizR</span><span class='kw ns'>:::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/SticsOptimizR/topics/get_params_names'>get_params_names</a></span>(<span class='no'>prior_information</span>)
+<span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -177,7 +199,7 @@ and the vector of upper and lower bounds (one value per group) (<code>ub</code> 
 
       <footer>
       <div class="copyright">
-  <p>Developed by Samuel Buis, Michel Giner.</p>
+  <p>Developed by Samuel Buis, Michel Giner, Patrice Lecharpentier, SticsRpacks.</p>
 </div>
 
 <div class="pkgdown">

@@ -43,7 +43,6 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
   #' of the criterion
   #' `nlo`, the data structure returned by nloptr
   #'
-  # @examples
 
   # TO DO LIST
   # - externalize nloptr
@@ -94,7 +93,7 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
   start_time <- Sys.time()
   for (irep in 1:nb_rep){
 
-    nlo[[irep]] <- nloptr(x0 = as.numeric(init_values[irep,]), eval_f = main_crit,
+    nlo[[irep]] <- nloptr::nloptr(x0 = as.numeric(init_values[irep,]), eval_f = main_crit,
                           lb = bounds$lb, ub = bounds$ub,
                           opts = list("algorithm"="NLOPT_LN_NELDERMEAD",
                                       "xtol_rel"=xtol_rel, "maxeval"=maxeval,
@@ -114,19 +113,19 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
   ind_min_crit=which.min(sapply(nlo, function(x) x$objective))
 
   # Graph and print the results
-  pdf(file = file.path(path_results,"EstimatedVSinit.pdf") , width = 9, height = 9)
+  grDevices::pdf(file = file.path(path_results,"EstimatedVSinit.pdf") , width = 9, height = 9)
   for (ipar in 1:nb_params) {
-    plot(init_values[,ipar], est_values[,ipar],
+    graphics::plot(init_values[,ipar], est_values[,ipar],
          main = "Estimated vs Initial values of the parameters for different repetitions",
-         text(init_values[,ipar], est_values[,ipar], pos=1,col="black"),
+         graphics::text(init_values[,ipar], est_values[,ipar], pos=1,col="black"),
          xlim = c(bounds$lb[ipar],bounds$ub[ipar]),
          ylim = c(bounds$lb[ipar],bounds$ub[ipar]),
          xlab = paste("Initial value for", param_names[ipar]),
          ylab = paste("Estimated value for", param_names[ipar]))
-    text(init_values[ind_min_crit,ipar], est_values[ind_min_crit,ipar],
+    graphics::text(init_values[ind_min_crit,ipar], est_values[ind_min_crit,ipar],
          labels = ind_min_crit, pos=1,col="red")
   }
-  dev.off()
+  grDevices::dev.off()
 
   # pdf(file = file.path(path_results,"ConvergencePlots.pdf") , width = 9, height = 9)
   # for (ipar in 1:(nb_params+1)) {

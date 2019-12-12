@@ -8,6 +8,13 @@
 
 <title>main function for parameter estimation — main_optim • SticsOptimizR</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
@@ -88,7 +95,13 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/Designing_a _model_wrapper.html">Elements for implementing a crop model R wrapper</a>
+      <a href="../articles/ApsimX_parameter_estimation_simple_case.html">Parameter estimation with the ApsimX crop Model: a simple case</a>
+    </li>
+    <li>
+      <a href="../articles/Designing_a_model_wrapper.html">Elements for implementing a crop model R wrapper</a>
+    </li>
+    <li>
+      <a href="../articles/Designing_a_model_wrapper_SAM.html">Elements for implementing a crop model R wrapper</a>
     </li>
     <li>
       <a href="../articles/Parameter_estimation_simple_case.html">Parameter estimation with the Stics crop Model: a simple case</a>
@@ -131,7 +144,7 @@
     </div>
 
     <pre class="usage"><span class='fu'>main_optim</span>(<span class='no'>obs_list</span>, <span class='kw'>crit_function</span> <span class='kw'>=</span> <span class='no'>concentrated_wss</span>, <span class='no'>model_function</span>,
-  <span class='kw'>model_options</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>optim_method</span> <span class='kw'>=</span> <span class='st'>"simplex"</span>,
+  <span class='kw'>model_options</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>optim_method</span> <span class='kw'>=</span> <span class='st'>"nloptr.simplex"</span>,
   <span class='kw'>optim_options</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>prior_information</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -139,139 +152,138 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>obs_list</th>
-      <td><p>List of observed values</p></td>
+      <td><p>List of observed values to use for parameter estimation
+A <code>named list</code> (names = situations names) of data.frame containing
+one column named Date with the dates (POSIXct format) of the different observations
+and one column per observed variables with either the measured values or NA, if
+the variable is not observed at the given date.</p></td>
     </tr>
     <tr>
       <th>crit_function</th>
-      <td><p>Function implementing the criterion to optimize (optional, default=concentrated_wss)</p></td>
+      <td><p>Function implementing the criterion to optimize
+(optional, default=concentrated_wss). See ? concentrated_wss for more details about
+the list of proposed criterion.</p></td>
     </tr>
     <tr>
       <th>model_function</th>
-      <td><p>Crop Model wrapper function</p></td>
+      <td><p>Crop Model wrapper function to use</p></td>
     </tr>
     <tr>
       <th>model_options</th>
       <td><p>List of options for the Crop Model wrapper (optional,
-see help of the Crop Model wrapper used)</p></td>
+see help of the Crop Model wrapper function used)</p></td>
     </tr>
     <tr>
       <th>optim_method</th>
-      <td><p>Name of the parameter estimation method (optional,
-see help of optim_switch function)</p></td>
+      <td><p>Name of the parameter estimation method to use (optional,
+default="nloptr.simplex", the only one available for the moment)</p></td>
     </tr>
     <tr>
       <th>optim_options</th>
       <td><p>List of options of the parameter estimation method:
 <code>nb_rep</code>, the number of repetitions (optional, default=1)
-(see help of optim_switch function))</p></td>
+<code>xtol_rel</code>, the tolerance for the stopping criterion on relative
+differences on parameters values between 2 iterations (optional, default=1e-5)
+<code>maxeval</code>, the maximum number of criterion evaluation (optional, default=500)
+<code>path_results</code>, the path where to store the results (optional, default=getwd())</p></td>
     </tr>
     <tr>
       <th>prior_information</th>
       <td><p>Prior information on the parameters to estimate.
 For the moment only uniform distribution are allowed.
-Either a list containing (named) vectors of upper and lower
-bounds (<code>ub</code> and <code>lb</code>), or a named list containing for each
-parameter the list of situations per group (<code>sit_list</code>)
-and the vector of upper and lower bounds (one value per group) (<code>ub</code> and <code>lb</code>)</p></td>
-    </tr>
-    <tr>
-      <th>param_names</th>
-      <td><p>Name(s) of parameters to estimate</p></td>
+Either
+a list containing:</p><ul>
+<li><p>(named) vectors of upper and lower bounds (<code>ub</code> and <code>lb</code>),</p></li>
+<li><p><code>init_values</code>, A data.frame containing initial
+values to test for the parameters (optional, if not provided (or if less values
+than number of repetitions of the minimization are provided), the (or part
+of the) initial values will be randomly generated using LHS sampling within
+parameter bounds.
+or
+a named list containing for each parameter the list of situations per group
+(<code>sit_list</code>), the vector of upper and lower bounds (one value per group)
+(<code>ub</code> and <code>lb</code>) and the list of initial values per group
+<code>init_values</code> (data.frame, one column per group).</p></li>
+</ul></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>The vector of values for optimized parameters + prints and graphs,
-depending on the parameter estimation method used</p>
+    <p>prints, graphs and a list containing the results of the parameter estimation,
+which content depends on the method used, all that saved in the defined in
+<code>optim_options.path_results</code></p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>For more detail and examples, see the different vignettes in
+<a href='https://sticsrpacks.github.io/SticsOptimizR/'>CroptimizR website</a></p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>SticsRFiles</span>)</div><div class='output co'>#&gt; <span class='message'>Learn SticsRFiles at: <span style='color: #0000BB;font-weight: bold;text-decoration: underline;'>https://SticsRPacks.github.io/SticsRFiles</span><span></span></div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'>Attachement du package : 'SticsRFiles'</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from 'package:SticsOptimizR':</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    get_params_names</span></div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>SticsOnR</span>)</div><div class='output co'>#&gt; <span class='message'>Learn SticsOnR at: </span><span style='color: #0000BB;font-weight: bold;text-decoration: underline;'>https://SticsRPacks.github.io/SticsOnR</span><span></span></div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'>Attachement du package : 'SticsOnR'</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from 'package:SticsRFiles':</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    compute_doy_cumul, set_file, set_general, set_ini, set_out_var,</span>
-#&gt; <span class='message'>    set_param, set_plant, set_soil, set_station, set_tec, set_tmp,</span>
-#&gt; <span class='message'>    set_usm</span></div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>SticsOptimizR</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>dplyr</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: le package 'dplyr' a été compilé avec la version R 3.5.1</span></div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'>Attachement du package : 'dplyr'</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from 'package:SticsRFiles':</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    rename</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from 'package:stats':</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    filter, lag</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from 'package:base':</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    intersect, setdiff, setequal, union</span></div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>nloptr</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: le package 'nloptr' a été compilé avec la version R 3.5.1</span></div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>DiceDesign</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: le package 'DiceDesign' a été compilé avec la version R 3.5.3</span></div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='st'>"doParallel"</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: le package 'doParallel' a été compilé avec la version R 3.5.3</span></div><div class='output co'>#&gt; <span class='message'>Le chargement a nécessité le package : foreach</span></div><div class='output co'>#&gt; <span class='warning'>Warning: le package 'foreach' a été compilé avec la version R 3.5.1</span></div><div class='output co'>#&gt; <span class='message'>Le chargement a nécessité le package : iterators</span></div><div class='output co'>#&gt; <span class='warning'>Warning: le package 'iterators' a été compilé avec la version R 3.5.1</span></div><div class='output co'>#&gt; <span class='message'>Le chargement a nécessité le package : parallel</span></div><div class='input'>
+    <pre class="examples"># NOT RUN {
+# Example one one situation and one variable with the Stics model
+# Version 9.* of Stics is needed to run this example
 
-<span class='co'># TEST ON ONE SITUATION and ONE VARIABLE</span>
+# Load the needed packages
+library(SticsRFiles)
+library(SticsOnR)
+library(SticsOptimizR)
+library(dplyr)
+library(nloptr)
+library(DiceDesign)
+library("doParallel")
 
-<span class='co'># Select situation and variable</span>
-<span class='no'>sit_name</span><span class='kw'>=</span><span class='st'>"bo96iN+"</span>
-<span class='no'>var_name</span><span class='kw'>=</span><span class='st'>"lai_n"</span>
+# Download the data for the example (Stics input files in txt format, one folder per USM)
+data_dir= normalizePath(tempdir(), winslash = "/", mustWork = FALSE)
+data_dir_zip= normalizePath(file.path(data_dir,"master.zip"), winslash = "/", mustWork = FALSE)
+download.file("https://github.com/SticsRPacks/data/archive/master.zip", data_dir_zip)
+unzip(data_dir_zip, exdir = data_dir)
+unlink(data_dir_zip)
+data_dir= file.path(normalizePath(list.dirs(data_dir)[2], winslash = "/"),"study_case_1","V9.0")
+# NB: all examples are now in data_dir
 
-<span class='co'># Run the model before optimization for a prior evaluation</span>
-<span class='no'>stics_path</span><span class='kw'>=</span><span class='st'>"D:/Home/sbuis/Documents/WORK/STICS/JavaSTICS-1.41-stics-9.0/bin/stics_modulo"</span>  <span class='co'># TO ADAPT TO YOUR CASE :-) ###</span>
-<span class='no'>data_dir</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system.file'>system.file</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/file.path'>file.path</a></span>(<span class='st'>"extdata"</span>,<span class='st'>"TestCase1c"</span>), <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"SticsOptimizR"</span>)
-<span class='no'>model_options</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/SticsOnR/topics/stics_wrapper_options'>stics_wrapper_options</a></span>(<span class='no'>stics_path</span>,<span class='no'>data_dir</span>,<span class='kw'>parallel</span><span class='kw'>=</span><span class='fl'>FALSE</span>)
-<span class='no'>sim_before_optim</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/SticsOnR/topics/stics_wrapper'>stics_wrapper</a></span>(<span class='kw'>model_options</span><span class='kw'>=</span><span class='no'>model_options</span>)
+# Define the path to the locally installed version of JavaStics
+# THIS SHOULD BE ADAPTED TO YOUR CASE !!!
+javastics_path=file.path(getwd(),"JavaSTICS-1.41-stics-9.0")
+stics_path=file.path(javastics_path,"bin/stics_modulo.exe")
 
-<span class='co'># Read and select the corresponding observations</span>
-<span class='no'>obs_list</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/SticsRFiles/topics/read_obs_to_list'>read_obs_to_list</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/file.path'>file.path</a></span>(<span class='no'>model_options</span>$<span class='no'>data_dir</span>,<span class='st'>"Orig Data"</span>),
-                          <span class='kw'>obs_filenames</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste0</a></span>(<span class='no'>sit_name</span>,<span class='st'>".obs"</span>))</div><div class='output co'>#&gt; <span class='warning'>Warning: NAs introduits lors de la conversion automatique</span></div><div class='input'><span class='no'>obs_list</span><span class='kw'>[[</span><span class='no'>sit_name</span>]]<span class='kw'>=</span><span class='no'>obs_list</span><span class='kw'>[[</span><span class='no'>sit_name</span>]][,<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"Date"</span>,<span class='no'>var_name</span>)]
+# Read and select the observations for the parameter estimation
+sit_name="bo96iN+"
+obs_list=read_obs(file.path(data_dir,"XmlFiles"),
+                          obs_filenames = paste0(sit_name,".obs"))
+var_name="lai_n"
+obs_list[[sit_name]]=obs_list[[sit_name]][,c("Date",var_name)]
 
-<span class='co'># Set prior information on the parameters to estimate</span>
-<span class='no'>prior_information</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>lb</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='kw'>dlaimax</span><span class='kw'>=</span><span class='fl'>0.0005</span>, <span class='kw'>durvieF</span><span class='kw'>=</span><span class='fl'>50</span>),
-                       <span class='kw'>ub</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='kw'>dlaimax</span><span class='kw'>=</span><span class='fl'>0.0025</span>, <span class='kw'>durvieF</span><span class='kw'>=</span><span class='fl'>400</span>))
+# Set prior information on the parameters to estimate
+prior_information=list(lb=c(dlaimax=0.0005, durvieF=50),
+                       ub=c(dlaimax=0.0025, durvieF=400),
+                       init_values=data.frame(dlaimax=c(0.0015), durvieF=c(225)))
 
-<span class='co'># Set options for the parameter estimation method</span>
-<span class='no'>optim_options</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>()
-<span class='no'>optim_options</span>$<span class='no'>nb_rep</span> <span class='kw'>&lt;-</span> <span class='fl'>2</span> <span class='co'># How many times we run the minimization with different parameters</span>
-<span class='no'>optim_options</span>$<span class='no'>xtol_rel</span> <span class='kw'>&lt;-</span> <span class='fl'>1e-05</span> <span class='co'># Tolerance criterion between two iterations</span>
-<span class='no'>optim_options</span>$<span class='no'>maxeval</span> <span class='kw'>&lt;-</span> <span class='fl'>20</span> <span class='co'># Maximum number of iterations executed by the function</span>
-<span class='no'>optim_options</span>$<span class='no'>path_results</span> <span class='kw'>&lt;-</span> <span class='no'>model_options</span>$<span class='no'>data_dir</span> <span class='co'># path where to store results graphs</span>
+# Set options for the parameter estimation method
+optim_options=list()
+optim_options$nb_rep <- 2 # How many times we run the minimization with different parameters
+optim_options$xtol_rel <- 1e-05 # Tolerance criterion between two iterations
+optim_options$maxeval <- 5 # Maximum number of iterations executed by the function
+optim_options$path_results <- data_dir # path where to store results graphs
 
-<span class='co'># Run the optimization</span>
-<span class='no'>param_est_values</span><span class='kw'>=</span><span class='fu'>main_optim</span>(<span class='kw'>obs_list</span><span class='kw'>=</span><span class='no'>obs_list</span>,<span class='kw'>crit_function</span><span class='kw'>=</span><span class='no'>concentrated_wss</span>,
-                            <span class='kw'>model_function</span><span class='kw'>=</span><span class='no'>stics_wrapper</span>,
-                            <span class='kw'>model_options</span><span class='kw'>=</span><span class='no'>model_options</span>,
-                            <span class='kw'>optim_options</span><span class='kw'>=</span><span class='no'>optim_options</span>,
-                            <span class='kw'>prior_information</span><span class='kw'>=</span><span class='no'>prior_information</span>)</div><div class='output co'>#&gt; [1] "Working: 50.00%. ETA: 1.61"
-#&gt; [1] "Working: 100.00%. ETA: 0.00"</div><div class='output co'>#&gt; <span class='error'>Error in init_values[, ipar]: indice hors limites</span></div><div class='input'>
-<span class='co'># Run the model after optimzation</span>
-<span class='no'>sim_after_optim</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/SticsOnR/topics/stics_wrapper'>stics_wrapper</a></span>(<span class='kw'>param_values</span><span class='kw'>=</span><span class='no'>param_est_values</span>,<span class='kw'>model_options</span><span class='kw'>=</span><span class='no'>model_options</span>)</div><div class='output co'>#&gt; <span class='error'>Error in exists(sym, env, mode = "function", inherits = FALSE): objet 'param_est_values' introuvable</span></div><div class='input'>
-<span class='co'># Plot the results</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/grDevices/topics/dev'>dev.new</a></span>()</div><div class='output co'>#&gt; <span class='message'>dev.new(): using pdf(file="Rplots66.pdf")</span></div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/par'>par</a></span>(<span class='kw'>mfrow</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>))
-<span class='no'>Ymax</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Extremes'>max</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Extremes'>max</a></span>(<span class='no'>obs_list</span><span class='kw'>[[</span><span class='no'>sit_name</span>]][,<span class='no'>var_name</span>], <span class='kw'>na.rm</span><span class='kw'>=</span><span class='fl'>TRUE</span>),
-         <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Extremes'>max</a></span>(<span class='no'>sim_before_optim</span>$<span class='no'>sim_list</span><span class='kw'>[[</span><span class='no'>sit_name</span>]][,<span class='no'>var_name</span>], <span class='kw'>na.rm</span><span class='kw'>=</span><span class='fl'>TRUE</span>))
-<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>sim_before_optim</span>$<span class='no'>sim_list</span><span class='kw'>[[</span><span class='no'>sit_name</span>]][,<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"Date"</span>,<span class='no'>var_name</span>)],<span class='kw'>type</span><span class='kw'>=</span><span class='st'>"l"</span>,
-     <span class='kw'>main</span><span class='kw'>=</span><span class='st'>"Before optimization"</span>,<span class='kw'>ylim</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>0</span>,<span class='no'>Ymax</span>+<span class='no'>Ymax</span>*<span class='fl'>0.1</span>))
-<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/points'>points</a></span>(<span class='no'>obs_list</span><span class='kw'>[[</span><span class='no'>sit_name</span>]],<span class='kw'>col</span><span class='kw'>=</span><span class='st'>"green"</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>sim_after_optim</span>$<span class='no'>sim_list</span><span class='kw'>[[</span><span class='no'>sit_name</span>]][,<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"Date"</span>,<span class='no'>var_name</span>)],<span class='kw'>type</span><span class='kw'>=</span><span class='st'>"l"</span>,
-     <span class='kw'>main</span><span class='kw'>=</span><span class='st'>"After optimization"</span>,<span class='kw'>ylim</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>0</span>,<span class='no'>Ymax</span>+<span class='no'>Ymax</span>*<span class='fl'>0.1</span>))</div><div class='output co'>#&gt; <span class='error'>Error in plot(sim_after_optim$sim_list[[sit_name]][, c("Date", var_name)],     type = "l", main = "After optimization", ylim = c(0, Ymax +         Ymax * 0.1)): objet 'sim_after_optim' introuvable</span></div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/points'>points</a></span>(<span class='no'>obs_list</span><span class='kw'>[[</span><span class='no'>sit_name</span>]],<span class='kw'>col</span><span class='kw'>=</span><span class='st'>"green"</span>)
+# Set the model options (see '? stics_wrapper_options' for details)
+model_options=stics_wrapper_options(stics_path,data_dir,
+                                    parallel=FALSE)
 
+# Run the optimization
+optim_results=main_optim(obs_list=obs_list,
+                         model_function=stics_wrapper,
+                         model_options=model_options,
+                         optim_options=optim_options,
+                         prior_information=prior_information)
 
-<span class='co'># TEST WITH SEVERAL SITUATIONS AND USING GROUPS OF SITUATIONS PER PARAMETER</span>
+# See results (graph and Rdata) stored in optim_options$path_results
 
-<span class='no'>prior_information</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>()
-<span class='no'>prior_information</span>$<span class='no'>dlaimax</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>sit_list</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"bou99t3"</span>, <span class='st'>"bou00t3"</span>, <span class='st'>"bou99t1"</span>, <span class='st'>"bou00t1"</span>, <span class='st'>"bo96iN+"</span>, <span class='st'>"lu96iN+"</span>, <span class='st'>"lu96iN6"</span>, <span class='st'>"lu97iN+"</span>)),<span class='kw'>lb</span><span class='kw'>=</span><span class='fl'>0.0005</span>,<span class='kw'>ub</span><span class='kw'>=</span><span class='fl'>0.0025</span>)
-<span class='no'>prior_information</span>$<span class='no'>durvieF</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>sit_list</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"bo96iN+"</span>, <span class='st'>"lu96iN+"</span>, <span class='st'>"lu96iN6"</span>, <span class='st'>"lu97iN+"</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"bou99t3"</span>, <span class='st'>"bou00t3"</span>, <span class='st'>"bou99t1"</span>, <span class='st'>"bou00t1"</span>)),<span class='kw'>lb</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>50</span>,<span class='fl'>50</span>),<span class='kw'>ub</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>400</span>,<span class='fl'>400</span>))
-
-<span class='no'>stics_path</span><span class='kw'>=</span><span class='st'>"D:/Home/sbuis/Documents/WORK/STICS/JavaSTICS-1.41-stics-9.0/bin/stics_modulo"</span>  <span class='co'># TO ADAPT TO YOUR CASE :-) ###</span>
-<span class='no'>data_dir</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system.file'>system.file</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/file.path'>file.path</a></span>(<span class='st'>"extdata"</span>,<span class='st'>"TestCase1c"</span>), <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"SticsOptimizR"</span>)
-<span class='no'>model_options</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/SticsOnR/topics/stics_wrapper_options'>stics_wrapper_options</a></span>(<span class='no'>stics_path</span>,<span class='no'>data_dir</span>, <span class='kw'>parallel</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-
-<span class='no'>optim_options</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>()
-<span class='no'>optim_options</span>$<span class='no'>nb_rep</span><span class='kw'>=</span><span class='fl'>2</span>                              <span class='co'># How many times we run the minimization with different parameters</span>
-<span class='no'>optim_options</span>$<span class='no'>xtol_rel</span><span class='kw'>=</span><span class='fl'>1e-05</span>                        <span class='co'># Tolerance criterion between two iterations</span>
-<span class='no'>optim_options</span>$<span class='no'>maxeval</span><span class='kw'>=</span><span class='fl'>3</span>                             <span class='co'># Maximum number of iterations executed by the function</span>
-<span class='no'>optim_options</span>$<span class='no'>path_results</span><span class='kw'>=</span><span class='no'>model_options</span>$<span class='no'>data_dir</span>   <span class='co'># path where to store results graphs</span>
-
-<span class='no'>obs_list</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/SticsRFiles/topics/read_obs_to_list'>read_obs_to_list</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/file.path'>file.path</a></span>(<span class='no'>model_options</span>$<span class='no'>data_dir</span>,<span class='st'>"Orig Data"</span>))</div><div class='output co'>#&gt; <span class='warning'>Warning: NAs introduits lors de la conversion automatique</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NAs introduits lors de la conversion automatique</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NAs introduits lors de la conversion automatique</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NAs introduits lors de la conversion automatique</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NAs introduits lors de la conversion automatique</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NAs introduits lors de la conversion automatique</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NAs introduits lors de la conversion automatique</span></div><div class='output co'>#&gt; <span class='warning'>Warning: NAs introduits lors de la conversion automatique</span></div><div class='input'>
-<span class='fu'>main_optim</span>(<span class='kw'>obs_list</span><span class='kw'>=</span><span class='no'>obs_list</span>,<span class='kw'>crit_function</span><span class='kw'>=</span><span class='no'>concentrated_wss</span>,<span class='kw'>model_function</span><span class='kw'>=</span><span class='no'>stics_wrapper</span>,<span class='kw'>model_options</span><span class='kw'>=</span><span class='no'>model_options</span>,<span class='kw'>optim_options</span><span class='kw'>=</span><span class='no'>optim_options</span>,<span class='kw'>prior_information</span><span class='kw'>=</span><span class='no'>prior_information</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n, HR_1, HR_2, HR_3, HR_4, HR_5, resmes, zrac, chargefruit not simulated by the Stics model for USM bou00t1 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/bou00t1/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n, HR_1, HR_2, HR_3, HR_4, HR_5, resmes, zrac, chargefruit not simulated by the Stics model for USM bou00t3 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/bou00t3/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n, HR_1, HR_2, HR_3, HR_4, HR_5, resmes, zrac, chargefruit not simulated by the Stics model for USM bou99t3 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/bou99t3/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n not simulated by the Stics model for USM lu96iN6 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/lu96iN6/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n not simulated by the Stics model for USM lu97iN+ =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/lu97iN+/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n, HR_1, HR_2, HR_3, HR_4, HR_5, resmes, zrac, chargefruit not simulated by the Stics model for USM bou00t1 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/bou00t1/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n, HR_1, HR_2, HR_3, HR_4, HR_5, resmes, zrac, chargefruit not simulated by the Stics model for USM bou00t3 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/bou00t3/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n, HR_1, HR_2, HR_3, HR_4, HR_5, resmes, zrac, chargefruit not simulated by the Stics model for USM bou99t3 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/bou99t3/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n not simulated by the Stics model for USM lu96iN6 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/lu96iN6/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n not simulated by the Stics model for USM lu97iN+ =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/lu97iN+/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n, HR_1, HR_2, HR_3, HR_4, HR_5, resmes, zrac, chargefruit not simulated by the Stics model for USM bou00t1 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/bou00t1/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n, HR_1, HR_2, HR_3, HR_4, HR_5, resmes, zrac, chargefruit not simulated by the Stics model for USM bou00t3 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/bou00t3/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n, HR_1, HR_2, HR_3, HR_4, HR_5, resmes, zrac, chargefruit not simulated by the Stics model for USM bou99t3 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/bou99t3/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n not simulated by the Stics model for USM lu96iN6 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/lu96iN6/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n not simulated by the Stics model for USM lu97iN+ =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/lu97iN+/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n, HR_1, HR_2, HR_3, HR_4, HR_5, resmes, zrac, chargefruit not simulated by the Stics model for USM bou00t1 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/bou00t1/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n, HR_1, HR_2, HR_3, HR_4, HR_5, resmes, zrac, chargefruit not simulated by the Stics model for USM bou00t3 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/bou00t3/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n, HR_1, HR_2, HR_3, HR_4, HR_5, resmes, zrac, chargefruit not simulated by the Stics model for USM bou99t3 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/bou99t3/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n not simulated by the Stics model for USM lu96iN6 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/lu96iN6/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n not simulated by the Stics model for USM lu97iN+ =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/lu97iN+/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n, HR_1, HR_2, HR_3, HR_4, HR_5, resmes, zrac, chargefruit not simulated by the Stics model for USM bou00t1 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/bou00t1/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n, HR_1, HR_2, HR_3, HR_4, HR_5, resmes, zrac, chargefruit not simulated by the Stics model for USM bou00t3 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/bou00t3/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n, HR_1, HR_2, HR_3, HR_4, HR_5, resmes, zrac, chargefruit not simulated by the Stics model for USM bou99t3 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/bou99t3/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n not simulated by the Stics model for USM lu96iN6 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/lu96iN6/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n not simulated by the Stics model for USM lu97iN+ =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/lu97iN+/var.mod</span></div><div class='output co'>#&gt; [1] "Working: 50.00%. ETA: 53.02"</div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n, HR_1, HR_2, HR_3, HR_4, HR_5, resmes, zrac, chargefruit not simulated by the Stics model for USM bou00t1 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/bou00t1/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n, HR_1, HR_2, HR_3, HR_4, HR_5, resmes, zrac, chargefruit not simulated by the Stics model for USM bou00t3 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/bou00t3/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n, HR_1, HR_2, HR_3, HR_4, HR_5, resmes, zrac, chargefruit not simulated by the Stics model for USM bou99t3 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/bou99t3/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n not simulated by the Stics model for USM lu96iN6 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/lu96iN6/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n not simulated by the Stics model for USM lu97iN+ =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/lu97iN+/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n, HR_1, HR_2, HR_3, HR_4, HR_5, resmes, zrac, chargefruit not simulated by the Stics model for USM bou00t1 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/bou00t1/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n, HR_1, HR_2, HR_3, HR_4, HR_5, resmes, zrac, chargefruit not simulated by the Stics model for USM bou00t3 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/bou00t3/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n, HR_1, HR_2, HR_3, HR_4, HR_5, resmes, zrac, chargefruit not simulated by the Stics model for USM bou99t3 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/bou99t3/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n not simulated by the Stics model for USM lu96iN6 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/lu96iN6/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n not simulated by the Stics model for USM lu97iN+ =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/lu97iN+/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n, HR_1, HR_2, HR_3, HR_4, HR_5, resmes, zrac, chargefruit not simulated by the Stics model for USM bou00t1 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/bou00t1/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n, HR_1, HR_2, HR_3, HR_4, HR_5, resmes, zrac, chargefruit not simulated by the Stics model for USM bou00t3 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/bou00t3/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n, HR_1, HR_2, HR_3, HR_4, HR_5, resmes, zrac, chargefruit not simulated by the Stics model for USM bou99t3 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/bou99t3/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n not simulated by the Stics model for USM lu96iN6 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/lu96iN6/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n not simulated by the Stics model for USM lu97iN+ =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/lu97iN+/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n, HR_1, HR_2, HR_3, HR_4, HR_5, resmes, zrac, chargefruit not simulated by the Stics model for USM bou00t1 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/bou00t1/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n, HR_1, HR_2, HR_3, HR_4, HR_5, resmes, zrac, chargefruit not simulated by the Stics model for USM bou00t3 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/bou00t3/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n, HR_1, HR_2, HR_3, HR_4, HR_5, resmes, zrac, chargefruit not simulated by the Stics model for USM bou99t3 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/bou99t3/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n not simulated by the Stics model for USM lu96iN6 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/lu96iN6/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n not simulated by the Stics model for USM lu97iN+ =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/lu97iN+/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n, HR_1, HR_2, HR_3, HR_4, HR_5, resmes, zrac, chargefruit not simulated by the Stics model for USM bou00t1 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/bou00t1/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n, HR_1, HR_2, HR_3, HR_4, HR_5, resmes, zrac, chargefruit not simulated by the Stics model for USM bou00t3 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/bou00t3/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n, HR_1, HR_2, HR_3, HR_4, HR_5, resmes, zrac, chargefruit not simulated by the Stics model for USM bou99t3 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/bou99t3/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n not simulated by the Stics model for USM lu96iN6 =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/lu96iN6/var.mod</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable(s) masec_n not simulated by the Stics model for USM lu97iN+ =&gt; try to add it(them) in D:/Home/sbuis/Documents/GitHub/SticsOptimizR/inst/extdata/TestCase1c/lu97iN+/var.mod</span></div><div class='output co'>#&gt; [1] "Working: 100.00%. ETA: 0.00"</div><div class='output co'>#&gt; <span class='error'>Error in init_values[, ipar]: indice hors limites</span></div><div class='input'>
-</div></span></pre>
+# See the different vignettes in [CroptimizR website](https://sticsrpacks.github.io/SticsOptimizR/)
+for more details and examples.
+# }
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -279,6 +291,8 @@ depending on the parameter estimation method used</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#see-also">See also</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>
@@ -288,7 +302,7 @@ depending on the parameter estimation method used</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Samuel Buis, Michel Giner.</p>
+  <p>Developed by Samuel Buis, Michel Giner, Patrice Lecharpentier, SticsRpacks.</p>
 </div>
 
 <div class="pkgdown">

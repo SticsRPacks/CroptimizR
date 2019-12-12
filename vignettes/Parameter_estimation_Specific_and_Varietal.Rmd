@@ -1,6 +1,14 @@
 ---
 title: "Parameter estimation with the Stics crop Model: a case with specific and varietal parameters"
-output: html_document
+output: rmarkdown::html_vignette
+author:
+- name: "Samuel Buis"
+affiliation: "INRA - EMMAH"
+date: "`r Sys.Date()`"
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 params:
   eval_rmd: FALSE
 ---

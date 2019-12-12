@@ -15,9 +15,8 @@
 #' @return A vector or data.frame containing the sampled values (nrow=n)
 #'
 #' @examples
-#' library(DiceDesign)
 #' bounds_list=list(lb=c(0,1,2),ub=c(1,2,3))
-#' sample_params(bounds_list,5)
+#' SticsOptimizR:::sample_params(bounds_list,5)
 #'
 sample_params <- function(bounds_list,n, seed=NULL) {
 
@@ -25,7 +24,7 @@ sample_params <- function(bounds_list,n, seed=NULL) {
 
   nb_params=length(bounds$lb)
 
-  out <- lhsDesign(n, dimension=nb_params,seed=seed)$design
+  out <- DiceDesign::lhsDesign(n, dimension=nb_params,seed=seed)$design
   res=sapply(1:nb_params,
              function(x) bounds$lb[x]+out[,x]*(bounds$ub[x]-bounds$lb[x]))
   res=matrix(res,nrow=n,ncol=nb_params)

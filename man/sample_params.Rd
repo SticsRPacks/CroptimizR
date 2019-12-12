@@ -29,8 +29,7 @@ hopefully soon extended to any distribution. Use randomized LHS (from
 DiceDesign package)
 }
 \examples{
-library(DiceDesign)
 bounds_list=list(lb=c(0,1,2),ub=c(1,2,3))
-sample_params(bounds_list,5)
+SticsOptimizR:::sample_params(bounds_list,5)
 
 }

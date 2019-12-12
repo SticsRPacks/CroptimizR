@@ -1,21 +1,23 @@
 ---
 title: "Elements for implementing a crop model R wrapper"
-author: 
+output: rmarkdown::html_vignette
+author:
 - name: "Patrice Lecharpentier"
   affiliation: "INRA - Agroclim"
 - name: "Samuel Buis"
-  affiliation: "INRA - Emmah"
-date: "09/10/2019"
-output:
-   html_document:
-     toc: true
-     toc_float: true
+  affiliation: "INRA - EMMAH"
+date: "`r Sys.Date()`"
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 params:
    cores_nb: 2
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(eval = FALSE)
 ```
 
 
@@ -157,7 +159,7 @@ This is usefull for `sensitivity analysis` or `optimization` processes cases, fo
 > Based on a model example used with a simple system call
 
 
-```{r, eval=FALSE}
+```{r}
 model_wrapper_options <- function(model_path,
                                   data_dir, ... ) {
   

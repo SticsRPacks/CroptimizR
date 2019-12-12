@@ -1,6 +1,17 @@
 ---
 title: "Parameter estimation with the ApsimX crop Model: a simple case"
-output: html_document
+output: rmarkdown::html_vignette
+author: 
+- name: "Patrice Lecharpentier"
+  affiliation: "INRA - Agroclim"
+- name: "Samuel Buis"
+  affiliation: "INRA - EMMAH"
+- name "Drew Holzworth"
+date: "`r Sys.Date()`"
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 params:
   eval_rmd: FALSE
   apsimx_path: !r  Sys.which("Models")

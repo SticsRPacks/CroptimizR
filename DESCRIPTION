@@ -29,6 +29,8 @@ Suggests:
     testthat,
     covr,
     knitr,
-    rmarkdown
+    rmarkdown,
+	crayon,
+	rstudioapi
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)

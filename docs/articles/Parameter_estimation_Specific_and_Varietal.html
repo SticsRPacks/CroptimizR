@@ -6,6 +6,12 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Parameter estimation with the Stics crop Model: a case with specific and varietal parameters • SticsOptimizR</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
@@ -54,7 +60,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/Designing_a%20_model_wrapper.html">Elements for implementing a crop model R wrapper</a>
+      <a href="../articles/ApsimX_parameter_estimation_simple_case.html">Parameter estimation with the ApsimX crop Model: a simple case</a>
+    </li>
+    <li>
+      <a href="../articles/Designing_a_model_wrapper.html">Elements for implementing a crop model R wrapper</a>
     </li>
     <li>
       <a href="../articles/Parameter_estimation_simple_case.html">Parameter estimation with the Stics crop Model: a simple case</a>
@@ -85,7 +94,9 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1>Parameter estimation with the Stics crop Model: a case with specific and varietal parameters</h1>
-            
+                        <h4 class="author">Samuel Buis</h4>
+                        
+            <h4 class="date">2019-12-12</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/SticsOptimizR/blob/master/vignettes/Parameter_estimation_Specific_and_Varietal.Rmd"><code>vignettes/Parameter_estimation_Specific_and_Varietal.Rmd</code></a></small>
       <div class="hidden name"><code>Parameter_estimation_Specific_and_Varietal.Rmd</code></div>
@@ -97,144 +108,129 @@
 <div id="study-case" class="section level2">
 <h2 class="hasAnchor">
 <a href="#study-case" class="anchor"></a>Study Case</h2>
-<p>A case with simultaneous estimation of one specific and one varietal parameter.</p>
-<p>Data comes from a maize crop experiment (see description in Wallach et al., 2011). In this example, 8 situations (USMs in Stics language) will be used for the parameter estimation.</p>
+<p>This document presents an example of a simultaneous estimation of one specific and one varietal parameter using the stics model, while a simpler introductory example is presented in this <a href="https://sticsrpacks.github.io/SticsOptimizR/articles/Parameter_estimation_simple_case.html">vignette</a> (you should look at it first).</p>
+<p>Data comes from a maize crop experiment (see description in Wallach et al., 2011). In this example, 8 situations (USMs in Stics language) will be used for the parameter estimation. This test case correspond to case 1c in (Wallach et al., 2011).</p>
 <p>The parameter estimation is performed using the Nelder-Meade simplex method implemented in the nloptr package.</p>
-<p>To regulate the number of simulations (and thus the duration of execution), reduce the number of repetition of the minimization and/or the maximum number of evaluation (see section “Set options for the parameter estimation method”).</p>
-<p>The execution of this Rmarkdown document requires the path to the Stics model. By default it uses</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/file.path">file.path</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/getwd">getwd</a></span>(),<span class="st">"JavaSTICS-1.41-stics-9.0/bin/stics_modulo"</span>)</span></code></pre></div>
-<p>(see stics_path param at the beginning of the .Rmd). If you want to change the value of this parameter you may use Knit-&gt;“Knit with parameters”.</p>
 </div>
 <div id="initialisation-step" class="section level2">
 <h2 class="hasAnchor">
 <a href="#initialisation-step" class="anchor"></a>Initialisation step</h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>knitr<span class="op">::</span>opts_chunk<span class="op">$</span><span class="kw">set</span>(<span class="dt">echo =</span> <span class="ot">TRUE</span>)</span>
-<span id="cb2-2"><a href="#cb2-2"></a></span>
-<span id="cb2-3"><a href="#cb2-3"></a><span class="co"># Install and load the needed libraries</span></span>
-<span id="cb2-4"><a href="#cb2-4"></a><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">require</a></span>(<span class="st">"SticsRFiles"</span>)){</span>
-<span id="cb2-5"><a href="#cb2-5"></a>  devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/devtools/topics/remote-reexports">install_github</a></span>(<span class="st">"SticsRPacks/SticsRFiles"</span>)</span>
-<span id="cb2-6"><a href="#cb2-6"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"SticsRFiles"</span>)</span>
-<span id="cb2-7"><a href="#cb2-7"></a>}</span>
-<span id="cb2-8"><a href="#cb2-8"></a><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">require</a></span>(<span class="st">"SticsOnR"</span>)){</span>
-<span id="cb2-9"><a href="#cb2-9"></a>  devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/devtools/topics/remote-reexports">install_github</a></span>(<span class="st">"SticsRPacks/SticsOnR"</span>)</span>
-<span id="cb2-10"><a href="#cb2-10"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"SticsOnR"</span>)</span>
-<span id="cb2-11"><a href="#cb2-11"></a>}</span>
-<span id="cb2-12"><a href="#cb2-12"></a><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">require</a></span>(<span class="st">"SticsOptimizR"</span>)){</span>
-<span id="cb2-13"><a href="#cb2-13"></a>  devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/devtools/topics/remote-reexports">install_github</a></span>(<span class="st">"SticsRPacks/SticsOptimizR"</span>)</span>
-<span id="cb2-14"><a href="#cb2-14"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"SticsOptimizR"</span>)</span>
-<span id="cb2-15"><a href="#cb2-15"></a>}</span>
-<span id="cb2-16"><a href="#cb2-16"></a><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">require</a></span>(<span class="st">"dplyr"</span>)){</span>
-<span id="cb2-17"><a href="#cb2-17"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/install.packages">install.packages</a></span>(<span class="st">"dplyr"</span>,<span class="dt">repos=</span><span class="st">"http://cran.irsn.fr"</span>)</span>
-<span id="cb2-18"><a href="#cb2-18"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"dplyr"</span>)</span>
-<span id="cb2-19"><a href="#cb2-19"></a>}</span>
-<span id="cb2-20"><a href="#cb2-20"></a><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">require</a></span>(<span class="st">"nloptr"</span>)){</span>
-<span id="cb2-21"><a href="#cb2-21"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/install.packages">install.packages</a></span>(<span class="st">"nloptr"</span>,<span class="dt">repos=</span><span class="st">"http://cran.irsn.fr"</span>)</span>
-<span id="cb2-22"><a href="#cb2-22"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"nloptr"</span>)</span>
-<span id="cb2-23"><a href="#cb2-23"></a>}</span>
-<span id="cb2-24"><a href="#cb2-24"></a><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">require</a></span>(<span class="st">"DiceDesign"</span>)){</span>
-<span id="cb2-25"><a href="#cb2-25"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/install.packages">install.packages</a></span>(<span class="st">"DiceDesign"</span>,<span class="dt">repos=</span><span class="st">"http://cran.irsn.fr"</span>)</span>
-<span id="cb2-26"><a href="#cb2-26"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"DiceDesign"</span>)</span>
-<span id="cb2-27"><a href="#cb2-27"></a>}</span>
-<span id="cb2-28"><a href="#cb2-28"></a><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">require</a></span>(<span class="st">"doParallel"</span>)){</span>
-<span id="cb2-29"><a href="#cb2-29"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/install.packages">install.packages</a></span>(<span class="st">"doParallel"</span>,<span class="dt">repos=</span><span class="st">"http://cran.irsn.fr"</span>)</span>
-<span id="cb2-30"><a href="#cb2-30"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"doParallel"</span>)</span>
-<span id="cb2-31"><a href="#cb2-31"></a>}</span>
-<span id="cb2-32"><a href="#cb2-32"></a></span>
-<span id="cb2-33"><a href="#cb2-33"></a><span class="co"># Define the paths to the needed tools and data</span></span>
-<span id="cb2-34"><a href="#cb2-34"></a>data_dir=<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/file.path">file.path</a></span>(<span class="st">"extdata"</span>,<span class="st">"TestCase1c"</span>), <span class="dt">package =</span> <span class="st">"SticsOptimizR"</span>) </span></code></pre></div>
+<p>This part is not shown here, it is the same as this of the <a href="https://sticsrpacks.github.io/SticsOptimizR/articles/Parameter_estimation_simple_case.html">introductory example</a>.</p>
 </div>
 <div id="read-and-select-the-corresponding-observations" class="section level2">
 <h2 class="hasAnchor">
 <a href="#read-and-select-the-corresponding-observations" class="anchor"></a>Read and select the corresponding observations</h2>
-<p>In this example, observations for variables and dates contained in the observations files will all be used in the parameter estimation.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># Set the model options (see '? stics_wrapper_options' for details)</span></span>
-<span id="cb3-2"><a href="#cb3-2"></a>model_options=<span class="kw">stics_wrapper_options</span>(params<span class="op">$</span>stics_path,data_dir) </span>
-<span id="cb3-3"><a href="#cb3-3"></a></span>
-<span id="cb3-4"><a href="#cb3-4"></a><span class="co"># Read observation files</span></span>
-<span id="cb3-5"><a href="#cb3-5"></a>obs_list=<span class="kw">read_obs_to_list</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/file.path">file.path</a></span>(model_options<span class="op">$</span>data_dir,<span class="st">"Orig Data"</span>))</span></code></pre></div>
+<p>In this example, observed LAI are used.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># Read observation files</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a>obs_list=<span class="kw">read_obs</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/file.path">file.path</a></span>(data_dir,<span class="st">"XmlFiles"</span>))</span>
+<span id="cb1-3"><a href="#cb1-3"></a>obs_list=<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/lapply">lapply</a></span>(obs_list,<span class="st">"["</span>,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"Date"</span>,<span class="st">"lai_n"</span>))</span></code></pre></div>
 </div>
 <div id="set-prior-information-on-the-parameters-to-estimate" class="section level2">
 <h2 class="hasAnchor">
 <a href="#set-prior-information-on-the-parameters-to-estimate" class="anchor"></a>Set prior information on the parameters to estimate</h2>
-<p>prior_information determines the list of parameters that will be estimated in the parameter estimation process and associated prior information (only uniform distributions for the moment, others will come soon). It allows also to handle specific / varietal parameters here (dlaimax vs durvieF): dlaimax is defined to take the same value for all situations, whereas durvieF is defined in such a way that it may take one value for situations c(“bo96iN+”, “lu96iN+”, “lu96iN6”, “lu97iN+”), that correspond to a given variety, and another for situations c(“bou99t3”, “bou00t3”, “bou99t1”, “bou00t1”), that correspond to another variety, sit_list being a list of size 2. Please note that bounds may take different values for the different groups of situations (lb and ub are vectors of size 2 for durvieF).</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>prior_information=<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>()</span>
-<span id="cb4-2"><a href="#cb4-2"></a>prior_information<span class="op">$</span>dlaimax=<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">sit_list=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"bou99t3"</span>, <span class="st">"bou00t3"</span>, <span class="st">"bou99t1"</span>, <span class="st">"bou00t1"</span>, <span class="st">"bo96iN+"</span>, <span class="st">"lu96iN+"</span>, <span class="st">"lu96iN6"</span>, <span class="st">"lu97iN+"</span>)),<span class="dt">lb=</span><span class="fl">0.0005</span>,<span class="dt">ub=</span><span class="fl">0.0025</span>)</span>
-<span id="cb4-3"><a href="#cb4-3"></a>prior_information<span class="op">$</span>durvieF=<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">sit_list=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"bo96iN+"</span>, <span class="st">"lu96iN+"</span>, <span class="st">"lu96iN6"</span>, <span class="st">"lu97iN+"</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"bou99t3"</span>, <span class="st">"bou00t3"</span>, <span class="st">"bou99t1"</span>, <span class="st">"bou00t1"</span>)),<span class="dt">lb=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">50</span>,<span class="dv">50</span>),<span class="dt">ub=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">400</span>,<span class="dv">400</span>))</span></code></pre></div>
+<p><strong>Prior information allows handling specific / varietal parameters</strong> (dlaimax vs durvieF parameters in this example): dlaimax is defined to take the same value for all situations, whereas durvieF is defined in such a way that it may take one value for situations c(“bo96iN+”, “lu96iN+”, “lu96iN6”, “lu97iN+”), that correspond to a given variety, and another for situations c(“bou99t3”, “bou00t3”, “bou99t1”, “bou00t1”), that correspond to another variety, sit_list being in this case a list of size 2 (see code below). Please note that bounds can take different values for the different groups of situations (lb and ub are vectors of size 2 for durvieF).</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>prior_information=<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>()</span>
+<span id="cb2-2"><a href="#cb2-2"></a>prior_information<span class="op">$</span>dlaimax=<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">sit_list=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"bou99t3"</span>, <span class="st">"bou00t3"</span>, <span class="st">"bou99t1"</span>, <span class="st">"bou00t1"</span>, <span class="st">"bo96iN+"</span>, <span class="st">"lu96iN+"</span>, <span class="st">"lu96iN6"</span>, <span class="st">"lu97iN+"</span>)),<span class="dt">lb=</span><span class="fl">0.0005</span>,<span class="dt">ub=</span><span class="fl">0.0025</span>)</span>
+<span id="cb2-3"><a href="#cb2-3"></a>prior_information<span class="op">$</span>durvieF=<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">sit_list=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"bo96iN+"</span>, <span class="st">"lu96iN+"</span>, <span class="st">"lu96iN6"</span>, <span class="st">"lu97iN+"</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"bou99t3"</span>, <span class="st">"bou00t3"</span>, <span class="st">"bou99t1"</span>, <span class="st">"bou00t1"</span>)),<span class="dt">lb=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">50</span>,<span class="dv">100</span>),<span class="dt">ub=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">400</span>,<span class="dv">450</span>))</span></code></pre></div>
 </div>
 <div id="set-options-for-the-parameter-estimation-method" class="section level2">
 <h2 class="hasAnchor">
 <a href="#set-options-for-the-parameter-estimation-method" class="anchor"></a>Set options for the parameter estimation method</h2>
-<p>optim_options should contain the options of the parameter estimation method. Here we defined a few options for the simplex method of the nloptr package (defautl method in main_optim). The full set of options for the simplex method can be found in the <a href="https://cran.r-project.org/web/packages/nloptr/vignettes/nloptr.pdf">vignette of nloptr package</a>.</p>
-<p>The number of repetitions is advised to be set to at least 5, while 10 is a reasonable maximum value. maxeval should be used to stop the minimization only if results have to be produced within a given duration, otherwise set it to a high value so that the minimization stops when the criterion based on xtol_rel is satisfied.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>optim_options=<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>() </span>
-<span id="cb5-2"><a href="#cb5-2"></a>optim_options<span class="op">$</span>nb_rep &lt;-<span class="st"> </span><span class="dv">10</span> <span class="co"># Number of repetitions of the minimization </span></span>
-<span id="cb5-3"><a href="#cb5-3"></a>                          <span class="co"># (each time starting with different initial</span></span>
-<span id="cb5-4"><a href="#cb5-4"></a>                          <span class="co"># values for the estimated parameters) </span></span>
-<span id="cb5-5"><a href="#cb5-5"></a>optim_options<span class="op">$</span>maxeval &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="co"># Maximum number of evaluations of the </span></span>
-<span id="cb5-6"><a href="#cb5-6"></a>                            <span class="co"># minimized criteria </span></span>
-<span id="cb5-7"><a href="#cb5-7"></a>optim_options<span class="op">$</span>xtol_rel &lt;-<span class="st"> </span><span class="fl">1e-04</span> <span class="co"># Tolerance criterion between two iterations</span></span>
-<span id="cb5-8"><a href="#cb5-8"></a>                                <span class="co"># (threshold for the relative difference of</span></span>
-<span id="cb5-9"><a href="#cb5-9"></a>                                <span class="co"># parameter values between the 2 previous </span></span>
-<span id="cb5-10"><a href="#cb5-10"></a>                                <span class="co"># iterations)</span></span>
-<span id="cb5-11"><a href="#cb5-11"></a>optim_options<span class="op">$</span>path_results &lt;-<span class="st"> </span>model_options<span class="op">$</span>data_dir <span class="co"># path where to store </span></span>
-<span id="cb5-12"><a href="#cb5-12"></a>                                                     <span class="co"># results graphs</span></span>
-<span id="cb5-13"><a href="#cb5-13"></a>optim_options<span class="op">$</span>ranseed &lt;-<span class="st"> </span><span class="dv">1234</span> <span class="co"># random seed  </span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>optim_options=<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>() </span>
+<span id="cb3-2"><a href="#cb3-2"></a>optim_options<span class="op">$</span>nb_rep &lt;-<span class="st"> </span><span class="dv">7</span> <span class="co"># Number of repetitions of the minimization </span></span>
+<span id="cb3-3"><a href="#cb3-3"></a>                          <span class="co"># (each time starting with different initial</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a>                          <span class="co"># values for the estimated parameters) </span></span>
+<span id="cb3-5"><a href="#cb3-5"></a>optim_options<span class="op">$</span>maxeval &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="co"># Maximum number of evaluations of the </span></span>
+<span id="cb3-6"><a href="#cb3-6"></a>                            <span class="co"># minimized criteria </span></span>
+<span id="cb3-7"><a href="#cb3-7"></a>optim_options<span class="op">$</span>xtol_rel &lt;-<span class="st"> </span><span class="fl">1e-04</span> <span class="co"># Tolerance criterion between two iterations</span></span>
+<span id="cb3-8"><a href="#cb3-8"></a>                                <span class="co"># (threshold for the relative difference of</span></span>
+<span id="cb3-9"><a href="#cb3-9"></a>                                <span class="co"># parameter values between the 2 previous </span></span>
+<span id="cb3-10"><a href="#cb3-10"></a>                                <span class="co"># iterations)</span></span>
+<span id="cb3-11"><a href="#cb3-11"></a>optim_options<span class="op">$</span>path_results &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/getwd">getwd</a></span>() <span class="co"># path where to store the results (graph and Rdata)</span></span>
+<span id="cb3-12"><a href="#cb3-12"></a>optim_options<span class="op">$</span>ranseed &lt;-<span class="st"> </span><span class="dv">1234</span> <span class="co"># random seed  </span></span></code></pre></div>
 </div>
 <div id="run-the-optimization" class="section level2">
 <h2 class="hasAnchor">
 <a href="#run-the-optimization" class="anchor"></a>Run the optimization</h2>
-<p>The Nelder-Meade simplex is the default method =&gt; no need to set the optim_method argument. For the moment it is the only method interfaced (others will come soonly). Same for crit_function: a value is set by default (concentrated_wss, see wallach et al., 2011). For the moment it is the only criterion proposed (others will come soonly). The user can implement its own criterion (see inputs and outputs required in the concentrated_wss function).</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>param_est_values=<span class="kw"><a href="../reference/main_optim.html">main_optim</a></span>(<span class="dt">obs_list=</span>obs_list,</span>
-<span id="cb6-2"><a href="#cb6-2"></a>                            <span class="dt">model_function=</span>stics_wrapper,</span>
-<span id="cb6-3"><a href="#cb6-3"></a>                            <span class="dt">model_options=</span>model_options,</span>
-<span id="cb6-4"><a href="#cb6-4"></a>                            <span class="dt">optim_options=</span>optim_options,</span>
-<span id="cb6-5"><a href="#cb6-5"></a>                            <span class="dt">prior_information=</span>prior_information)</span></code></pre></div>
-<pre><code>## [1] "Working: 10.00%. ETA: 164.78"
-## [1] "Working: 20.00%. ETA: 119.63"
-## [1] "Working: 30.00%. ETA: 99.27"
-## [1] "Working: 40.00%. ETA: 81.82"
-## [1] "Working: 50.00%. ETA: 1.14"
-## [1] "Working: 60.00%. ETA: 0.90"
-## [1] "Working: 70.00%. ETA: 0.68"
-## [1] "Working: 80.00%. ETA: 0.45"
-## [1] "Working: 90.00%. ETA: 0.23"
-## [1] "Working: 100.00%. ETA: 0.00"</code></pre>
-<pre><code>## [1] "Estimated value for dlaimax :  0.00106741475850639"
-## [1] "Estimated value for durvieF :  391.070248404957"
-## [1] "Estimated value for durvieF :  214.674867188563"
-## [1] "Minimum value of the criterion : 1.68619365090367e+35"</code></pre>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(<span class="st">"Results of the optimization were saved in"</span>,</span>
-<span id="cb9-2"><a href="#cb9-2"></a>            optim_options<span class="op">$</span>path_results,<span class="st">" folder."</span>))</span></code></pre></div>
-<pre><code>## [1] "Results of the optimization were saved in D:/Home/sbuis/Documents/R/win-library/3.5/SticsOptimizR/extdata/TestCase1c  folder."</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co"># Set the model options (see '? stics_wrapper_options' for details)</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a>model_options=<span class="kw">stics_wrapper_options</span>(stics_path,data_dir, <span class="dt">parallel=</span><span class="ot">TRUE</span>) </span>
+<span id="cb4-3"><a href="#cb4-3"></a></span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="co"># Run the optimization</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a>optim_results=<span class="kw"><a href="../reference/main_optim.html">main_optim</a></span>(<span class="dt">obs_list=</span>obs_list,</span>
+<span id="cb4-6"><a href="#cb4-6"></a>                            <span class="dt">model_function=</span>stics_wrapper,</span>
+<span id="cb4-7"><a href="#cb4-7"></a>                            <span class="dt">model_options=</span>model_options,</span>
+<span id="cb4-8"><a href="#cb4-8"></a>                            <span class="dt">optim_options=</span>optim_options,</span>
+<span id="cb4-9"><a href="#cb4-9"></a>                            <span class="dt">prior_information=</span>prior_information)</span></code></pre></div>
 <p>The results printed in output on the R console are the following:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="co">## [1] "Estimated value for dlaimax :  0.00106741475850639"</span></span>
-<span id="cb11-2"><a href="#cb11-2"></a><span class="co">## [1] "Estimated value for durvieF :  391.070248404957"</span></span>
-<span id="cb11-3"><a href="#cb11-3"></a><span class="co">## [1] "Estimated value for durvieF :  214.674867188563"</span></span>
-<span id="cb11-4"><a href="#cb11-4"></a><span class="co">## [1] "Minimum value of the criterion : 1.68619365090367e+35"</span></span></code></pre></div>
-<p>Complementary graphs and data are stored in the optim_options$path_results folder. Among them, the EstimatedVSinit.pdf file containing the following figures:</p>
-<p><img src="ResultsSpecificVarietal/estimInit_dlaimax.PNG" width="45%"><img src="ResultsSpecificVarietal/estimInit_durvieF_var1.PNG" width="45%"><img src="ResultsSpecificVarietal/estimInit_durvieF_var2.PNG" width="45%"></p>
-<p>Figure 1: plots of estimated vs initial values of parameters dlaimax and durvieF (estimated for both varieties). Numbers represent the repetition number of the minimization. The number in red, 7 in this case, is the minimization that lead to the minimal value of the criterion among all repetitions.</p>
-<p>The optim_options$path_results folder also contains the optim_results.Rdata file that store the nlo variable, a list containing the results of the minimization for each repetition. If we print it for repetition 7 …</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>nlo[[<span class="dv">7</span>]]</span></code></pre></div>
-<p>… this returns:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="co">## Call:</span></span>
-<span id="cb13-2"><a href="#cb13-2"></a><span class="co">## nloptr(x0 = init_values[irep, ], eval_f = main_crit, lb = bounds$lb, </span></span>
-<span id="cb13-3"><a href="#cb13-3"></a><span class="co">##     ub = bounds$ub, opts = list(algorithm = "NLOPT_LN_NELDERMEAD", </span></span>
-<span id="cb13-4"><a href="#cb13-4"></a><span class="co">##         xtol_rel = xtol_rel, maxeval = maxeval, ranseed = ranseed), </span></span>
-<span id="cb13-5"><a href="#cb13-5"></a><span class="co">##     crit_options = crit_options_loc)</span></span>
-<span id="cb13-6"><a href="#cb13-6"></a><span class="co">## </span></span>
-<span id="cb13-7"><a href="#cb13-7"></a><span class="co">## </span></span>
-<span id="cb13-8"><a href="#cb13-8"></a><span class="co">## Minimization using NLopt version 2.4.2 </span></span>
-<span id="cb13-9"><a href="#cb13-9"></a><span class="co">## </span></span>
-<span id="cb13-10"><a href="#cb13-10"></a><span class="co">## NLopt solver status: 4 ( NLOPT_XTOL_REACHED: Optimization stopped because </span></span>
-<span id="cb13-11"><a href="#cb13-11"></a><span class="co">## xtol_rel or xtol_abs (above) was reached. )</span></span>
-<span id="cb13-12"><a href="#cb13-12"></a><span class="co">## </span></span>
-<span id="cb13-13"><a href="#cb13-13"></a><span class="co">## Number of Iterations....: 98 </span></span>
-<span id="cb13-14"><a href="#cb13-14"></a><span class="co">## Termination conditions:  xtol_rel: 1e-04 maxeval: 1000 </span></span>
-<span id="cb13-15"><a href="#cb13-15"></a><span class="co">## Number of inequality constraints:  0 </span></span>
-<span id="cb13-16"><a href="#cb13-16"></a><span class="co">## Number of equality constraints:    0 </span></span>
-<span id="cb13-17"><a href="#cb13-17"></a><span class="co">## Optimal value of objective function:  1.68619365090367e+35 </span></span>
-<span id="cb13-18"><a href="#cb13-18"></a><span class="co">## Optimal value of controls: 0.001067415 391.0702 214.6749</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co">## [1] "Estimated value for dlaimax :  0.001111705"</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="co">## [1] "Estimated value for durvieF1 :  359.7516"</span></span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="co">## [1] "Estimated value for durvieF2 :  384.4479"</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="co">## [1] "Minimum value of the criterion : 7.98187472584448"</span></span></code></pre></div>
+<p>Complementary graphs and data are stored in the optim_options$path_results folder. Among them, the EstimatedVSinit.pdf file contains the following figures:</p>
+<p><img src="ResultsSpecificVarietal/estimInit_dlaimax.PNG" width="50%"><img src="ResultsSpecificVarietal/estimInit_durvieF_var1.PNG" width="50%"><img src="ResultsSpecificVarietal/estimInit_durvieF_var2.PNG" width="50%"></p>
+<p>Figure 1: plots of estimated vs initial values of parameters dlaimax and durvieF (estimated for both varieties).</p>
+</div>
+<div id="compare-simulations-and-observations-before-and-after-optimization" class="section level2">
+<h2 class="hasAnchor">
+<a href="#compare-simulations-and-observations-before-and-after-optimization" class="anchor"></a>Compare simulations and observations before and after optimization</h2>
+<p>A couple of plots to check if the calibration reduced the difference between simulations and observations.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># Run the model without and with forcing the optimized values of the parameters</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a>sim_before_optim=<span class="kw">stics_wrapper</span>(<span class="dt">model_options=</span>model_options)</span>
+<span id="cb6-3"><a href="#cb6-3"></a></span>
+<span id="cb6-4"><a href="#cb6-4"></a>sim_after_optim=<span class="kw">stics_wrapper</span>(<span class="dt">param_values=</span>optim_results<span class="op">$</span>final_values,</span>
+<span id="cb6-5"><a href="#cb6-5"></a>                              <span class="dt">model_options=</span>model_options)</span>
+<span id="cb6-6"><a href="#cb6-6"></a>  </span>
+<span id="cb6-7"><a href="#cb6-7"></a><span class="co"># transform into data.frame and intersect for using ggplot2</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a>sim_before_df =<span class="st"> </span><span class="kw">bind_rows</span>(sim_before_optim<span class="op">$</span>sim_list,<span class="dt">.id =</span> <span class="st">'Situation'</span>)</span>
+<span id="cb6-9"><a href="#cb6-9"></a>sim_after_df =<span class="st"> </span><span class="kw">bind_rows</span>(sim_after_optim<span class="op">$</span>sim_list,<span class="dt">.id =</span> <span class="st">'Situation'</span>)</span>
+<span id="cb6-10"><a href="#cb6-10"></a>obs_df =<span class="st"> </span><span class="kw">bind_rows</span>(obs_list,<span class="dt">.id =</span> <span class="st">'Situation'</span>)</span>
+<span id="cb6-11"><a href="#cb6-11"></a>sim_before_df =<span class="st"> </span><span class="kw">rename</span>(sim_before_df,<span class="dt">LAI_sim=</span>lai_n)</span>
+<span id="cb6-12"><a href="#cb6-12"></a>sim_after_df =<span class="st"> </span><span class="kw">rename</span>(sim_after_df,<span class="dt">LAI_sim=</span>lai_n)</span>
+<span id="cb6-13"><a href="#cb6-13"></a>obs_df =<span class="st"> </span><span class="kw">rename</span>(obs_df,<span class="dt">LAI_obs=</span>lai_n)</span>
+<span id="cb6-14"><a href="#cb6-14"></a>sim_before_obs_df =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/merge">merge.data.frame</a></span>(sim_before_df,obs_df,<span class="dt">by =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">'Situation'</span>,<span class="st">'Date'</span>), <span class="dt">all.x =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb6-15"><a href="#cb6-15"></a>sim_after_obs_df =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/merge">merge.data.frame</a></span>(sim_after_df,obs_df,<span class="dt">by =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">'Situation'</span>,<span class="st">'Date'</span>), <span class="dt">all.x =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb6-16"><a href="#cb6-16"></a></span>
+<span id="cb6-17"><a href="#cb6-17"></a><span class="co"># Compute RMSE</span></span>
+<span id="cb6-18"><a href="#cb6-18"></a>rmse_before =<span class="st"> </span><span class="kw">rmse</span>(sim_before_obs_df<span class="op">$</span>LAI_obs,sim_before_obs_df<span class="op">$</span>LAI_sim)</span>
+<span id="cb6-19"><a href="#cb6-19"></a>rmse_after =<span class="st"> </span><span class="kw">rmse</span>(sim_after_obs_df<span class="op">$</span>LAI_obs,sim_after_obs_df<span class="op">$</span>LAI_sim)</span>
+<span id="cb6-20"><a href="#cb6-20"></a></span>
+<span id="cb6-21"><a href="#cb6-21"></a><span class="co"># Plot the graphs</span></span>
+<span id="cb6-22"><a href="#cb6-22"></a>max_LAI_sim=<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Extremes">max</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(sim_before_obs_df<span class="op">$</span>LAI_sim,sim_after_obs_df<span class="op">$</span>LAI_sim,<span class="dt">na.rm=</span><span class="ot">TRUE</span>),<span class="dt">na.rm=</span><span class="ot">TRUE</span>)</span>
+<span id="cb6-23"><a href="#cb6-23"></a>max_LAI_obs=<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Extremes">max</a></span>(sim_before_obs_df<span class="op">$</span>LAI_obs,<span class="dt">na.rm=</span><span class="ot">TRUE</span>)</span>
+<span id="cb6-24"><a href="#cb6-24"></a></span>
+<span id="cb6-25"><a href="#cb6-25"></a>p1=<span class="kw">ggplot</span>(sim_before_obs_df, <span class="kw">aes</span>(<span class="dt">x =</span> LAI_obs, <span class="dt">y =</span> LAI_sim)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb6-26"><a href="#cb6-26"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">shape=</span><span class="dv">21</span>, <span class="dt">size =</span> <span class="dv">3</span>, <span class="dt">color =</span> <span class="st">'blue'</span>,</span>
+<span id="cb6-27"><a href="#cb6-27"></a>             <span class="dt">fill=</span><span class="st">"white"</span>,<span class="dt">alpha =</span> <span class="fl">0.8</span>,<span class="dt">stroke =</span> <span class="dv">1</span>) <span class="op">+</span></span>
+<span id="cb6-28"><a href="#cb6-28"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">16</span>)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb6-29"><a href="#cb6-29"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">aspect.ratio=</span><span class="dv">1</span>) <span class="op">+</span></span>
+<span id="cb6-30"><a href="#cb6-30"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">"Observed LAI"</span>, <span class="dt">y =</span> <span class="st">"Simulated LAI"</span>) <span class="op">+</span></span>
+<span id="cb6-31"><a href="#cb6-31"></a><span class="st">  </span><span class="kw">geom_abline</span>(<span class="dt">intercept =</span> <span class="dv">0</span>, <span class="dt">slope =</span> <span class="dv">1</span>, <span class="dt">size =</span> <span class="fl">0.5</span>, <span class="dt">color =</span> <span class="st">"blue"</span>) <span class="op">+</span></span>
+<span id="cb6-32"><a href="#cb6-32"></a><span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot.window">xlim</a></span>(<span class="dv">0</span>,max_LAI_obs) <span class="op">+</span><span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot.window">ylim</a></span>(<span class="dv">0</span>,max_LAI_sim) <span class="op">+</span></span>
+<span id="cb6-33"><a href="#cb6-33"></a><span class="st">  </span><span class="kw">ggtitle</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(<span class="st">"Before optimization </span><span class="ch">\n</span><span class="st"> RMSE="</span>,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Round">round</a></span>(rmse_before,<span class="dv">2</span>))) <span class="op">+</span></span>
+<span id="cb6-34"><a href="#cb6-34"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">plot.title =</span> <span class="kw">element_text</span>(<span class="dt">hjust =</span> <span class="fl">0.5</span>))</span>
+<span id="cb6-35"><a href="#cb6-35"></a></span>
+<span id="cb6-36"><a href="#cb6-36"></a>p2=<span class="kw">ggplot</span>(sim_after_obs_df, <span class="kw">aes</span>(<span class="dt">x =</span> LAI_obs, <span class="dt">y =</span> LAI_sim)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb6-37"><a href="#cb6-37"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">shape=</span><span class="dv">21</span>, <span class="dt">size =</span> <span class="dv">3</span>, <span class="dt">color =</span> <span class="st">'blue'</span>,</span>
+<span id="cb6-38"><a href="#cb6-38"></a>             <span class="dt">fill=</span><span class="st">"white"</span>,<span class="dt">alpha =</span> <span class="fl">0.8</span>,<span class="dt">stroke =</span> <span class="dv">1</span>) <span class="op">+</span></span>
+<span id="cb6-39"><a href="#cb6-39"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">text =</span> <span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">16</span>)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb6-40"><a href="#cb6-40"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">aspect.ratio=</span><span class="dv">1</span>) <span class="op">+</span></span>
+<span id="cb6-41"><a href="#cb6-41"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">"Observed LAI"</span>, <span class="dt">y =</span> <span class="st">"Simulated LAI"</span>) <span class="op">+</span></span>
+<span id="cb6-42"><a href="#cb6-42"></a><span class="st">  </span><span class="kw">geom_abline</span>(<span class="dt">intercept =</span> <span class="dv">0</span>, <span class="dt">slope =</span> <span class="dv">1</span>, <span class="dt">size =</span> <span class="fl">0.5</span>, <span class="dt">color =</span> <span class="st">"blue"</span>) <span class="op">+</span></span>
+<span id="cb6-43"><a href="#cb6-43"></a><span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot.window">xlim</a></span>(<span class="dv">0</span>,max_LAI_obs) <span class="op">+</span><span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot.window">ylim</a></span>(<span class="dv">0</span>,max_LAI_sim) <span class="op">+</span></span>
+<span id="cb6-44"><a href="#cb6-44"></a><span class="st">  </span><span class="kw">ggtitle</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(<span class="st">"After optimization </span><span class="ch">\n</span><span class="st"> RMSE="</span>,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Round">round</a></span>(rmse_after,<span class="dv">2</span>))) <span class="op">+</span></span>
+<span id="cb6-45"><a href="#cb6-45"></a><span class="st">  </span><span class="kw">theme</span>(<span class="dt">plot.title =</span> <span class="kw">element_text</span>(<span class="dt">hjust =</span> <span class="fl">0.5</span>))</span>
+<span id="cb6-46"><a href="#cb6-46"></a></span>
+<span id="cb6-47"><a href="#cb6-47"></a>p=<span class="kw">grid.arrange</span>(<span class="dt">grobs=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(p1,p2), <span class="dt">nrow=</span><span class="dv">1</span>, <span class="dt">ncol=</span><span class="dv">2</span>)</span>
+<span id="cb6-48"><a href="#cb6-48"></a></span>
+<span id="cb6-49"><a href="#cb6-49"></a><span class="co"># Save the graph</span></span>
+<span id="cb6-50"><a href="#cb6-50"></a><span class="kw">ggsave</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/file.path">file.path</a></span>(optim_options<span class="op">$</span>path_results,</span>
+<span id="cb6-51"><a href="#cb6-51"></a>                 <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(<span class="st">"sim_obs"</span>,<span class="st">".png"</span>)), <span class="dt">plot=</span>p)</span></code></pre></div>
+<p>This gives:</p>
+<div class="figure">
+<img src="ResultsSpecificVarietal/sim_obs.png" alt="Figure 2: plots of simulated vs observed LAI before and after optimization. The gap between simulated and observed values has been drastically reduced: the minimizer has done its job!" width="80%"><p class="caption">
+Figure 2: plots of simulated vs observed LAI before and after optimization. The gap between simulated and observed values has been drastically reduced: the minimizer has done its job!
+</p>
+</div>
 </div>
   </div>
 
@@ -249,6 +245,7 @@
       <li><a href="#set-prior-information-on-the-parameters-to-estimate">Set prior information on the parameters to estimate</a></li>
       <li><a href="#set-options-for-the-parameter-estimation-method">Set options for the parameter estimation method</a></li>
       <li><a href="#run-the-optimization">Run the optimization</a></li>
+      <li><a href="#compare-simulations-and-observations-before-and-after-optimization">Compare simulations and observations before and after optimization</a></li>
       </ul>
 </div>
       </div>
@@ -257,7 +254,7 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Samuel Buis, Michel Giner.</p>
+  <p>Developed by Samuel Buis, Michel Giner, Patrice Lecharpentier, SticsRpacks.</p>
 </div>
 
 <div class="pkgdown">

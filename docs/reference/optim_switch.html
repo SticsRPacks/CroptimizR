@@ -8,6 +8,13 @@
 
 <title>Call the required parameter estimation method — optim_switch • SticsOptimizR</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
@@ -88,7 +95,13 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/Designing_a _model_wrapper.html">Elements for implementing a crop model R wrapper</a>
+      <a href="../articles/ApsimX_parameter_estimation_simple_case.html">Parameter estimation with the ApsimX crop Model: a simple case</a>
+    </li>
+    <li>
+      <a href="../articles/Designing_a_model_wrapper.html">Elements for implementing a crop model R wrapper</a>
+    </li>
+    <li>
+      <a href="../articles/Designing_a_model_wrapper_SAM.html">Elements for implementing a crop model R wrapper</a>
     </li>
     <li>
       <a href="../articles/Parameter_estimation_simple_case.html">Parameter estimation with the Stics crop Model: a simple case</a>
@@ -131,7 +144,7 @@
     </div>
 
     <pre class="usage"><span class='fu'>optim_switch</span>(<span class='no'>param_names</span>, <span class='no'>obs_list</span>, <span class='no'>crit_function</span>, <span class='no'>model_function</span>,
-  <span class='kw'>model_options</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>optim_method</span> <span class='kw'>=</span> <span class='st'>"simplex"</span>,
+  <span class='kw'>model_options</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>optim_method</span> <span class='kw'>=</span> <span class='st'>"nloptr.simplex"</span>,
   <span class='kw'>optim_options</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>prior_information</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -176,17 +189,36 @@ differences on parameters values between 2 iterations (optional, default=1e-5)
       <th>prior_information</th>
       <td><p>Prior information on the parameters to estimate.
 For the moment only uniform distribution are allowed.
-Either a list containing (named) vectors of upper and lower
-bounds (<code>ub</code> and <code>lb</code>), or a named list containing for each
-parameter the list of situations per group (<code>sit_list</code>)
-and the vector of upper and lower bounds (one value per group) (<code>ub</code> and <code>lb</code>)</p></td>
+Either
+a list containing:</p><ul>
+<li><p>(named) vectors of upper and lower bounds (<code>ub</code> and <code>lb</code>),</p></li>
+<li><p><code>init_values</code>, A (column named) vector or data.frame containing initial
+values to test for the parameters (optional, if not provided (or if less values
+than number of repetitions of the minimization are provided), the (or part
+of the) initial values will be randomly generated using LHS sampling within
+parameter bounds.
+or
+a named list containing for each parameter the list of situations per group
+(<code>sit_list</code>), the vector of upper and lower bounds (one value per group)
+(<code>ub</code> and <code>lb</code>) and the list of initial values per group
+<code>init_values</code> (column named vector or data.frame per group).</p></li>
+</ul></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>The vector of values for optimized parameters + prints and graphs,
-depending on the parameter estimation method used</p>
+    <p>prints, graphs and a list containing the results of the parameter estimation.
+which content depends on the method used.
+e.g. for Nelder meade simplex in nloptr, this list contains
+<code>final_values</code>, the vector of estimated values for optimized parameters
+for the repetition that lead to the lowest value of the criterion
+<code>init_values</code>, the vector of initial values for optimized parameters
+<code>est_values</code>, the vector of estimated values for optimized parameters
+for all repetitions
+<code>ind_min_crit</code>, the index of the repetition that lead to the lowest value
+of the criterion
+<code>nlo</code>, the data structure returned by nloptr</p>
     
 
   </div>
@@ -203,7 +235,7 @@ depending on the parameter estimation method used</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Samuel Buis, Michel Giner.</p>
+  <p>Developed by Samuel Buis, Michel Giner, Patrice Lecharpentier, SticsRpacks.</p>
 </div>
 
 <div class="pkgdown">

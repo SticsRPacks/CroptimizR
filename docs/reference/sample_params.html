@@ -8,6 +8,13 @@
 
 <title>sample values in given distribution — sample_params • SticsOptimizR</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
@@ -88,7 +95,13 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/Designing_a _model_wrapper.html">Elements for implementing a crop model R wrapper</a>
+      <a href="../articles/ApsimX_parameter_estimation_simple_case.html">Parameter estimation with the ApsimX crop Model: a simple case</a>
+    </li>
+    <li>
+      <a href="../articles/Designing_a_model_wrapper.html">Elements for implementing a crop model R wrapper</a>
+    </li>
+    <li>
+      <a href="../articles/Designing_a_model_wrapper_SAM.html">Elements for implementing a crop model R wrapper</a>
     </li>
     <li>
       <a href="../articles/Parameter_estimation_simple_case.html">Parameter estimation with the Stics crop Model: a simple case</a>
@@ -165,14 +178,13 @@ DiceDesign package)</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>DiceDesign</span>)
-<span class='no'>bounds_list</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>lb</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>1</span>,<span class='fl'>2</span>),<span class='kw'>ub</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>))
-<span class='fu'>sample_params</span>(<span class='no'>bounds_list</span>,<span class='fl'>5</span>)</div><div class='output co'>#&gt;            [,1]     [,2]     [,3]
-#&gt; [1,] 0.09688109 1.893919 2.908745
-#&gt; [2,] 0.39067508 1.020974 2.127793
-#&gt; [3,] 0.98275967 1.480291 2.309567
-#&gt; [4,] 0.77624752 1.602619 2.750846
-#&gt; [5,] 0.45740576 1.240066 2.569821</div><div class='input'>
+    <pre class="examples"><div class='input'><span class='no'>bounds_list</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>lb</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>1</span>,<span class='fl'>2</span>),<span class='kw'>ub</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>))
+<span class='kw pkg'>SticsOptimizR</span><span class='kw ns'>:::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/SticsOptimizR/topics/sample_params'>sample_params</a></span>(<span class='no'>bounds_list</span>,<span class='fl'>5</span>)</div><div class='output co'>#&gt;           [,1]     [,2]     [,3]
+#&gt; [1,] 0.3336057 1.811515 2.971367
+#&gt; [2,] 0.6715985 1.618400 2.011593
+#&gt; [3,] 0.8232661 1.565906 2.422046
+#&gt; [4,] 0.4224408 1.343786 2.752908
+#&gt; [5,] 0.1173503 1.043126 2.247585</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -192,7 +204,7 @@ DiceDesign package)</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Samuel Buis, Michel Giner.</p>
+  <p>Developed by Samuel Buis, Michel Giner, Patrice Lecharpentier, SticsRpacks.</p>
 </div>
 
 <div class="pkgdown">

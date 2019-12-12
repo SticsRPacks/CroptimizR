@@ -18,7 +18,6 @@ main_crit <- function(param_values,crit_options) {
   #'
   #' @return The value of the criterion
   #'
-  # @examples
 
   # Denormalize parameters
   # TO DO

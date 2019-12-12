@@ -1,9 +1,9 @@
-pandoc: 2.7.2
-pkgdown: 1.4.1
+pandoc: 2.7.3
+pkgdown: 1.3.0
 pkgdown_sha: ~
 articles:
   ApsimX_parameter_estimation_simple_case: ApsimX_parameter_estimation_simple_case.html
   Designing_a_model_wrapper: Designing_a_model_wrapper.html
-  Parameter_estimation_Specific_and_Varietal: Parameter_estimation_Specific_and_Varietal.html
   Parameter_estimation_simple_case: Parameter_estimation_simple_case.html
+  Parameter_estimation_Specific_and_Varietal: Parameter_estimation_Specific_and_Varietal.html
 
