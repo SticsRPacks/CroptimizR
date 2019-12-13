@@ -88,7 +88,7 @@ and NA in other cases.
 
 #### Function header example
 
-```{r}
+```{r eval=FALSE}
 #' @title Running situation(s) from txt input files stored in one directory
 #' per `situation`, simulated results are returned in a list
 #'
@@ -220,6 +220,7 @@ For example, from a list of observation files (useful for evaluation or optimiza
 Here is an example for a single file for `banana` observations:
 
 ```{r warning=FALSE}
+# remotes::install_github("SticsRPacks/SticsRFiles")
 library(SticsRFiles)
 path <- system.file(file.path("extdata","obs","V9.0"), package = "SticsRFiles")
 obs_list <- read_obs(path)
