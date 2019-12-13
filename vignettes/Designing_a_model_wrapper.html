@@ -7,21 +7,22 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<meta name="date" content="2019-12-12" />
+<meta name="date" content="2019-12-13" />
 
 <title>Elements for implementing a crop model R wrapper</title>
 
 
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-code.sourceCode > span { display: inline-block; line-height: 1.25; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-code.sourceCode > span:empty { height: 1.2em; }
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 div.sourceCode { margin: 1em 0; }
@@ -31,16 +32,14 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 code.sourceCode { white-space: pre-wrap; }
-code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
 }
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
+    border: none; pointer-events: all; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -49,9 +48,9 @@ pre.numberSource code > span > a:first-child::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {   }
+  {  }
 @media screen {
-code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+a.sourceLine::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -82,7 +81,29 @@ code span.st { color: #4070a0; } /* String */
 code span.va { color: #19177c; } /* Variable */
 code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
 </style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
 
 
 
@@ -270,6 +291,9 @@ code > span.al { color: #ff0000; font-weight: bold; }
 code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
 
+
+
+
 </head>
 
 <body>
@@ -278,11 +302,11 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 
 <h1 class="title toc-ignore">Elements for implementing a crop model R wrapper</h1>
-<h4 class="author"><em>Patrice Lecharpentier</em></h4>
+<h4 class="author">Patrice Lecharpentier</h4>
 <address class="author_afil">
-INRA - Agroclim<br><h4 class="author"><em>Samuel Buis</em></h4>
+INRA - Agroclim<br><h4 class="author">Samuel Buis</h4>
 <address class="author_afil">
-INRA - EMMAH<br><h4 class="date"><em>2019-12-12</em></h4>
+INRA - EMMAH<br><h4 class="date">2019-12-13</h4>
 
 
 
@@ -344,40 +368,40 @@ INRA - EMMAH<br><h4 class="date"><em>2019-12-12</em></h4>
 </div>
 <div id="function-header-example" class="section level4">
 <h4>Function header example</h4>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co">#&#39; @title Running situation(s) from txt input files stored in one directory</span></span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="co">#&#39; per `situation`, simulated results are returned in a list</span></span>
-<span id="cb1-3"><a href="#cb1-3"></a><span class="co">#&#39;</span></span>
-<span id="cb1-4"><a href="#cb1-4"></a><span class="co">#&#39; @description This function uses the model directly through a system call, can</span></span>
-<span id="cb1-5"><a href="#cb1-5"></a><span class="co">#&#39; force model input parameters with values given in arguments.</span></span>
-<span id="cb1-6"><a href="#cb1-6"></a><span class="co">#&#39;</span></span>
-<span id="cb1-7"><a href="#cb1-7"></a><span class="co">#&#39; @param param_values named vector containing the value(s) and names of the</span></span>
-<span id="cb1-8"><a href="#cb1-8"></a><span class="co">#&#39; parameters to force (optional)</span></span>
-<span id="cb1-9"><a href="#cb1-9"></a><span class="co">#&#39;</span></span>
-<span id="cb1-10"><a href="#cb1-10"></a><span class="co">#&#39; @param site_var_dates_mask List of situations, variables and dates for which</span></span>
-<span id="cb1-11"><a href="#cb1-11"></a><span class="co">#&#39; simulated values should be returned. Typically a list containing the</span></span>
-<span id="cb1-12"><a href="#cb1-12"></a><span class="co">#&#39; observations to which simulations should be compared</span></span>
-<span id="cb1-13"><a href="#cb1-13"></a><span class="co">#&#39; (i.e. a list of variables/dates per situation)</span></span>
-<span id="cb1-14"><a href="#cb1-14"></a><span class="co">#&#39;</span></span>
-<span id="cb1-15"><a href="#cb1-15"></a><span class="co">#&#39; @param prior_information Prior information on the parameters to estimate.</span></span>
-<span id="cb1-16"><a href="#cb1-16"></a><span class="co">#&#39; For the moment only uniform distribution are allowed.</span></span>
-<span id="cb1-17"><a href="#cb1-17"></a><span class="co">#&#39; Either a list containing (named) vectors of upper and lower</span></span>
-<span id="cb1-18"><a href="#cb1-18"></a><span class="co">#&#39; bounds (\code{ub} and \code{lb}), or a named list containing for each</span></span>
-<span id="cb1-19"><a href="#cb1-19"></a><span class="co">#&#39; parameter the list of situations per group (\code{sit_list})</span></span>
-<span id="cb1-20"><a href="#cb1-20"></a><span class="co">#&#39; and the vector of upper and lower bounds (one value per group) (\code{ub} and \code{lb})</span></span>
-<span id="cb1-21"><a href="#cb1-21"></a><span class="co">#&#39;</span></span>
-<span id="cb1-22"><a href="#cb1-22"></a><span class="co">#&#39; @param model_options List containing any information needed by the model.</span></span>
-<span id="cb1-23"><a href="#cb1-23"></a><span class="co">#&#39; For example: the path of the model executable file,</span></span>
-<span id="cb1-24"><a href="#cb1-24"></a><span class="co">#&#39; the path of the directory containing input data</span></span>
-<span id="cb1-25"><a href="#cb1-25"></a><span class="co">#&#39;</span></span>
-<span id="cb1-26"><a href="#cb1-26"></a><span class="co">#&#39; @return A list containing simulated values (\code{sim_list}) and a flag</span></span>
-<span id="cb1-27"><a href="#cb1-27"></a><span class="co">#&#39; (\code{flag_allsim}) indicating if all required situations, variables and</span></span>
-<span id="cb1-28"><a href="#cb1-28"></a><span class="co">#&#39; dates were simulated.</span></span>
-<span id="cb1-29"><a href="#cb1-29"></a></span>
-<span id="cb1-30"><a href="#cb1-30"></a>model_wrapper &lt;-<span class="st"> </span><span class="cf">function</span>( <span class="dt">param_values=</span><span class="ot">NULL</span>, <span class="dt">site_var_dates_mask=</span><span class="ot">NULL</span>,</span>
-<span id="cb1-31"><a href="#cb1-31"></a>                           <span class="dt">prior_information=</span><span class="ot">NULL</span>, model_options ) {</span>
-<span id="cb1-32"><a href="#cb1-32"></a>  ...</span>
-<span id="cb1-33"><a href="#cb1-33"></a>  </span>
-<span id="cb1-34"><a href="#cb1-34"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="co">#&#39; @title Running situation(s) from txt input files stored in one directory</span></a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="co">#&#39; per `situation`, simulated results are returned in a list</span></a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="co">#&#39;</span></a>
+<a class="sourceLine" id="cb1-4" title="4"><span class="co">#&#39; @description This function uses the model directly through a system call, can</span></a>
+<a class="sourceLine" id="cb1-5" title="5"><span class="co">#&#39; force model input parameters with values given in arguments.</span></a>
+<a class="sourceLine" id="cb1-6" title="6"><span class="co">#&#39;</span></a>
+<a class="sourceLine" id="cb1-7" title="7"><span class="co">#&#39; @param param_values named vector containing the value(s) and names of the</span></a>
+<a class="sourceLine" id="cb1-8" title="8"><span class="co">#&#39; parameters to force (optional)</span></a>
+<a class="sourceLine" id="cb1-9" title="9"><span class="co">#&#39;</span></a>
+<a class="sourceLine" id="cb1-10" title="10"><span class="co">#&#39; @param site_var_dates_mask List of situations, variables and dates for which</span></a>
+<a class="sourceLine" id="cb1-11" title="11"><span class="co">#&#39; simulated values should be returned. Typically a list containing the</span></a>
+<a class="sourceLine" id="cb1-12" title="12"><span class="co">#&#39; observations to which simulations should be compared</span></a>
+<a class="sourceLine" id="cb1-13" title="13"><span class="co">#&#39; (i.e. a list of variables/dates per situation)</span></a>
+<a class="sourceLine" id="cb1-14" title="14"><span class="co">#&#39;</span></a>
+<a class="sourceLine" id="cb1-15" title="15"><span class="co">#&#39; @param prior_information Prior information on the parameters to estimate.</span></a>
+<a class="sourceLine" id="cb1-16" title="16"><span class="co">#&#39; For the moment only uniform distribution are allowed.</span></a>
+<a class="sourceLine" id="cb1-17" title="17"><span class="co">#&#39; Either a list containing (named) vectors of upper and lower</span></a>
+<a class="sourceLine" id="cb1-18" title="18"><span class="co">#&#39; bounds (\code{ub} and \code{lb}), or a named list containing for each</span></a>
+<a class="sourceLine" id="cb1-19" title="19"><span class="co">#&#39; parameter the list of situations per group (\code{sit_list})</span></a>
+<a class="sourceLine" id="cb1-20" title="20"><span class="co">#&#39; and the vector of upper and lower bounds (one value per group) (\code{ub} and \code{lb})</span></a>
+<a class="sourceLine" id="cb1-21" title="21"><span class="co">#&#39;</span></a>
+<a class="sourceLine" id="cb1-22" title="22"><span class="co">#&#39; @param model_options List containing any information needed by the model.</span></a>
+<a class="sourceLine" id="cb1-23" title="23"><span class="co">#&#39; For example: the path of the model executable file,</span></a>
+<a class="sourceLine" id="cb1-24" title="24"><span class="co">#&#39; the path of the directory containing input data</span></a>
+<a class="sourceLine" id="cb1-25" title="25"><span class="co">#&#39;</span></a>
+<a class="sourceLine" id="cb1-26" title="26"><span class="co">#&#39; @return A list containing simulated values (\code{sim_list}) and a flag</span></a>
+<a class="sourceLine" id="cb1-27" title="27"><span class="co">#&#39; (\code{flag_allsim}) indicating if all required situations, variables and</span></a>
+<a class="sourceLine" id="cb1-28" title="28"><span class="co">#&#39; dates were simulated.</span></a>
+<a class="sourceLine" id="cb1-29" title="29"></a>
+<a class="sourceLine" id="cb1-30" title="30">model_wrapper &lt;-<span class="st"> </span><span class="cf">function</span>( <span class="dt">param_values=</span><span class="ot">NULL</span>, <span class="dt">site_var_dates_mask=</span><span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb1-31" title="31">                           <span class="dt">prior_information=</span><span class="ot">NULL</span>, model_options ) {</a>
+<a class="sourceLine" id="cb1-32" title="32">  ...</a>
+<a class="sourceLine" id="cb1-33" title="33">  </a>
+<a class="sourceLine" id="cb1-34" title="34">}</a></code></pre></div>
 </div>
 </div>
 <div id="defining-a-model-options-list" class="section level3">
@@ -412,46 +436,46 @@ INRA - EMMAH<br><h4 class="date"><em>2019-12-12</em></h4>
 <blockquote>
 <p>Based on a model example used with a simple system call</p>
 </blockquote>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>model_wrapper_options &lt;-<span class="st"> </span><span class="cf">function</span>(model_path,</span>
-<span id="cb2-2"><a href="#cb2-2"></a>                                  data_dir, ... ) {</span>
-<span id="cb2-3"><a href="#cb2-3"></a>  </span>
-<span id="cb2-4"><a href="#cb2-4"></a>  <span class="co"># options list template</span></span>
-<span id="cb2-5"><a href="#cb2-5"></a>  options &lt;-<span class="st"> </span><span class="kw">list</span>()</span>
-<span id="cb2-6"><a href="#cb2-6"></a>  <span class="co"># model executable</span></span>
-<span id="cb2-7"><a href="#cb2-7"></a>  options<span class="op">$</span>model_path &lt;-<span class="st"> </span><span class="kw">character</span>(<span class="dv">0</span>)</span>
-<span id="cb2-8"><a href="#cb2-8"></a>  <span class="co"># input data</span></span>
-<span id="cb2-9"><a href="#cb2-9"></a>  options<span class="op">$</span>data_dir &lt;-<span class="st"> </span><span class="kw">character</span>(<span class="dv">0</span>)</span>
-<span id="cb2-10"><a href="#cb2-10"></a>  <span class="co"># parallel calculation switch</span></span>
-<span id="cb2-11"><a href="#cb2-11"></a>  options<span class="op">$</span>parallel &lt;-<span class="st"> </span><span class="ot">FALSE</span></span>
-<span id="cb2-12"><a href="#cb2-12"></a>  <span class="co"># setting cores number</span></span>
-<span id="cb2-13"><a href="#cb2-13"></a>  options<span class="op">$</span>cores &lt;-<span class="st"> </span><span class="ot">NA</span></span>
-<span id="cb2-14"><a href="#cb2-14"></a>  <span class="co"># duration time display switch</span></span>
-<span id="cb2-15"><a href="#cb2-15"></a>  options<span class="op">$</span>time_display &lt;-<span class="st"> </span><span class="ot">FALSE</span></span>
-<span id="cb2-16"><a href="#cb2-16"></a>  <span class="co"># warning display switch</span></span>
-<span id="cb2-17"><a href="#cb2-17"></a>  options<span class="op">$</span>warning_display &lt;-<span class="st"> </span><span class="ot">TRUE</span></span>
-<span id="cb2-18"><a href="#cb2-18"></a>  </span>
-<span id="cb2-19"><a href="#cb2-19"></a>  <span class="co"># Getting the options list template content</span></span>
-<span id="cb2-20"><a href="#cb2-20"></a>  <span class="co"># when running model_wrapper_options()</span></span>
-<span id="cb2-21"><a href="#cb2-21"></a>  <span class="cf">if</span> (<span class="op">!</span><span class="st"> </span><span class="kw">nargs</span>()) <span class="kw">return</span>(options)</span>
-<span id="cb2-22"><a href="#cb2-22"></a>  </span>
-<span id="cb2-23"><a href="#cb2-23"></a>  <span class="co"># Fixing mandatory fields values</span></span>
-<span id="cb2-24"><a href="#cb2-24"></a>  options<span class="op">$</span>model_path &lt;-<span class="st"> </span>model_path</span>
-<span id="cb2-25"><a href="#cb2-25"></a>  options<span class="op">$</span>data_dir &lt;-<span class="st"> </span>data_dir</span>
-<span id="cb2-26"><a href="#cb2-26"></a>  </span>
-<span id="cb2-27"><a href="#cb2-27"></a>  <span class="co"># Fixing optional fields:</span></span>
-<span id="cb2-28"><a href="#cb2-28"></a>  <span class="co"># if names in given list (...) correspond</span></span>
-<span id="cb2-29"><a href="#cb2-29"></a>  <span class="co"># to exact field names in options list</span></span>
-<span id="cb2-30"><a href="#cb2-30"></a>  list_names &lt;-<span class="st"> </span><span class="kw">names</span> (options)</span>
-<span id="cb2-31"><a href="#cb2-31"></a>  add_args &lt;-<span class="st"> </span><span class="kw">list</span>(...)</span>
-<span id="cb2-32"><a href="#cb2-32"></a>  </span>
-<span id="cb2-33"><a href="#cb2-33"></a>  <span class="cf">for</span> (n <span class="cf">in</span> <span class="kw">names</span>(add_args)) {</span>
-<span id="cb2-34"><a href="#cb2-34"></a>    <span class="cf">if</span> ( n <span class="op">%in%</span><span class="st"> </span>list_names) {</span>
-<span id="cb2-35"><a href="#cb2-35"></a>      options[[n]] &lt;-<span class="st"> </span>add_args[[n]]</span>
-<span id="cb2-36"><a href="#cb2-36"></a>    }</span>
-<span id="cb2-37"><a href="#cb2-37"></a>  }</span>
-<span id="cb2-38"><a href="#cb2-38"></a>  </span>
-<span id="cb2-39"><a href="#cb2-39"></a>  <span class="kw">return</span>(options)</span>
-<span id="cb2-40"><a href="#cb2-40"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">model_wrapper_options &lt;-<span class="st"> </span><span class="cf">function</span>(model_path,</a>
+<a class="sourceLine" id="cb2-2" title="2">                                  data_dir, ... ) {</a>
+<a class="sourceLine" id="cb2-3" title="3">  </a>
+<a class="sourceLine" id="cb2-4" title="4">  <span class="co"># options list template</span></a>
+<a class="sourceLine" id="cb2-5" title="5">  options &lt;-<span class="st"> </span><span class="kw">list</span>()</a>
+<a class="sourceLine" id="cb2-6" title="6">  <span class="co"># model executable</span></a>
+<a class="sourceLine" id="cb2-7" title="7">  options<span class="op">$</span>model_path &lt;-<span class="st"> </span><span class="kw">character</span>(<span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb2-8" title="8">  <span class="co"># input data</span></a>
+<a class="sourceLine" id="cb2-9" title="9">  options<span class="op">$</span>data_dir &lt;-<span class="st"> </span><span class="kw">character</span>(<span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb2-10" title="10">  <span class="co"># parallel calculation switch</span></a>
+<a class="sourceLine" id="cb2-11" title="11">  options<span class="op">$</span>parallel &lt;-<span class="st"> </span><span class="ot">FALSE</span></a>
+<a class="sourceLine" id="cb2-12" title="12">  <span class="co"># setting cores number</span></a>
+<a class="sourceLine" id="cb2-13" title="13">  options<span class="op">$</span>cores &lt;-<span class="st"> </span><span class="ot">NA</span></a>
+<a class="sourceLine" id="cb2-14" title="14">  <span class="co"># duration time display switch</span></a>
+<a class="sourceLine" id="cb2-15" title="15">  options<span class="op">$</span>time_display &lt;-<span class="st"> </span><span class="ot">FALSE</span></a>
+<a class="sourceLine" id="cb2-16" title="16">  <span class="co"># warning display switch</span></a>
+<a class="sourceLine" id="cb2-17" title="17">  options<span class="op">$</span>warning_display &lt;-<span class="st"> </span><span class="ot">TRUE</span></a>
+<a class="sourceLine" id="cb2-18" title="18">  </a>
+<a class="sourceLine" id="cb2-19" title="19">  <span class="co"># Getting the options list template content</span></a>
+<a class="sourceLine" id="cb2-20" title="20">  <span class="co"># when running model_wrapper_options()</span></a>
+<a class="sourceLine" id="cb2-21" title="21">  <span class="cf">if</span> (<span class="op">!</span><span class="st"> </span><span class="kw">nargs</span>()) <span class="kw">return</span>(options)</a>
+<a class="sourceLine" id="cb2-22" title="22">  </a>
+<a class="sourceLine" id="cb2-23" title="23">  <span class="co"># Fixing mandatory fields values</span></a>
+<a class="sourceLine" id="cb2-24" title="24">  options<span class="op">$</span>model_path &lt;-<span class="st"> </span>model_path</a>
+<a class="sourceLine" id="cb2-25" title="25">  options<span class="op">$</span>data_dir &lt;-<span class="st"> </span>data_dir</a>
+<a class="sourceLine" id="cb2-26" title="26">  </a>
+<a class="sourceLine" id="cb2-27" title="27">  <span class="co"># Fixing optional fields:</span></a>
+<a class="sourceLine" id="cb2-28" title="28">  <span class="co"># if names in given list (...) correspond</span></a>
+<a class="sourceLine" id="cb2-29" title="29">  <span class="co"># to exact field names in options list</span></a>
+<a class="sourceLine" id="cb2-30" title="30">  list_names &lt;-<span class="st"> </span><span class="kw">names</span> (options)</a>
+<a class="sourceLine" id="cb2-31" title="31">  add_args &lt;-<span class="st"> </span><span class="kw">list</span>(...)</a>
+<a class="sourceLine" id="cb2-32" title="32">  </a>
+<a class="sourceLine" id="cb2-33" title="33">  <span class="cf">for</span> (n <span class="cf">in</span> <span class="kw">names</span>(add_args)) {</a>
+<a class="sourceLine" id="cb2-34" title="34">    <span class="cf">if</span> ( n <span class="op">%in%</span><span class="st"> </span>list_names) {</a>
+<a class="sourceLine" id="cb2-35" title="35">      options[[n]] &lt;-<span class="st"> </span>add_args[[n]]</a>
+<a class="sourceLine" id="cb2-36" title="36">    }</a>
+<a class="sourceLine" id="cb2-37" title="37">  }</a>
+<a class="sourceLine" id="cb2-38" title="38">  </a>
+<a class="sourceLine" id="cb2-39" title="39">  <span class="kw">return</span>(options)</a>
+<a class="sourceLine" id="cb2-40" title="40">}</a></code></pre></div>
 </div>
 </div>
 <div id="the-output-mask-i.e.-site_var_dates_mask" class="section level3">
@@ -463,10 +487,10 @@ INRA - EMMAH<br><h4 class="date"><em>2019-12-12</em></h4>
 <p>But this structure will certainly change in the future, to minimize stored information, keeping only the usefull data for selecting output data (optimizing memory storage, process)</p>
 <p>For example, from a list of observation files (useful for evaluation or optimization processes), a named list of data.frame is produced, one for each situation for which the file exists.</p>
 <p>Here is an example for a single file for <code>banana</code> observations:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">library</span>(SticsRFiles)</span>
-<span id="cb3-2"><a href="#cb3-2"></a>path &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="kw">file.path</span>(<span class="st">&quot;extdata&quot;</span>,<span class="st">&quot;obs&quot;</span>,<span class="st">&quot;V9.0&quot;</span>), <span class="dt">package =</span> <span class="st">&quot;SticsRFiles&quot;</span>)</span>
-<span id="cb3-3"><a href="#cb3-3"></a>obs_list &lt;-<span class="st"> </span><span class="kw">read_obs</span>(path)</span>
-<span id="cb3-4"><a href="#cb3-4"></a><span class="kw">lapply</span>(obs_list, <span class="cf">function</span>(x) <span class="kw">head</span>(x,<span class="dv">4</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">library</span>(SticsRFiles)</a>
+<a class="sourceLine" id="cb3-2" title="2">path &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="kw">file.path</span>(<span class="st">&quot;extdata&quot;</span>,<span class="st">&quot;obs&quot;</span>,<span class="st">&quot;V9.0&quot;</span>), <span class="dt">package =</span> <span class="st">&quot;SticsRFiles&quot;</span>)</a>
+<a class="sourceLine" id="cb3-3" title="3">obs_list &lt;-<span class="st"> </span><span class="kw">read_obs</span>(path)</a>
+<a class="sourceLine" id="cb3-4" title="4"><span class="kw">lapply</span>(obs_list, <span class="cf">function</span>(x) <span class="kw">head</span>(x,<span class="dv">4</span>))</a></code></pre></div>
 <p>One can give a similar filter list structure defining a customized selection of variables and Dates, but with all values set to NA in data.frames.</p>
 </div>
 <div id="actions-to-be-performed-by-the-model-wrapper" class="section level3">
@@ -501,17 +525,17 @@ INRA - EMMAH<br><h4 class="date"><em>2019-12-12</em></h4>
 <ul>
 <li>Example of information stored in <code>prior_information</code> and use:</li>
 </ul>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">library</span>(SticsOptimizR)</span>
-<span id="cb4-2"><a href="#cb4-2"></a>sg=<span class="kw">list</span>(<span class="dt">p1=</span><span class="kw">list</span>(<span class="dt">sit_list=</span><span class="kw">list</span>(<span class="kw">c</span>(<span class="st">&quot;sit1&quot;</span>,<span class="st">&quot;sit2&quot;</span>,<span class="st">&quot;sit3&quot;</span>),<span class="kw">c</span>(<span class="st">&quot;sit4&quot;</span>,<span class="st">&quot;sit5&quot;</span>,<span class="st">&quot;sit6&quot;</span>))),</span>
-<span id="cb4-3"><a href="#cb4-3"></a>        <span class="dt">p2=</span><span class="kw">list</span>(<span class="dt">sit_list=</span><span class="kw">list</span>(<span class="kw">c</span>(<span class="st">&quot;sit1&quot;</span>,<span class="st">&quot;sit2&quot;</span>,<span class="st">&quot;sit3&quot;</span>,<span class="st">&quot;sit4&quot;</span>,<span class="st">&quot;sit5&quot;</span>,<span class="st">&quot;sit6&quot;</span>))))</span>
-<span id="cb4-4"><a href="#cb4-4"></a></span>
-<span id="cb4-5"><a href="#cb4-5"></a>vec=<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>)</span>
-<span id="cb4-6"><a href="#cb4-6"></a></span>
-<span id="cb4-7"><a href="#cb4-7"></a><span class="kw">names</span>(vec) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;p2&quot;</span>,<span class="st">&quot;p1&quot;</span>,<span class="st">&quot;p1&quot;</span>)</span>
-<span id="cb4-8"><a href="#cb4-8"></a></span>
-<span id="cb4-9"><a href="#cb4-9"></a>params_sit2 &lt;-<span class="st"> </span><span class="kw">get_params_per_sit</span>(sg,<span class="st">&quot;sit2&quot;</span>,vec)</span>
-<span id="cb4-10"><a href="#cb4-10"></a></span>
-<span id="cb4-11"><a href="#cb4-11"></a>params_sit2</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">library</span>(SticsOptimizR)</a>
+<a class="sourceLine" id="cb4-2" title="2">sg=<span class="kw">list</span>(<span class="dt">p1=</span><span class="kw">list</span>(<span class="dt">sit_list=</span><span class="kw">list</span>(<span class="kw">c</span>(<span class="st">&quot;sit1&quot;</span>,<span class="st">&quot;sit2&quot;</span>,<span class="st">&quot;sit3&quot;</span>),<span class="kw">c</span>(<span class="st">&quot;sit4&quot;</span>,<span class="st">&quot;sit5&quot;</span>,<span class="st">&quot;sit6&quot;</span>))),</a>
+<a class="sourceLine" id="cb4-3" title="3">        <span class="dt">p2=</span><span class="kw">list</span>(<span class="dt">sit_list=</span><span class="kw">list</span>(<span class="kw">c</span>(<span class="st">&quot;sit1&quot;</span>,<span class="st">&quot;sit2&quot;</span>,<span class="st">&quot;sit3&quot;</span>,<span class="st">&quot;sit4&quot;</span>,<span class="st">&quot;sit5&quot;</span>,<span class="st">&quot;sit6&quot;</span>))))</a>
+<a class="sourceLine" id="cb4-4" title="4"></a>
+<a class="sourceLine" id="cb4-5" title="5">vec=<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>)</a>
+<a class="sourceLine" id="cb4-6" title="6"></a>
+<a class="sourceLine" id="cb4-7" title="7"><span class="kw">names</span>(vec) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;p2&quot;</span>,<span class="st">&quot;p1&quot;</span>,<span class="st">&quot;p1&quot;</span>)</a>
+<a class="sourceLine" id="cb4-8" title="8"></a>
+<a class="sourceLine" id="cb4-9" title="9">params_sit2 &lt;-<span class="st"> </span><span class="kw">get_params_per_sit</span>(sg,<span class="st">&quot;sit2&quot;</span>,vec)</a>
+<a class="sourceLine" id="cb4-10" title="10"></a>
+<a class="sourceLine" id="cb4-11" title="11">params_sit2</a></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
 <li>Running the model</li>
 </ol>
@@ -528,49 +552,49 @@ INRA - EMMAH<br><h4 class="date"><em>2019-12-12</em></h4>
 <h4>Managing optional parallel computations inside the loop</h4>
 <p>The doParallel package is used and there are specificities when doing a parallel loop especially that a pre allocated list outide of the loop is not shared between cores so return statements must be used inside.</p>
 <p>Here is an example for illustrating what happens:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># Code of an example of foreach loop algo</span></span>
-<span id="cb5-2"><a href="#cb5-2"></a><span class="kw">library</span>(<span class="st">&quot;doParallel&quot;</span>)</span>
-<span id="cb5-3"><a href="#cb5-3"></a><span class="kw">print</span>(params<span class="op">$</span>cores_nb)</span>
-<span id="cb5-4"><a href="#cb5-4"></a></span>
-<span id="cb5-5"><a href="#cb5-5"></a>test_parallel &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">cores_nb =</span> <span class="dv">1</span>,</span>
-<span id="cb5-6"><a href="#cb5-6"></a>                          <span class="dt">pa =</span> <span class="ot">FALSE</span>,</span>
-<span id="cb5-7"><a href="#cb5-7"></a>                          <span class="dt">max_it =</span> <span class="dv">5</span>) {</span>
-<span id="cb5-8"><a href="#cb5-8"></a>  </span>
-<span id="cb5-9"><a href="#cb5-9"></a>  <span class="co"># Launching the cluster</span></span>
-<span id="cb5-10"><a href="#cb5-10"></a>  cl &lt;-<span class="st"> </span><span class="kw">makeCluster</span>(cores_nb)</span>
-<span id="cb5-11"><a href="#cb5-11"></a>  <span class="kw">registerDoParallel</span>(cl)</span>
-<span id="cb5-12"><a href="#cb5-12"></a>  </span>
-<span id="cb5-13"><a href="#cb5-13"></a>  <span class="co"># List preallocation</span></span>
-<span id="cb5-14"><a href="#cb5-14"></a>  out_pa &lt;-<span class="st"> </span><span class="kw">vector</span>(<span class="dt">mode =</span> <span class="st">&quot;list&quot;</span>, max_it)</span>
-<span id="cb5-15"><a href="#cb5-15"></a>  </span>
-<span id="cb5-16"><a href="#cb5-16"></a>  <span class="co"># Parallel loop</span></span>
-<span id="cb5-17"><a href="#cb5-17"></a>  out &lt;-<span class="st"> </span><span class="kw">foreach</span>(<span class="dt">i =</span> <span class="dv">1</span><span class="op">:</span>max_it) <span class="op">%dopar%</span><span class="st"> </span>{</span>
-<span id="cb5-18"><a href="#cb5-18"></a>    <span class="cf">if</span> (pa) {</span>
-<span id="cb5-19"><a href="#cb5-19"></a>      out_pa[[i]] &lt;-<span class="st"> </span>i</span>
-<span id="cb5-20"><a href="#cb5-20"></a>    } <span class="cf">else</span> {</span>
-<span id="cb5-21"><a href="#cb5-21"></a>      <span class="kw">return</span>(i)</span>
-<span id="cb5-22"><a href="#cb5-22"></a>    }</span>
-<span id="cb5-23"><a href="#cb5-23"></a>  }</span>
-<span id="cb5-24"><a href="#cb5-24"></a>  </span>
-<span id="cb5-25"><a href="#cb5-25"></a>  <span class="co"># Stopping the cluster</span></span>
-<span id="cb5-26"><a href="#cb5-26"></a>  <span class="kw">stopCluster</span>(cl)</span>
-<span id="cb5-27"><a href="#cb5-27"></a>  </span>
-<span id="cb5-28"><a href="#cb5-28"></a>  <span class="cf">if</span> (pa) {</span>
-<span id="cb5-29"><a href="#cb5-29"></a>    <span class="kw">return</span>(out_pa)</span>
-<span id="cb5-30"><a href="#cb5-30"></a>  } <span class="cf">else</span> {</span>
-<span id="cb5-31"><a href="#cb5-31"></a>    <span class="kw">return</span>(out)</span>
-<span id="cb5-32"><a href="#cb5-32"></a>  }</span>
-<span id="cb5-33"><a href="#cb5-33"></a>  </span>
-<span id="cb5-34"><a href="#cb5-34"></a>  </span>
-<span id="cb5-35"><a href="#cb5-35"></a>}</span>
-<span id="cb5-36"><a href="#cb5-36"></a></span>
-<span id="cb5-37"><a href="#cb5-37"></a>out &lt;-<span class="st"> </span><span class="kw">test_parallel</span>(params<span class="op">$</span>cores_nb)</span>
-<span id="cb5-38"><a href="#cb5-38"></a></span>
-<span id="cb5-39"><a href="#cb5-39"></a>out_pa &lt;-<span class="st"> </span><span class="kw">test_parallel</span>(params<span class="op">$</span>cores_nb, <span class="ot">TRUE</span>)</span>
-<span id="cb5-40"><a href="#cb5-40"></a></span>
-<span id="cb5-41"><a href="#cb5-41"></a>out</span>
-<span id="cb5-42"><a href="#cb5-42"></a></span>
-<span id="cb5-43"><a href="#cb5-43"></a>out_pa</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="co"># Code of an example of foreach loop algo</span></a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="kw">library</span>(<span class="st">&quot;doParallel&quot;</span>)</a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="kw">print</span>(params<span class="op">$</span>cores_nb)</a>
+<a class="sourceLine" id="cb5-4" title="4"></a>
+<a class="sourceLine" id="cb5-5" title="5">test_parallel &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">cores_nb =</span> <span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb5-6" title="6">                          <span class="dt">pa =</span> <span class="ot">FALSE</span>,</a>
+<a class="sourceLine" id="cb5-7" title="7">                          <span class="dt">max_it =</span> <span class="dv">5</span>) {</a>
+<a class="sourceLine" id="cb5-8" title="8">  </a>
+<a class="sourceLine" id="cb5-9" title="9">  <span class="co"># Launching the cluster</span></a>
+<a class="sourceLine" id="cb5-10" title="10">  cl &lt;-<span class="st"> </span><span class="kw">makeCluster</span>(cores_nb)</a>
+<a class="sourceLine" id="cb5-11" title="11">  <span class="kw">registerDoParallel</span>(cl)</a>
+<a class="sourceLine" id="cb5-12" title="12">  </a>
+<a class="sourceLine" id="cb5-13" title="13">  <span class="co"># List preallocation</span></a>
+<a class="sourceLine" id="cb5-14" title="14">  out_pa &lt;-<span class="st"> </span><span class="kw">vector</span>(<span class="dt">mode =</span> <span class="st">&quot;list&quot;</span>, max_it)</a>
+<a class="sourceLine" id="cb5-15" title="15">  </a>
+<a class="sourceLine" id="cb5-16" title="16">  <span class="co"># Parallel loop</span></a>
+<a class="sourceLine" id="cb5-17" title="17">  out &lt;-<span class="st"> </span><span class="kw">foreach</span>(<span class="dt">i =</span> <span class="dv">1</span><span class="op">:</span>max_it) <span class="op">%dopar%</span><span class="st"> </span>{</a>
+<a class="sourceLine" id="cb5-18" title="18">    <span class="cf">if</span> (pa) {</a>
+<a class="sourceLine" id="cb5-19" title="19">      out_pa[[i]] &lt;-<span class="st"> </span>i</a>
+<a class="sourceLine" id="cb5-20" title="20">    } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb5-21" title="21">      <span class="kw">return</span>(i)</a>
+<a class="sourceLine" id="cb5-22" title="22">    }</a>
+<a class="sourceLine" id="cb5-23" title="23">  }</a>
+<a class="sourceLine" id="cb5-24" title="24">  </a>
+<a class="sourceLine" id="cb5-25" title="25">  <span class="co"># Stopping the cluster</span></a>
+<a class="sourceLine" id="cb5-26" title="26">  <span class="kw">stopCluster</span>(cl)</a>
+<a class="sourceLine" id="cb5-27" title="27">  </a>
+<a class="sourceLine" id="cb5-28" title="28">  <span class="cf">if</span> (pa) {</a>
+<a class="sourceLine" id="cb5-29" title="29">    <span class="kw">return</span>(out_pa)</a>
+<a class="sourceLine" id="cb5-30" title="30">  } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb5-31" title="31">    <span class="kw">return</span>(out)</a>
+<a class="sourceLine" id="cb5-32" title="32">  }</a>
+<a class="sourceLine" id="cb5-33" title="33">  </a>
+<a class="sourceLine" id="cb5-34" title="34">  </a>
+<a class="sourceLine" id="cb5-35" title="35">}</a>
+<a class="sourceLine" id="cb5-36" title="36"></a>
+<a class="sourceLine" id="cb5-37" title="37">out &lt;-<span class="st"> </span><span class="kw">test_parallel</span>(params<span class="op">$</span>cores_nb)</a>
+<a class="sourceLine" id="cb5-38" title="38"></a>
+<a class="sourceLine" id="cb5-39" title="39">out_pa &lt;-<span class="st"> </span><span class="kw">test_parallel</span>(params<span class="op">$</span>cores_nb, <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb5-40" title="40"></a>
+<a class="sourceLine" id="cb5-41" title="41">out</a>
+<a class="sourceLine" id="cb5-42" title="42"></a>
+<a class="sourceLine" id="cb5-43" title="43">out_pa</a></code></pre></div>
 <p>There are also differences with managing warnings and displays in a parallel context. They must be stored in the return list and treated after the loop.</p>
 </div>
 <div id="returning-data-for-all-situations" class="section level4">
@@ -587,6 +611,9 @@ INRA - EMMAH<br><h4 class="date"><em>2019-12-12</em></h4>
 <p>TODO</p>
 </div>
 
+
+
+<!-- code folding -->
 
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

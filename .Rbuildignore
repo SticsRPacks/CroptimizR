@@ -6,10 +6,13 @@
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
+CODE_OF_CONDUCT.md
+README.Rmd
 
 # temporary
 R/tests.txt
 Preliminary\ work
+tmp
 vignettes/JavaSTICS-1.41-stics-9.0
 vignettes/ApsimX_parameter_estimation_simple_case_files
 vignettes/Parameter_estimation_Specific_and_Varietal_files

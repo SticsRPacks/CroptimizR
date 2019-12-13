@@ -21,8 +21,12 @@
 #'
 #' # A case with groups of situations per parameter
 #' prior_information=list()
-#' prior_information$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1", "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),lb=0.0005,ub=0.0025)
-#' prior_information$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"), c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),lb=c(50,50),ub=c(400,400))
+#' prior_information$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1",
+#'                                                "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),
+#'                                lb=0.0005,ub=0.0025)
+#' prior_information$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
+#'                                              c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),
+#'                                lb=c(50,50),ub=c(400,400))
 #' SticsOptimizR:::get_params_bounds(prior_information)
 #' }
 

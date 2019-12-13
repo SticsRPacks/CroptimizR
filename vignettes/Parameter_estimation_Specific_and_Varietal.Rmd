@@ -6,7 +6,7 @@ author:
 affiliation: "INRA - EMMAH"
 date: "`r Sys.Date()`"
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{Parameter estimation with Stics}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 params:

@@ -47,16 +47,20 @@ get_params_init_values(prior_information)
 
 Cases with groups of situations per parameter
 prior_information=list()
-prior_information$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1", "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),
+prior_information$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1",
+                                               "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),
                                init_values=0.001,lb=0.0001,ub=0.1)
-prior_information$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"), c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),
+prior_information$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
+                                             c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),
                                init_values=c(200,300),lb=50,ub=400)
 get_params_init_values(prior_information)
 
 prior_information=list()
-prior_information$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1", "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),
+prior_information$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1",
+                                               "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),
                                init_values=c(0.001,0.002),lb=0.0001,ub=0.1)
-prior_information$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"), c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),
+prior_information$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
+                                             c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),
                                init_values=data.frame(c(200,300),c(250,350)),lb=50,ub=400)
 SticsOptimizR:::get_params_init_values(prior_information)
 }

@@ -85,7 +85,7 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
 
   sample_sz=nb_rep-NROW(init_values)
   if (sample_sz>0) {
-    init_values=rbind(init_values,complem_init_values)
+    init_values=rbind(init_values,user_init_values)
   }
 
   # Run nloptr for each repetition
