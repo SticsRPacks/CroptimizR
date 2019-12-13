@@ -20,7 +20,7 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 
 ## Study Case
 
-This document presents an example of a simultaneous estimation of one specific and one varietal parameter using the stics model, while a simpler introductory example is presented in this [vignette](https://sticsrpacks.github.io/SticsOptimizR/articles/Parameter_estimation_simple_case.html) (you should look at it first).
+This document presents an example of a simultaneous estimation of one specific and one varietal parameter using the stics model, while a simpler introductory example is presented in this [vignette](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html) (you should look at it first).
 
 Data comes from a maize crop experiment (see description in Wallach et al., 2011). In this example, 8 situations (USMs in Stics language) will be used for the parameter estimation. This test case correspond to case 1c in (Wallach et al., 2011).
 
@@ -29,7 +29,7 @@ The parameter estimation is performed using the Nelder-Meade simplex method impl
 
 ## Initialisation step
 
-This part is not shown here, it is the same as this of the [introductory example](https://sticsrpacks.github.io/SticsOptimizR/articles/Parameter_estimation_simple_case.html). 
+This part is not shown here, it is the same as this of the [introductory example](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html). 
 
 ```{r setup_initializations,  echo=FALSE, message=FALSE, results=FALSE, warning=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -43,9 +43,9 @@ if(!require("SticsOnR")){
   devtools::install_github("SticsRPacks/SticsOnR")
   library("SticsOnR")
 }
-if(!require("SticsOptimizR")){
-  devtools::install_github("SticsRPacks/SticsOptimizR")
-  library("SticsOptimizR")
+if(!require("CroptimizR")){
+  devtools::install_github("SticsRPacks/CroptimizR")
+  library("CroptimizR")
 }
 if(!require("dplyr")){
   install.packages("dplyr",repos="http://cran.irsn.fr")

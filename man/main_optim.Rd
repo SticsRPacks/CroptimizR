@@ -17,7 +17,7 @@ the variable is not observed at the given date.}
 
 \item{crit_function}{Function implementing the criterion to optimize
 (optional, default=concentrated_wss). See
-\href{https://sticsrpacks.github.io/SticsOptimizR/reference/ls_criterion.html}{here}
+\href{https://sticsrpacks.github.io/CroptimizR/reference/ls_criterion.html}{here}
 for more details about the list of proposed criterion.}
 
 \item{model_function}{Crop Model wrapper function to use}
@@ -70,7 +70,7 @@ main function for parameter estimation
 # Load the needed packages
 library(SticsRFiles)
 library(SticsOnR)
-library(SticsOptimizR)
+library(CroptimizR)
 library(dplyr)
 library(nloptr)
 library(DiceDesign)
@@ -122,11 +122,11 @@ optim_results=main_optim(obs_list=obs_list,
 
 # See results (graph and Rdata) stored in optim_options$path_results
 
-# See the different vignettes in [CroptimizR website](https://sticsrpacks.github.io/SticsOptimizR/)
+# See the different vignettes in [CroptimizR website](https://sticsrpacks.github.io/CroptimizR/)
 for more details and examples.
 }
 }
 \seealso{
 For more detail and examples, see the different vignettes in
-\href{https://sticsrpacks.github.io/SticsOptimizR/}{CroptimizR website}
+\href{https://sticsrpacks.github.io/CroptimizR/}{CroptimizR website}
 }

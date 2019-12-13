@@ -30,6 +30,6 @@ DiceDesign package)
 }
 \examples{
 bounds_list=list(lb=c(0,1,2),ub=c(1,2,3))
-SticsOptimizR:::sample_params(bounds_list,5)
+CroptimizR:::sample_params(bounds_list,5)
 
 }

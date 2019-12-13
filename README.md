@@ -1,15 +1,15 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# SticsOptimizR: An R package for parameter estimation, uncertainty and sensitivity analysis for the [STICS](https://www6.paca.inra.fr/stics_eng/) model <img src="man/figures/logo.png" alt="logo" width="150" align="right" />
+# CroptimizR: An R package for parameter estimation, uncertainty and sensitivity analysis for the [STICS](https://www6.paca.inra.fr/stics_eng/) model <img src="man/figures/logo.png" alt="logo" width="150" align="right" />
 
 [![Project Status: WIP – Initial development is in progress, but there
 has not yet been a stable, usable release suitable for the
 public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 [![Travis build
-status](https://travis-ci.org/SticsRPacks/SticsOptimizR.svg?branch=master)](https://travis-ci.org/SticsRPacks/SticsOptimizR)
+status](https://travis-ci.org/SticsRPacks/CroptimizR.svg?branch=master)](https://travis-ci.org/SticsRPacks/CroptimizR)
 [![Codecov test
-coverage](https://codecov.io/gh/SticsRPacks/SticsOptimizR/branch/master/graph/badge.svg)](https://codecov.io/gh/SticsRPacks/SticsOptimizR?branch=master)
+coverage](https://codecov.io/gh/SticsRPacks/CroptimizR/branch/master/graph/badge.svg)](https://codecov.io/gh/SticsRPacks/CroptimizR?branch=master)
 
 ## Overview
 
@@ -17,24 +17,24 @@ This package is dedicated to Probabilistic Uncertainty analysis,
 Sensitivity analysis and Parameter estimation for crop models.
 
 It is under intensive development, so you can fill an issue or request a
-feature [here](https://github.com/SticsRPacks/SticsOptimizR/issues) at
+feature [here](https://github.com/SticsRPacks/CroptimizR/issues) at
 any time. The list of functions accessible to the users is provided in
 this
-[webpage](https://sticsrpacks.github.io/SticsOptimizR/reference/index.html).
+[webpage](https://sticsrpacks.github.io/CroptimizR/reference/index.html).
 
 For the moment, only parameter estimation functions have been
 developped. The
-([`main_optim`](https://sticsrpacks.github.io/SticsOptimizR/reference/main_optim.html))
+([`main_optim`](https://sticsrpacks.github.io/CroptimizR/reference/main_optim.html))
 function can be used to perform parameter estimation using multi-start
 Nelder-Meade simplexe minimization of [different least square
-criterion](https://sticsrpacks.github.io/SticsOptimizR/reference/ls_criterion.html).
+criterion](https://sticsrpacks.github.io/CroptimizR/reference/ls_criterion.html).
 
 Functionnalities for simultaneous estimation of varietal and specific
 parameters are provided (see
-[here](https://SticsRPacks.github.io/SticsOptimizR/articles/Parameter_estimation_Specific_and_Varietal.html)
+[here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html)
 for an example).
 
-SticsOptimizR is designed to be crop model generic: all the
+CroptimizR is designed to be crop model generic: all the
 functionalities can be used on any crop model for which an R wrapper can
 be implemented. For the moment, R wrappers are available for Stics and
 APSIM crop models (see
@@ -44,7 +44,7 @@ SiriusQuality is under development.
 
 Guidelines for developping a wrapper for your favourite crop model are
 given in the following
-[vignette](https://SticsRPacks.github.io/SticsOptimizR/articles/Designing_a_model_wrapper.html).
+[vignette](https://SticsRPacks.github.io/CroptimizR/articles/Designing_a_model_wrapper.html).
 
 Planned features, installation and examples of use are described in the
 following sections.
@@ -175,7 +175,7 @@ The development version from [GitHub](https://github.com/) can be
 installed with:
 
 ``` r
-devtools::install_github("SticsRPacks/SticsOptimizR")
+devtools::install_github("SticsRPacks/CroptimizR")
 ```
 
 Or using the lightweight
@@ -183,33 +183,33 @@ Or using the lightweight
 
 ``` r
 # install.packages("remotes")
-remotes::install_github("SticsRPacks/SticsOptimizR")
+remotes::install_github("SticsRPacks/CroptimizR")
 ```
 
 The package is tested routinely to pass all
 [CRAN](https://CRAN.R-project.org) tests using Travis-CI (linux) and
 AppVeyor (Windows), but it is not yet released to the CRAN servers:
-SticsOptimizR is still under development and users are not yet
+CroptimizR is still under development and users are not yet
 widespread enough to bother CRAN people and use their free server time.
 
 ## Examples
 
 A simple introductory example of model calibration using the Stics model
 is given in this
-[vignette](https://SticsRPacks.github.io/SticsOptimizR/articles/Parameter_estimation_simple_case.html).
+[vignette](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html).
 
 A more complex one with simultaneous estimation of specific and varietal
 parameters is given
-[here](https://SticsRPacks.github.io/SticsOptimizR/articles/Parameter_estimation_Specific_and_Varietal.html).
+[here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html).
 
 An example using the ApsimX model is detailed
-[here](https://SticsRPacks.github.io/SticsOptimizR/articles/ApsimX_parameter_estimation_simple_case.html).
+[here](https://SticsRPacks.github.io/CroptimizR/articles/ApsimX_parameter_estimation_simple_case.html).
 
 See
-[here](https://sticsrpacks.github.io/SticsOptimizR/reference/main_optim.html)
+[here](https://sticsrpacks.github.io/CroptimizR/reference/main_optim.html)
 for a detailed description of the input and output arguments of the
 main\_optim function (or type “? main\_optim” in an R console after
-having installed and loaded the SticsOptimizR package).
+having installed and loaded the CroptimizR package).
 
 ## Code of conduct
 
@@ -227,6 +227,6 @@ Institute for Agricultural research- by Nadine Brisson and Dominique
 Ripoche. An overview of the model is available
 [here](https://www6.paca.inra.fr/stics_eng/About-us/Stics-model-overview).
 
-The SticsOptimizR package is developed by Samuel Buis, Michel Giner and
-the \[SticsOptimizR Team\]
-(<https://github.com/orgs/SticsRPacks/teams/sticsoptimizr>).
+The CroptimizR package is developed by Samuel Buis, Michel Giner and
+the \[CroptimizR Team\]
+(<https://github.com/orgs/SticsRPacks/teams/CroptimizR>).
