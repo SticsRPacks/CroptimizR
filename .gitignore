@@ -16,3 +16,4 @@ vignettes/JavaSTICS-1.41-stics-9.0
 tmp
 doc
 Meta
+vignettes/*.html
