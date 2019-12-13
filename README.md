@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# CroptimizR: An R package for parameter estimation, uncertainty and sensitivity analysis for the [STICS](https://www6.paca.inra.fr/stics_eng/) model <img src="man/figures/logo.png" alt="logo" width="150" align="right" />
+# CroptimizR: An R package for parameter estimation, uncertainty analysis and sensitivity analysis for Crop Models
 
 [![Project Status: WIP – Initial development is in progress, but there
 has not yet been a stable, usable release suitable for the
@@ -17,9 +17,8 @@ This package is dedicated to Probabilistic Uncertainty analysis,
 Sensitivity analysis and Parameter estimation for crop models.
 
 It is under intensive development, so you can fill an issue or request a
-feature [here](https://github.com/SticsRPacks/CroptimizR/issues) at
-any time. The list of functions accessible to the users is provided in
-this
+feature [here](https://github.com/SticsRPacks/CroptimizR/issues) at any
+time. The list of functions accessible to the users is provided in this
 [webpage](https://sticsrpacks.github.io/CroptimizR/reference/index.html).
 
 For the moment, only parameter estimation functions have been
@@ -34,11 +33,10 @@ parameters are provided (see
 [here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html)
 for an example).
 
-CroptimizR is designed to be crop model generic: all the
-functionalities can be used on any crop model for which an R wrapper can
-be implemented. For the moment, R wrappers are available for Stics and
-APSIM crop models (see
-[SticsOnR](https://github.com/SticsRPacks/SticsOnR) and
+CroptimizR is designed to be crop model generic: all the functionalities
+can be used on any crop model for which an R wrapper can be implemented.
+For the moment, R wrappers are available for Stics and APSIM crop models
+(see [SticsOnR](https://github.com/SticsRPacks/SticsOnR) and
 [ApsimOnR](https://github.com/hol430/ApsimOnR)). A wrapper for
 SiriusQuality is under development.
 
@@ -189,8 +187,8 @@ remotes::install_github("SticsRPacks/CroptimizR")
 The package is tested routinely to pass all
 [CRAN](https://CRAN.R-project.org) tests using Travis-CI (linux) and
 AppVeyor (Windows), but it is not yet released to the CRAN servers:
-CroptimizR is still under development and users are not yet
-widespread enough to bother CRAN people and use their free server time.
+CroptimizR is still under development and users are not yet widespread
+enough to bother CRAN people and use their free server time.
 
 ## Examples
 
@@ -219,14 +217,5 @@ to abide by its terms.
 
 ## Authors and acknowledgments
 
-The STICS (Simulateur mulTIdisciplinaire pour les Cultures Standard, or
-multidisciplinary simulator for standard crops) model is a dynamic,
-generic and robust model aiming to simulate the soil-crop-atmosphere
-system. It was first developed in 1996 by INRA -the French National
-Institute for Agricultural research- by Nadine Brisson and Dominique
-Ripoche. An overview of the model is available
-[here](https://www6.paca.inra.fr/stics_eng/About-us/Stics-model-overview).
-
-The CroptimizR package is developed by Samuel Buis, Michel Giner and
-the \[CroptimizR Team\]
-(<https://github.com/orgs/SticsRPacks/teams/CroptimizR>).
+The CroptimizR package is developed by Samuel Buis, Michel Giner and the
+[CroptimizR Team](https://github.com/orgs/SticsRPacks/teams/CroptimizR).

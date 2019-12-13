@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 options(tibble.print_min = 5, tibble.print_max = 5)
 ```
   
-# CroptimizR: An R package for parameter estimation, uncertainty and sensitivity analysis for the [STICS](https://www6.paca.inra.fr/stics_eng/) model <img src="man/figures/logo.png" alt="logo" width="150" align="right" />
+# CroptimizR: An R package for parameter estimation, uncertainty analysis and sensitivity analysis for Crop Models
 
 [![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 [![Travis build status](https://travis-ci.org/SticsRPacks/CroptimizR.svg?branch=master)](https://travis-ci.org/SticsRPacks/CroptimizR)
@@ -142,6 +142,4 @@ Please note that this project is released with a [Contributor Code of Conduct](C
 
 ## Authors and acknowledgments
 
-The STICS (Simulateur mulTIdisciplinaire pour les Cultures Standard, or multidisciplinary simulator for standard crops) model is a dynamic, generic and robust model aiming to simulate the soil-crop-atmosphere system. It was first developed in 1996 by INRA -the French National Institute for Agricultural research-  by Nadine Brisson and Dominique Ripoche. An overview of the model is available [here](https://www6.paca.inra.fr/stics_eng/About-us/Stics-model-overview).
-
-The CroptimizR package is developed by Samuel Buis, Michel Giner and the [CroptimizR Team] (https://github.com/orgs/SticsRPacks/teams/CroptimizR).
+The CroptimizR package is developed by Samuel Buis, Michel Giner and the [CroptimizR Team](https://github.com/orgs/SticsRPacks/teams/CroptimizR).
