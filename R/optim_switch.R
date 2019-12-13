@@ -59,12 +59,6 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
     init_values[idx,param]=user_init_values[idx,param]
   }
 
-
-  sample_sz=nb_rep-NROW(init_values)
-  if (sample_sz>0) {
-    init_values=rbind(init_values,user_init_values)
-  }
-
   # Run nloptr for each repetition
   nlo <- list()
   start_time <- Sys.time()
