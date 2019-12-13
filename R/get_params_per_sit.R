@@ -21,7 +21,9 @@
 #' names(vec)=c("p2","p1","p1")
 #' CroptimizR:::get_params_per_sit(sg,"sit2",vec)   # should give c(1,2)
 #' CroptimizR:::get_params_per_sit(sg,"sit4",vec)   # should give c(1,3)
-#'
+#' 
+#' @keywords internal 
+#' 
 get_params_per_sit <- function(sit_groups, situation, param_vec) {
 
   if (is.list(sit_groups[[1]])) {

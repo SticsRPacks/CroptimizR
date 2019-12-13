@@ -165,9 +165,9 @@ difference between observed and simulated values of model output variables.</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The following criterion are proposed (<a href='https://sticsrpacks.github.io/CroptimizR/reference/index.html'>see html version</a> for a better rendering of equations):</p><ul>
+    <p>The following criterion are proposed (<a href='https://sticsrpacks.github.io/CroptimizR/reference/ls_criterion.html'>see html version</a> for a better rendering of equations):</p><ul>
 <li><p><code>concentrated_wss</code>: concentrated version of weighted sum of squares
-$$ \prod_{j} {(\frac{1}{n_j} \sum_{i,k} [Y_{ijk}-f_{jk}(X_i;\theta)]^2 )} $$
+$$ \prod_{j} {(\frac{1}{n_j} \sum_{i,k} [Y_{ijk}-f_{jk}(X_i;\theta)]^2 )} $$^n_j/2
 where \( Y_{ijk} \) is the observed value for the \(k^{th}\) time point of the \(j^{th}\) variable in the \(i^{th}\)
 situation,
 \( f_{jk}(X_i;\theta) \) the corresponding model prediction, and \(n_j\) the number of measurements of variable \(j\). <br />

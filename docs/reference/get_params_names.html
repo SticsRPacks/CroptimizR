@@ -101,9 +101,6 @@
       <a href="../articles/Designing_a_model_wrapper.html">Elements for implementing a crop model R wrapper</a>
     </li>
     <li>
-      <a href="../articles/Designing_a_model_wrapper_SAM.html">Elements for implementing a crop model R wrapper</a>
-    </li>
-    <li>
       <a href="../articles/Parameter_estimation_simple_case.html">Parameter estimation with the Stics crop Model: a simple case</a>
     </li>
     <li>
@@ -152,10 +149,20 @@
       <th>prior_information</th>
       <td><p>Prior information on the parameters to estimate.
 For the moment only uniform distribution are allowed.
-Either a list containing (named) vectors of upper and lower
-bounds (<code>ub</code> and <code>lb</code>), or a named list containing for each
-parameter the list of situations per group (<code>sit_list</code>)
-and the vector of upper and lower bounds (one value per group) (<code>ub</code> and <code>lb</code>)</p></td>
+Either
+a list containing:</p><ul>
+<li><p>(named) vectors of upper and lower bounds (<code>ub</code> and <code>lb</code>),</p></li>
+<li><p><code>init_values</code>, A data.frame containing initial
+values to test for the parameters (optional, if not provided (or if less values
+than number of repetitions of the minimization are provided), the (or part
+of the) initial values will be randomly generated using LHS sampling within
+parameter bounds.
+or
+a named list containing for each parameter the list of situations per group
+(<code>sit_list</code>), the vector of upper and lower bounds (one value per group)
+(<code>ub</code> and <code>lb</code>) and the list of initial values per group
+<code>init_values</code> (data.frame, one column per group).</p></li>
+</ul></td>
     </tr>
     <tr>
       <th>short_list</th>
@@ -179,10 +186,15 @@ happens for simultaneous estimation of specific and varietal parameters
 
 <span class='co'># A case with groups of situations per parameter</span>
 <span class='no'>prior_information</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>()
-<span class='no'>prior_information</span>$<span class='no'>dlaimax</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>sit_list</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"bou99t3"</span>, <span class='st'>"bou00t3"</span>, <span class='st'>"bou99t1"</span>, <span class='st'>"bou00t1"</span>, <span class='st'>"bo96iN+"</span>, <span class='st'>"lu96iN+"</span>, <span class='st'>"lu96iN6"</span>, <span class='st'>"lu97iN+"</span>)),<span class='kw'>lb</span><span class='kw'>=</span><span class='fl'>0.0005</span>,<span class='kw'>ub</span><span class='kw'>=</span><span class='fl'>0.0025</span>)
-<span class='no'>prior_information</span>$<span class='no'>durvieF</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>sit_list</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"bo96iN+"</span>, <span class='st'>"lu96iN+"</span>, <span class='st'>"lu96iN6"</span>, <span class='st'>"lu97iN+"</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"bou99t3"</span>, <span class='st'>"bou00t3"</span>, <span class='st'>"bou99t1"</span>, <span class='st'>"bou00t1"</span>)),<span class='kw'>lb</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>50</span>,<span class='fl'>50</span>),<span class='kw'>ub</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>400</span>,<span class='fl'>400</span>))
+<span class='no'>prior_information</span>$<span class='no'>dlaimax</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>sit_list</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"bou99t3"</span>, <span class='st'>"bou00t3"</span>, <span class='st'>"bou99t1"</span>, <span class='st'>"bou00t1"</span>,
+                                               <span class='st'>"bo96iN+"</span>, <span class='st'>"lu96iN+"</span>, <span class='st'>"lu96iN6"</span>, <span class='st'>"lu97iN+"</span>)),
+                               <span class='kw'>lb</span><span class='kw'>=</span><span class='fl'>0.0005</span>,<span class='kw'>ub</span><span class='kw'>=</span><span class='fl'>0.0025</span>)
+<span class='no'>prior_information</span>$<span class='no'>durvieF</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>sit_list</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"bo96iN+"</span>, <span class='st'>"lu96iN+"</span>, <span class='st'>"lu96iN6"</span>, <span class='st'>"lu97iN+"</span>),
+                                             <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"bou99t3"</span>, <span class='st'>"bou00t3"</span>, <span class='st'>"bou99t1"</span>, <span class='st'>"bou00t1"</span>)),
+                               <span class='kw'>lb</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>50</span>,<span class='fl'>50</span>),<span class='kw'>ub</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>400</span>,<span class='fl'>400</span>))
 <span class='kw pkg'>CroptimizR</span><span class='kw ns'>:::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/CroptimizR/topics/get_params_names'>get_params_names</a></span>(<span class='no'>prior_information</span>)
-<span class='co'># }</span></pre>
+<span class='co'># }</span><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

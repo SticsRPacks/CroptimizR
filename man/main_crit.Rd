@@ -29,3 +29,4 @@ The value of the criterion
 \description{
 main function for criterion to optimize
 }
+\keyword{internal}

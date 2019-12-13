@@ -1,11 +1,6 @@
 #' @title Extract bounds from prior information
 #'
-#' @param prior_information Prior information on the parameters to estimate.
-#' For the moment only uniform distribution are allowed.
-#' Either a list containing (named) vectors of upper and lower
-#' bounds (`ub` and `lb`), or a named list containing for each
-#' parameter the list of situations per group (`sit_list`)
-#' and the vector of upper and lower bounds (one value per group) (`ub` and `lb`)
+#' @inheritParams main_optim
 #'
 #' @details For the moment only works with uniform distributions but will be
 #' hopefully soon extended to any distribution
@@ -29,7 +24,9 @@
 #'                                lb=c(50,50),ub=c(400,400))
 #' CroptimizR:::get_params_bounds(prior_information)
 #' }
-
+#' 
+#' @keywords internal 
+#' 
 get_params_bounds <- function(prior_information) {
 
   if (!is.null(prior_information$lb) && !is.null(prior_information$ub)) {

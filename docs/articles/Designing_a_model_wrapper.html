@@ -98,7 +98,7 @@
             <address class="author_afil">
       INRA - Agroclim<br><h4 class="author">Samuel Buis</h4>
             <address class="author_afil">
-      INRA - EMMAH<br><h4 class="date">2019-12-12</h4>
+      INRA - EMMAH<br><h4 class="date">2019-12-13</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/master/vignettes/Designing_a_model_wrapper.Rmd"><code>vignettes/Designing_a_model_wrapper.Rmd</code></a></small>
       <div class="hidden name"><code>Designing_a_model_wrapper.Rmd</code></div>
@@ -304,10 +304,11 @@
 <p>But this structure will certainly change in the future, to minimize stored information, keeping only the usefull data for selecting output data (optimizing memory storage, process)</p>
 <p>For example, from a list of observation files (useful for evaluation or optimization processes), a named list of data.frame is produced, one for each situation for which the file exists.</p>
 <p>Here is an example for a single file for <code>banana</code> observations:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(SticsRFiles)</span>
-<span id="cb3-2"><a href="#cb3-2"></a>path &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/file.path">file.path</a></span>(<span class="st">"extdata"</span>,<span class="st">"obs"</span>,<span class="st">"V9.0"</span>), <span class="dt">package =</span> <span class="st">"SticsRFiles"</span>)</span>
-<span id="cb3-3"><a href="#cb3-3"></a>obs_list &lt;-<span class="st"> </span><span class="kw">read_obs</span>(path)</span>
-<span id="cb3-4"><a href="#cb3-4"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/lapply">lapply</a></span>(obs_list, <span class="cf">function</span>(x) <span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(x,<span class="dv">4</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># remotes::install_github("SticsRPacks/SticsRFiles")</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(SticsRFiles)</span>
+<span id="cb3-3"><a href="#cb3-3"></a>path &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/file.path">file.path</a></span>(<span class="st">"extdata"</span>,<span class="st">"obs"</span>,<span class="st">"V9.0"</span>), <span class="dt">package =</span> <span class="st">"SticsRFiles"</span>)</span>
+<span id="cb3-4"><a href="#cb3-4"></a>obs_list &lt;-<span class="st"> </span><span class="kw">read_obs</span>(path)</span>
+<span id="cb3-5"><a href="#cb3-5"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/lapply">lapply</a></span>(obs_list, <span class="cf">function</span>(x) <span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(x,<span class="dv">4</span>))</span></code></pre></div>
 <p>One can give a similar filter list structure defining a customized selection of variables and Dates, but with all values set to NA in data.frames.</p>
 </div>
 <div id="actions-to-be-performed-by-the-model-wrapper" class="section level3">

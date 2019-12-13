@@ -4,31 +4,32 @@
 \alias{optim_switch}
 \title{Call the required parameter estimation method}
 \usage{
-optim_switch(
-  param_names,
-  obs_list,
-  crit_function,
-  model_function,
-  model_options = NULL,
-  optim_method = "nloptr.simplex",
-  optim_options = NULL,
-  prior_information
-)
+optim_switch(param_names, obs_list, crit_function, model_function,
+  model_options = NULL, optim_method = "nloptr.simplex",
+  optim_options = NULL, prior_information)
 }
 \arguments{
 \item{param_names}{Name(s) of parameters to estimate (a parameter name must
 be replicated if several groups of situations for this parameter)}
 
-\item{obs_list}{List of observed values}
+\item{obs_list}{List of observed values to use for parameter estimation
+A \code{named list} (names = situations names) of data.frame containing
+one column named Date with the dates (POSIXct format) of the different observations
+and one column per observed variables with either the measured values or NA, if
+the variable is not observed at the given date.}
 
-\item{crit_function}{Function implementing the criterion to optimize}
+\item{crit_function}{Function implementing the criterion to optimize
+(optional, default=concentrated_wss). See
+\href{https://sticsrpacks.github.io/CroptimizR/reference/ls_criterion.html}{here}
+for more details about the list of proposed criterion.}
 
-\item{model_function}{Crop Model wrapper function}
+\item{model_function}{Crop Model wrapper function to use}
 
-\item{model_options}{List of options for the Crop Model wrapper (optional)}
+\item{model_options}{List of options for the Crop Model wrapper (optional,
+see help of the Crop Model wrapper function used)}
 
-\item{optim_method}{Name of the parameter estimation method (optional,
-simplex is the only one interfaced for the moment)}
+\item{optim_method}{Name of the parameter estimation method to use (optional,
+default="nloptr.simplex", the only one available for the moment)}
 
 \item{optim_options}{List of options of the parameter estimation method:
 \code{nb_rep}, the number of repetitions (optional, default=1)
@@ -43,7 +44,7 @@ Either
 a list containing:
 \itemize{
 \item (named) vectors of upper and lower bounds (\code{ub} and \code{lb}),
-\item \code{init_values}, A (column named) vector or data.frame containing initial
+\item \code{init_values}, A data.frame containing initial
 values to test for the parameters (optional, if not provided (or if less values
 than number of repetitions of the minimization are provided), the (or part
 of the) initial values will be randomly generated using LHS sampling within
@@ -52,7 +53,7 @@ or
 a named list containing for each parameter the list of situations per group
 (\code{sit_list}), the vector of upper and lower bounds (one value per group)
 (\code{ub} and \code{lb}) and the list of initial values per group
-\code{init_values} (column named vector or data.frame per group).
+\code{init_values} (data.frame, one column per group).
 }}
 }
 \value{
@@ -71,3 +72,4 @@ of the criterion
 \description{
 Call the required parameter estimation method
 }
+\keyword{internal}

@@ -4,7 +4,9 @@
 #' @param obs_list List of observed values
 #'
 #' @return A list containing the new obs and sim lists having same situations, variables, dates
-#'
+#' 
+#' @keywords internal 
+#' 
 intersect_sim_obs <- function(sim_list,obs_list) {
 
   # Intersect situations

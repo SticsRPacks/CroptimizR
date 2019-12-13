@@ -37,7 +37,9 @@
 #'                                init_values=data.frame(c(200,300),c(250,350)),lb=50,ub=400)
 #' CroptimizR:::get_params_init_values(prior_information)
 #' }
-
+#' 
+#' @keywords internal 
+#' 
 get_params_init_values <- function(prior_information) {
 
   init_values=NULL

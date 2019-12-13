@@ -9,10 +9,21 @@ get_params_names(prior_information, short_list = FALSE)
 \arguments{
 \item{prior_information}{Prior information on the parameters to estimate.
 For the moment only uniform distribution are allowed.
-Either a list containing (named) vectors of upper and lower
-bounds (\code{ub} and \code{lb}), or a named list containing for each
-parameter the list of situations per group (\code{sit_list})
-and the vector of upper and lower bounds (one value per group) (\code{ub} and \code{lb})}
+Either
+a list containing:
+\itemize{
+\item (named) vectors of upper and lower bounds (\code{ub} and \code{lb}),
+\item \code{init_values}, A data.frame containing initial
+values to test for the parameters (optional, if not provided (or if less values
+than number of repetitions of the minimization are provided), the (or part
+of the) initial values will be randomly generated using LHS sampling within
+parameter bounds.
+or
+a named list containing for each parameter the list of situations per group
+(\code{sit_list}), the vector of upper and lower bounds (one value per group)
+(\code{ub} and \code{lb}) and the list of initial values per group
+\code{init_values} (data.frame, one column per group).
+}}
 
 \item{short_list}{TRUE to return a list without replicated parameters which
 happens for simultaneous estimation of specific and varietal parameters
@@ -41,4 +52,6 @@ prior_information$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", 
                                lb=c(50,50),ub=c(400,400))
 CroptimizR:::get_params_names(prior_information)
 }
+
 }
+\keyword{internal}

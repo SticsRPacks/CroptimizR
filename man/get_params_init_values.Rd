@@ -64,4 +64,6 @@ prior_information$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", 
                                init_values=data.frame(c(200,300),c(250,350)),lb=50,ub=400)
 CroptimizR:::get_params_init_values(prior_information)
 }
+
 }
+\keyword{internal}

@@ -37,3 +37,4 @@ CroptimizR:::get_params_per_sit(sg,"sit2",vec)   # should give c(1,2)
 CroptimizR:::get_params_per_sit(sg,"sit4",vec)   # should give c(1,3)
 
 }
+\keyword{internal}

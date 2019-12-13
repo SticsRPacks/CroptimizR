@@ -1,23 +1,25 @@
+#' @title main function for criterion to optimize
+#'
+#' @param param_values Value(s) of the parameters
+#' @param crit_options A list containing the following elements:
+#' `param_names` Name(s) of parameters
+#' `obs_list` List of observed values
+#' `crit_function` Function implementing the criterion to optimize
+#' `model_function` Function implementing the criterion to optimize
+#' `model_options` List of arguments to pass to model function
+#' `situation_names` Name(s) of the situations to simulate
+#' `prior_information` Prior information on the parameters to estimate.
+#' For the moment only uniform distribution are allowed.
+#' Either a list containing a vector of upper and lower
+#' bounds (`ub` and `lb`), or a list of list containing for each
+#' parameter and group of situation the names of the situations (`sit_names`)
+#' and upper and lower bounds (`ub` and `lb`)
+#'
+#' @return The value of the criterion
+#' 
+#' @keywords internal 
+#' 
 main_crit <- function(param_values,crit_options) {
-  #' @title main function for criterion to optimize
-  #'
-  #' @param param_values Value(s) of the parameters
-  #' @param crit_options A list containing the following elements:
-  #' `param_names` Name(s) of parameters
-  #' `obs_list` List of observed values
-  #' `crit_function` Function implementing the criterion to optimize
-  #' `model_function` Function implementing the criterion to optimize
-  #' `model_options` List of arguments to pass to model function
-  #' `situation_names` Name(s) of the situations to simulate
-  #' `prior_information` Prior information on the parameters to estimate.
-  #' For the moment only uniform distribution are allowed.
-  #' Either a list containing a vector of upper and lower
-  #' bounds (`ub` and `lb`), or a list of list containing for each
-  #' parameter and group of situation the names of the situations (`sit_names`)
-  #' and upper and lower bounds (`ub` and `lb`)
-  #'
-  #' @return The value of the criterion
-  #'
 
   # Denormalize parameters
   # TO DO

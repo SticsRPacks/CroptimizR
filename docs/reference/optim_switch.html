@@ -101,9 +101,6 @@
       <a href="../articles/Designing_a_model_wrapper.html">Elements for implementing a crop model R wrapper</a>
     </li>
     <li>
-      <a href="../articles/Designing_a_model_wrapper_SAM.html">Elements for implementing a crop model R wrapper</a>
-    </li>
-    <li>
       <a href="../articles/Parameter_estimation_simple_case.html">Parameter estimation with the Stics crop Model: a simple case</a>
     </li>
     <li>
@@ -157,24 +154,32 @@ be replicated if several groups of situations for this parameter)</p></td>
     </tr>
     <tr>
       <th>obs_list</th>
-      <td><p>List of observed values</p></td>
+      <td><p>List of observed values to use for parameter estimation
+A <code>named list</code> (names = situations names) of data.frame containing
+one column named Date with the dates (POSIXct format) of the different observations
+and one column per observed variables with either the measured values or NA, if
+the variable is not observed at the given date.</p></td>
     </tr>
     <tr>
       <th>crit_function</th>
-      <td><p>Function implementing the criterion to optimize</p></td>
+      <td><p>Function implementing the criterion to optimize
+(optional, default=concentrated_wss). See
+<a href='https://sticsrpacks.github.io/CroptimizR/reference/ls_criterion.html'>here</a>
+for more details about the list of proposed criterion.</p></td>
     </tr>
     <tr>
       <th>model_function</th>
-      <td><p>Crop Model wrapper function</p></td>
+      <td><p>Crop Model wrapper function to use</p></td>
     </tr>
     <tr>
       <th>model_options</th>
-      <td><p>List of options for the Crop Model wrapper (optional)</p></td>
+      <td><p>List of options for the Crop Model wrapper (optional,
+see help of the Crop Model wrapper function used)</p></td>
     </tr>
     <tr>
       <th>optim_method</th>
-      <td><p>Name of the parameter estimation method (optional,
-simplex is the only one interfaced for the moment)</p></td>
+      <td><p>Name of the parameter estimation method to use (optional,
+default="nloptr.simplex", the only one available for the moment)</p></td>
     </tr>
     <tr>
       <th>optim_options</th>
@@ -192,7 +197,7 @@ For the moment only uniform distribution are allowed.
 Either
 a list containing:</p><ul>
 <li><p>(named) vectors of upper and lower bounds (<code>ub</code> and <code>lb</code>),</p></li>
-<li><p><code>init_values</code>, A (column named) vector or data.frame containing initial
+<li><p><code>init_values</code>, A data.frame containing initial
 values to test for the parameters (optional, if not provided (or if less values
 than number of repetitions of the minimization are provided), the (or part
 of the) initial values will be randomly generated using LHS sampling within
@@ -201,7 +206,7 @@ or
 a named list containing for each parameter the list of situations per group
 (<code>sit_list</code>), the vector of upper and lower bounds (one value per group)
 (<code>ub</code> and <code>lb</code>) and the list of initial values per group
-<code>init_values</code> (column named vector or data.frame per group).</p></li>
+<code>init_values</code> (data.frame, one column per group).</p></li>
 </ul></td>
     </tr>
     </table>
