@@ -142,9 +142,9 @@ difference between observed and simulated values of model output variables.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>concentrated_wss</span>(<span class='no'>sim_list</span>, <span class='no'>obs_list</span>)
+    <pre class="usage"><span class='fu'>crit_cwss</span>(<span class='no'>sim_list</span>, <span class='no'>obs_list</span>)
 
-<span class='fu'>log_concentrated_wss</span>(<span class='no'>sim_list</span>, <span class='no'>obs_list</span>)</pre>
+<span class='fu'>crit_log_cwss</span>(<span class='no'>sim_list</span>, <span class='no'>obs_list</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -166,14 +166,14 @@ difference between observed and simulated values of model output variables.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The following criterion are proposed (<a href='https://sticsrpacks.github.io/CroptimizR/reference/ls_criterion.html'>see html version</a> for a better rendering of equations):</p><ul>
-<li><p><code>concentrated_wss</code>: concentrated version of weighted sum of squares
+<li><p><code>crit_cwss</code>: concentrated version of weighted sum of squares
 $$ \prod_{j} {(\frac{1}{n_j} \sum_{i,k} [Y_{ijk}-f_{jk}(X_i;\theta)]^2 )} $$^n_j/2
 where \( Y_{ijk} \) is the observed value for the \(k^{th}\) time point of the \(j^{th}\) variable in the \(i^{th}\)
 situation,
 \( f_{jk}(X_i;\theta) \) the corresponding model prediction, and \(n_j\) the number of measurements of variable \(j\). <br />
 More details about this criterion are given in Wallach et al. (2011), equation 5.</p></li>
-<li><p><code>log_concentrated_wss</code>: log transformation of concentrated version of weighted sum of squares <br />
-This criterion can be useful in place of concentrated_wss if the sum of residues are null for a given situation
+<li><p><code>crit_log_cwss</code>: log transformation of concentrated version of weighted sum of squares <br />
+This criterion can be useful in place of crit_cwss if the sum of residues are null for a given situation
 (this may happen for example when one optimize on integers such as phenological stages days ...)</p></li>
 </ul><p><code>sim_list</code> and <code>obs_list</code> must have the same structure (i.e. same number of variables, dates, situations, ... use internal function
 intersect_sim_obs before calling the criterion functions).</p>

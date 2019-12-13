@@ -11,14 +11,14 @@
 #'
 #' @details The following criterion are proposed ([see html version](https://sticsrpacks.github.io/CroptimizR/reference/ls_criterion.html) for a better rendering of equations):
 #' \itemize{
-#'   \item `concentrated_wss`: concentrated version of weighted sum of squares
+#'   \item `crit_cwss`: concentrated version of weighted sum of squares
 #'           \deqn{ \prod_{j} {(\frac{1}{n_j} \sum_{i,k} [Y_{ijk}-f_{jk}(X_i;\theta)]^2 )} }^{n_j/2}
 #'           where \eqn{ Y_{ijk} } is the observed value for the \eqn{k^{th}} time point of the \eqn{j^{th}} variable in the \eqn{i^{th}}
 #'           situation,
 #'           \eqn{ f_{jk}(X_i;\theta) } the corresponding model prediction, and \eqn{n_j} the number of measurements of variable \eqn{j}. \cr
 #'           More details about this criterion are given in Wallach et al. (2011), equation 5.
-#'   \item `log_concentrated_wss`: log transformation of concentrated version of weighted sum of squares \cr
-#'           This criterion can be useful in place of concentrated_wss if the sum of residues are null for a given situation 
+#'   \item `crit_log_cwss`: log transformation of concentrated version of weighted sum of squares \cr
+#'           This criterion can be useful in place of crit_cwss if the sum of residues are null for a given situation 
 #'           (this may happen for example when one optimize on integers such as phenological stages days ...)
 #' }
 #' `sim_list` and `obs_list` must have the same structure (i.e. same number of variables, dates, situations, ... use internal function 
@@ -31,7 +31,7 @@ NULL
 
 #' @export
 #' @rdname ls_criterion
-concentrated_wss <- function(sim_list,obs_list) {
+crit_cwss <- function(sim_list,obs_list) {
 
   var_list=unique(unlist(lapply(obs_list,function (x) colnames(x))))
   var_list=setdiff(var_list,"Date")
@@ -54,7 +54,7 @@ concentrated_wss <- function(sim_list,obs_list) {
 
 #' @export
 #' @rdname ls_criterion
-log_concentrated_wss <- function(sim_list,obs_list) {
+crit_log_cwss <- function(sim_list,obs_list) {
 
   var_list=unique(unlist(lapply(obs_list,function (x) colnames(x))))
   var_list=setdiff(var_list,"Date")

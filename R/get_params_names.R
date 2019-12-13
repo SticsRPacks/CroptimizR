@@ -1,6 +1,6 @@
 #' @title Extract param names from prior information
 #'
-#' @inheritParams main_optim
+#' @inheritParams estim_param
 #'
 #' @param short_list TRUE to return a list without replicated parameters which
 #' happens for simultaneous estimation of specific and varietal parameters

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>main function for parameter estimation — main_optim • CroptimizR</title>
+<title>main function for parameter estimation — estim_param • CroptimizR</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -37,7 +37,7 @@
 
 
 
-<meta property="og:title" content="main function for parameter estimation — main_optim" />
+<meta property="og:title" content="main function for parameter estimation — estim_param" />
 
 <meta property="og:description" content="main function for parameter estimation" />
 
@@ -130,8 +130,8 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>main function for parameter estimation</h1>
-    <small class="dont-index">Source: <a href='https://github.com/SticsRPacks/CroptimizR/blob/master/R/main_optim.R'><code>R/main_optim.R</code></a></small>
-    <div class="hidden name"><code>main_optim.Rd</code></div>
+    <small class="dont-index">Source: <a href='https://github.com/SticsRPacks/CroptimizR/blob/master/R/estim_param.R'><code>R/estim_param.R</code></a></small>
+    <div class="hidden name"><code>estim_param.Rd</code></div>
     </div>
 
     <div class="ref-description">
@@ -140,7 +140,7 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>main_optim</span>(<span class='no'>obs_list</span>, <span class='kw'>crit_function</span> <span class='kw'>=</span> <span class='no'>concentrated_wss</span>, <span class='no'>model_function</span>,
+    <pre class="usage"><span class='fu'>estim_param</span>(<span class='no'>obs_list</span>, <span class='kw'>crit_function</span> <span class='kw'>=</span> <span class='no'>crit_cwss</span>, <span class='no'>model_function</span>,
   <span class='kw'>model_options</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>optim_method</span> <span class='kw'>=</span> <span class='st'>"nloptr.simplex"</span>,
   <span class='kw'>optim_options</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>prior_information</span>)</pre>
     
@@ -158,7 +158,7 @@ the variable is not observed at the given date.</p></td>
     <tr>
       <th>crit_function</th>
       <td><p>Function implementing the criterion to optimize
-(optional, default=concentrated_wss). See
+(optional, default=crit_cwss). See
 <a href='https://sticsrpacks.github.io/CroptimizR/reference/ls_criterion.html'>here</a>
 for more details about the list of proposed criterion.</p></td>
     </tr>
@@ -267,7 +267,7 @@ model_options=stics_wrapper_options(stics_path,data_dir,
                                     parallel=FALSE)
 
 # Run the optimization
-optim_results=main_optim(obs_list=obs_list,
+optim_results=estim_param(obs_list=obs_list,
                          model_function=stics_wrapper,
                          model_options=model_options,
                          optim_options=optim_options,

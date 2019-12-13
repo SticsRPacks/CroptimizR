@@ -23,7 +23,7 @@ time. The list of functions accessible to the users is provided in this
 
 For the moment, only parameter estimation functions have been
 developped. The
-([`main_optim`](https://sticsrpacks.github.io/CroptimizR/reference/main_optim.html))
+([`estim_param`](https://sticsrpacks.github.io/CroptimizR/reference/estim_param.html))
 function can be used to perform parameter estimation using multi-start
 Nelder-Meade simplexe minimization of [different least square
 criterion](https://sticsrpacks.github.io/CroptimizR/reference/ls_criterion.html).
@@ -204,7 +204,7 @@ An example using the ApsimX model is detailed
 [here](https://SticsRPacks.github.io/CroptimizR/articles/ApsimX_parameter_estimation_simple_case.html).
 
 See
-[here](https://sticsrpacks.github.io/CroptimizR/reference/main_optim.html)
+[here](https://sticsrpacks.github.io/CroptimizR/reference/estim_param.html)
 for a detailed description of the input and output arguments of the
 main\_optim function (or type “? main\_optim” in an R console after
 having installed and loaded the CroptimizR package).

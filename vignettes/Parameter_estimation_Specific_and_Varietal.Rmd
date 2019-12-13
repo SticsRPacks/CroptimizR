@@ -136,7 +136,7 @@ optim_options$ranseed <- 1234 # random seed
 model_options=stics_wrapper_options(stics_path,data_dir, parallel=TRUE) 
 
 # Run the optimization
-optim_results=main_optim(obs_list=obs_list,
+optim_results=estim_param(obs_list=obs_list,
                             model_function=stics_wrapper,
                             model_options=model_options,
                             optim_options=optim_options,

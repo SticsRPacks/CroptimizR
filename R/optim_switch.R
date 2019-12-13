@@ -1,6 +1,6 @@
 #' @title Call the required parameter estimation method
 #'
-#' @inheritParams main_optim
+#' @inheritParams estim_param
 #' @param param_names Name(s) of parameters to estimate (a parameter name must
 #' be replicated if several groups of situations for this parameter)
 #'

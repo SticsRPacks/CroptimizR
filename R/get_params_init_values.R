@@ -1,6 +1,6 @@
 #' @title Extract parameter initial values from prior information
 #'
-#' @inheritParams main_optim
+#' @inheritParams estim_param
 #'
 #' @return A dataframe containing initial values for the different parameters to
 #' estimated (one column per parameter)

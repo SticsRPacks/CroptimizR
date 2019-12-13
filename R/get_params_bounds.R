@@ -1,6 +1,6 @@
 #' @title Extract bounds from prior information
 #'
-#' @inheritParams main_optim
+#' @inheritParams estim_param
 #'
 #' @details For the moment only works with uniform distributions but will be
 #' hopefully soon extended to any distribution

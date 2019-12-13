@@ -19,7 +19,7 @@ and one column per observed variables with either the measured values or NA, if
 the variable is not observed at the given date.}
 
 \item{crit_function}{Function implementing the criterion to optimize
-(optional, default=concentrated_wss). See
+(optional, default=crit_cwss). See
 \href{https://sticsrpacks.github.io/CroptimizR/reference/ls_criterion.html}{here}
 for more details about the list of proposed criterion.}
 

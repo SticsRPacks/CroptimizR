@@ -6,7 +6,7 @@
 #' and one column per observed variables with either the measured values or NA, if
 #' the variable is not observed at the given date.
 #' @param crit_function Function implementing the criterion to optimize
-#' (optional, default=concentrated_wss). See
+#' (optional, default=crit_cwss). See
 #' [here](https://sticsrpacks.github.io/CroptimizR/reference/ls_criterion.html)
 #' for more details about the list of proposed criterion.
 #' @param model_function Crop Model wrapper function to use
@@ -95,7 +95,7 @@
 #'                                     parallel=FALSE)
 #'
 #' # Run the optimization
-#' optim_results=main_optim(obs_list=obs_list,
+#' optim_results=estim_param(obs_list=obs_list,
 #'                          model_function=stics_wrapper,
 #'                          model_options=model_options,
 #'                          optim_options=optim_options,
@@ -109,7 +109,7 @@
 
 
 
-main_optim <- function(obs_list,crit_function=concentrated_wss,model_function,model_options=NULL,optim_method="nloptr.simplex",optim_options=NULL,prior_information) {
+estim_param <- function(obs_list,crit_function=crit_cwss,model_function,model_options=NULL,optim_method="nloptr.simplex",optim_options=NULL,prior_information) {
 
 
   #

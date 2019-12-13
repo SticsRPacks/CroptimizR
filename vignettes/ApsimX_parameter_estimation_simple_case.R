@@ -114,7 +114,7 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 #  
-#  optim_results=main_optim(obs_list=obs_list,
+#  optim_results=estim_param(obs_list=obs_list,
 #                              model_function=apsimx_wrapper,
 #                              model_options=model_options,
 #                              optim_options=optim_options,

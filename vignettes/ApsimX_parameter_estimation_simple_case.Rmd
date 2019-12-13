@@ -145,7 +145,7 @@ prior_information <-
 ## Set options for the parameter estimation method
 
 `optim_options` should contain the options of the parameter estimation method.
-Here we defined a few options for the simplex method of the `nloptr` package (default method in main_optim).
+Here we defined a few options for the simplex method of the `nloptr` package (default method in estim_param).
 The full set of options for the simplex method can be found in the [vignette of nloptr package](https://cran.r-project.org/web/packages/nloptr/vignettes/nloptr.pdf).
 
 The number of repetitions `nb_rep` is advised to be set at least to 5, while 10 is a reasonable maximum value.
@@ -175,11 +175,11 @@ optim_options$ranseed <- 1234 # set random seed so that each execution give the 
 
 The Nelder-Meade simplex is the default method => no need to set the 
 optim_method argument. For the moment it is the only method interfaced (others will come soonly).
-Same for crit_function: a value is set by default (concentrated_wss, see wallach et al., 2011). For the moment only 2 criterion are proposed (log_concentrated_wss and concentrated_wss), others will be proposed in next versions of CroptimizR. The user can implement its own criterion (see inputs and outputs required in the concentrated_wss function).
+Same for crit_function: a value is set by default (crit_cwss, see wallach et al., 2011). For the moment only 2 criterion are proposed (crit_log_cwss and crit_cwss), others will be proposed in next versions of CroptimizR. The user can implement its own criterion (see inputs and outputs required in the crit_cwss function).
 
 ```{r message=FALSE, warning=FALSE}
 
-optim_results=main_optim(obs_list=obs_list,
+optim_results=estim_param(obs_list=obs_list,
                             model_function=apsimx_wrapper,
                             model_options=model_options,
                             optim_options=optim_options,
