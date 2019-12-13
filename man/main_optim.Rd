@@ -68,13 +68,10 @@ main function for parameter estimation
 # Version 9.* of Stics is needed to run this example
 
 # Load the needed packages
-library(SticsRFiles)
-library(SticsOnR)
-library(CroptimizR)
-library(dplyr)
-library(nloptr)
-library(DiceDesign)
-library("doParallel")
+ if(!require("SticsRPacks")){
+   devtools::install_github("SticsRPacks/SticsRPacks")
+   library("SticsRPacks")
+ }
 
 # Download the data for the example (Stics input files in txt format, one folder per USM)
 data_dir= normalizePath(tempdir(), winslash = "/", mustWork = FALSE)

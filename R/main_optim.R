@@ -2,12 +2,12 @@
 #'
 #' @param obs_list List of observed values to use for parameter estimation
 #' A `named list` (names = situations names) of data.frame containing
-#' one column named Date with the dates (POSIXct format) of the different observations 
-#' and one column per observed variables with either the measured values or NA, if 
+#' one column named Date with the dates (POSIXct format) of the different observations
+#' and one column per observed variables with either the measured values or NA, if
 #' the variable is not observed at the given date.
 #' @param crit_function Function implementing the criterion to optimize
-#' (optional, default=concentrated_wss). See 
-#' [here](https://sticsrpacks.github.io/CroptimizR/reference/ls_criterion.html) 
+#' (optional, default=concentrated_wss). See
+#' [here](https://sticsrpacks.github.io/CroptimizR/reference/ls_criterion.html)
 #' for more details about the list of proposed criterion.
 #' @param model_function Crop Model wrapper function to use
 #' @param model_options List of options for the Crop Model wrapper (optional,
@@ -37,12 +37,12 @@
 #' `init_values` (data.frame, one column per group).
 #'
 #' @return prints, graphs and a list containing the results of the parameter estimation,
-#' which content depends on the method used, all that saved in the defined in 
+#' which content depends on the method used, all that saved in the defined in
 #' `optim_options.path_results`
 #'
-#' @seealso For more detail and examples, see the different vignettes in 
+#' @seealso For more detail and examples, see the different vignettes in
 #' [CroptimizR website](https://sticsrpacks.github.io/CroptimizR/)
-#' 
+#'
 #' @export
 #'
 #' @examples
@@ -52,13 +52,10 @@
 #' # Version 9.* of Stics is needed to run this example
 #'
 #' # Load the needed packages
-#' library(SticsRFiles)
-#' library(SticsOnR)
-#' library(CroptimizR)
-#' library(dplyr)
-#' library(nloptr)
-#' library(DiceDesign)
-#' library("doParallel")
+#'  if(!require("SticsRPacks")){
+#'    devtools::install_github("SticsRPacks/SticsRPacks")
+#'    library("SticsRPacks")
+#'  }
 #'
 #' # Download the data for the example (Stics input files in txt format, one folder per USM)
 #' data_dir= normalizePath(tempdir(), winslash = "/", mustWork = FALSE)
