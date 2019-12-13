@@ -19,12 +19,7 @@ ByteCompile: true
 RoxygenNote: 7.0.0
 Imports:
     nloptr,
-    DiceDesign,
-    SticsRFiles,
-    SticsOnR
-Remotes: 
-    github::SticsRPacks/SticsRFiles,
-    github::SticsRPacks/SticsOnR
+    DiceDesign
 Suggests:
     testthat,
     covr,
