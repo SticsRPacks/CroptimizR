@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Elements for implementing a crop model R wrapper • SticsOptimizR</title>
+<title>Elements for implementing a crop model R wrapper • CroptimizR</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -36,7 +36,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">SticsOptimizR</a>
+        <a class="navbar-link" href="../index.html">CroptimizR</a>
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
       </span>
     </div>
@@ -76,7 +76,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/SticsRPacks/SticsOptimizR">
+  <a href="https://github.com/SticsRPacks/CroptimizR">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -100,7 +100,7 @@
             <address class="author_afil">
       INRA - EMMAH<br><h4 class="date">2019-12-12</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/SticsOptimizR/blob/master/vignettes/Designing_a_model_wrapper.Rmd"><code>vignettes/Designing_a_model_wrapper.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/master/vignettes/Designing_a_model_wrapper.Rmd"><code>vignettes/Designing_a_model_wrapper.Rmd</code></a></small>
       <div class="hidden name"><code>Designing_a_model_wrapper.Rmd</code></div>
 
     </address>
@@ -345,7 +345,7 @@
 <ul>
 <li>Example of information stored in <code>prior_information</code> and use:</li>
 </ul>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(SticsOptimizR)</span>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(CroptimizR)</span>
 <span id="cb4-2"><a href="#cb4-2"></a>sg=<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">p1=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">sit_list=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"sit1"</span>,<span class="st">"sit2"</span>,<span class="st">"sit3"</span>),<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"sit4"</span>,<span class="st">"sit5"</span>,<span class="st">"sit6"</span>))),</span>
 <span id="cb4-3"><a href="#cb4-3"></a>        <span class="dt">p2=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">sit_list=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"sit1"</span>,<span class="st">"sit2"</span>,<span class="st">"sit3"</span>,<span class="st">"sit4"</span>,<span class="st">"sit5"</span>,<span class="st">"sit6"</span>))))</span>
 <span id="cb4-4"><a href="#cb4-4"></a></span>

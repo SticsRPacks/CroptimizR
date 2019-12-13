@@ -30,10 +30,10 @@ will be considered in the same order as in \code{sit_group}
 sg=list(p1=list(sit_list=list(c("sit1","sit2","sit3"),c("sit4","sit5","sit6"))),
         p2=list(sit_list=list(c("sit1","sit2","sit3","sit4","sit5","sit6"))))
 vec=c(1,2,3)
-SticsOptimizR:::get_params_per_sit(sg,"sit2",vec)   # should give c(1,3)
-SticsOptimizR:::get_params_per_sit(sg,"sit4",vec)   # should give c(2,3)
+CroptimizR:::get_params_per_sit(sg,"sit2",vec)   # should give c(1,3)
+CroptimizR:::get_params_per_sit(sg,"sit4",vec)   # should give c(2,3)
 names(vec)=c("p2","p1","p1")
-SticsOptimizR:::get_params_per_sit(sg,"sit2",vec)   # should give c(1,2)
-SticsOptimizR:::get_params_per_sit(sg,"sit4",vec)   # should give c(1,3)
+CroptimizR:::get_params_per_sit(sg,"sit2",vec)   # should give c(1,2)
+CroptimizR:::get_params_per_sit(sg,"sit4",vec)   # should give c(1,3)
 
 }

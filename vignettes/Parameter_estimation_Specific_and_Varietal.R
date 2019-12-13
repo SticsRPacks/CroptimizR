@@ -17,9 +17,9 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 #    devtools::install_github("SticsRPacks/SticsOnR")
 #    library("SticsOnR")
 #  }
-#  if(!require("SticsOptimizR")){
-#    devtools::install_github("SticsRPacks/SticsOptimizR")
-#    library("SticsOptimizR")
+#  if(!require("CroptimizR")){
+#    devtools::install_github("SticsRPacks/CroptimizR")
+#    library("CroptimizR")
 #  }
 #  if(!require("dplyr")){
 #    install.packages("dplyr",repos="http://cran.irsn.fr")

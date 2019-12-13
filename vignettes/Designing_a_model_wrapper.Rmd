@@ -264,7 +264,7 @@ If `prior_information` contains the default value (NULL) the same set of paramet
 
 - Example of information stored in `prior_information` and use:
 ```{r}
-library(SticsOptimizR)
+library(CroptimizR)
 sg=list(p1=list(sit_list=list(c("sit1","sit2","sit3"),c("sit4","sit5","sit6"))),
         p2=list(sit_list=list(c("sit1","sit2","sit3","sit4","sit5","sit6"))))
 

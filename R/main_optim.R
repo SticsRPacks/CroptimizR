@@ -7,7 +7,7 @@
 #' the variable is not observed at the given date.
 #' @param crit_function Function implementing the criterion to optimize
 #' (optional, default=concentrated_wss). See 
-#' [here](https://sticsrpacks.github.io/SticsOptimizR/reference/ls_criterion.html) 
+#' [here](https://sticsrpacks.github.io/CroptimizR/reference/ls_criterion.html) 
 #' for more details about the list of proposed criterion.
 #' @param model_function Crop Model wrapper function to use
 #' @param model_options List of options for the Crop Model wrapper (optional,
@@ -41,7 +41,7 @@
 #' `optim_options.path_results`
 #'
 #' @seealso For more detail and examples, see the different vignettes in 
-#' [CroptimizR website](https://sticsrpacks.github.io/SticsOptimizR/)
+#' [CroptimizR website](https://sticsrpacks.github.io/CroptimizR/)
 #' 
 #' @export
 #'
@@ -54,7 +54,7 @@
 #' # Load the needed packages
 #' library(SticsRFiles)
 #' library(SticsOnR)
-#' library(SticsOptimizR)
+#' library(CroptimizR)
 #' library(dplyr)
 #' library(nloptr)
 #' library(DiceDesign)
@@ -106,7 +106,7 @@
 #'
 #' # See results (graph and Rdata) stored in optim_options$path_results
 #'
-#' # See the different vignettes in [CroptimizR website](https://sticsrpacks.github.io/SticsOptimizR/)
+#' # See the different vignettes in [CroptimizR website](https://sticsrpacks.github.io/CroptimizR/)
 #' for more details and examples.
 #' }
 

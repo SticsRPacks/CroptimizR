@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>main function for parameter estimation — main_optim • SticsOptimizR</title>
+<title>main function for parameter estimation — main_optim • CroptimizR</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -71,7 +71,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">SticsOptimizR</a>
+        <a class="navbar-link" href="../index.html">CroptimizR</a>
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
       </span>
     </div>
@@ -112,7 +112,7 @@
       
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/SticsRPacks/SticsOptimizR">
+  <a href="https://github.com/SticsRPacks/CroptimizR">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -130,7 +130,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>main function for parameter estimation</h1>
-    <small class="dont-index">Source: <a href='https://github.com/SticsRPacks/SticsOptimizR/blob/master/R/main_optim.R'><code>R/main_optim.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/SticsRPacks/CroptimizR/blob/master/R/main_optim.R'><code>R/main_optim.R</code></a></small>
     <div class="hidden name"><code>main_optim.Rd</code></div>
     </div>
 
@@ -159,7 +159,7 @@ the variable is not observed at the given date.</p></td>
       <th>crit_function</th>
       <td><p>Function implementing the criterion to optimize
 (optional, default=concentrated_wss). See
-<a href='https://sticsrpacks.github.io/SticsOptimizR/reference/ls_criterion.html'>here</a>
+<a href='https://sticsrpacks.github.io/CroptimizR/reference/ls_criterion.html'>here</a>
 for more details about the list of proposed criterion.</p></td>
     </tr>
     <tr>
@@ -215,7 +215,7 @@ which content depends on the method used, all that saved in the defined in
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>For more detail and examples, see the different vignettes in
-<a href='https://sticsrpacks.github.io/SticsOptimizR/'>CroptimizR website</a></p></div>
+<a href='https://sticsrpacks.github.io/CroptimizR/'>CroptimizR website</a></p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -226,7 +226,7 @@ which content depends on the method used, all that saved in the defined in
 # Load the needed packages
 library(SticsRFiles)
 library(SticsOnR)
-library(SticsOptimizR)
+library(CroptimizR)
 library(dplyr)
 library(nloptr)
 library(DiceDesign)
@@ -278,7 +278,7 @@ optim_results=main_optim(obs_list=obs_list,
 
 # See results (graph and Rdata) stored in optim_options$path_results
 
-# See the different vignettes in [CroptimizR website](https://sticsrpacks.github.io/SticsOptimizR/)
+# See the different vignettes in [CroptimizR website](https://sticsrpacks.github.io/CroptimizR/)
 for more details and examples.
 # }
 </pre>

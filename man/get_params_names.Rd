@@ -39,6 +39,6 @@ prior_information$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", 
 prior_information$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
                                              c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),
                                lb=c(50,50),ub=c(400,400))
-SticsOptimizR:::get_params_names(prior_information)
+CroptimizR:::get_params_names(prior_information)
 }
 }

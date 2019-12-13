@@ -54,14 +54,14 @@ flag_log <- TRUE # TRUE -> With log ; FALSE -> Without log
 
 # Workspace_donne -> workspace directory where are USM folders
 # Write full path, relative path does not work
-workspace_donne <- "D:/Home/sbuis/Documents/GitHub/SticsOptimizR/Preliminary work/Data/TestCase1c"
+workspace_donne <- "D:/Home/sbuis/Documents/GitHub/CroptimizR/Preliminary work/Data/TestCase1c"
 
 # path_modulo -> directory of the executable of the JavaStics application (bin folder)
 # To find the name of the executable, check in JavaStics -> Tools -> Select/Add Stics model version -> Corresponding executable
 path_modulo <- "D:/Home/sbuis/Documents/WORK/STICS/JavaSTICS-1.41-stics-9.0/bin/stics_modulo"
 
 # path_results -> Path to the folder where to store the results
-path_results <- "D:/Home/sbuis/Documents/GitHub/SticsOptimizR/Preliminary work/Data/TestCase1c"
+path_results <- "D:/Home/sbuis/Documents/GitHub/CroptimizR/Preliminary work/Data/TestCase1c"
 
 # path_packages -> Path of the needed packages (SticsOnR, SticsEvalR, classes)
 path_packages <- "Tools"

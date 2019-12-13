@@ -92,7 +92,7 @@ knitr::opts_chunk$set(eval = FALSE)
 #  
 
 ## -----------------------------------------------------------------------------
-#  library(SticsOptimizR)
+#  library(CroptimizR)
 #  sg=list(p1=list(sit_list=list(c("sit1","sit2","sit3"),c("sit4","sit5","sit6"))),
 #          p2=list(sit_list=list(c("sit1","sit2","sit3","sit4","sit5","sit6"))))
 #  
