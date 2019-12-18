@@ -12,12 +12,13 @@ text_col <- function(x) {
   theme <- rstudioapi::getThemeInfo()
 
   if (isTRUE(theme$dark)) crayon::white(x) else crayon::black(x)
-
 }
 
 .onAttach <- function(libname, pkgname) {
   packageStartupMessage(
-    text_col(paste("Learn CroptimizR at:",
-                    crayon::blue$underline$bold("https://SticsRPacks.github.io/CroptimizR")))
+    text_col(paste(
+      "Learn CroptimizR at:",
+      crayon::blue$underline$bold("https://SticsRPacks.github.io/CroptimizR")
+    ))
   )
 }

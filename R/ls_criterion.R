@@ -1,12 +1,12 @@
 #' @title Criterion to optimize
 #'
 #' @description
-#' Provide several least squares criterion to estimate parameters by minimizing the 
+#' Provide several least squares criterion to estimate parameters by minimizing the
 #' difference between observed and simulated values of model output variables.
 #'
 #' @param sim_list List of simulated variables
 #' @param obs_list List of observed variables
-#' 
+#'
 #' @return The value of the criterion given the observed and simulated values of the variables.
 #'
 #' @details The following criterion are proposed ([see html version](https://sticsrpacks.github.io/CroptimizR/reference/ls_criterion.html) for a better rendering of equations):
@@ -18,10 +18,10 @@
 #'           \eqn{ f_{jk}(X_i;\theta) } the corresponding model prediction, and \eqn{n_j} the number of measurements of variable \eqn{j}. \cr
 #'           More details about this criterion are given in Wallach et al. (2011), equation 5.
 #'   \item `crit_log_cwss`: log transformation of concentrated version of weighted sum of squares \cr
-#'           This criterion can be useful in place of crit_cwss if the sum of residues are null for a given situation 
+#'           This criterion can be useful in place of crit_cwss if the sum of residues are null for a given situation
 #'           (this may happen for example when one optimize on integers such as phenological stages days ...)
 #' }
-#' `sim_list` and `obs_list` must have the same structure (i.e. same number of variables, dates, situations, ... use internal function 
+#' `sim_list` and `obs_list` must have the same structure (i.e. same number of variables, dates, situations, ... use internal function
 #' intersect_sim_obs before calling the criterion functions).
 #'
 #' @name ls_criterion
@@ -31,22 +31,21 @@ NULL
 
 #' @export
 #' @rdname ls_criterion
-crit_cwss <- function(sim_list,obs_list) {
+crit_cwss <- function(sim_list, obs_list) {
+  var_list <- unique(unlist(lapply(obs_list, function(x) colnames(x))))
+  var_list <- setdiff(var_list, "Date")
 
-  var_list=unique(unlist(lapply(obs_list,function (x) colnames(x))))
-  var_list=setdiff(var_list,"Date")
-
-  result=1
+  result <- 1
 
   for (var in var_list) {
-    obs=unlist(sapply(obs_list,function (x) x[is.element(colnames(x),var)]))
-    sim=unlist(sapply(sim_list,function (x) x[is.element(colnames(x),var)]))
-    res=obs-sim
-    res=res[!is.na(res)]
+    obs <- unlist(sapply(obs_list, function(x) x[is.element(colnames(x), var)]))
+    sim <- unlist(sapply(sim_list, function(x) x[is.element(colnames(x), var)]))
+    res <- obs - sim
+    res <- res[!is.na(res)]
 
-    sz=length(res)
+    sz <- length(res)
 
-    result=result *((1/sz)*(res%*%res))^(sz/2)
+    result <- result * ((1 / sz) * (res %*% res))^(sz / 2)
   }
 
   return(result)
@@ -54,22 +53,21 @@ crit_cwss <- function(sim_list,obs_list) {
 
 #' @export
 #' @rdname ls_criterion
-crit_log_cwss <- function(sim_list,obs_list) {
+crit_log_cwss <- function(sim_list, obs_list) {
+  var_list <- unique(unlist(lapply(obs_list, function(x) colnames(x))))
+  var_list <- setdiff(var_list, "Date")
 
-  var_list=unique(unlist(lapply(obs_list,function (x) colnames(x))))
-  var_list=setdiff(var_list,"Date")
-
-  result=0
+  result <- 0
 
   for (var in var_list) {
-    obs=unlist(sapply(obs_list,function (x) x[is.element(colnames(x),var)]))
-    sim=unlist(sapply(sim_list,function (x) x[is.element(colnames(x),var)]))
-    res=obs-sim
-    res=res[!is.na(res)]
+    obs <- unlist(sapply(obs_list, function(x) x[is.element(colnames(x), var)]))
+    sim <- unlist(sapply(sim_list, function(x) x[is.element(colnames(x), var)]))
+    res <- obs - sim
+    res <- res[!is.na(res)]
 
-    sz=length(res)
+    sz <- length(res)
 
-    result=result + (sz/2)*(log(1/sz)+log(res%*%res+1e-300))
+    result <- result + (sz / 2) * (log(1 / sz) + log(res %*% res + 1e-300))
   }
 
   return(result)

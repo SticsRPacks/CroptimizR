@@ -15,23 +15,22 @@
 #' @return A vector or data.frame containing the sampled values (nrow=n)
 #'
 #' @examples
-#' bounds_list=list(lb=c(0,1,2),ub=c(1,2,3))
-#' CroptimizR:::sample_params(bounds_list,5)
+#' bounds_list <- list(lb = c(0, 1, 2), ub = c(1, 2, 3))
+#' CroptimizR:::sample_params(bounds_list, 5)
+#' @keywords internal
 #'
-#' @keywords internal 
-#' 
-sample_params <- function(bounds_list,n, seed=NULL) {
+sample_params <- function(bounds_list, n, seed = NULL) {
+  bounds <- get_params_bounds(bounds_list)
 
-  bounds=get_params_bounds(bounds_list)
+  nb_params <- length(bounds$lb)
 
-  nb_params=length(bounds$lb)
-
-  out <- DiceDesign::lhsDesign(n, dimension=nb_params,seed=seed)$design
-  res=sapply(1:nb_params,
-             function(x) bounds$lb[x]+out[,x]*(bounds$ub[x]-bounds$lb[x]))
-  res=matrix(res,nrow=n,ncol=nb_params)
-  colnames(res)=names(bounds$lb)
+  out <- DiceDesign::lhsDesign(n, dimension = nb_params, seed = seed)$design
+  res <- sapply(
+    1:nb_params,
+    function(x) bounds$lb[x] + out[, x] * (bounds$ub[x] - bounds$lb[x])
+  )
+  res <- matrix(res, nrow = n, ncol = nb_params)
+  colnames(res) <- names(bounds$lb)
 
   return(res)
-
 }

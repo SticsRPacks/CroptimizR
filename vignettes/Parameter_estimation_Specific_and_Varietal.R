@@ -10,46 +10,17 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 #  
 #  # Install and load the needed libraries
 #  if(!require("SticsRFiles")){
-#    devtools::install_github("SticsRPacks/SticsRFiles")
+#    devtools::install_github("SticsRPacks/SticsRFiles@*release")
 #    library("SticsRFiles")
 #  }
 #  if(!require("SticsOnR")){
-#    devtools::install_github("SticsRPacks/SticsOnR")
+#    devtools::install_github("SticsRPacks/SticsOnR@*release")
 #    library("SticsOnR")
 #  }
 #  if(!require("CroptimizR")){
-#    devtools::install_github("SticsRPacks/CroptimizR")
+#    devtools::install_github("SticsRPacks/CroptimizR@*release")
 #    library("CroptimizR")
 #  }
-#  if(!require("dplyr")){
-#    install.packages("dplyr",repos="http://cran.irsn.fr")
-#    library("dplyr")
-#  }
-#  if(!require("nloptr")){
-#    install.packages("nloptr",repos="http://cran.irsn.fr")
-#    library("nloptr")
-#  }
-#  if(!require("DiceDesign")){
-#    install.packages("DiceDesign",repos="http://cran.irsn.fr")
-#    library("DiceDesign")
-#  }
-#  if(!require("doParallel")){
-#    install.packages("doParallel",repos="http://cran.irsn.fr")
-#    library("doParallel")
-#  }
-#  if(!require("hydroGOF")){
-#    install.packages("hydroGOF",repos="http://cran.irsn.fr")
-#    library("hydroGOF")
-#  }
-#  if(!require("ggplot2")){
-#    install.packages("ggplot2",repos="http://cran.irsn.fr")
-#    library("ggplot2")
-#  }
-#  if(!require("gridExtra")){
-#    install.packages("gridExtra",repos="http://cran.irsn.fr")
-#    library("gridExtra")
-#  }
-#  
 #  
 #  # Download the example USMs:
 #  data_dir= normalizePath(tempdir(), winslash = "/", mustWork = FALSE)

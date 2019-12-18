@@ -109,7 +109,8 @@
 
 
 
-estim_param <- function(obs_list,crit_function=crit_cwss,model_function,model_options=NULL,optim_method="nloptr.simplex",optim_options=NULL,prior_information) {
+estim_param <- function(obs_list,crit_function=crit_cwss,model_function,model_options=NULL,
+                        optim_method="nloptr.simplex",optim_options=NULL,prior_information) {
 
 
   #
@@ -123,6 +124,7 @@ estim_param <- function(obs_list,crit_function=crit_cwss,model_function,model_op
 
   param_names=get_params_names(prior_information)
 
-  return(optim_switch(param_names,obs_list,crit_function,model_function,model_options,optim_method,optim_options,prior_information))
+  return(optim_switch(param_names,obs_list,crit_function,model_function,model_options,
+                      optim_method,optim_options,prior_information))
 
   }
