@@ -113,16 +113,16 @@ Results provided:
 
 ## Installation
 
-The development version from [GitHub](https://github.com/) can be installed with:
+The last released version of the package can be installed from [GitHub](https://github.com/) using:
 
 ``` r
-devtools::install_github("SticsRPacks/CroptimizR")
+devtools::install_github("SticsRPacks/CroptimizR@*release")
 ```
 Or using the lightweight [remotes](https://github.com/r-lib/remotes#readme) package: 
 
 ``` r
 # install.packages("remotes")
-remotes::install_github("SticsRPacks/CroptimizR")
+remotes::install_github("SticsRPacks/CroptimizR@*release")
 ```
 The package is tested routinely to pass all [CRAN](https://CRAN.R-project.org) tests using Travis-CI (linux) and AppVeyor (Windows), but it is not yet released to the CRAN servers: CroptimizR is still under development and users are not yet widespread enough to bother CRAN people and use their free server time.
 

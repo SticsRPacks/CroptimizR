@@ -169,11 +169,11 @@ Results provided:
 
 ## Installation
 
-The development version from [GitHub](https://github.com/) can be
-installed with:
+The last released version of the package can be installed from
+[GitHub](https://github.com/) using:
 
 ``` r
-devtools::install_github("SticsRPacks/CroptimizR")
+devtools::install_github("SticsRPacks/CroptimizR@*release")
 ```
 
 Or using the lightweight
@@ -181,7 +181,7 @@ Or using the lightweight
 
 ``` r
 # install.packages("remotes")
-remotes::install_github("SticsRPacks/CroptimizR")
+remotes::install_github("SticsRPacks/CroptimizR@*release")
 ```
 
 The package is tested routinely to pass all
@@ -206,7 +206,7 @@ An example using the ApsimX model is detailed
 See
 [here](https://sticsrpacks.github.io/CroptimizR/reference/estim_param.html)
 for a detailed description of the input and output arguments of the
-main\_optim function (or type “? main\_optim” in an R console after
+estim\_param function (or type “? estim\_param” in an R console after
 having installed and loaded the CroptimizR package).
 
 ## Code of conduct
