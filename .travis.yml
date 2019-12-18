@@ -7,18 +7,5 @@ os:
   - linux
   - osx
 
-r_github_packages:
-  - SticsRPacks/SticsRFiles
-
- matrix:
-  include:
-  - r: release
-    after_success:
-    - Rscript -e 'covr::codecov()'
-    before_cache:
-    - Rscript -e 'remotes::install_cran("pkgdown")'
-    - Rscript -e 'remotes::install_github("rstudio/rmarkdown")' # https://github.com/rstudio/rmarkdown/pull/1668
-    deploy:
-      provider: script
-      script: Rscript -e 'pkgdown::deploy_site_github(verbose = TRUE)'
-      cleanup: false
+after_success:
+  - Rscript -e 'covr::codecov()'
