@@ -2,7 +2,7 @@ Package: CroptimizR
 Type: Package
 Title: A Package for Parameter Estimation, Uncertainty and Sensitivity Analysis for the Stics Model  https://github.com/SticsRPacks/CroptimizR
 Date: 2019-06-24
-Version: 0.1.0.9000
+Version: 0.1.0.9001
 Authors@R: c(person("Samuel", "Buis",, "samuel.buis@inra.fr", c("aut", "cre")),
  person("Michel", "Giner",, "michel.giner@cirad.fr", c("aut")),
  person("Patrice", "Lecharpentier",, "patrice.lecharpentier@inra.fr", c("aut")),
