@@ -19,7 +19,9 @@ ByteCompile: true
 RoxygenNote: 7.0.0
 Imports:
     nloptr,
-    DiceDesign
+    DiceDesign,
+    BayesianTools,
+    coda
 Suggests:
     testthat,
     covr,
