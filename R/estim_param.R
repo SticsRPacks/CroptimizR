@@ -73,7 +73,7 @@
 #'
 #' # Read and select the observations for the parameter estimation
 #' sit_name="bo96iN+"
-#' obs_list=read_obs(file.path(data_dir,"XmlFiles"),
+#' obs_list=get_obs(file.path(data_dir,"XmlFiles"),
 #'                           obs_filenames = paste0(sit_name,".obs"))
 #' var_name="lai_n"
 #' obs_list[[sit_name]]=obs_list[[sit_name]][,c("Date",var_name)]

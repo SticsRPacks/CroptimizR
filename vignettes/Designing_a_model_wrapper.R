@@ -88,7 +88,7 @@ knitr::opts_chunk$set(eval = FALSE)
 #  # remotes::install_github("SticsRPacks/SticsRFiles")
 #  library(SticsRFiles)
 #  path <- system.file(file.path("extdata","obs","V9.0"), package = "SticsRFiles")
-#  obs_list <- read_obs(path)
+#  obs_list <- get_obs(path)
 #  lapply(obs_list, function(x) head(x,4))
 #  
 

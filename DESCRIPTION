@@ -16,7 +16,7 @@ License: file LICENSE
 Encoding: UTF-8
 LazyData: true
 ByteCompile: true
-RoxygenNote: 7.0.0
+RoxygenNote: 7.0.2
 Imports:
     nloptr,
     DiceDesign,

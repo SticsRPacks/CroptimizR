@@ -1,5 +1,5 @@
 params <-
-list(eval_rmd = FALSE, apsimx_path = c(Models = ""))
+list(eval_rmd = FALSE, apsimx_path = c(Models = "/usr/local/bin/Models"))
 
 ## ----setup, eval=TRUE, include=FALSE------------------------------------------
 # Global options

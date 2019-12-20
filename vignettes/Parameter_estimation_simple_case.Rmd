@@ -99,9 +99,9 @@ We only keep observations for situation (i.e. USM for Stics) sit_name and variab
 sit_name="bo96iN+"  ## among bo96iN+, bou00t1, bou00t3, bou99t1, bou99t3,
                     ## lu96iN+, lu96iN6 or lu97iN+
 
-# For the moment read_obs is only able to read obs files in one folder ...
+# For the moment get_obs is only able to read obs files in one folder ...
 # this will change in future release of sticsRfiles
-obs_list=read_obs(file.path(data_dir,"XmlFiles"), 
+obs_list=get_obs(file.path(data_dir,"XmlFiles"), 
                           obs_filenames = paste0(sit_name,".obs"))
 
 var_name="lai_n"    ## lai_n or masec_n

@@ -4,13 +4,19 @@
 \alias{estim_param}
 \title{main function for parameter estimation}
 \usage{
-estim_param(obs_list, crit_function = crit_cwss, model_function,
-  model_options = NULL, optim_method = "nloptr.simplex",
-  optim_options = NULL, prior_information)
+estim_param(
+  obs_list,
+  crit_function = crit_cwss,
+  model_function,
+  model_options = NULL,
+  optim_method = "nloptr.simplex",
+  optim_options = NULL,
+  prior_information
+)
 }
 \arguments{
 \item{obs_list}{List of observed values to use for parameter estimation
-A \code{named list} (names = situations names) of data.frame containing
+A \verb{named list} (names = situations names) of data.frame containing
 one column named Date with the dates (POSIXct format) of the different observations
 and one column per observed variables with either the measured values or NA, if
 the variable is not observed at the given date.}
@@ -89,7 +95,7 @@ stics_path=file.path(javastics_path,"bin/stics_modulo.exe")
 
 # Read and select the observations for the parameter estimation
 sit_name="bo96iN+"
-obs_list=read_obs(file.path(data_dir,"XmlFiles"),
+obs_list=get_obs(file.path(data_dir,"XmlFiles"),
                           obs_filenames = paste0(sit_name,".obs"))
 var_name="lai_n"
 obs_list[[sit_name]]=obs_list[[sit_name]][,c("Date",var_name)]
