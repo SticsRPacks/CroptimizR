@@ -47,7 +47,7 @@
 <li>
   <a href="../index.html">
     <span class="fas fa fas fa-home fa-lg"></span>
-     
+
   </a>
 </li>
 <li>
@@ -56,7 +56,7 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Articles
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
@@ -79,7 +79,7 @@
 <li>
   <a href="https://github.com/SticsRPacks/CroptimizR">
     <span class="fab fa fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul>
@@ -90,23 +90,23 @@
 </div>
 <!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1>Parameter estimation with the Stics crop Model: a simple case</h1>
                         <h4 class="author">Samuel Buis</h4>
-                        
+
             <h4 class="date">2019-12-20</h4>
-      
+
       <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/master/vignettes/Parameter_estimation_simple_case.Rmd"><code>vignettes/Parameter_estimation_simple_case.Rmd</code></a></small>
       <div class="hidden name"><code>Parameter_estimation_simple_case.Rmd</code></div>
 
     </div>
 
-    
-    
+
+
 <div id="study-case" class="section level2">
 <h2 class="hasAnchor">
 <a href="#study-case" class="anchor"></a>Study Case</h2>
@@ -172,9 +172,9 @@
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">sit_name=<span class="st">"bo96iN+"</span>  <span class="co">## among bo96iN+, bou00t1, bou00t3, bou99t1, bou99t3,</span></a>
 <a class="sourceLine" id="cb4-2" title="2">                    <span class="co">## lu96iN+, lu96iN6 or lu97iN+</span></a>
 <a class="sourceLine" id="cb4-3" title="3"></a>
-<a class="sourceLine" id="cb4-4" title="4"><span class="co"># For the moment get_obs is only able to read obs files in one folder ...</span></a>
+<a class="sourceLine" id="cb4-4" title="4"><span class="co"># For the moment read_obs_to_list is only able to read obs files in one folder ...</span></a>
 <a class="sourceLine" id="cb4-5" title="5"><span class="co"># this will change in future release of sticsRfiles</span></a>
-<a class="sourceLine" id="cb4-6" title="6">obs_list=<span class="kw"><a href="https://rdrr.io/pkg/SticsRFiles/man/get_obs.html">get_obs</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(data_dir,<span class="st">"XmlFiles"</span>), </a>
+<a class="sourceLine" id="cb4-6" title="6">obs_list=<span class="kw"><a href="https://rdrr.io/pkg/SticsRFiles/man/read_obs_to_list.html">read_obs_to_list</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(data_dir,<span class="st">"XmlFiles"</span>), </a>
 <a class="sourceLine" id="cb4-7" title="7">                          <span class="dt">obs_filenames =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(sit_name,<span class="st">".obs"</span>))</a>
 <a class="sourceLine" id="cb4-8" title="8"></a>
 <a class="sourceLine" id="cb4-9" title="9">var_name=<span class="st">"lai_n"</span>    <span class="co">## lai_n or masec_n</span></a>
@@ -229,24 +229,24 @@
 <p>… this returns:</p>
 <pre><code>## Warning: l'espace de nom 'SticsOptimizR' n'est pas disponible et a été remplacé
 ## par .GlobalEnv lors du traitement de l'objet 'nlo'</code></pre>
-<pre><code>## 
+<pre><code>##
 ## Call:
-## nloptr(x0 = init_values[irep, ], eval_f = main_crit, lb = bounds$lb, 
-##     ub = bounds$ub, opts = list(algorithm = "NLOPT_LN_NELDERMEAD", 
-##         xtol_rel = xtol_rel, maxeval = maxeval, ranseed = ranseed), 
+## nloptr(x0 = init_values[irep, ], eval_f = main_crit, lb = bounds$lb,
+##     ub = bounds$ub, opts = list(algorithm = "NLOPT_LN_NELDERMEAD",
+##         xtol_rel = xtol_rel, maxeval = maxeval, ranseed = ranseed),
 ##     crit_options = crit_options_loc)
-## 
-## 
-## Minimization using NLopt version 2.4.2 
-## 
-## NLopt solver status: 4 ( NLOPT_XTOL_REACHED: Optimization stopped because 
+##
+##
+## Minimization using NLopt version 2.4.2
+##
+## NLopt solver status: 4 ( NLOPT_XTOL_REACHED: Optimization stopped because
 ## xtol_rel or xtol_abs (above) was reached. )
-## 
-## Number of Iterations....: 44 
-## Termination conditions:  xtol_rel: 0.001 maxeval: 500 
-## Number of inequality constraints:  0 
-## Number of equality constraints:    0 
-## Optimal value of objective function:  112.530331140718 
+##
+## Number of Iterations....: 44
+## Termination conditions:  xtol_rel: 0.001 maxeval: 500
+## Number of inequality constraints:  0
+## Number of equality constraints:    0
+## Optimal value of objective function:  112.530331140718
 ## Optimal value of controls: 0.001696149 53.96913</code></pre>
 </div>
 <div id="run-the-model-after-optimization" class="section level2">
@@ -320,7 +320,7 @@ Figure 2: plots of simulated and observed target variable before and after optim
       </footer>
 </div>
 
-  
+
 
 
   </body>

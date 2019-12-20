@@ -47,7 +47,7 @@
 <li>
   <a href="../index.html">
     <span class="fas fa fas fa-home fa-lg"></span>
-     
+
   </a>
 </li>
 <li>
@@ -56,7 +56,7 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Articles
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
@@ -79,7 +79,7 @@
 <li>
   <a href="https://github.com/SticsRPacks/CroptimizR">
     <span class="fab fa fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul>
@@ -90,7 +90,7 @@
 </div>
 <!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
@@ -101,7 +101,7 @@
       INRA - Agroclim<br><h4 class="author">Samuel Buis</h4>
             <address class="author_afil">
       INRA - EMMAH<br><h4 class="date">2019-12-20</h4>
-      
+
       <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/master/vignettes/Designing_a_model_wrapper.Rmd"><code>vignettes/Designing_a_model_wrapper.Rmd</code></a></small>
       <div class="hidden name"><code>Designing_a_model_wrapper.Rmd</code></div>
 
@@ -109,8 +109,8 @@
 </address>
 </div>
 
-    
-    
+
+
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
@@ -309,7 +309,7 @@
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="co"># remotes::install_github("SticsRPacks/SticsRFiles")</span></a>
 <a class="sourceLine" id="cb3-2" title="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(SticsRFiles)</a>
 <a class="sourceLine" id="cb3-3" title="3">path &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="st">"extdata"</span>,<span class="st">"obs"</span>,<span class="st">"V9.0"</span>), <span class="dt">package =</span> <span class="st">"SticsRFiles"</span>)</a>
-<a class="sourceLine" id="cb3-4" title="4">obs_list &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/SticsRFiles/man/get_obs.html">get_obs</a></span>(path)</a>
+<a class="sourceLine" id="cb3-4" title="4">obs_list &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/SticsRFiles/man/read_obs_to_list.html">read_obs_to_list</a></span>(path)</a>
 <a class="sourceLine" id="cb3-5" title="5"><span class="kw"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span>(obs_list, <span class="cf">function</span>(x) <span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(x,<span class="dv">4</span>))</a></code></pre></div>
 <p>One can give a similar filter list structure defining a customized selection of variables and Dates, but with all values set to NA in data.frames.</p>
 </div>
@@ -467,7 +467,7 @@
       </footer>
 </div>
 
-  
+
 
 
   </body>
