@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • CroptimizR</title>
+<title>A wrapper for BayesianTools package — wrap_BayesianTools • CroptimizR</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,7 +42,8 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="A wrapper for BayesianTools package — wrap_BayesianTools" />
+<meta property="og:description" content="A wrapper for BayesianTools package" />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -63,7 +64,7 @@
   </head>
 
   <body>
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -131,54 +132,94 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>A wrapper for BayesianTools package</h1>
+    <small class="dont-index">Source: <a href='https://github.com/SticsRPacks/CroptimizR/blob/master/R/wrap_BayesianTools.R'><code>R/wrap_BayesianTools.R</code></a></small>
+    <div class="hidden name"><code>wrap_BayesianTools.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    <p>A wrapper for BayesianTools package</p>
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
+    <pre class="usage"><span class='fu'>wrap_BayesianTools</span>(<span class='no'>param_names</span>, <span class='no'>obs_list</span>, <span class='no'>crit_function</span>, <span class='no'>model_function</span>,
+  <span class='kw'>model_options</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>optim_options</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>prior_information</span>)</pre>
 
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      <tr>
-        
-        <td>
-          <p><code><a href="Likelihood.html">likelihood_ciidn()</a></code> <code><a href="Likelihood.html">likelihood_log_ciidn()</a></code> </p>
-        </td>
-        <td><p>Likelihood</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="estim_param.html">estim_param()</a></code> </p>
-        </td>
-        <td><p>main function for parameter estimation</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="ls_criterion.html">crit_cwss()</a></code> <code><a href="ls_criterion.html">crit_log_cwss()</a></code> </p>
-        </td>
-        <td><p>Criterion to optimize</p></td>
-      </tr>
-    </tbody>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>param_names</th>
+      <td><p>Name(s) of parameters to estimate (a parameter name must
+be replicated if several groups of situations for this parameter)</p></td>
+    </tr>
+    <tr>
+      <th>obs_list</th>
+      <td><p>List of observed values to use for parameter estimation
+A <code>named list</code> (names = situations names) of data.frame containing
+one column named Date with the dates (POSIXct format) of the different observations
+and one column per observed variables with either the measured values or NA, if
+the variable is not observed at the given date.</p></td>
+    </tr>
+    <tr>
+      <th>crit_function</th>
+      <td><p>Function implementing the criterion to optimize
+(optional, default=crit_cwss). See
+<a href='https://sticsrpacks.github.io/CroptimizR/reference/ls_criterion.html'>here</a>
+for more details about the list of proposed criterion.</p></td>
+    </tr>
+    <tr>
+      <th>model_function</th>
+      <td><p>Crop Model wrapper function to use</p></td>
+    </tr>
+    <tr>
+      <th>model_options</th>
+      <td><p>List of options for the Crop Model wrapper (optional,
+see help of the Crop Model wrapper function used)</p></td>
+    </tr>
+    <tr>
+      <th>optim_options</th>
+      <td><p>List of options of the parameter estimation method:
+<code>nb_rep</code>, the number of repetitions (optional, default=1)
+<code>xtol_rel</code>, the tolerance for the stopping criterion on relative
+differences on parameters values between 2 iterations (optional, default=1e-5)
+<code>maxeval</code>, the maximum number of criterion evaluation (optional, default=500)
+<code>path_results</code>, the path where to store the results (optional, default=getwd())</p></td>
+    </tr>
+    <tr>
+      <th>prior_information</th>
+      <td><p>Prior information on the parameters to estimate.
+For the moment only uniform distribution are allowed.
+Either
+a list containing:</p><ul>
+<li><p>(named) vectors of upper and lower bounds (<code>ub</code> and <code>lb</code>),</p></li>
+<li><p><code>init_values</code>, A data.frame containing initial
+values to test for the parameters (optional, if not provided (or if less values
+than number of repetitions of the minimization are provided), the (or part
+of the) initial values will be randomly generated using LHS sampling within
+parameter bounds.
+or
+a named list containing for each parameter the list of situations per group
+(<code>sit_list</code>), the vector of upper and lower bounds (one value per group)
+(<code>ub</code> and <code>lb</code>) and the list of initial values per group
+<code>init_values</code> (data.frame, one column per group).</p></li>
+</ul></td>
+    </tr>
     </table>
-  </div>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>prints, graphs and a list containing:</p>
+
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#section-all-functions">All functions</a></li>
+      <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#value">Value</a></li>
     </ul>
+
   </div>
 </div>
 

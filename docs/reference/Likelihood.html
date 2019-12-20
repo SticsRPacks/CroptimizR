@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • CroptimizR</title>
+<title>Likelihood — Likelihood • CroptimizR</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -42,7 +42,8 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Likelihood — Likelihood" />
+<meta property="og:description" content="Provide several likelihood to estimate parameters using bayesian methods." />
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
 
@@ -63,7 +64,7 @@
   </head>
 
   <body>
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -131,54 +132,59 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Likelihood</h1>
+    <small class="dont-index">Source: <a href='https://github.com/SticsRPacks/CroptimizR/blob/master/R/likelihood.R'><code>R/likelihood.R</code></a></small>
+    <div class="hidden name"><code>Likelihood.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    <p>Provide several likelihood to estimate parameters using bayesian methods.</p>
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
+    <pre class="usage"><span class='fu'>likelihood_ciidn</span>(<span class='no'>sim_list</span>, <span class='no'>obs_list</span>)
 
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      <tr>
-        
-        <td>
-          <p><code><a href="Likelihood.html">likelihood_ciidn()</a></code> <code><a href="Likelihood.html">likelihood_log_ciidn()</a></code> </p>
-        </td>
-        <td><p>Likelihood</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="estim_param.html">estim_param()</a></code> </p>
-        </td>
-        <td><p>main function for parameter estimation</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="ls_criterion.html">crit_cwss()</a></code> <code><a href="ls_criterion.html">crit_log_cwss()</a></code> </p>
-        </td>
-        <td><p>Criterion to optimize</p></td>
-      </tr>
-    </tbody>
+<span class='fu'>likelihood_log_ciidn</span>(<span class='no'>sim_list</span>, <span class='no'>obs_list</span>)</pre>
+
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>sim_list</th>
+      <td><p>List of simulated variables</p></td>
+    </tr>
+    <tr>
+      <th>obs_list</th>
+      <td><p>List of observed variables</p></td>
+    </tr>
     </table>
-  </div>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>The value of the likelihood given the observed and simulated values of the variables.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The following likelihood are proposed (<a href='https://sticsrpacks.github.io/CroptimizR/reference/likelihood.html'>see html version</a> for a better rendering of equations):</p><ul>
+<li><p><code>likelihood_ciidn</code>: concentrated version of iid normal likelihood
+$$ \prod_{j} {\sum_{i,k} [Y_{ijk}-f_{jk}(X_i;\theta)]^2 )}^{-(n_j/2+2)} $$
+where \( Y_{ijk} \) is the observed value for the \(k^{th}\) time point of the \(j^{th}\) variable in the \(i^{th}\)
+situation,
+\( f_{jk}(X_i;\theta) \) the corresponding model prediction, and \(n_j\) the number of measurements of variable \(j\). <br />
+More details about this criterion are given in Wallach et al. (2011), equation 5.</p></li>
+<li><p><code>likelihood_log_ciidn</code>: log transformation of concentrated version of iid normal likelihood <br /></p></li>
+</ul><p><code>sim_list</code> and <code>obs_list</code> must have the same structure (i.e. same number of variables, dates, situations, ... use internal function
+intersect_sim_obs before calling the criterion functions).</p>
+
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#section-all-functions">All functions</a></li>
+      <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#value">Value</a></li>
+      <li><a href="#details">Details</a></li>
     </ul>
+
   </div>
 </div>
 
