@@ -31,18 +31,12 @@ The parameter estimation is performed using the Nelder-Meade simplex method impl
 ```{r setup_initializations,  message=FALSE, results=FALSE, warning=FALSE}
 
 # Install and load the needed libraries
-if(!require("SticsRFiles")){
-  devtools::install_github("SticsRPacks/SticsRFiles@*release")
-  library("SticsRFiles")
-}
-if(!require("SticsOnR")){
-  devtools::install_github("SticsRPacks/SticsOnR@*release")
-  library("SticsOnR")
-}
-if(!require("CroptimizR")){
-  devtools::install_github("SticsRPacks/CroptimizR@*release")
-  library("CroptimizR")
-}
+devtools::install_github("SticsRPacks/SticsOnR@*release")
+library("SticsOnR")
+devtools::install_github("SticsRPacks/SticsRFiles@*release")
+library("SticsRFiles")
+devtools::install_github("SticsRPacks/CroptimizR@*release")
+library("CroptimizR")
 
 # Download the example USMs:
 data_dir= normalizePath(tempdir(), winslash = "/", mustWork = FALSE)
@@ -130,10 +124,10 @@ maxeval should be used to stop the minimization only if results have to be produ
 
 ```{r message=FALSE, warning=FALSE}
 optim_options=list() 
-optim_options$nb_rep <- 1 #7 # Number of repetitions of the minimization 
+optim_options$nb_rep <- 7 # Number of repetitions of the minimization 
                           # (each time starting with different initial
                           # values for the estimated parameters) 
-optim_options$maxeval <- 1 #500 # Maximum number of evaluations of the 
+optim_options$maxeval <- 500 # Maximum number of evaluations of the 
                              # minimized criteria 
 optim_options$xtol_rel <- 1e-03 # Tolerance criterion between two iterations
                                 # (threshold for the relative difference of
