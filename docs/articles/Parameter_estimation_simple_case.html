@@ -118,11 +118,11 @@
 <h2 class="hasAnchor">
 <a href="#initialisation-step" class="anchor"></a>Initialisation step</h2>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="co"># Install and load the needed libraries</span></a>
-<a class="sourceLine" id="cb1-2" title="2">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"SticsRPacks/SticsOnR@*release"</span>)</a>
+<a class="sourceLine" id="cb1-2" title="2">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"SticsRPacks/SticsOnR@v0.1.0.9001"</span>)</a>
 <a class="sourceLine" id="cb1-3" title="3"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"SticsOnR"</span>)</a>
-<a class="sourceLine" id="cb1-4" title="4">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"SticsRPacks/SticsRFiles@*release"</span>)</a>
+<a class="sourceLine" id="cb1-4" title="4">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"SticsRPacks/SticsRFiles@v0.1.0.9001"</span>)</a>
 <a class="sourceLine" id="cb1-5" title="5"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"SticsRFiles"</span>)</a>
-<a class="sourceLine" id="cb1-6" title="6">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"SticsRPacks/CroptimizR@*release"</span>)</a>
+<a class="sourceLine" id="cb1-6" title="6">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"SticsRPacks/CroptimizR@v0.1.0.9001"</span>)</a>
 <a class="sourceLine" id="cb1-7" title="7"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"CroptimizR"</span>)</a>
 <a class="sourceLine" id="cb1-8" title="8"></a>
 <a class="sourceLine" id="cb1-9" title="9"><span class="co"># Download the example USMs:</span></a>
@@ -166,9 +166,9 @@
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">sit_name=<span class="st">"bo96iN+"</span>  <span class="co">## among bo96iN+, bou00t1, bou00t3, bou99t1, bou99t3,</span></a>
 <a class="sourceLine" id="cb4-2" title="2">                    <span class="co">## lu96iN+, lu96iN6 or lu97iN+</span></a>
 <a class="sourceLine" id="cb4-3" title="3"></a>
-<a class="sourceLine" id="cb4-4" title="4"><span class="co"># For the moment get_obs is only able to read obs files in one folder ...</span></a>
+<a class="sourceLine" id="cb4-4" title="4"><span class="co"># For the moment read_obs is only able to read obs files in one folder ...</span></a>
 <a class="sourceLine" id="cb4-5" title="5"><span class="co"># this will change in future release of sticsRfiles</span></a>
-<a class="sourceLine" id="cb4-6" title="6">obs_list=<span class="kw">get_obs</span>(<span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(data_dir,<span class="st">"XmlFiles"</span>), </a>
+<a class="sourceLine" id="cb4-6" title="6">obs_list=<span class="kw">read_obs</span>(<span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(data_dir,<span class="st">"XmlFiles"</span>), </a>
 <a class="sourceLine" id="cb4-7" title="7">                          <span class="dt">obs_filenames =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(sit_name,<span class="st">".obs"</span>))</a>
 <a class="sourceLine" id="cb4-8" title="8"></a>
 <a class="sourceLine" id="cb4-9" title="9">var_name=<span class="st">"lai_n"</span>    <span class="co">## lai_n or masec_n</span></a>

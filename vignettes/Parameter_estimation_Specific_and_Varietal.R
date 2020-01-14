@@ -9,11 +9,11 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 #  knitr::opts_chunk$set(echo = TRUE)
 #  
 #  # Install and load the needed libraries
-#  devtools::install_github("SticsRPacks/SticsOnR@*release")
+#  devtools::install_github("SticsRPacks/SticsOnR@v0.1.0.9001")
 #  library("SticsOnR")
-#  devtools::install_github("SticsRPacks/SticsRFiles@*release")
+#  devtools::install_github("SticsRPacks/SticsRFiles@v0.1.0.9001")
 #  library("SticsRFiles")
-#  devtools::install_github("SticsRPacks/CroptimizR@*release")
+#  devtools::install_github("SticsRPacks/CroptimizR@v0.1.0.9001")
 #  library("CroptimizR")
 #  
 #  # Download the example USMs:
@@ -31,7 +31,7 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 #  # Read observation files
-#  obs_list=get_obs(file.path(data_dir,"XmlFiles"))
+#  obs_list=read_obs(file.path(data_dir,"XmlFiles"))
 #  obs_list=lapply(obs_list,"[",c("Date","lai_n"))
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------

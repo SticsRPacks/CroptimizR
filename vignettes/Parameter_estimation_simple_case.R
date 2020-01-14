@@ -8,11 +8,11 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 ## ----setup_initializations,  message=FALSE, results=FALSE, warning=FALSE------
 #  
 #  # Install and load the needed libraries
-#  devtools::install_github("SticsRPacks/SticsOnR@*release")
+#  devtools::install_github("SticsRPacks/SticsOnR@v0.1.0.9001")
 #  library("SticsOnR")
-#  devtools::install_github("SticsRPacks/SticsRFiles@*release")
+#  devtools::install_github("SticsRPacks/SticsRFiles@v0.1.0.9001")
 #  library("SticsRFiles")
-#  devtools::install_github("SticsRPacks/CroptimizR@*release")
+#  devtools::install_github("SticsRPacks/CroptimizR@v0.1.0.9001")
 #  library("CroptimizR")
 #  
 #  # Download the example USMs:
@@ -51,9 +51,9 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 #  sit_name="bo96iN+"  ## among bo96iN+, bou00t1, bou00t3, bou99t1, bou99t3,
 #                      ## lu96iN+, lu96iN6 or lu97iN+
 #  
-#  # For the moment get_obs is only able to read obs files in one folder ...
+#  # For the moment read_obs is only able to read obs files in one folder ...
 #  # this will change in future release of sticsRfiles
-#  obs_list=get_obs(file.path(data_dir,"XmlFiles"),
+#  obs_list=read_obs(file.path(data_dir,"XmlFiles"),
 #                            obs_filenames = paste0(sit_name,".obs"))
 #  
 #  var_name="lai_n"    ## lai_n or masec_n
