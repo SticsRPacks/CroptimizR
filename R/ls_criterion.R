@@ -72,3 +72,30 @@ crit_log_cwss <- function(sim_list, obs_list) {
 
   return(result)
 }
+
+#' @export
+#' @rdname ls_criterion
+crit_cwss_corr <- function(sim_list,obs_list) {
+  var_list=unique(unlist(lapply(obs_list,function (x) colnames(x))))
+  var_list=setdiff(var_list,"Date")
+  result<-1
+
+  for (var in var_list) {
+    result1<-0
+    for (i in 1:length(obs_list)) {
+      obs=obs_list[[i]][[var]]
+      if (length(obs)!=0) {
+      sim=sim_list[[i]][[var]]
+      res=obs-sim
+      res=res[!is.na(res)]
+      #compte les USM
+      sz=length(res)
+      result1<-result1+(1/sz)*(res%*%res)
+      }
+    }
+    Nj <-sum(sapply(obs_list,function (x) is.element(var,colnames(x))))
+    result<-result*(result1^(Nj/2))/Nj
+  }
+
+return(result)
+}

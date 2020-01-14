@@ -13,8 +13,9 @@
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="Parameter estimation with the ApsimX crop Model: a simple case">
 <meta property="og:description" content="">
 <meta property="og:image" content="/logo.png">
@@ -37,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CroptimizR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0.9001</span>
       </span>
     </div>
 
@@ -45,7 +46,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -77,7 +78,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/SticsRPacks/CroptimizR">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -90,6 +91,7 @@
 <!--/.navbar -->
 
       
+
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
@@ -99,8 +101,8 @@
       INRA - Agroclim<br><h4 class="author">Samuel Buis</h4>
             <address class="author_afil">
       INRA - EMMAH<br><h4 class="author">Drew Holzworth</h4>
-            
-            <h4 class="date">2019-12-18</h4>
+                        
+            <h4 class="date">2020-01-14</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/master/vignettes/ApsimX_parameter_estimation_simple_case.Rmd"><code>vignettes/ApsimX_parameter_estimation_simple_case.Rmd</code></a></small>
       <div class="hidden name"><code>ApsimX_parameter_estimation_simple_case.Rmd</code></div>
@@ -121,135 +123,139 @@
 <div id="initialisation-step" class="section level2">
 <h2 class="hasAnchor">
 <a href="#initialisation-step" class="anchor"></a>Initialisation step</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># Install and load the needed libraries</span></span>
-<span id="cb1-11"><a href="#cb1-11"></a>devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/devtools/topics/remote-reexports">install_github</a></span>(<span class="st">"SticsRPacks/CroptimizR@*release"</span>)</span>
-<span id="cb1-12"><a href="#cb1-12"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"CroptimizR"</span>)</span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">require</a></span>(<span class="st">"ApsimOnR"</span>)){</span>
-<span id="cb1-3"><a href="#cb1-3"></a>  devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/devtools/topics/remote-reexports">install_github</a></span>(<span class="st">"ApsimOnR"</span>)</span>
-<span id="cb1-4"><a href="#cb1-4"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"ApsimOnR"</span>)</span>
-<span id="cb1-5"><a href="#cb1-5"></a>}</span>
-<span id="cb1-10"><a href="#cb1-10"></a><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">require</a></span>(<span class="st">"dplyr"</span>)){</span>
-<span id="cb1-11"><a href="#cb1-11"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/install.packages">install.packages</a></span>(<span class="st">"dplyr"</span>,<span class="dt">repos=</span><span class="st">"http://cran.irsn.fr"</span>)</span>
-<span id="cb1-12"><a href="#cb1-12"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"dplyr"</span>)</span>
-<span id="cb1-13"><a href="#cb1-13"></a>}</span>
-<span id="cb1-14"><a href="#cb1-14"></a><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">require</a></span>(<span class="st">"nloptr"</span>)){</span>
-<span id="cb1-15"><a href="#cb1-15"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/install.packages">install.packages</a></span>(<span class="st">"nloptr"</span>,<span class="dt">repos=</span><span class="st">"http://cran.irsn.fr"</span>)</span>
-<span id="cb1-16"><a href="#cb1-16"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"nloptr"</span>)</span>
-<span id="cb1-17"><a href="#cb1-17"></a>}</span>
-<span id="cb1-18"><a href="#cb1-18"></a><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">require</a></span>(<span class="st">"DiceDesign"</span>)){</span>
-<span id="cb1-19"><a href="#cb1-19"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/install.packages">install.packages</a></span>(<span class="st">"DiceDesign"</span>,<span class="dt">repos=</span><span class="st">"http://cran.irsn.fr"</span>)</span>
-<span id="cb1-20"><a href="#cb1-20"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"DiceDesign"</span>)</span>
-<span id="cb1-21"><a href="#cb1-21"></a>}</span>
-<span id="cb1-22"><a href="#cb1-22"></a><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">require</a></span>(<span class="st">"doParallel"</span>)){</span>
-<span id="cb1-23"><a href="#cb1-23"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/install.packages">install.packages</a></span>(<span class="st">"doParallel"</span>,<span class="dt">repos=</span><span class="st">"http://cran.irsn.fr"</span>)</span>
-<span id="cb1-24"><a href="#cb1-24"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"doParallel"</span>)</span>
-<span id="cb1-25"><a href="#cb1-25"></a>}</span>
-<span id="cb1-26"><a href="#cb1-26"></a></span>
-<span id="cb1-27"><a href="#cb1-27"></a><span class="co"># Define the path to the local version of ApsimX (should be something like C:/path/to/apsimx/bin/Models.exe on windows, and /usr/local/bin/Models on linux)</span></span>
-<span id="cb1-28"><a href="#cb1-28"></a>apsimx_path &lt;-<span class="st"> </span>params<span class="op">$</span>apsimx_path</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="co"># Install and load the needed libraries</span></a>
+<a class="sourceLine" id="cb1-2" title="2">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"SticsRPacks/CroptimizR@*release"</span>)</a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"CroptimizR"</span>)</a>
+<a class="sourceLine" id="cb1-4" title="4"><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="st">"ApsimOnR"</span>)){</a>
+<a class="sourceLine" id="cb1-5" title="5">  devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"ApsimOnR"</span>)</a>
+<a class="sourceLine" id="cb1-6" title="6">  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"ApsimOnR"</span>)</a>
+<a class="sourceLine" id="cb1-7" title="7">}</a>
+<a class="sourceLine" id="cb1-8" title="8"><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="st">"dplyr"</span>)){</a>
+<a class="sourceLine" id="cb1-9" title="9">  <span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"dplyr"</span>,<span class="dt">repos=</span><span class="st">"http://cran.irsn.fr"</span>)</a>
+<a class="sourceLine" id="cb1-10" title="10">  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"dplyr"</span>)</a>
+<a class="sourceLine" id="cb1-11" title="11">}</a>
+<a class="sourceLine" id="cb1-12" title="12"><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="st">"nloptr"</span>)){</a>
+<a class="sourceLine" id="cb1-13" title="13">  <span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"nloptr"</span>,<span class="dt">repos=</span><span class="st">"http://cran.irsn.fr"</span>)</a>
+<a class="sourceLine" id="cb1-14" title="14">  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"nloptr"</span>)</a>
+<a class="sourceLine" id="cb1-15" title="15">}</a>
+<a class="sourceLine" id="cb1-16" title="16"><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="st">"DiceDesign"</span>)){</a>
+<a class="sourceLine" id="cb1-17" title="17">  <span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"DiceDesign"</span>,<span class="dt">repos=</span><span class="st">"http://cran.irsn.fr"</span>)</a>
+<a class="sourceLine" id="cb1-18" title="18">  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"DiceDesign"</span>)</a>
+<a class="sourceLine" id="cb1-19" title="19">}</a>
+<a class="sourceLine" id="cb1-20" title="20"><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="st">"doParallel"</span>)){</a>
+<a class="sourceLine" id="cb1-21" title="21">  <span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"doParallel"</span>,<span class="dt">repos=</span><span class="st">"http://cran.irsn.fr"</span>)</a>
+<a class="sourceLine" id="cb1-22" title="22">  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"doParallel"</span>)</a>
+<a class="sourceLine" id="cb1-23" title="23">}</a>
+<a class="sourceLine" id="cb1-24" title="24"></a>
+<a class="sourceLine" id="cb1-25" title="25"><span class="co"># Define the path to the local version of ApsimX (should be something like C:/path/to/apsimx/bin/Models.exe on windows, and /usr/local/bin/Models on linux)</span></a>
+<a class="sourceLine" id="cb1-26" title="26">apsimx_path &lt;-<span class="st"> </span>params<span class="op">$</span>apsimx_path</a></code></pre></div>
 </div>
 <div id="set-the-list-of-situations-and-variables-to-consider-in-this-example" class="section level2">
 <h2 class="hasAnchor">
 <a href="#set-the-list-of-situations-and-variables-to-consider-in-this-example" class="anchor"></a>Set the list of situations and variables to consider in this example</h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>sit_name=<span class="st">"GattonRowSpacingRowSpace25cm"</span>  <span class="co"># among "GattonRowSpacingRowSpace25cm", "GattonRowSpacingRowSpace50cm","GattonRowSpacingRowSpaceN0"</span></span>
-<span id="cb2-2"><a href="#cb2-2"></a></span>
-<span id="cb2-3"><a href="#cb2-3"></a>var_name =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"Wheat.Leaf.LAI"</span>) <span class="co"># or "Wheat.AboveGround.Wt"</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">sit_name=<span class="st">"GattonRowSpacingRowSpace25cm"</span>  <span class="co"># among "GattonRowSpacingRowSpace25cm", "GattonRowSpacingRowSpace50cm","GattonRowSpacingRowSpaceN0"</span></a>
+<a class="sourceLine" id="cb2-2" title="2"></a>
+<a class="sourceLine" id="cb2-3" title="3">var_name =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Wheat.Leaf.LAI"</span>) <span class="co"># or "Wheat.AboveGround.Wt"</span></a></code></pre></div>
 </div>
 <div id="run-the-model-before-optimization-for-a-prior-evaluation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#run-the-model-before-optimization-for-a-prior-evaluation" class="anchor"></a>Run the model before optimization for a prior evaluation</h2>
 <p>In this case, the argument <code>param_values</code> of the wrapper is not set: the values of the model input parameters are all read in the model input files.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># Set the model options (see '? apsimx_wrapper_options' for details)</span></span>
-<span id="cb3-2"><a href="#cb3-2"></a>files_path &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/file.path">file.path</a></span>(<span class="st">"extdata"</span>,<span class="st">"apsimx_files"</span>),<span class="dt">package =</span> <span class="st">"ApsimOnR"</span>)</span>
-<span id="cb3-3"><a href="#cb3-3"></a>apsimx_file &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/file.path">file.path</a></span>(files_path, <span class="st">"template.apsimx"</span>)</span>
-<span id="cb3-4"><a href="#cb3-4"></a></span>
-<span id="cb3-5"><a href="#cb3-5"></a><span class="co"># Setting met files path</span></span>
-<span id="cb3-6"><a href="#cb3-6"></a>met_files_path &lt;-<span class="st"> </span>files_path</span>
-<span id="cb3-7"><a href="#cb3-7"></a></span>
-<span id="cb3-8"><a href="#cb3-8"></a><span class="co"># Setting observed data files path</span></span>
-<span id="cb3-9"><a href="#cb3-9"></a>obs_files_path &lt;-<span class="st"> </span>files_path</span>
-<span id="cb3-10"><a href="#cb3-10"></a></span>
-<span id="cb3-11"><a href="#cb3-11"></a><span class="co"># Setting sqlite db tables names </span></span>
-<span id="cb3-12"><a href="#cb3-12"></a>predicted_table_name &lt;-<span class="st"> "DailyReport"</span></span>
-<span id="cb3-13"><a href="#cb3-13"></a>observed_table_name &lt;-<span class="st"> "Observed"</span></span>
-<span id="cb3-14"><a href="#cb3-14"></a></span>
-<span id="cb3-15"><a href="#cb3-15"></a>model_options=<span class="kw">apsimx_wrapper_options</span>(<span class="dt">apsimx_path =</span> apsimx_path,</span>
-<span id="cb3-16"><a href="#cb3-16"></a>                                     <span class="dt">apsimx_file =</span>  apsimx_file,</span>
-<span id="cb3-17"><a href="#cb3-17"></a>                                     <span class="dt">variable_names =</span> var_name,</span>
-<span id="cb3-18"><a href="#cb3-18"></a>                                     <span class="dt">predicted_table_name =</span> predicted_table_name,</span>
-<span id="cb3-19"><a href="#cb3-19"></a>                                     <span class="dt">met_files_path =</span> met_files_path,</span>
-<span id="cb3-20"><a href="#cb3-20"></a>                                     <span class="dt">observed_table_name =</span> observed_table_name,</span>
-<span id="cb3-21"><a href="#cb3-21"></a>                                     <span class="dt">obs_files_path =</span> obs_files_path) </span>
-<span id="cb3-22"><a href="#cb3-22"></a></span>
-<span id="cb3-23"><a href="#cb3-23"></a><span class="co"># Run the model (on all situations found in the apsimx_file)</span></span>
-<span id="cb3-24"><a href="#cb3-24"></a>sim_before_optim=<span class="kw">apsimx_wrapper</span>(<span class="dt">model_options=</span>model_options)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="co"># Set the model options (see '? apsimx_wrapper_options' for details)</span></a>
+<a class="sourceLine" id="cb3-2" title="2">files_path &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="st">"extdata"</span>,<span class="st">"apsimx_files"</span>),<span class="dt">package =</span> <span class="st">"ApsimOnR"</span>)</a>
+<a class="sourceLine" id="cb3-3" title="3">apsimx_file &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(files_path, <span class="st">"template.apsimx"</span>)</a>
+<a class="sourceLine" id="cb3-4" title="4"></a>
+<a class="sourceLine" id="cb3-5" title="5"><span class="co"># Setting met files path</span></a>
+<a class="sourceLine" id="cb3-6" title="6">met_files_path &lt;-<span class="st"> </span>files_path</a>
+<a class="sourceLine" id="cb3-7" title="7"></a>
+<a class="sourceLine" id="cb3-8" title="8"><span class="co"># Setting observed data files path</span></a>
+<a class="sourceLine" id="cb3-9" title="9">obs_files_path &lt;-<span class="st"> </span>files_path</a>
+<a class="sourceLine" id="cb3-10" title="10"></a>
+<a class="sourceLine" id="cb3-11" title="11"><span class="co"># Setting sqlite db tables names </span></a>
+<a class="sourceLine" id="cb3-12" title="12">predicted_table_name &lt;-<span class="st"> "DailyReport"</span></a>
+<a class="sourceLine" id="cb3-13" title="13">observed_table_name &lt;-<span class="st"> "Observed"</span></a>
+<a class="sourceLine" id="cb3-14" title="14"></a>
+<a class="sourceLine" id="cb3-15" title="15">model_options=<span class="kw">apsimx_wrapper_options</span>(<span class="dt">apsimx_path =</span> apsimx_path,</a>
+<a class="sourceLine" id="cb3-16" title="16">                                     <span class="dt">apsimx_file =</span>  apsimx_file,</a>
+<a class="sourceLine" id="cb3-17" title="17">                                     <span class="dt">variable_names =</span> var_name,</a>
+<a class="sourceLine" id="cb3-18" title="18">                                     <span class="dt">predicted_table_name =</span> predicted_table_name,</a>
+<a class="sourceLine" id="cb3-19" title="19">                                     <span class="dt">met_files_path =</span> met_files_path,</a>
+<a class="sourceLine" id="cb3-20" title="20">                                     <span class="dt">observed_table_name =</span> observed_table_name,</a>
+<a class="sourceLine" id="cb3-21" title="21">                                     <span class="dt">obs_files_path =</span> obs_files_path) </a>
+<a class="sourceLine" id="cb3-22" title="22"></a>
+<a class="sourceLine" id="cb3-23" title="23"><span class="co"># Run the model (on all situations found in the apsimx_file)</span></a>
+<a class="sourceLine" id="cb3-24" title="24">sim_before_optim=<span class="kw">apsimx_wrapper</span>(<span class="dt">model_options=</span>model_options)</a></code></pre></div>
 </div>
 <div id="read-and-select-the-corresponding-observations" class="section level2">
 <h2 class="hasAnchor">
 <a href="#read-and-select-the-corresponding-observations" class="anchor"></a>Read and select the corresponding observations</h2>
 <p>We only keep observations for situation <code>sit_name</code> and variable <code>var_name</code> (<code>obs_list</code> defines the list of situations and variables that will be used in the parameter estimation process).</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co"># At the moment, observed data are read from the db file after the first simulation ran before optimization.</span></span>
-<span id="cb4-2"><a href="#cb4-2"></a><span class="co">#But they may be loaded using the original xlsx data file (from the files_path)  </span></span>
-<span id="cb4-3"><a href="#cb4-3"></a></span>
-<span id="cb4-4"><a href="#cb4-4"></a>obs_list &lt;-<span class="st"> </span><span class="kw">read_apsimx_output</span>(sim_before_optim<span class="op">$</span>db_file_name,</span>
-<span id="cb4-5"><a href="#cb4-5"></a>                               model_options<span class="op">$</span>observed_table_name,</span>
-<span id="cb4-6"><a href="#cb4-6"></a>                               model_options<span class="op">$</span>variable_names,</span>
-<span id="cb4-7"><a href="#cb4-7"></a>                               <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(sim_before_optim<span class="op">$</span>sim_list))</span>
-<span id="cb4-8"><a href="#cb4-8"></a>obs_list=obs_list[sit_name]</span>
-<span id="cb4-9"><a href="#cb4-9"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(obs_list) &lt;-<span class="st"> </span>sit_name</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="co"># At the moment, observed data are read from the db file after the first simulation ran before optimization.</span></a>
+<a class="sourceLine" id="cb4-2" title="2"><span class="co">#But they may be loaded using the original xlsx data file (from the files_path)  </span></a>
+<a class="sourceLine" id="cb4-3" title="3"></a>
+<a class="sourceLine" id="cb4-4" title="4">obs_list &lt;-<span class="st"> </span><span class="kw">read_apsimx_output</span>(sim_before_optim<span class="op">$</span>db_file_name,</a>
+<a class="sourceLine" id="cb4-5" title="5">                               model_options<span class="op">$</span>observed_table_name,</a>
+<a class="sourceLine" id="cb4-6" title="6">                               model_options<span class="op">$</span>variable_names,</a>
+<a class="sourceLine" id="cb4-7" title="7">                               <span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(sim_before_optim<span class="op">$</span>sim_list))</a>
+<a class="sourceLine" id="cb4-8" title="8">obs_list=obs_list[sit_name]</a>
+<a class="sourceLine" id="cb4-9" title="9"><span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(obs_list) &lt;-<span class="st"> </span>sit_name</a></code></pre></div>
 </div>
 <div id="set-prior-information-on-the-parameters-to-estimate" class="section level2">
 <h2 class="hasAnchor">
 <a href="#set-prior-information-on-the-parameters-to-estimate" class="anchor"></a>Set prior information on the parameters to estimate</h2>
 <p><code>prior_information</code> determines the list of parameters that will be estimated in the parameter estimation process and associated bounds information (only uniform distributions for the moment, others will come soon).</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># 2 parameters here: ExtinctionCoeff and RUE, of prior distributions U([0.4,0.6]) and U([1.4,1.6])</span></span>
-<span id="cb5-2"><a href="#cb5-2"></a>prior_information &lt;-<span class="st"> </span></span>
-<span id="cb5-3"><a href="#cb5-3"></a><span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">lb=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dt">.Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue=</span><span class="fl">0.4</span>,</span>
-<span id="cb5-4"><a href="#cb5-4"></a>            <span class="dt">.Simulations.Replacements.Wheat.Leaf.Photosynthesis.RUE.FixedValue=</span><span class="fl">1.4</span>),</span>
-<span id="cb5-5"><a href="#cb5-5"></a>       <span class="dt">ub=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dt">.Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue=</span><span class="fl">0.6</span>,</span>
-<span id="cb5-6"><a href="#cb5-6"></a>            <span class="dt">.Simulations.Replacements.Wheat.Leaf.Photosynthesis.RUE.FixedValue=</span><span class="fl">1.6</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="co"># 2 parameters here: ExtinctionCoeff and RUE, of prior distributions U([0.4,0.6]) and U([1.4,1.6])</span></a>
+<a class="sourceLine" id="cb5-2" title="2">prior_information &lt;-<span class="st"> </span></a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">lb=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dt">.Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue=</span><span class="fl">0.4</span>,</a>
+<a class="sourceLine" id="cb5-4" title="4">            <span class="dt">.Simulations.Replacements.Wheat.Leaf.Photosynthesis.RUE.FixedValue=</span><span class="fl">1.4</span>),</a>
+<a class="sourceLine" id="cb5-5" title="5">       <span class="dt">ub=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dt">.Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue=</span><span class="fl">0.6</span>,</a>
+<a class="sourceLine" id="cb5-6" title="6">            <span class="dt">.Simulations.Replacements.Wheat.Leaf.Photosynthesis.RUE.FixedValue=</span><span class="fl">1.6</span>))</a></code></pre></div>
 </div>
 <div id="set-options-for-the-parameter-estimation-method" class="section level2">
 <h2 class="hasAnchor">
 <a href="#set-options-for-the-parameter-estimation-method" class="anchor"></a>Set options for the parameter estimation method</h2>
 <p><code>optim_options</code> should contain the options of the parameter estimation method. Here we defined a few options for the simplex method of the <code>nloptr</code> package (default method in estim_param). The full set of options for the simplex method can be found in the <a href="https://cran.r-project.org/web/packages/nloptr/vignettes/nloptr.pdf">vignette of nloptr package</a>.</p>
 <p>The number of repetitions <code>nb_rep</code> is advised to be set at least to 5, while 10 is a reasonable maximum value. <code>maxeval</code> should be used to stop the minimization only if results have to be produced within a given duration, otherwise set it to a high value so that the minimization stops when the criterion based on the relative tolerance <code>xtol_rel</code> is satisfied.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>optim_options=<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>() </span>
-<span id="cb6-2"><a href="#cb6-2"></a>optim_options<span class="op">$</span>nb_rep &lt;-<span class="st"> </span><span class="dv">7</span> <span class="co"># Number of repetitions of the minimization </span></span>
-<span id="cb6-3"><a href="#cb6-3"></a>                          <span class="co"># (each time starting with different initial</span></span>
-<span id="cb6-4"><a href="#cb6-4"></a>                          <span class="co"># values for the estimated parameters) </span></span>
-<span id="cb6-5"><a href="#cb6-5"></a>optim_options<span class="op">$</span>maxeval &lt;-<span class="st">  </span><span class="dv">500</span> <span class="co"># Maximum number of evaluations of the </span></span>
-<span id="cb6-6"><a href="#cb6-6"></a>                             <span class="co"># minimized criteria </span></span>
-<span id="cb6-7"><a href="#cb6-7"></a>optim_options<span class="op">$</span>xtol_rel &lt;-<span class="st"> </span><span class="fl">1e-03</span> <span class="co"># Tolerance criterion between two iterations</span></span>
-<span id="cb6-8"><a href="#cb6-8"></a>                                <span class="co"># (threshold for the relative difference of </span></span>
-<span id="cb6-9"><a href="#cb6-9"></a>                                <span class="co"># parameter values between the 2 previous </span></span>
-<span id="cb6-10"><a href="#cb6-10"></a>                                <span class="co"># iterations)</span></span>
-<span id="cb6-11"><a href="#cb6-11"></a></span>
-<span id="cb6-12"><a href="#cb6-12"></a>optim_options<span class="op">$</span>path_results &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/getwd">getwd</a></span>() <span class="co"># path where to store the results (graph and Rdata)</span></span>
-<span id="cb6-13"><a href="#cb6-13"></a></span>
-<span id="cb6-14"><a href="#cb6-14"></a>optim_options<span class="op">$</span>ranseed &lt;-<span class="st"> </span><span class="dv">1234</span> <span class="co"># set random seed so that each execution give the same results</span></span>
-<span id="cb6-15"><a href="#cb6-15"></a>                              <span class="co"># If you want randomization, don't set it.</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">optim_options=<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>() </a>
+<a class="sourceLine" id="cb6-2" title="2">optim_options<span class="op">$</span>nb_rep &lt;-<span class="st"> </span><span class="dv">7</span> <span class="co"># Number of repetitions of the minimization </span></a>
+<a class="sourceLine" id="cb6-3" title="3">                          <span class="co"># (each time starting with different initial</span></a>
+<a class="sourceLine" id="cb6-4" title="4">                          <span class="co"># values for the estimated parameters) </span></a>
+<a class="sourceLine" id="cb6-5" title="5">optim_options<span class="op">$</span>maxeval &lt;-<span class="st">  </span><span class="dv">500</span> <span class="co"># Maximum number of evaluations of the </span></a>
+<a class="sourceLine" id="cb6-6" title="6">                             <span class="co"># minimized criteria </span></a>
+<a class="sourceLine" id="cb6-7" title="7">optim_options<span class="op">$</span>xtol_rel &lt;-<span class="st"> </span><span class="fl">1e-03</span> <span class="co"># Tolerance criterion between two iterations</span></a>
+<a class="sourceLine" id="cb6-8" title="8">                                <span class="co"># (threshold for the relative difference of </span></a>
+<a class="sourceLine" id="cb6-9" title="9">                                <span class="co"># parameter values between the 2 previous </span></a>
+<a class="sourceLine" id="cb6-10" title="10">                                <span class="co"># iterations)</span></a>
+<a class="sourceLine" id="cb6-11" title="11"></a>
+<a class="sourceLine" id="cb6-12" title="12">optim_options<span class="op">$</span>path_results &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/getwd.html">getwd</a></span>() <span class="co"># path where to store the results (graph and Rdata)</span></a>
+<a class="sourceLine" id="cb6-13" title="13"></a>
+<a class="sourceLine" id="cb6-14" title="14">optim_options<span class="op">$</span>ranseed &lt;-<span class="st"> </span><span class="dv">1234</span> <span class="co"># set random seed so that each execution give the same results</span></a>
+<a class="sourceLine" id="cb6-15" title="15">                              <span class="co"># If you want randomization, don't set it.</span></a></code></pre></div>
 </div>
 <div id="run-the-optimization" class="section level2">
 <h2 class="hasAnchor">
 <a href="#run-the-optimization" class="anchor"></a>Run the optimization</h2>
 <p>The Nelder-Meade simplex is the default method =&gt; no need to set the optim_method argument. For the moment it is the only method interfaced (others will come soonly). Same for crit_function: a value is set by default (crit_cwss, see wallach et al., 2011). For the moment only 2 criterion are proposed (crit_log_cwss and crit_cwss), others will be proposed in next versions of CroptimizR. The user can implement its own criterion (see inputs and outputs required in the crit_cwss function).</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>optim_results=<span class="kw"><a href="../reference/estim_param.html">estim_param</a></span>(<span class="dt">obs_list=</span>obs_list,</span>
-<span id="cb7-2"><a href="#cb7-2"></a>                            <span class="dt">model_function=</span>apsimx_wrapper,</span>
-<span id="cb7-3"><a href="#cb7-3"></a>                            <span class="dt">model_options=</span>model_options,</span>
-<span id="cb7-4"><a href="#cb7-4"></a>                            <span class="dt">optim_options=</span>optim_options,</span>
-<span id="cb7-5"><a href="#cb7-5"></a>                            <span class="dt">prior_information=</span>prior_information)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1">optim_results=<span class="kw"><a href="../reference/estim_param.html">estim_param</a></span>(<span class="dt">obs_list=</span>obs_list,</a>
+<a class="sourceLine" id="cb7-2" title="2">                            <span class="dt">model_function=</span>apsimx_wrapper,</a>
+<a class="sourceLine" id="cb7-3" title="3">                            <span class="dt">model_options=</span>model_options,</a>
+<a class="sourceLine" id="cb7-4" title="4">                            <span class="dt">optim_options=</span>optim_options,</a>
+<a class="sourceLine" id="cb7-5" title="5">                            <span class="dt">prior_information=</span>prior_information)</a></code></pre></div>
 <p>The results printed in output on the R console are the following:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="co">## [1] "Estimated value for .Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue :  0.432140042063685"</span></span>
-<span id="cb8-2"><a href="#cb8-2"></a><span class="co">## [1] "Estimated value for .Simulations.Replacements.Wheat.Leaf.Photosynthesis.RUE.FixedValue :  1.6"</span></span>
-<span id="cb8-3"><a href="#cb8-3"></a><span class="co">## [1] "Minimum value of the criterion : 6.37702433098772e-05"</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="co">## [1] "Estimated value for .Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue :  0.432140042063685"</span></a>
+<a class="sourceLine" id="cb8-2" title="2"><span class="co">## [1] "Estimated value for .Simulations.Replacements.Wheat.Leaf.Photosynthesis.RUE.FixedValue :  1.6"</span></a>
+<a class="sourceLine" id="cb8-3" title="3"><span class="co">## [1] "Minimum value of the criterion : 6.37702433098772e-05"</span></a></code></pre></div>
 <p>Complementary graphs and data are stored in the results folder which path is given above. Among them, the <code>EstimatedVSinit.pdf</code> file contains the following figures:</p>
 <p><img src="ResultsSimpleCaseApsim/estimInit_ExtinctionCoeff.png" width="50%"><img src="ResultsSimpleCaseApsim/estimInit_RUE.png" width="50%"></p>
 <p>Figure 1: plots of estimated vs initial values of parameters <em>ExtinctionCoeff</em> and <em>RUE</em>. Numbers represent the repetition number of the minimization. The number in red, 2 in this case, is the minimization that lead to the minimal value of the criterion among all repetitions. In this case, minimizations converge towards different values for the parameters (3 for <em>ExtinctionCoeff</em> and 2 for <em>RUE</em>), which indicates the presence of local minima. Values of <em>RUE</em> are very close to the upper bound value. In realistic calibration cases this may indicate the presence of a large error in the observation values or in the simulated output values (this simple case with only one situation does not allow to derive such conclusion).</p>
 <p>The optim_options$path_results folder also contains the optim_results.Rdata file that store the nlo variable, a list containing the results of the minimization for each repetition. If we print it for repetition 2 …</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/load">load</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/file.path">file.path</a></span>(optim_options<span class="op">$</span>path_results,<span class="st">"optim_results.Rdata"</span>))</span>
-<span id="cb9-2"><a href="#cb9-2"></a>nlo[[<span class="dv">2</span>]]</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="kw"><a href="https://rdrr.io/r/base/load.html">load</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(optim_options<span class="op">$</span>path_results,<span class="st">"optim_results.Rdata"</span>))</a>
+<a class="sourceLine" id="cb9-2" title="2">nlo[[<span class="dv">2</span>]]</a></code></pre></div>
 <p>… this returns:</p>
+<pre><code>## Warning: l'espace de nom 'SticsOptimizR' n'est pas disponible et a été remplacé
+## par .GlobalEnv lors du traitement de l'objet 'nlo'</code></pre>
+<pre><code>## Warning: l'espace de nom 'ApsimOnR' n'est pas disponible et a été remplacé
+## par .GlobalEnv lors du traitement de l'objet 'nlo'</code></pre>
 <pre><code>## 
 ## Call:
 ## nloptr(x0 = as.numeric(init_values[irep, ]), eval_f = main_crit, 
@@ -274,25 +280,25 @@
 <h2 class="hasAnchor">
 <a href="#run-the-model-after-optimization" class="anchor"></a>Run the model after optimization</h2>
 <p>In this case, the <code>param_values</code> argument is set so that estimated values of the parameters overwrite the values defined in the model input file (’.apsimx`).</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>sim_after_optim=<span class="kw">apsimx_wrapper</span>(<span class="dt">param_values=</span>optim_results<span class="op">$</span>final_values,</span>
-<span id="cb11-2"><a href="#cb11-2"></a>                               <span class="dt">model_options=</span>model_options)</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">sim_after_optim=<span class="kw">apsimx_wrapper</span>(<span class="dt">param_values=</span>optim_results<span class="op">$</span>final_values,</a>
+<a class="sourceLine" id="cb13-2" title="2">                               <span class="dt">model_options=</span>model_options)</a></code></pre></div>
 </div>
 <div id="plot-the-results" class="section level2">
 <h2 class="hasAnchor">
 <a href="#plot-the-results" class="anchor"></a>Plot the results</h2>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/grDevices/topics/png">png</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/file.path">file.path</a></span>(optim_options<span class="op">$</span>path_results,<span class="st">"sim_obs_plots.png"</span>),</span>
-<span id="cb12-2"><a href="#cb12-2"></a>    <span class="dt">width =</span> <span class="dv">15</span>, <span class="dt">height =</span> <span class="dv">10</span>, <span class="dt">units =</span> <span class="st">"cm"</span>, <span class="dt">res=</span><span class="dv">1000</span>)</span>
-<span id="cb12-3"><a href="#cb12-3"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/par">par</a></span>(<span class="dt">mfrow =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
-<span id="cb12-4"><a href="#cb12-4"></a></span>
-<span id="cb12-5"><a href="#cb12-5"></a><span class="co"># Simulated and observed LAI before optimization</span></span>
-<span id="cb12-6"><a href="#cb12-6"></a>Ymax=<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Extremes">max</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Extremes">max</a></span>(obs_list[[sit_name]][,var_name], <span class="dt">na.rm=</span><span class="ot">TRUE</span>),</span>
-<span id="cb12-7"><a href="#cb12-7"></a>         <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Extremes">max</a></span>(sim_before_optim<span class="op">$</span>sim_list[[sit_name]][,var_name], <span class="dt">na.rm=</span><span class="ot">TRUE</span>))</span>
-<span id="cb12-8"><a href="#cb12-8"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(sim_before_optim<span class="op">$</span>sim_list[[sit_name]][,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"Date"</span>,var_name)],<span class="dt">type=</span><span class="st">"l"</span>,</span>
-<span id="cb12-9"><a href="#cb12-9"></a>     <span class="dt">main=</span><span class="st">"Before optimization"</span>,<span class="dt">ylim=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>,Ymax<span class="op">+</span>Ymax<span class="op">*</span><span class="fl">0.1</span>))</span>
-<span id="cb12-10"><a href="#cb12-10"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/points">points</a></span>(obs_list[[sit_name]]<span class="op">$</span>Date,obs_list[[sit_name]][[var_name]],<span class="dt">col=</span><span class="st">"red"</span>)</span>
-<span id="cb12-11"><a href="#cb12-11"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(sim_after_optim<span class="op">$</span>sim_list[[sit_name]][,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"Date"</span>,var_name)],<span class="dt">type=</span><span class="st">"l"</span>,</span>
-<span id="cb12-12"><a href="#cb12-12"></a>     <span class="dt">main=</span><span class="st">"After optimization"</span>,<span class="dt">ylim=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>,Ymax<span class="op">+</span>Ymax<span class="op">*</span><span class="fl">0.1</span>))</span>
-<span id="cb12-13"><a href="#cb12-13"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/points">points</a></span>(obs_list[[sit_name]]<span class="op">$</span>Date,obs_list[[sit_name]][[var_name]],<span class="dt">col=</span><span class="st">"red"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1"><span class="kw"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(optim_options<span class="op">$</span>path_results,<span class="st">"sim_obs_plots.png"</span>),</a>
+<a class="sourceLine" id="cb14-2" title="2">    <span class="dt">width =</span> <span class="dv">15</span>, <span class="dt">height =</span> <span class="dv">10</span>, <span class="dt">units =</span> <span class="st">"cm"</span>, <span class="dt">res=</span><span class="dv">1000</span>)</a>
+<a class="sourceLine" id="cb14-3" title="3"><span class="kw"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="dt">mfrow =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1</span>,<span class="dv">2</span>))</a>
+<a class="sourceLine" id="cb14-4" title="4"></a>
+<a class="sourceLine" id="cb14-5" title="5"><span class="co"># Simulated and observed LAI before optimization</span></a>
+<a class="sourceLine" id="cb14-6" title="6">Ymax=<span class="kw"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span>(obs_list[[sit_name]][,var_name], <span class="dt">na.rm=</span><span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb14-7" title="7">         <span class="kw"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span>(sim_before_optim<span class="op">$</span>sim_list[[sit_name]][,var_name], <span class="dt">na.rm=</span><span class="ot">TRUE</span>))</a>
+<a class="sourceLine" id="cb14-8" title="8"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(sim_before_optim<span class="op">$</span>sim_list[[sit_name]][,<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Date"</span>,var_name)],<span class="dt">type=</span><span class="st">"l"</span>,</a>
+<a class="sourceLine" id="cb14-9" title="9">     <span class="dt">main=</span><span class="st">"Before optimization"</span>,<span class="dt">ylim=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>,Ymax<span class="op">+</span>Ymax<span class="op">*</span><span class="fl">0.1</span>))</a>
+<a class="sourceLine" id="cb14-10" title="10"><span class="kw"><a href="https://rdrr.io/r/graphics/points.html">points</a></span>(obs_list[[sit_name]]<span class="op">$</span>Date,obs_list[[sit_name]][[var_name]],<span class="dt">col=</span><span class="st">"red"</span>)</a>
+<a class="sourceLine" id="cb14-11" title="11"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(sim_after_optim<span class="op">$</span>sim_list[[sit_name]][,<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Date"</span>,var_name)],<span class="dt">type=</span><span class="st">"l"</span>,</a>
+<a class="sourceLine" id="cb14-12" title="12">     <span class="dt">main=</span><span class="st">"After optimization"</span>,<span class="dt">ylim=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>,Ymax<span class="op">+</span>Ymax<span class="op">*</span><span class="fl">0.1</span>))</a>
+<a class="sourceLine" id="cb14-13" title="13"><span class="kw"><a href="https://rdrr.io/r/graphics/points.html">points</a></span>(obs_list[[sit_name]]<span class="op">$</span>Date,obs_list[[sit_name]][[var_name]],<span class="dt">col=</span><span class="st">"red"</span>)</a></code></pre></div>
 this gives:
 <div class="figure">
 <img src="ResultsSimpleCaseApsim/sim_obs_plots.png" alt="Figure 2: plots of simulated and observed target variable before and after optimization. The gap between simulated and observed values has been drastically reduced: the minimizer has done its job!" width="80%"><p class="caption">
@@ -303,6 +309,7 @@ Figure 2: plots of simulated and observed target variable before and after optim
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+
         <div id="tocnav">
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
@@ -324,17 +331,20 @@ Figure 2: plots of simulated and observed target variable before and after optim
 </div>
 
 
+
       <footer><div class="copyright">
   <p>Developed by Samuel Buis, Michel Giner, Patrice Lecharpentier, SticsRpacks.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
 </div>
 
   
+
 
   </body>
 </html>

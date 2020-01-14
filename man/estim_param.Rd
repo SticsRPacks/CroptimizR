@@ -4,19 +4,13 @@
 \alias{estim_param}
 \title{main function for parameter estimation}
 \usage{
-estim_param(
-  obs_list,
-  crit_function = crit_cwss,
-  model_function,
-  model_options = NULL,
-  optim_method = "nloptr.simplex",
-  optim_options = NULL,
-  prior_information
-)
+estim_param(obs_list, crit_function = crit_cwss, model_function,
+  model_options = NULL, optim_method = "nloptr.simplex",
+  optim_options = NULL, prior_information)
 }
 \arguments{
 \item{obs_list}{List of observed values to use for parameter estimation
-A \verb{named list} (names = situations names) of data.frame containing
+A \code{named list} (names = situations names) of data.frame containing
 one column named Date with the dates (POSIXct format) of the different observations
 and one column per observed variables with either the measured values or NA, if
 the variable is not observed at the given date.}

@@ -106,10 +106,10 @@
       <a href="../articles/Designing_a_model_wrapper.html">Elements for implementing a crop model R wrapper</a>
     </li>
     <li>
-      <a href="../articles/Parameter_estimation_Specific_and_Varietal.html">Parameter estimation with the Stics crop Model: a case with specific and varietal parameters</a>
+      <a href="../articles/Parameter_estimation_simple_case.html">Parameter estimation with the Stics crop Model: a simple case</a>
     </li>
     <li>
-      <a href="../articles/Parameter_estimation_simple_case.html">Parameter estimation with the Stics crop Model: a simple case</a>
+      <a href="../articles/Parameter_estimation_Specific_and_Varietal.html">Parameter estimation with the Stics crop Model: a case with specific and varietal parameters</a>
     </li>
   </ul>
 </li>
@@ -143,16 +143,9 @@
     <p>Call the required parameter estimation method</p>
     </div>
 
-    <pre class="usage"><span class='fu'>optim_switch</span>(
-  <span class='no'>param_names</span>,
-  <span class='no'>obs_list</span>,
-  <span class='no'>crit_function</span>,
-  <span class='no'>model_function</span>,
-  <span class='kw'>model_options</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>optim_method</span> <span class='kw'>=</span> <span class='st'>"nloptr.simplex"</span>,
-  <span class='kw'>optim_options</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>prior_information</span>
-)</pre>
+    <pre class="usage"><span class='fu'>optim_switch</span>(<span class='no'>param_names</span>, <span class='no'>obs_list</span>, <span class='no'>crit_function</span>, <span class='no'>model_function</span>,
+  <span class='kw'>model_options</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>optim_method</span> <span class='kw'>=</span> <span class='st'>"nloptr.simplex"</span>,
+  <span class='kw'>optim_options</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>prior_information</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

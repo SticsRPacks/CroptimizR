@@ -1,5 +1,5 @@
 params <-
-list(eval_rmd = FALSE, apsimx_path = c(Models = "/usr/local/bin/Models"))
+list(eval_rmd = FALSE, apsimx_path = c(Models = ""))
 
 ## ----setup, eval=TRUE, include=FALSE------------------------------------------
 # Global options
@@ -8,13 +8,11 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 ## ----setup_initializations, message=FALSE, results=FALSE, warning=FALSE-------
 #  
 #  # Install and load the needed libraries
+#  devtools::install_github("SticsRPacks/CroptimizR@*release")
+#  library("CroptimizR")
 #  if(!require("ApsimOnR")){
 #    devtools::install_github("ApsimOnR")
 #    library("ApsimOnR")
-#  }
-#  if(!require("CroptimizR")){
-#    devtools::install_github("SticsRPacks/CroptimizR")
-#    library("CroptimizR")
 #  }
 #  if(!require("dplyr")){
 #    install.packages("dplyr",repos="http://cran.irsn.fr")
