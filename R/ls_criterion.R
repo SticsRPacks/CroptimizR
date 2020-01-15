@@ -48,7 +48,7 @@ crit_cwss <- function(sim_list, obs_list) {
     result <- result * ((1 / sz) * (res %*% res))^(sz / 2)
   }
 
-  return(result)
+  return(as.numeric(result))
 }
 
 #' @export
@@ -70,7 +70,7 @@ crit_log_cwss <- function(sim_list, obs_list) {
     result <- result + (sz / 2) * (log(1 / sz) + log(res %*% res + 1e-300))
   }
 
-  return(result)
+  return(as.numeric(result))
 }
 
 #' @export
@@ -97,5 +97,5 @@ crit_cwss_corr <- function(sim_list,obs_list) {
     result<-result*(result1^(Nj/2))/Nj
   }
 
-return(result)
+return(as.numeric(result))
 }
