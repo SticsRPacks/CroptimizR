@@ -33,17 +33,16 @@ estimated (one column per parameter)
 Extract parameter initial values from prior information
 }
 \examples{
-\dontrun{
 # Simple cases
 prior_information=list(init_values=c(dlaimax=0.001, durvieF=200),
                        lb=c(dlaimax=0.0001, durvieF=50),
                        ub=c(dlaimax=0.01, durvieF=400))
-get_params_init_values(prior_information)
+CroptimizR:::get_params_init_values(prior_information)
 
 prior_information=list(init_values=data.frame(dlaimax=c(0.001,0.002), durvieF=c(50,200)),
                        lb=c(dlaimax=0.0001, durvieF=50),
                        ub=c(dlaimax=0.01, durvieF=400))
-get_params_init_values(prior_information)
+CroptimizR:::get_params_init_values(prior_information)
 
 Cases with groups of situations per parameter
 prior_information=list()
@@ -53,7 +52,7 @@ prior_information$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", 
 prior_information$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
                                              c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),
                                init_values=c(200,300),lb=50,ub=400)
-get_params_init_values(prior_information)
+CroptimizR:::get_params_init_values(prior_information)
 
 prior_information=list()
 prior_information$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1",
@@ -63,7 +62,6 @@ prior_information$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", 
                                              c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),
                                init_values=data.frame(c(200,300),c(250,350)),lb=50,ub=400)
 CroptimizR:::get_params_init_values(prior_information)
-}
 
 }
 \keyword{internal}
