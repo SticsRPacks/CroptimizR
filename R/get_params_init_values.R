@@ -17,7 +17,7 @@
 #'                        ub=c(dlaimax=0.01, durvieF=400))
 #' CroptimizR:::get_params_init_values(prior_information)
 #'
-#' Cases with groups of situations per parameter
+#' # Cases with groups of situations per parameter
 #' prior_information=list()
 #' prior_information$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1",
 #'                                                "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),
