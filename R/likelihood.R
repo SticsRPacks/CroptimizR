@@ -46,7 +46,7 @@ likelihood_ciidn <- function(sim_list,obs_list) {
     result=result * (res%*%res)^(-(sz/2+2))
   }
 
-  return(result)
+  return(as.numeric(result))
 }
 
 #' @export
@@ -69,7 +69,7 @@ likelihood_log_ciidn <- function(sim_list,obs_list) {
     result=result - (sz/2+2)*log(res%*%res+1e-300)
   }
 
-  return(result)
+  return(as.numeric(result))
 }
 
 #' @export
@@ -97,5 +97,5 @@ likelihood_ciidn_corr <- function(sim_list,obs_list) {
     result<-result*(result1^-((Nj/2)+2))
   }
 
-  return(result)
+  return(as.numeric(result))
 }
