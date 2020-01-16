@@ -39,12 +39,8 @@ devtools::install_github("SticsRPacks/CroptimizR@v0.1.0.9001")
 library("CroptimizR")
 
 # Download the example USMs:
-data_dir= normalizePath(tempdir(), winslash = "/", mustWork = FALSE)
-data_dir_zip= normalizePath(file.path(data_dir,"master.zip"), winslash = "/", mustWork = FALSE)
-download.file("https://github.com/SticsRPacks/data/archive/master.zip", data_dir_zip)
-unzip(data_dir_zip, exdir = data_dir)
-unlink(data_dir_zip)
-data_dir= file.path(normalizePath(list.dirs(data_dir)[2], winslash = "/"),"study_case_1","V9.0")
+
+data_dir= file.path(SticsRFiles::download_data(),"study_case_1","V9.0")
 # NB: all examples are now in data_dir
 
 # Define the path to the local version of JavaStics 

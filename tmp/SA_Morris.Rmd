@@ -45,7 +45,7 @@ To regulate the number of simulations, if needed, select a subset of the list of
 
 ```{r message=FALSE, warning=FALSE}
 # Fill list of USMs to consider
-usm_list=get_usms_list(data_path,xml_name="usms.xml")
+usm_list=get_usms_list(data_path,xml_name="usms.xml")[[1]]
 # a short sublist for quick tests, COMMENT NEXT LINE FOR LARGE TEST -------
 usm_list= c("FORE-Ap-12-122210","MERY-Ap-10-116375")
 print(usm_list)
