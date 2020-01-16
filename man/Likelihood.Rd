@@ -4,11 +4,14 @@
 \alias{Likelihood}
 \alias{likelihood_ciidn}
 \alias{likelihood_log_ciidn}
+\alias{likelihood_ciidn_corr}
 \title{Likelihood}
 \usage{
 likelihood_ciidn(sim_list, obs_list)
 
 likelihood_log_ciidn(sim_list, obs_list)
+
+likelihood_ciidn_corr(sim_list, obs_list)
 }
 \arguments{
 \item{sim_list}{List of simulated variables}

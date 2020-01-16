@@ -173,7 +173,7 @@ The last released version of the package can be installed from
 [GitHub](https://github.com/) using:
 
 ``` r
-devtools::install_github("SticsRPacks/CroptimizR@*release")
+devtools::install_github("SticsRPacks/CroptimizR@v0.1.0.9001")
 ```
 
 Or using the lightweight
@@ -181,14 +181,14 @@ Or using the lightweight
 
 ``` r
 # install.packages("remotes")
-remotes::install_github("SticsRPacks/CroptimizR@*release")
+remotes::install_github("SticsRPacks/CroptimizR@v0.1.0.9001")
 ```
 
 The package is tested routinely to pass all
-[CRAN](https://CRAN.R-project.org) tests using Travis-CI (linux) and
-AppVeyor (Windows), but it is not yet released to the CRAN servers:
-CroptimizR is still under development and users are not yet widespread
-enough to bother CRAN people and use their free server time.
+[CRAN](https://CRAN.R-project.org) tests using Travis-CI, but it is not
+yet released to the CRAN servers: CroptimizR is still under development
+and users are not yet widespread enough to bother CRAN people and use
+their free server time.
 
 ## Examples
 

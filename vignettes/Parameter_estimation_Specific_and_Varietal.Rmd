@@ -35,18 +35,12 @@ This part is not shown here, it is the same as this of the [introductory example
 knitr::opts_chunk$set(echo = TRUE)
 
 # Install and load the needed libraries
-if(!require("SticsRFiles")){
-  devtools::install_github("SticsRPacks/SticsRFiles@*release")
-  library("SticsRFiles")
-}
-if(!require("SticsOnR")){
-  devtools::install_github("SticsRPacks/SticsOnR@*release")
-  library("SticsOnR")
-}
-if(!require("CroptimizR")){
-  devtools::install_github("SticsRPacks/CroptimizR@*release")
-  library("CroptimizR")
-}
+devtools::install_github("SticsRPacks/SticsOnR@v0.1.0.9001")
+library("SticsOnR")
+devtools::install_github("SticsRPacks/SticsRFiles@v0.1.0.9001")
+library("SticsRFiles")
+devtools::install_github("SticsRPacks/CroptimizR@v0.1.0.9001")
+library("CroptimizR")
 
 # Download the example USMs:
 data_dir= normalizePath(tempdir(), winslash = "/", mustWork = FALSE)
@@ -68,7 +62,7 @@ In this example, observed LAI are used.
 
 ```{r message=FALSE, warning=FALSE}
 # Read observation files
-obs_list=get_obs(file.path(data_dir,"XmlFiles"))
+obs_list=read_obs(file.path(data_dir,"XmlFiles"))
 obs_list=lapply(obs_list,"[",c("Date","lai_n"))
 ```
 
@@ -143,6 +137,29 @@ Figure 1: plots of estimated vs initial values of parameters dlaimax and durvieF
 A couple of plots to check if the calibration reduced the difference between simulations and observations.
 
 ```{r message=FALSE, warning=FALSE}
+# Install a few packages needed for the following
+if(!require("gridExtra")){
+  install.packages("gridExtra",repos="http://cran.irsn.fr")
+  library("gridExtra")
+}
+if(!require("Metrics")){
+  install.packages("Metrics",repos="http://cran.irsn.fr")
+  library("Metrics")
+}
+if(!require("grid")){
+  install.packages("grid",repos="http://cran.irsn.fr")
+  library("grid")
+}
+if(!require("dplyr")){
+  install.packages("dplyr",repos="http://cran.irsn.fr")
+  library("dplyr")
+}
+if(!require("ggplot2")){
+  install.packages("ggplot2",repos="http://cran.irsn.fr")
+  library("ggplot2")
+}
+
+
 # Run the model without and with forcing the optimized values of the parameters
 sim_before_optim=stics_wrapper(model_options=model_options)
 

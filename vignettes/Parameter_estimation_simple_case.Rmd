@@ -31,26 +31,16 @@ The parameter estimation is performed using the Nelder-Meade simplex method impl
 ```{r setup_initializations,  message=FALSE, results=FALSE, warning=FALSE}
 
 # Install and load the needed libraries
-if(!require("SticsRFiles")){
-  devtools::install_github("SticsRPacks/SticsRFiles@*release")
-  library("SticsRFiles")
-}
-if(!require("SticsOnR")){
-  devtools::install_github("SticsRPacks/SticsOnR@*release")
-  library("SticsOnR")
-}
-if(!require("CroptimizR")){
-  devtools::install_github("SticsRPacks/CroptimizR@*release")
-  library("CroptimizR")
-}
+devtools::install_github("SticsRPacks/SticsOnR@v0.1.0.9001")
+library("SticsOnR")
+devtools::install_github("SticsRPacks/SticsRFiles@v0.1.0.9001")
+library("SticsRFiles")
+devtools::install_github("SticsRPacks/CroptimizR@v0.1.0.9001")
+library("CroptimizR")
 
 # Download the example USMs:
-data_dir= normalizePath(tempdir(), winslash = "/", mustWork = FALSE)
-data_dir_zip= normalizePath(file.path(data_dir,"master.zip"), winslash = "/", mustWork = FALSE)
-download.file("https://github.com/SticsRPacks/data/archive/master.zip", data_dir_zip)
-unzip(data_dir_zip, exdir = data_dir)
-unlink(data_dir_zip)
-data_dir= file.path(normalizePath(list.dirs(data_dir)[2], winslash = "/"),"study_case_1","V9.0")
+
+data_dir= file.path(SticsRFiles::download_data(),"study_case_1","V9.0")
 # NB: all examples are now in data_dir
 
 # Define the path to the local version of JavaStics 
@@ -99,9 +89,9 @@ We only keep observations for situation (i.e. USM for Stics) sit_name and variab
 sit_name="bo96iN+"  ## among bo96iN+, bou00t1, bou00t3, bou99t1, bou99t3,
                     ## lu96iN+, lu96iN6 or lu97iN+
 
-# For the moment get_obs is only able to read obs files in one folder ...
+# For the moment read_obs is only able to read obs files in one folder ...
 # this will change in future release of sticsRfiles
-obs_list=get_obs(file.path(data_dir,"XmlFiles"), 
+obs_list=read_obs(file.path(data_dir,"XmlFiles"), 
                           obs_filenames = paste0(sit_name,".obs"))
 
 var_name="lai_n"    ## lai_n or masec_n
@@ -130,10 +120,10 @@ maxeval should be used to stop the minimization only if results have to be produ
 
 ```{r message=FALSE, warning=FALSE}
 optim_options=list() 
-optim_options$nb_rep <- 1 #7 # Number of repetitions of the minimization 
+optim_options$nb_rep <- 7 # Number of repetitions of the minimization 
                           # (each time starting with different initial
                           # values for the estimated parameters) 
-optim_options$maxeval <- 1 #500 # Maximum number of evaluations of the 
+optim_options$maxeval <- 500 # Maximum number of evaluations of the 
                              # minimized criteria 
 optim_options$xtol_rel <- 1e-03 # Tolerance criterion between two iterations
                                 # (threshold for the relative difference of

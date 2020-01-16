@@ -6,7 +6,7 @@ author:
   affiliation: "INRA - Agroclim"
 - name: "Samuel Buis"
   affiliation: "INRA - EMMAH"
-- name "Drew Holzworth"
+- name: "Drew Holzworth"
 date: "`r Sys.Date()`"
 vignette: >
   %\VignetteIndexEntry{Parameter estimation with ApsimX}
@@ -36,13 +36,11 @@ To regulate the number of simulations (and thus the duration of execution), redu
 ```{r setup_initializations, message=FALSE, results=FALSE, warning=FALSE}
 
 # Install and load the needed libraries
+devtools::install_github("SticsRPacks/CroptimizR@*release")
+library("CroptimizR")
 if(!require("ApsimOnR")){
   devtools::install_github("ApsimOnR")
   library("ApsimOnR")
-}
-if(!require("CroptimizR")){
-  devtools::install_github("SticsRPacks/CroptimizR")
-  library("CroptimizR")
 }
 if(!require("dplyr")){
   install.packages("dplyr",repos="http://cran.irsn.fr")

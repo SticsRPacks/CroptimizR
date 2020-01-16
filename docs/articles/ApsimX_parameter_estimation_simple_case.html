@@ -67,10 +67,10 @@
       <a href="../articles/Designing_a_model_wrapper.html">Elements for implementing a crop model R wrapper</a>
     </li>
     <li>
-      <a href="../articles/Parameter_estimation_Specific_and_Varietal.html">Parameter estimation with the Stics crop Model: a case with specific and varietal parameters</a>
+      <a href="../articles/Parameter_estimation_simple_case.html">Parameter estimation with the Stics crop Model: a simple case</a>
     </li>
     <li>
-      <a href="../articles/Parameter_estimation_simple_case.html">Parameter estimation with the Stics crop Model: a simple case</a>
+      <a href="../articles/Parameter_estimation_Specific_and_Varietal.html">Parameter estimation with the Stics crop Model: a case with specific and varietal parameters</a>
     </li>
   </ul>
 </li>
@@ -100,9 +100,9 @@
             <address class="author_afil">
       INRA - Agroclim<br><h4 class="author">Samuel Buis</h4>
             <address class="author_afil">
-      INRA - EMMAH<br><h4 class="author">name “Drew Holzworth”</h4>
-            
-            <h4 class="date">2019-12-20</h4>
+      INRA - EMMAH<br><h4 class="author">Drew Holzworth</h4>
+                        
+            <h4 class="date">2020-01-14</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/master/vignettes/ApsimX_parameter_estimation_simple_case.Rmd"><code>vignettes/ApsimX_parameter_estimation_simple_case.Rmd</code></a></small>
       <div class="hidden name"><code>ApsimX_parameter_estimation_simple_case.Rmd</code></div>
@@ -124,33 +124,31 @@
 <h2 class="hasAnchor">
 <a href="#initialisation-step" class="anchor"></a>Initialisation step</h2>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="co"># Install and load the needed libraries</span></a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="st">"ApsimOnR"</span>)){</a>
-<a class="sourceLine" id="cb1-3" title="3">  devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"ApsimOnR"</span>)</a>
-<a class="sourceLine" id="cb1-4" title="4">  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"ApsimOnR"</span>)</a>
-<a class="sourceLine" id="cb1-5" title="5">}</a>
-<a class="sourceLine" id="cb1-6" title="6"><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="st">"CroptimizR"</span>)){</a>
-<a class="sourceLine" id="cb1-7" title="7">  devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"SticsRPacks/CroptimizR"</span>)</a>
-<a class="sourceLine" id="cb1-8" title="8">  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"CroptimizR"</span>)</a>
-<a class="sourceLine" id="cb1-9" title="9">}</a>
-<a class="sourceLine" id="cb1-10" title="10"><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="st">"dplyr"</span>)){</a>
-<a class="sourceLine" id="cb1-11" title="11">  <span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"dplyr"</span>,<span class="dt">repos=</span><span class="st">"http://cran.irsn.fr"</span>)</a>
-<a class="sourceLine" id="cb1-12" title="12">  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"dplyr"</span>)</a>
-<a class="sourceLine" id="cb1-13" title="13">}</a>
-<a class="sourceLine" id="cb1-14" title="14"><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="st">"nloptr"</span>)){</a>
-<a class="sourceLine" id="cb1-15" title="15">  <span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"nloptr"</span>,<span class="dt">repos=</span><span class="st">"http://cran.irsn.fr"</span>)</a>
-<a class="sourceLine" id="cb1-16" title="16">  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"nloptr"</span>)</a>
-<a class="sourceLine" id="cb1-17" title="17">}</a>
-<a class="sourceLine" id="cb1-18" title="18"><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="st">"DiceDesign"</span>)){</a>
-<a class="sourceLine" id="cb1-19" title="19">  <span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"DiceDesign"</span>,<span class="dt">repos=</span><span class="st">"http://cran.irsn.fr"</span>)</a>
-<a class="sourceLine" id="cb1-20" title="20">  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"DiceDesign"</span>)</a>
-<a class="sourceLine" id="cb1-21" title="21">}</a>
-<a class="sourceLine" id="cb1-22" title="22"><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="st">"doParallel"</span>)){</a>
-<a class="sourceLine" id="cb1-23" title="23">  <span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"doParallel"</span>,<span class="dt">repos=</span><span class="st">"http://cran.irsn.fr"</span>)</a>
-<a class="sourceLine" id="cb1-24" title="24">  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"doParallel"</span>)</a>
-<a class="sourceLine" id="cb1-25" title="25">}</a>
-<a class="sourceLine" id="cb1-26" title="26"></a>
-<a class="sourceLine" id="cb1-27" title="27"><span class="co"># Define the path to the local version of ApsimX (should be something like C:/path/to/apsimx/bin/Models.exe on windows, and /usr/local/bin/Models on linux)</span></a>
-<a class="sourceLine" id="cb1-28" title="28">apsimx_path &lt;-<span class="st"> </span>params<span class="op">$</span>apsimx_path</a></code></pre></div>
+<a class="sourceLine" id="cb1-2" title="2">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"SticsRPacks/CroptimizR@*release"</span>)</a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"CroptimizR"</span>)</a>
+<a class="sourceLine" id="cb1-4" title="4"><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="st">"ApsimOnR"</span>)){</a>
+<a class="sourceLine" id="cb1-5" title="5">  devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"ApsimOnR"</span>)</a>
+<a class="sourceLine" id="cb1-6" title="6">  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"ApsimOnR"</span>)</a>
+<a class="sourceLine" id="cb1-7" title="7">}</a>
+<a class="sourceLine" id="cb1-8" title="8"><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="st">"dplyr"</span>)){</a>
+<a class="sourceLine" id="cb1-9" title="9">  <span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"dplyr"</span>,<span class="dt">repos=</span><span class="st">"http://cran.irsn.fr"</span>)</a>
+<a class="sourceLine" id="cb1-10" title="10">  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"dplyr"</span>)</a>
+<a class="sourceLine" id="cb1-11" title="11">}</a>
+<a class="sourceLine" id="cb1-12" title="12"><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="st">"nloptr"</span>)){</a>
+<a class="sourceLine" id="cb1-13" title="13">  <span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"nloptr"</span>,<span class="dt">repos=</span><span class="st">"http://cran.irsn.fr"</span>)</a>
+<a class="sourceLine" id="cb1-14" title="14">  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"nloptr"</span>)</a>
+<a class="sourceLine" id="cb1-15" title="15">}</a>
+<a class="sourceLine" id="cb1-16" title="16"><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="st">"DiceDesign"</span>)){</a>
+<a class="sourceLine" id="cb1-17" title="17">  <span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"DiceDesign"</span>,<span class="dt">repos=</span><span class="st">"http://cran.irsn.fr"</span>)</a>
+<a class="sourceLine" id="cb1-18" title="18">  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"DiceDesign"</span>)</a>
+<a class="sourceLine" id="cb1-19" title="19">}</a>
+<a class="sourceLine" id="cb1-20" title="20"><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="st">"doParallel"</span>)){</a>
+<a class="sourceLine" id="cb1-21" title="21">  <span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"doParallel"</span>,<span class="dt">repos=</span><span class="st">"http://cran.irsn.fr"</span>)</a>
+<a class="sourceLine" id="cb1-22" title="22">  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"doParallel"</span>)</a>
+<a class="sourceLine" id="cb1-23" title="23">}</a>
+<a class="sourceLine" id="cb1-24" title="24"></a>
+<a class="sourceLine" id="cb1-25" title="25"><span class="co"># Define the path to the local version of ApsimX (should be something like C:/path/to/apsimx/bin/Models.exe on windows, and /usr/local/bin/Models on linux)</span></a>
+<a class="sourceLine" id="cb1-26" title="26">apsimx_path &lt;-<span class="st"> </span>params<span class="op">$</span>apsimx_path</a></code></pre></div>
 </div>
 <div id="set-the-list-of-situations-and-variables-to-consider-in-this-example" class="section level2">
 <h2 class="hasAnchor">
@@ -177,7 +175,7 @@
 <a class="sourceLine" id="cb3-12" title="12">predicted_table_name &lt;-<span class="st"> "DailyReport"</span></a>
 <a class="sourceLine" id="cb3-13" title="13">observed_table_name &lt;-<span class="st"> "Observed"</span></a>
 <a class="sourceLine" id="cb3-14" title="14"></a>
-<a class="sourceLine" id="cb3-15" title="15">model_options=<span class="kw"><a href="https://rdrr.io/pkg/ApsimOnR/man/apsimx_wrapper_options.html">apsimx_wrapper_options</a></span>(<span class="dt">apsimx_path =</span> apsimx_path,</a>
+<a class="sourceLine" id="cb3-15" title="15">model_options=<span class="kw">apsimx_wrapper_options</span>(<span class="dt">apsimx_path =</span> apsimx_path,</a>
 <a class="sourceLine" id="cb3-16" title="16">                                     <span class="dt">apsimx_file =</span>  apsimx_file,</a>
 <a class="sourceLine" id="cb3-17" title="17">                                     <span class="dt">variable_names =</span> var_name,</a>
 <a class="sourceLine" id="cb3-18" title="18">                                     <span class="dt">predicted_table_name =</span> predicted_table_name,</a>
@@ -186,7 +184,7 @@
 <a class="sourceLine" id="cb3-21" title="21">                                     <span class="dt">obs_files_path =</span> obs_files_path) </a>
 <a class="sourceLine" id="cb3-22" title="22"></a>
 <a class="sourceLine" id="cb3-23" title="23"><span class="co"># Run the model (on all situations found in the apsimx_file)</span></a>
-<a class="sourceLine" id="cb3-24" title="24">sim_before_optim=<span class="kw"><a href="https://rdrr.io/pkg/ApsimOnR/man/apsimx_wrapper.html">apsimx_wrapper</a></span>(<span class="dt">model_options=</span>model_options)</a></code></pre></div>
+<a class="sourceLine" id="cb3-24" title="24">sim_before_optim=<span class="kw">apsimx_wrapper</span>(<span class="dt">model_options=</span>model_options)</a></code></pre></div>
 </div>
 <div id="read-and-select-the-corresponding-observations" class="section level2">
 <h2 class="hasAnchor">
@@ -256,6 +254,8 @@
 <p>… this returns:</p>
 <pre><code>## Warning: l'espace de nom 'SticsOptimizR' n'est pas disponible et a été remplacé
 ## par .GlobalEnv lors du traitement de l'objet 'nlo'</code></pre>
+<pre><code>## Warning: l'espace de nom 'ApsimOnR' n'est pas disponible et a été remplacé
+## par .GlobalEnv lors du traitement de l'objet 'nlo'</code></pre>
 <pre><code>## 
 ## Call:
 ## nloptr(x0 = as.numeric(init_values[irep, ]), eval_f = main_crit, 
@@ -280,25 +280,25 @@
 <h2 class="hasAnchor">
 <a href="#run-the-model-after-optimization" class="anchor"></a>Run the model after optimization</h2>
 <p>In this case, the <code>param_values</code> argument is set so that estimated values of the parameters overwrite the values defined in the model input file (’.apsimx`).</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">sim_after_optim=<span class="kw"><a href="https://rdrr.io/pkg/ApsimOnR/man/apsimx_wrapper.html">apsimx_wrapper</a></span>(<span class="dt">param_values=</span>optim_results<span class="op">$</span>final_values,</a>
-<a class="sourceLine" id="cb12-2" title="2">                               <span class="dt">model_options=</span>model_options)</a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">sim_after_optim=<span class="kw">apsimx_wrapper</span>(<span class="dt">param_values=</span>optim_results<span class="op">$</span>final_values,</a>
+<a class="sourceLine" id="cb13-2" title="2">                               <span class="dt">model_options=</span>model_options)</a></code></pre></div>
 </div>
 <div id="plot-the-results" class="section level2">
 <h2 class="hasAnchor">
 <a href="#plot-the-results" class="anchor"></a>Plot the results</h2>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1"><span class="kw"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(optim_options<span class="op">$</span>path_results,<span class="st">"sim_obs_plots.png"</span>),</a>
-<a class="sourceLine" id="cb13-2" title="2">    <span class="dt">width =</span> <span class="dv">15</span>, <span class="dt">height =</span> <span class="dv">10</span>, <span class="dt">units =</span> <span class="st">"cm"</span>, <span class="dt">res=</span><span class="dv">1000</span>)</a>
-<a class="sourceLine" id="cb13-3" title="3"><span class="kw"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="dt">mfrow =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1</span>,<span class="dv">2</span>))</a>
-<a class="sourceLine" id="cb13-4" title="4"></a>
-<a class="sourceLine" id="cb13-5" title="5"><span class="co"># Simulated and observed LAI before optimization</span></a>
-<a class="sourceLine" id="cb13-6" title="6">Ymax=<span class="kw"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span>(obs_list[[sit_name]][,var_name], <span class="dt">na.rm=</span><span class="ot">TRUE</span>),</a>
-<a class="sourceLine" id="cb13-7" title="7">         <span class="kw"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span>(sim_before_optim<span class="op">$</span>sim_list[[sit_name]][,var_name], <span class="dt">na.rm=</span><span class="ot">TRUE</span>))</a>
-<a class="sourceLine" id="cb13-8" title="8"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(sim_before_optim<span class="op">$</span>sim_list[[sit_name]][,<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Date"</span>,var_name)],<span class="dt">type=</span><span class="st">"l"</span>,</a>
-<a class="sourceLine" id="cb13-9" title="9">     <span class="dt">main=</span><span class="st">"Before optimization"</span>,<span class="dt">ylim=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>,Ymax<span class="op">+</span>Ymax<span class="op">*</span><span class="fl">0.1</span>))</a>
-<a class="sourceLine" id="cb13-10" title="10"><span class="kw"><a href="https://rdrr.io/r/graphics/points.html">points</a></span>(obs_list[[sit_name]]<span class="op">$</span>Date,obs_list[[sit_name]][[var_name]],<span class="dt">col=</span><span class="st">"red"</span>)</a>
-<a class="sourceLine" id="cb13-11" title="11"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(sim_after_optim<span class="op">$</span>sim_list[[sit_name]][,<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Date"</span>,var_name)],<span class="dt">type=</span><span class="st">"l"</span>,</a>
-<a class="sourceLine" id="cb13-12" title="12">     <span class="dt">main=</span><span class="st">"After optimization"</span>,<span class="dt">ylim=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>,Ymax<span class="op">+</span>Ymax<span class="op">*</span><span class="fl">0.1</span>))</a>
-<a class="sourceLine" id="cb13-13" title="13"><span class="kw"><a href="https://rdrr.io/r/graphics/points.html">points</a></span>(obs_list[[sit_name]]<span class="op">$</span>Date,obs_list[[sit_name]][[var_name]],<span class="dt">col=</span><span class="st">"red"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1"><span class="kw"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(optim_options<span class="op">$</span>path_results,<span class="st">"sim_obs_plots.png"</span>),</a>
+<a class="sourceLine" id="cb14-2" title="2">    <span class="dt">width =</span> <span class="dv">15</span>, <span class="dt">height =</span> <span class="dv">10</span>, <span class="dt">units =</span> <span class="st">"cm"</span>, <span class="dt">res=</span><span class="dv">1000</span>)</a>
+<a class="sourceLine" id="cb14-3" title="3"><span class="kw"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="dt">mfrow =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1</span>,<span class="dv">2</span>))</a>
+<a class="sourceLine" id="cb14-4" title="4"></a>
+<a class="sourceLine" id="cb14-5" title="5"><span class="co"># Simulated and observed LAI before optimization</span></a>
+<a class="sourceLine" id="cb14-6" title="6">Ymax=<span class="kw"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span>(obs_list[[sit_name]][,var_name], <span class="dt">na.rm=</span><span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb14-7" title="7">         <span class="kw"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span>(sim_before_optim<span class="op">$</span>sim_list[[sit_name]][,var_name], <span class="dt">na.rm=</span><span class="ot">TRUE</span>))</a>
+<a class="sourceLine" id="cb14-8" title="8"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(sim_before_optim<span class="op">$</span>sim_list[[sit_name]][,<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Date"</span>,var_name)],<span class="dt">type=</span><span class="st">"l"</span>,</a>
+<a class="sourceLine" id="cb14-9" title="9">     <span class="dt">main=</span><span class="st">"Before optimization"</span>,<span class="dt">ylim=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>,Ymax<span class="op">+</span>Ymax<span class="op">*</span><span class="fl">0.1</span>))</a>
+<a class="sourceLine" id="cb14-10" title="10"><span class="kw"><a href="https://rdrr.io/r/graphics/points.html">points</a></span>(obs_list[[sit_name]]<span class="op">$</span>Date,obs_list[[sit_name]][[var_name]],<span class="dt">col=</span><span class="st">"red"</span>)</a>
+<a class="sourceLine" id="cb14-11" title="11"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(sim_after_optim<span class="op">$</span>sim_list[[sit_name]][,<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Date"</span>,var_name)],<span class="dt">type=</span><span class="st">"l"</span>,</a>
+<a class="sourceLine" id="cb14-12" title="12">     <span class="dt">main=</span><span class="st">"After optimization"</span>,<span class="dt">ylim=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>,Ymax<span class="op">+</span>Ymax<span class="op">*</span><span class="fl">0.1</span>))</a>
+<a class="sourceLine" id="cb14-13" title="13"><span class="kw"><a href="https://rdrr.io/r/graphics/points.html">points</a></span>(obs_list[[sit_name]]<span class="op">$</span>Date,obs_list[[sit_name]][[var_name]],<span class="dt">col=</span><span class="st">"red"</span>)</a></code></pre></div>
 this gives:
 <div class="figure">
 <img src="ResultsSimpleCaseApsim/sim_obs_plots.png" alt="Figure 2: plots of simulated and observed target variable before and after optimization. The gap between simulated and observed values has been drastically reduced: the minimizer has done its job!" width="80%"><p class="caption">

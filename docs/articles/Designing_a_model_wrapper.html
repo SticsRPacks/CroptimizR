@@ -47,7 +47,7 @@
 <li>
   <a href="../index.html">
     <span class="fas fa fas fa-home fa-lg"></span>
-
+     
   </a>
 </li>
 <li>
@@ -56,7 +56,7 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Articles
-
+     
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
@@ -67,10 +67,10 @@
       <a href="../articles/Designing_a_model_wrapper.html">Elements for implementing a crop model R wrapper</a>
     </li>
     <li>
-      <a href="../articles/Parameter_estimation_Specific_and_Varietal.html">Parameter estimation with the Stics crop Model: a case with specific and varietal parameters</a>
+      <a href="../articles/Parameter_estimation_simple_case.html">Parameter estimation with the Stics crop Model: a simple case</a>
     </li>
     <li>
-      <a href="../articles/Parameter_estimation_simple_case.html">Parameter estimation with the Stics crop Model: a simple case</a>
+      <a href="../articles/Parameter_estimation_Specific_and_Varietal.html">Parameter estimation with the Stics crop Model: a case with specific and varietal parameters</a>
     </li>
   </ul>
 </li>
@@ -79,7 +79,7 @@
 <li>
   <a href="https://github.com/SticsRPacks/CroptimizR">
     <span class="fab fa fab fa-github fa-lg"></span>
-
+     
   </a>
 </li>
       </ul>
@@ -90,7 +90,7 @@
 </div>
 <!--/.navbar -->
 
-
+      
 
       </header><div class="row">
   <div class="col-md-9 contents">
@@ -100,8 +100,8 @@
             <address class="author_afil">
       INRA - Agroclim<br><h4 class="author">Samuel Buis</h4>
             <address class="author_afil">
-      INRA - EMMAH<br><h4 class="date">2019-12-20</h4>
-
+      INRA - EMMAH<br><h4 class="date">2020-01-14</h4>
+      
       <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/master/vignettes/Designing_a_model_wrapper.Rmd"><code>vignettes/Designing_a_model_wrapper.Rmd</code></a></small>
       <div class="hidden name"><code>Designing_a_model_wrapper.Rmd</code></div>
 
@@ -109,8 +109,8 @@
 </address>
 </div>
 
-
-
+    
+    
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
@@ -309,7 +309,7 @@
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="co"># remotes::install_github("SticsRPacks/SticsRFiles")</span></a>
 <a class="sourceLine" id="cb3-2" title="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(SticsRFiles)</a>
 <a class="sourceLine" id="cb3-3" title="3">path &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="st">"extdata"</span>,<span class="st">"obs"</span>,<span class="st">"V9.0"</span>), <span class="dt">package =</span> <span class="st">"SticsRFiles"</span>)</a>
-<a class="sourceLine" id="cb3-4" title="4">obs_list &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/SticsRFiles/man/read_obs_to_list.html">read_obs_to_list</a></span>(path)</a>
+<a class="sourceLine" id="cb3-4" title="4">obs_list &lt;-<span class="st"> </span><span class="kw">get_obs</span>(path)</a>
 <a class="sourceLine" id="cb3-5" title="5"><span class="kw"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span>(obs_list, <span class="cf">function</span>(x) <span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(x,<span class="dv">4</span>))</a></code></pre></div>
 <p>One can give a similar filter list structure defining a customized selection of variables and Dates, but with all values set to NA in data.frames.</p>
 </div>
@@ -386,7 +386,7 @@
 <a class="sourceLine" id="cb5-8" title="8">  </a>
 <a class="sourceLine" id="cb5-9" title="9">  <span class="co"># Launching the cluster</span></a>
 <a class="sourceLine" id="cb5-10" title="10">  cl &lt;-<span class="st"> </span><span class="kw">makeCluster</span>(cores_nb)</a>
-<a class="sourceLine" id="cb5-11" title="11">  <span class="kw"><a href="https://rdrr.io/pkg/doParallel/man/registerDoParallel.html">registerDoParallel</a></span>(cl)</a>
+<a class="sourceLine" id="cb5-11" title="11">  <span class="kw">registerDoParallel</span>(cl)</a>
 <a class="sourceLine" id="cb5-12" title="12">  </a>
 <a class="sourceLine" id="cb5-13" title="13">  <span class="co"># List preallocation</span></a>
 <a class="sourceLine" id="cb5-14" title="14">  out_pa &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/vector.html">vector</a></span>(<span class="dt">mode =</span> <span class="st">"list"</span>, max_it)</a>
@@ -467,7 +467,7 @@
       </footer>
 </div>
 
-
+  
 
 
   </body>

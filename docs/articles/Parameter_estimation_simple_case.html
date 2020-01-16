@@ -47,7 +47,7 @@
 <li>
   <a href="../index.html">
     <span class="fas fa fas fa-home fa-lg"></span>
-
+     
   </a>
 </li>
 <li>
@@ -56,7 +56,7 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Articles
-
+     
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
@@ -67,10 +67,10 @@
       <a href="../articles/Designing_a_model_wrapper.html">Elements for implementing a crop model R wrapper</a>
     </li>
     <li>
-      <a href="../articles/Parameter_estimation_Specific_and_Varietal.html">Parameter estimation with the Stics crop Model: a case with specific and varietal parameters</a>
+      <a href="../articles/Parameter_estimation_simple_case.html">Parameter estimation with the Stics crop Model: a simple case</a>
     </li>
     <li>
-      <a href="../articles/Parameter_estimation_simple_case.html">Parameter estimation with the Stics crop Model: a simple case</a>
+      <a href="../articles/Parameter_estimation_Specific_and_Varietal.html">Parameter estimation with the Stics crop Model: a case with specific and varietal parameters</a>
     </li>
   </ul>
 </li>
@@ -79,7 +79,7 @@
 <li>
   <a href="https://github.com/SticsRPacks/CroptimizR">
     <span class="fab fa fab fa-github fa-lg"></span>
-
+     
   </a>
 </li>
       </ul>
@@ -90,23 +90,23 @@
 </div>
 <!--/.navbar -->
 
-
+      
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1>Parameter estimation with the Stics crop Model: a simple case</h1>
                         <h4 class="author">Samuel Buis</h4>
-
-            <h4 class="date">2019-12-20</h4>
-
+                        
+            <h4 class="date">2020-01-14</h4>
+      
       <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/master/vignettes/Parameter_estimation_simple_case.Rmd"><code>vignettes/Parameter_estimation_simple_case.Rmd</code></a></small>
       <div class="hidden name"><code>Parameter_estimation_simple_case.Rmd</code></div>
 
     </div>
 
-
-
+    
+    
 <div id="study-case" class="section level2">
 <h2 class="hasAnchor">
 <a href="#study-case" class="anchor"></a>Study Case</h2>
@@ -118,31 +118,25 @@
 <h2 class="hasAnchor">
 <a href="#initialisation-step" class="anchor"></a>Initialisation step</h2>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="co"># Install and load the needed libraries</span></a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="st">"SticsRFiles"</span>)){</a>
-<a class="sourceLine" id="cb1-3" title="3">  devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"SticsRPacks/SticsRFiles@*release"</span>)</a>
-<a class="sourceLine" id="cb1-4" title="4">  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"SticsRFiles"</span>)</a>
-<a class="sourceLine" id="cb1-5" title="5">}</a>
-<a class="sourceLine" id="cb1-6" title="6"><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="st">"SticsOnR"</span>)){</a>
-<a class="sourceLine" id="cb1-7" title="7">  devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"SticsRPacks/SticsOnR@*release"</span>)</a>
-<a class="sourceLine" id="cb1-8" title="8">  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"SticsOnR"</span>)</a>
-<a class="sourceLine" id="cb1-9" title="9">}</a>
-<a class="sourceLine" id="cb1-10" title="10"><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="st">"CroptimizR"</span>)){</a>
-<a class="sourceLine" id="cb1-11" title="11">  devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"SticsRPacks/CroptimizR@*release"</span>)</a>
-<a class="sourceLine" id="cb1-12" title="12">  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"CroptimizR"</span>)</a>
-<a class="sourceLine" id="cb1-13" title="13">}</a>
-<a class="sourceLine" id="cb1-14" title="14"></a>
-<a class="sourceLine" id="cb1-15" title="15"><span class="co"># Download the example USMs:</span></a>
-<a class="sourceLine" id="cb1-16" title="16">data_dir=<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/normalizePath.html">normalizePath</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/tempfile.html">tempdir</a></span>(), <span class="dt">winslash =</span> <span class="st">"/"</span>, <span class="dt">mustWork =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb1-17" title="17">data_dir_zip=<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/normalizePath.html">normalizePath</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(data_dir,<span class="st">"master.zip"</span>), <span class="dt">winslash =</span> <span class="st">"/"</span>, <span class="dt">mustWork =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb1-18" title="18"><span class="kw"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span>(<span class="st">"https://github.com/SticsRPacks/data/archive/master.zip"</span>, data_dir_zip)</a>
-<a class="sourceLine" id="cb1-19" title="19"><span class="kw"><a href="https://rdrr.io/r/utils/unzip.html">unzip</a></span>(data_dir_zip, <span class="dt">exdir =</span> data_dir)</a>
-<a class="sourceLine" id="cb1-20" title="20"><span class="kw"><a href="https://rdrr.io/r/base/unlink.html">unlink</a></span>(data_dir_zip)</a>
-<a class="sourceLine" id="cb1-21" title="21">data_dir=<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/normalizePath.html">normalizePath</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/list.files.html">list.dirs</a></span>(data_dir)[<span class="dv">2</span>], <span class="dt">winslash =</span> <span class="st">"/"</span>),<span class="st">"study_case_1"</span>,<span class="st">"V9.0"</span>)</a>
-<a class="sourceLine" id="cb1-22" title="22"><span class="co"># NB: all examples are now in data_dir</span></a>
-<a class="sourceLine" id="cb1-23" title="23"></a>
-<a class="sourceLine" id="cb1-24" title="24"><span class="co"># Define the path to the local version of JavaStics </span></a>
-<a class="sourceLine" id="cb1-25" title="25">javastics_path=<span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/getwd.html">getwd</a></span>(),<span class="st">"JavaSTICS-1.41-stics-9.0"</span>)</a>
-<a class="sourceLine" id="cb1-26" title="26">stics_path=<span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(javastics_path,<span class="st">"bin/stics_modulo.exe"</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb1-2" title="2">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"SticsRPacks/SticsOnR@v0.1.0.9001"</span>)</a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"SticsOnR"</span>)</a>
+<a class="sourceLine" id="cb1-4" title="4">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"SticsRPacks/SticsRFiles@v0.1.0.9001"</span>)</a>
+<a class="sourceLine" id="cb1-5" title="5"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"SticsRFiles"</span>)</a>
+<a class="sourceLine" id="cb1-6" title="6">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"SticsRPacks/CroptimizR@v0.1.0.9001"</span>)</a>
+<a class="sourceLine" id="cb1-7" title="7"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"CroptimizR"</span>)</a>
+<a class="sourceLine" id="cb1-8" title="8"></a>
+<a class="sourceLine" id="cb1-9" title="9"><span class="co"># Download the example USMs:</span></a>
+<a class="sourceLine" id="cb1-10" title="10">data_dir=<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/normalizePath.html">normalizePath</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/tempfile.html">tempdir</a></span>(), <span class="dt">winslash =</span> <span class="st">"/"</span>, <span class="dt">mustWork =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb1-11" title="11">data_dir_zip=<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/normalizePath.html">normalizePath</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(data_dir,<span class="st">"master.zip"</span>), <span class="dt">winslash =</span> <span class="st">"/"</span>, <span class="dt">mustWork =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb1-12" title="12"><span class="kw"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span>(<span class="st">"https://github.com/SticsRPacks/data/archive/master.zip"</span>, data_dir_zip)</a>
+<a class="sourceLine" id="cb1-13" title="13"><span class="kw"><a href="https://rdrr.io/r/utils/unzip.html">unzip</a></span>(data_dir_zip, <span class="dt">exdir =</span> data_dir)</a>
+<a class="sourceLine" id="cb1-14" title="14"><span class="kw"><a href="https://rdrr.io/r/base/unlink.html">unlink</a></span>(data_dir_zip)</a>
+<a class="sourceLine" id="cb1-15" title="15">data_dir=<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/normalizePath.html">normalizePath</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/list.files.html">list.dirs</a></span>(data_dir)[<span class="dv">2</span>], <span class="dt">winslash =</span> <span class="st">"/"</span>),<span class="st">"study_case_1"</span>,<span class="st">"V9.0"</span>)</a>
+<a class="sourceLine" id="cb1-16" title="16"><span class="co"># NB: all examples are now in data_dir</span></a>
+<a class="sourceLine" id="cb1-17" title="17"></a>
+<a class="sourceLine" id="cb1-18" title="18"><span class="co"># Define the path to the local version of JavaStics </span></a>
+<a class="sourceLine" id="cb1-19" title="19">javastics_path=<span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/getwd.html">getwd</a></span>(),<span class="st">"JavaSTICS-1.41-stics-9.0"</span>)</a>
+<a class="sourceLine" id="cb1-20" title="20">stics_path=<span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(javastics_path,<span class="st">"bin/stics_modulo.exe"</span>)</a></code></pre></div>
 </div>
 <div id="generate-stics-input-files-from-javastics-input-files" class="section level2">
 <h2 class="hasAnchor">
@@ -159,11 +153,11 @@
 <a href="#run-the-model-before-optimization-for-a-prior-evaluation" class="anchor"></a>Run the model before optimization for a prior evaluation</h2>
 <p>Here model parameters values are read in the model input files.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="co"># Set the model options (see '? stics_wrapper_options' for details)</span></a>
-<a class="sourceLine" id="cb3-2" title="2">model_options=<span class="kw"><a href="https://rdrr.io/pkg/SticsOnR/man/stics_wrapper_options.html">stics_wrapper_options</a></span>(stics_path,stics_inputs_path,</a>
+<a class="sourceLine" id="cb3-2" title="2">model_options=<span class="kw">stics_wrapper_options</span>(stics_path,stics_inputs_path,</a>
 <a class="sourceLine" id="cb3-3" title="3">                                    <span class="dt">parallel=</span><span class="ot">FALSE</span>) </a>
 <a class="sourceLine" id="cb3-4" title="4"></a>
 <a class="sourceLine" id="cb3-5" title="5"><span class="co"># Run the model on all situations found in stics_inputs_path</span></a>
-<a class="sourceLine" id="cb3-6" title="6">sim_before_optim=<span class="kw"><a href="https://rdrr.io/pkg/SticsOnR/man/stics_wrapper.html">stics_wrapper</a></span>(<span class="dt">model_options=</span>model_options)</a></code></pre></div>
+<a class="sourceLine" id="cb3-6" title="6">sim_before_optim=<span class="kw">stics_wrapper</span>(<span class="dt">model_options=</span>model_options)</a></code></pre></div>
 </div>
 <div id="read-and-select-the-observations-for-the-parameter-estimation" class="section level2">
 <h2 class="hasAnchor">
@@ -172,9 +166,9 @@
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">sit_name=<span class="st">"bo96iN+"</span>  <span class="co">## among bo96iN+, bou00t1, bou00t3, bou99t1, bou99t3,</span></a>
 <a class="sourceLine" id="cb4-2" title="2">                    <span class="co">## lu96iN+, lu96iN6 or lu97iN+</span></a>
 <a class="sourceLine" id="cb4-3" title="3"></a>
-<a class="sourceLine" id="cb4-4" title="4"><span class="co"># For the moment read_obs_to_list is only able to read obs files in one folder ...</span></a>
+<a class="sourceLine" id="cb4-4" title="4"><span class="co"># For the moment read_obs is only able to read obs files in one folder ...</span></a>
 <a class="sourceLine" id="cb4-5" title="5"><span class="co"># this will change in future release of sticsRfiles</span></a>
-<a class="sourceLine" id="cb4-6" title="6">obs_list=<span class="kw"><a href="https://rdrr.io/pkg/SticsRFiles/man/read_obs_to_list.html">read_obs_to_list</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(data_dir,<span class="st">"XmlFiles"</span>), </a>
+<a class="sourceLine" id="cb4-6" title="6">obs_list=<span class="kw">read_obs</span>(<span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(data_dir,<span class="st">"XmlFiles"</span>), </a>
 <a class="sourceLine" id="cb4-7" title="7">                          <span class="dt">obs_filenames =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(sit_name,<span class="st">".obs"</span>))</a>
 <a class="sourceLine" id="cb4-8" title="8"></a>
 <a class="sourceLine" id="cb4-9" title="9">var_name=<span class="st">"lai_n"</span>    <span class="co">## lai_n or masec_n</span></a>
@@ -194,10 +188,10 @@
 <p>optim_options should contain the options of the parameter estimation method. Here we defined a few options for the simplex method of the nloptr package (default method in estim_param). The full set of options for the simplex method can be found in the <a href="https://cran.r-project.org/web/packages/nloptr/vignettes/nloptr.pdf">vignette of nloptr package</a>.</p>
 <p>The number of repetitions is advised to be set to at least 5, while 10 is a reasonable maximum value. maxeval should be used to stop the minimization only if results have to be produced within a given duration, otherwise set it to a high value so that the minimization stops when the criterion based on xtol_rel is satisfied.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">optim_options=<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>() </a>
-<a class="sourceLine" id="cb6-2" title="2">optim_options<span class="op">$</span>nb_rep &lt;-<span class="st"> </span><span class="dv">1</span> <span class="co">#7 # Number of repetitions of the minimization </span></a>
+<a class="sourceLine" id="cb6-2" title="2">optim_options<span class="op">$</span>nb_rep &lt;-<span class="st"> </span><span class="dv">7</span> <span class="co"># Number of repetitions of the minimization </span></a>
 <a class="sourceLine" id="cb6-3" title="3">                          <span class="co"># (each time starting with different initial</span></a>
 <a class="sourceLine" id="cb6-4" title="4">                          <span class="co"># values for the estimated parameters) </span></a>
-<a class="sourceLine" id="cb6-5" title="5">optim_options<span class="op">$</span>maxeval &lt;-<span class="st"> </span><span class="dv">1</span> <span class="co">#500 # Maximum number of evaluations of the </span></a>
+<a class="sourceLine" id="cb6-5" title="5">optim_options<span class="op">$</span>maxeval &lt;-<span class="st"> </span><span class="dv">500</span> <span class="co"># Maximum number of evaluations of the </span></a>
 <a class="sourceLine" id="cb6-6" title="6">                             <span class="co"># minimized criteria </span></a>
 <a class="sourceLine" id="cb6-7" title="7">optim_options<span class="op">$</span>xtol_rel &lt;-<span class="st"> </span><span class="fl">1e-03</span> <span class="co"># Tolerance criterion between two iterations</span></a>
 <a class="sourceLine" id="cb6-8" title="8">                                <span class="co"># (threshold for the relative difference of</span></a>
@@ -229,31 +223,31 @@
 <p>… this returns:</p>
 <pre><code>## Warning: l'espace de nom 'SticsOptimizR' n'est pas disponible et a été remplacé
 ## par .GlobalEnv lors du traitement de l'objet 'nlo'</code></pre>
-<pre><code>##
+<pre><code>## 
 ## Call:
-## nloptr(x0 = init_values[irep, ], eval_f = main_crit, lb = bounds$lb,
-##     ub = bounds$ub, opts = list(algorithm = "NLOPT_LN_NELDERMEAD",
-##         xtol_rel = xtol_rel, maxeval = maxeval, ranseed = ranseed),
+## nloptr(x0 = init_values[irep, ], eval_f = main_crit, lb = bounds$lb, 
+##     ub = bounds$ub, opts = list(algorithm = "NLOPT_LN_NELDERMEAD", 
+##         xtol_rel = xtol_rel, maxeval = maxeval, ranseed = ranseed), 
 ##     crit_options = crit_options_loc)
-##
-##
-## Minimization using NLopt version 2.4.2
-##
-## NLopt solver status: 4 ( NLOPT_XTOL_REACHED: Optimization stopped because
+## 
+## 
+## Minimization using NLopt version 2.4.2 
+## 
+## NLopt solver status: 4 ( NLOPT_XTOL_REACHED: Optimization stopped because 
 ## xtol_rel or xtol_abs (above) was reached. )
-##
-## Number of Iterations....: 44
-## Termination conditions:  xtol_rel: 0.001 maxeval: 500
-## Number of inequality constraints:  0
-## Number of equality constraints:    0
-## Optimal value of objective function:  112.530331140718
+## 
+## Number of Iterations....: 44 
+## Termination conditions:  xtol_rel: 0.001 maxeval: 500 
+## Number of inequality constraints:  0 
+## Number of equality constraints:    0 
+## Optimal value of objective function:  112.530331140718 
 ## Optimal value of controls: 0.001696149 53.96913</code></pre>
 </div>
 <div id="run-the-model-after-optimization" class="section level2">
 <h2 class="hasAnchor">
 <a href="#run-the-model-after-optimization" class="anchor"></a>Run the model after optimization</h2>
 <p>We run here the Stics model using the estimated values of the parameters. In this case, the param_values argument of the stics_wrapper function is thus set so that estimated values of the parameters overwrite the values defined in the model input files.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">sim_after_optim=<span class="kw"><a href="https://rdrr.io/pkg/SticsOnR/man/stics_wrapper.html">stics_wrapper</a></span>(<span class="dt">param_values=</span>optim_results<span class="op">$</span>final_values,</a>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">sim_after_optim=<span class="kw">stics_wrapper</span>(<span class="dt">param_values=</span>optim_results<span class="op">$</span>final_values,</a>
 <a class="sourceLine" id="cb12-2" title="2">                              <span class="dt">model_options=</span>model_options)</a></code></pre></div>
 </div>
 <div id="plot-the-results" class="section level2">
@@ -320,7 +314,7 @@ Figure 2: plots of simulated and observed target variable before and after optim
       </footer>
 </div>
 
-
+  
 
 
   </body>

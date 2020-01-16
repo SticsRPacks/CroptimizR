@@ -4,11 +4,14 @@
 \alias{ls_criterion}
 \alias{crit_cwss}
 \alias{crit_log_cwss}
+\alias{crit_cwss_corr}
 \title{Criterion to optimize}
 \usage{
 crit_cwss(sim_list, obs_list)
 
 crit_log_cwss(sim_list, obs_list)
+
+crit_cwss_corr(sim_list, obs_list)
 }
 \arguments{
 \item{sim_list}{List of simulated variables}
