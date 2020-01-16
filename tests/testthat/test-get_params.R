@@ -49,3 +49,48 @@ test_that("get_params_init_values", {
   expect_equal(CroptimizR:::get_params_init_values(prior_3),
                data.frame(dlaimax=c(0.001, 0.002), durvieF1=c(200, 300), durvieF2=c(250, 350)))
 })
+
+prior_1 <- list(
+       lb = c(dlaimax = 0.0005, durvieF = 50),
+       ub = c(dlaimax = 0.0025, durvieF = 400)
+  )
+
+prior_2 <- list()
+prior_2$dlaimax <- list(
+       sit_list = list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1",
+                   "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),
+       lb = 0.0005, ub = 0.0025
+   )
+prior_2$durvieF <- list(
+       sit_list = list(
+             c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
+             c("bou99t3", "bou00t3", "bou99t1", "bou00t1")
+         ),
+       lb = c(50, 50), ub = c(400, 400)
+   )
+
+test_that("get_params_names", {
+  expect_equal(CroptimizR:::get_params_names(prior_1),
+               c("dlaimax", "durvieF"))
+  expect_equal(CroptimizR:::get_params_names(prior_2),
+               c("dlaimax", "durvieF1", "durvieF2"))
+})
+
+sg <- list(
+  p1 = list(sit_list = list(c("sit1", "sit2", "sit3"), c("sit4", "sit5", "sit6"))),
+  p2 = list(sit_list = list(c("sit1", "sit2", "sit3", "sit4", "sit5", "sit6")))
+)
+vec <- c(1, 2, 3)
+
+test_that("get_params_per_sit", {
+  expect_equal(CroptimizR:::get_params_per_sit(sg, "sit2", vec),c(1,3))
+  expect_equal(CroptimizR:::get_params_per_sit(sg, "sit4", vec),c(2,3))
+  })
+
+names(vec) <- c("p2", "p1", "p1")
+
+test_that("get_params_per_sit", {
+  expect_equal(CroptimizR:::get_params_per_sit(sg, "sit2", vec),c(p2=1,p1=2))
+  expect_equal(CroptimizR:::get_params_per_sit(sg, "sit4", vec),c(p2=1,p1=3))
+})
+

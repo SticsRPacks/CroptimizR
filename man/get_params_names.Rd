@@ -36,13 +36,13 @@ A vector of parameter names
 Extract param names from prior information
 }
 \examples{
-\dontrun{
+
 # A simple case
 prior_information <- list(
   lb = c(dlaimax = 0.0005, durvieF = 50),
   ub = c(dlaimax = 0.0025, durvieF = 400)
 )
-get_params_names(prior_information)
+CroptimizR:::get_params_names(prior_information)
 
 # A case with groups of situations per parameter
 prior_information <- list()
@@ -61,7 +61,7 @@ prior_information$durvieF <- list(
   lb = c(50, 50), ub = c(400, 400)
 )
 CroptimizR:::get_params_names(prior_information)
-}
+
 
 }
 \keyword{internal}
