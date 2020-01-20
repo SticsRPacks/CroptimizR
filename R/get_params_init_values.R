@@ -52,7 +52,7 @@ get_params_init_values <- function(prior_information) {
     # check if colnames were set to params_names, if not set them
     # and handle translation if necessary
     if (is.element(rownames(init_values)[1],params_names)) {
-      init_values=t(init_values)
+      init_values=as.data.frame(t(init_values))
       rownames(init_values)=1:nrow(init_values)
       init_values=init_values[,params_names]  # to ensure that params_names and
                                               # init_values have columns in same order
