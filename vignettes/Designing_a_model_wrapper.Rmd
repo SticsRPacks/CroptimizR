@@ -89,34 +89,40 @@ and NA in other cases.
 #### Function header example
 
 ```{r eval=FALSE}
-#' @title Running situation(s) from txt input files stored in one directory
+#' @title Running usm(s) from txt input files stored in one directory
 #' per `situation`, simulated results are returned in a list
 #'
-#' @description This function uses the model directly through a system call, can
-#' force model input parameters with values given in arguments.
+#' @description This function uses Stics directly through a system call, can
+#' force Stics input parameters with values given in arguments.
 #'
-#' @param param_values named vector containing the value(s) and names of the
-#' parameters to force (optional)
+#' @param param_values a named vector containing the value(s) and names of the
+#' parameters to force (optional). It may contains either unique value for each
+#' parameter name or multiple values for each parameter when `prior_information`
+#' argument is provided.
 #'
-#' @param site_var_dates_mask List of situations, variables and dates for which
-#' simulated values should be returned. Typically a list containing the
-#' observations to which simulations should be compared
-#' (i.e. a list of variables/dates per situation)
+#' @param sit_var_dates_mask List of situations:
+#' may be either a character vector of situation names or a named list containing
+#' information about variables and dates for which simulated values should be returned.
+#' Typically a list containing the observations to which simulations should be
+#' compared as provided by SticsRFiles::read_obs
 #'
 #' @param prior_information Prior information on the parameters to estimate.
 #' For the moment only uniform distribution are allowed.
 #' Either a list containing (named) vectors of upper and lower
-#' bounds (\code{ub} and \code{lb}), or a named list containing for each
-#' parameter the list of situations per group (\code{sit_list})
-#' and the vector of upper and lower bounds (one value per group) (\code{ub} and \code{lb})
+#' bounds (`ub` and `lb`), or a named list containing for each
+#' parameter the list of situations per group (`sit_list`)
+#' and the vector of upper and lower bounds (one value per group) (`ub` and `lb`)
 #'
 #' @param model_options List containing any information needed by the model.
-#' For example: the path of the model executable file,
-#' the path of the directory containing input data
+#' In the case of Stics: `stics_path` the path of Stics executable file and
+#' `data_dir` the path of the directory containing the Stics input data
+#' for each USM (one folder per USM where Stics input files are stored in txt
+#' format)
 #'
-#' @return A list containing simulated values (\code{sim_list}) and a flag
-#' (\code{flag_allsim}) indicating if all required situations, variables and
-#' dates were simulated.
+#' @return A list containing simulated values (`sim_list`: a named list containing
+#' usms outputs data.frames) and a flag (`flag_allsim`) indicating if all
+#' required situations, variables and dates were simulated.
+
 
 model_wrapper <- function( param_values=NULL, site_var_dates_mask=NULL,
                            prior_information=NULL, model_options ) {
