@@ -48,14 +48,20 @@ main_crit <- function(param_values, crit_options) {
 
   # intersect sim and obs if necessary
   obs_sim_list <- list(sim_list = model_results$sim_list, obs_list = obs_list)
-  # if (!model_results$flag_allsim) {
 
   obs_sim_list <- intersect_sim_obs(model_results$sim_list, obs_list)
   if (!is.list(obs_sim_list)) {
     stop("Error: intersection of simulations and observations is empty (no date and/or variable in common)!")
   }
-  # }
+  if (any(sapply(obs_sim_list$sim_list,function(x) any(sapply(x,is.nan)))) || any(sapply(obs_sim_list$sim_list,function(x) any(sapply(x,is.infinite))))) {
+    stop("Error: the model wrapper returned NaN or infinite values: \n ",obs_sim_list$sim_list,"\n Estimated parameters: ",paste(param_names,collapse=" "),", values: ",paste(param_values, collapse=" "))
+  }
 
   # Compute criterion value
-  return(crit_function(obs_sim_list$sim_list, obs_sim_list$obs_list))
+  crit=crit_function(obs_sim_list$sim_list, obs_sim_list$obs_list)
+  if (is.nan(crit)) {
+    stop(paste0("Error: optimized criterion returned NaN value. \n Estimated parameters: ",paste(param_names,collapse=" "),", values: ",paste(param_values, collapse=" ")))
+  }
+
+  return(crit)
 }
