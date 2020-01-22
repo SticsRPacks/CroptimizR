@@ -34,6 +34,7 @@
 #'   lb = c(50, 50), ub = c(400, 400)
 #' )
 #' CroptimizR:::get_params_names(prior_information)
+#' CroptimizR:::get_params_names(prior_information, short_list=TRUE)
 #'
 #'
 #' @keywords internal
@@ -46,12 +47,16 @@ get_params_names <- function(prior_information, short_list = FALSE) {
       res <- names(prior_information)
     } else {
       nb_groups <- sapply(prior_information, function(x) length(x$sit_list))
-
+      nb_params_sl <- length(nb_groups)
       # build suffix
       suffix <- rep("", sum(nb_groups))
-      for (i in 1:length(nb_groups)) {
+      count=1
+      for (i in 1:nb_params_sl) {
         if (nb_groups[i] > 1) {
-          suffix[(sum(nb_groups[1:(i - 1)]) + 1):sum(nb_groups[1:i])] <- as.character(1:nb_groups[i])
+          suffix[count:(count+nb_groups[i]-1)] <- as.character(1:nb_groups[i])
+          count=count+nb_groups[i]
+        } else {
+          count=count+1
         }
       }
 

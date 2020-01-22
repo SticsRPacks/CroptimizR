@@ -61,6 +61,7 @@ prior_information$durvieF <- list(
   lb = c(50, 50), ub = c(400, 400)
 )
 CroptimizR:::get_params_names(prior_information)
+CroptimizR:::get_params_names(prior_information, short_list=TRUE)
 
 
 }

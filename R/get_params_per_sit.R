@@ -18,26 +18,22 @@
 #'   p2 = list(sit_list = list(c("sit1", "sit2", "sit3", "sit4", "sit5", "sit6")))
 #' )
 #' vec <- c(1, 2, 3)
-#' CroptimizR:::get_params_per_sit(sg, "sit2", vec) # should give c(1,3)
-#' CroptimizR:::get_params_per_sit(sg, "sit4", vec) # should give c(2,3)
-#' names(vec) <- c("p2", "p1", "p1")
-#' CroptimizR:::get_params_per_sit(sg, "sit2", vec) # should give c(1,2)
-#' CroptimizR:::get_params_per_sit(sg, "sit4", vec) # should give c(1,3)
+#' names(vec) <- CroptimizR:::get_params_names(sg)
+#' CroptimizR:::get_params_per_sit(sg, "sit2", vec) # should give c(p1=1,p2=3)
+#' CroptimizR:::get_params_per_sit(sg, "sit4", vec) # should give c(p1=2,p2=3)
 #' @keywords internal
 #'
 get_params_per_sit <- function(sit_groups, situation, param_vec) {
   if (is.list(sit_groups[[1]])) {
-    param_names <- unique(names(param_vec))
-    if (!is.null(names(param_vec)) && all(sort(param_names) == sort(names(sit_groups)))) {
-      sit_groups <- sit_groups[param_names]
-    }
+    param_names <-  CroptimizR:::get_params_names(sit_groups, short_list=TRUE)
     index <- sapply(sit_groups, function(x1) which(sapply(x1$sit_list, function(x2) is.element(situation, x2))))
     nb_groups <- sapply(sit_groups, function(x) length(x$sit_list))
     nb_groups <- c(0, nb_groups[-length(nb_groups)])
     index <- index + nb_groups
-    return(param_vec[index])
+    res <- param_vec[index]
+    names(res)  <- param_names
+    return(res)
   } else { # no groups of situations defined
-
     return(param_vec)
   }
 }
