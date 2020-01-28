@@ -20,21 +20,20 @@
 #' differences on parameters values between 2 iterations (optional, default=1e-5)
 #' `maxeval`, the maximum number of criterion evaluation (optional, default=500)
 #' `path_results`, the path where to store the results (optional, default=getwd())
-#' @param prior_information Prior information on the parameters to estimate.
-#' For the moment only uniform distribution are allowed.
+#' @param par_info Information on the parameters to estimate.
 #' Either
 #' a list containing:
-#'    - (named) vectors of upper and lower bounds (`ub` and `lb`),
+#'    - (named) vectors of upper and lower bounds (`ub` and `lb`) (-Inf and Inf can be used),
 #'    - `init_values`, A data.frame containing initial
-#' values to test for the parameters (optional, if not provided (or if less values
-#' than number of repetitions of the minimization are provided), the (or part
-#' of the) initial values will be randomly generated using LHS sampling within
-#' parameter bounds.
+#' values to test for the parameters (optional, if not provided, or if less values
+#' than number of repetitions of the minimization are provided), the, or part
+#' of the, initial values will be randomly generated using LHS sampling within
+#' parameter bounds).
 #' or
 #' a named list containing for each parameter the list of situations per group
 #' (`sit_list`), the vector of upper and lower bounds (one value per group)
 #' (`ub` and `lb`) and the list of initial values per group
-#' `init_values` (data.frame, one column per group).
+#' `init_values` (data.frame, one column per group, optional).
 #'
 #' @return prints, graphs and a list containing the results of the parameter estimation,
 #' which content depends on the method used, all that saved in the defined in
@@ -79,7 +78,7 @@
 #' obs_list[[sit_name]]=obs_list[[sit_name]][,c("Date",var_name)]
 #'
 #' # Set prior information on the parameters to estimate
-#' prior_information=list(lb=c(dlaimax=0.0005, durvieF=50),
+#' par_info=list(lb=c(dlaimax=0.0005, durvieF=50),
 #'                        ub=c(dlaimax=0.0025, durvieF=400),
 #'                        init_values=data.frame(dlaimax=c(0.0015), durvieF=c(225)))
 #'
@@ -99,7 +98,7 @@
 #'                          model_function=stics_wrapper,
 #'                          model_options=model_options,
 #'                          optim_options=optim_options,
-#'                          prior_information=prior_information)
+#'                          par_info=par_info)
 #'
 #' # See results (graph and Rdata) stored in optim_options$path_results
 #'
@@ -110,21 +109,39 @@
 
 
 estim_param <- function(obs_list,crit_function=crit_cwss,model_function,model_options=NULL,
-                        optim_method="nloptr.simplex",optim_options=NULL,prior_information) {
+                        optim_method="nloptr.simplex",optim_options=NULL,par_info) {
+
+  # Check inputs
+
+  ## obs_list
+  if (!is.list(obs_list) || !all(sapply(obs_list, function(x) is.data.frame(x))) ) {
+    stop("Incorrect format for argument obs_list. Should be a named list containing data.frames.")
+  }
+  ## crit_function
+  if (!is.function(crit_function)) {
+    stop("Incorrect format for argument crit_function. Should be a function.")
+  }
+  ## model_function
+  if (!is.function(model_function)) {
+    stop("Incorrect format for argument model_function. Should be a function.")
+  }
+  ## optim_method
+  if (!is.character(optim_method)) {
+    stop("Incorrect format for argument optim_method. Should be of type character and contains the name of the parameter estimation method to use.")
+  }
+  ## par_info
+  if (!is.list(par_info)) {
+    stop("Incorrect format for argument par_info. Should be a list.")
+  } else if ( !all(is.element(c("lb","ub"),names(par_info))) &&
+              !all(sapply(par_info, function(x) all(is.element(c("lb","ub"),names(x))))) ) {
+    stop("Incorrect format for argument par_info. Should contains lb and ub vectors.")
+  }
 
 
-  #
-  # TO DO LIST
-  #    - handle the case of intercrop
-  #    - handle the case of rotations
-  #    - handle the case of different steps (each argument maybe lists?)
+  # Run the estimation
 
-  # Loop on the steps
-  ## force estimated parameters for next steps
-
-  param_names=get_params_names(prior_information)
-
+  param_names=get_params_names(par_info)
   return(optim_switch(param_names,obs_list,crit_function,model_function,model_options,
-                      optim_method,optim_options,prior_information))
+                      optim_method,optim_options,par_info))
 
   }
