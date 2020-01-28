@@ -214,7 +214,10 @@ model_wrapper <- function( model_options, param_values=NULL,
 
 ## Optional issues
 
-Among optional issues that may be useful for users of CroptimizR with your model wrapper, some may help to reduce the execution time:
+* Check wrapper arguments:
+
+If possible implement any check you can concerning what is given to the wrapper. Print a message using the `warning` function and return TRUE in `results$error` if a problem is detected.
+It may be an unknown model input parameter (`dimnames(param_values)[[2]]`), situation name (`dimnames(param_values)[[3]]`), variable name (in `site_var_dates_mask`) or an incorrect model option (field of `model_option`) such as an incorrect model path for example.
 
 * Perform parallel calculations:
 
