@@ -1,10 +1,13 @@
+
+
+
 ---
 title: "Parameter estimation with the Stics crop Model: a case with specific and varietal parameters"
 output: rmarkdown::html_vignette
 author:
 - name: "Samuel Buis"
 affiliation: "INRA - EMMAH"
-date: "`r Sys.Date()`"
+date: "2020-01-29"
 vignette: >
   %\VignetteIndexEntry{Parameter estimation with Stics}
   %\VignetteEngine{knitr::rmarkdown}
@@ -13,14 +16,13 @@ params:
   eval_rmd: FALSE
 ---
 
-```{r setup, eval=TRUE, include=FALSE}
-# Global options
-knitr::opts_chunk$set(eval = params$eval_rmd)
-```
+
+
+
 
 ## Study Case
 
-This document presents an example of a simultaneous estimation of one specific and one varietal parameter using the stics model, while a simpler introductory example is presented in this [vignette](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html) (you should look at it first).
+This document presents an example of a simultaneous estimation of one specific and one varietal parameter on a multi-varietal dataset using the Stics model, while a simpler introductory example is presented in this [vignette](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html) (you should look at it first).
 
 Data comes from a maize crop experiment (see description in Wallach et al., 2011). In this example, 8 situations (USMs in Stics language) will be used for the parameter estimation. This test case correspond to case 1c in (Wallach et al., 2011).
 
@@ -31,52 +33,42 @@ The parameter estimation is performed using the Nelder-Meade simplex method impl
 
 This part is not shown here, it is the same as this of the [introductory example](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html). 
 
-```{r setup_initializations,  echo=FALSE, message=FALSE, results=FALSE, warning=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-# Install and load the needed libraries
-devtools::install_github("SticsRPacks/SticsOnR@v0.1.0.9001")
-library("SticsOnR")
-devtools::install_github("SticsRPacks/SticsRFiles@v0.1.0.9001")
-library("SticsRFiles")
-devtools::install_github("SticsRPacks/CroptimizR@v0.1.0.9001")
-library("CroptimizR")
-# Download the example USMs:
-data_dir= normalizePath(tempdir(), winslash = "/", mustWork = FALSE)
-data_dir_zip= normalizePath(file.path(data_dir,"master.zip"), winslash = "/", mustWork = FALSE)
-download.file("https://github.com/SticsRPacks/data/archive/master.zip", data_dir_zip)
-unzip(data_dir_zip, exdir = data_dir)
-unlink(data_dir_zip)
-data_dir= file.path(normalizePath(list.dirs(data_dir)[2], winslash = "/"),"study_case_1","V9.0")
-# NB: all examples are now in data_dir
-# Define the path to the local version of JavaStics 
-javastics_path=file.path(getwd(),"JavaSTICS-1.41-stics-9.0")
-stics_path=file.path(javastics_path,"bin/stics_modulo.exe")
-```
+
+
+
 
 ## Read and select the corresponding observations
 
-In this example, observed LAI are used.
+In this example, observed LAI are used for all USMs for which there is an observation file in `file.path(data_dir,"XmlFiles")` folder.
 
-```{r message=FALSE, warning=FALSE}
+
+
+```r
 # Read observation files
-obs_list=read_obs(file.path(data_dir,"XmlFiles"))
+obs_list=get_obs(file.path(data_dir,"XmlFiles"))
 obs_list=lapply(obs_list,"[",c("Date","lai_n"))
 ```
 
+
 ## Set information on the parameters to estimate
 
-**`param_info` allows handling specific / varietal parameters** (dlaimax vs durvieF parameters in this example): dlaimax is defined to take the same value for all situations, whereas durvieF is defined in such a way that it may take one value for situations c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"), that correspond to a given variety, and another for situations c("bou99t3", "bou00t3", "bou99t1", "bou00t1"), that correspond to another variety, sit_list being in this case a list of size 2 (see code below).
+**`param_info` allows handling specific / varietal parameters** (dlaimax vs durvieF parameters in this example): dlaimax is defined to take the same value for all situations, whereas durvieF is defined in such a way that it may take one value for situations `c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")`, that correspond to a given variety, and another for situations `c("bou99t3", "bou00t3", "bou99t1", "bou00t1")`, that correspond to another variety, `sit_list` being in this case a list of size 2 (see code below).
 Please note that bounds can take different values for the different groups of situations (lb and ub are vectors of size 2 for durvieF).
 
-```{r message=FALSE, warning=FALSE}
+
+
+```r
 param_info=list()
 param_info$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1", "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),lb=0.0005,ub=0.0025)
 param_info$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"), c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),lb=c(50,100),ub=c(400,450))
 ```
 
+
 ## Set options for the parameter estimation method
 
-```{r message=FALSE, warning=FALSE}
+
+
+```r
 optim_options=list() 
 optim_options$nb_rep <- 7 # Number of repetitions of the minimization 
                           # (each time starting with different initial
@@ -87,16 +79,20 @@ optim_options$xtol_rel <- 1e-04 # Tolerance criterion between two iterations
                                 # (threshold for the relative difference of
                                 # parameter values between the 2 previous 
                                 # iterations)
-optim_options$path_results <- getwd() # path where to store the results (graph and Rdata)
+optim_options$path_results <- data_dir # path where to store the results (graph and Rdata)
 optim_options$ranseed <- 1234 # random seed  
 ```
 
+
 ## Run the optimization
 
-```{r results='hide', message=FALSE, warning=FALSE}
-# Set the model options (see '? stics_wrapper_options' for details)
-model_options=stics_wrapper_options(stics_path,data_dir, parallel=TRUE) 
-# Run the optimization
+The Nelder-Meade simplex is the default method => no need to set the
+optim_method argument. For the moment it is the only method interfaced (others will come soon).
+Same for crit_function: a value is set by default (`crit_cwss`, see `? crit_cwss` for more details and list of available criteria).
+
+
+
+```r
 optim_results=estim_param(obs_list=obs_list,
                             model_function=stics_wrapper,
                             model_options=model_options,
@@ -104,21 +100,23 @@ optim_results=estim_param(obs_list=obs_list,
                             param_info=param_info)
 ```
 
+
 The results printed in output on the R console are the following:
-```{r eval=FALSE, echo=TRUE}
-## [1] "Estimated value for dlaimax :  0.001111705"
-## [1] "Estimated value for durvieF1 :  359.7516"
-## [1] "Estimated value for durvieF2 :  384.4479"
-## [1] "Minimum value of the criterion : 7.98187472584448"
+
+
+```r
+## ## [1] "Estimated value for dlaimax :  0.001111705"
+## ## [1] "Estimated value for durvieF1 :  359.7516"
+## ## [1] "Estimated value for durvieF2 :  384.4479"
+## ## [1] "Minimum value of the criterion : 7.98187472584448"
 ```
 
-Complementary graphs and data are stored in the optim_options$path_results folder. Among them, the EstimatedVSinit.pdf file contains the following figures: 
 
-```{r eval=TRUE, echo=FALSE, out.width = '50%'}
-knitr::include_graphics("ResultsSpecificVarietal/estimInit_dlaimax.PNG")
-knitr::include_graphics("ResultsSpecificVarietal/estimInit_durvieF_var1.PNG")
-knitr::include_graphics("ResultsSpecificVarietal/estimInit_durvieF_var2.PNG")
-```
+Complementary graphs and data are stored in the `optim_options$path_results` folder. Among them, the EstimatedVSinit.pdf file contains the following figures: 
+
+
+<img src="ResultsSpecificVarietal/estimInit_dlaimax.PNG" title="plot of chunk unnamed-chunk-6" alt="plot of chunk unnamed-chunk-6" width="45%" /><img src="ResultsSpecificVarietal/estimInit_durvieF_var1.PNG" title="plot of chunk unnamed-chunk-6" alt="plot of chunk unnamed-chunk-6" width="45%" /><img src="ResultsSpecificVarietal/estimInit_durvieF_var2.PNG" title="plot of chunk unnamed-chunk-6" alt="plot of chunk unnamed-chunk-6" width="45%" />
+
 
 Figure 1: plots of estimated vs initial values of parameters dlaimax and durvieF (estimated for both varieties).
 
@@ -127,7 +125,9 @@ Figure 1: plots of estimated vs initial values of parameters dlaimax and durvieF
 
 A couple of plots to check if the calibration reduced the difference between simulations and observations.
 
-```{r message=FALSE, warning=FALSE}
+
+
+```r
 # Install a few packages needed for the following
 if(!require("gridExtra")){
   install.packages("gridExtra",repos="http://cran.irsn.fr")
@@ -193,12 +193,12 @@ p=grid.arrange(grobs=list(p1,p2), nrow=1, ncol=2)
 # Save the graph
 ggsave(file.path(optim_options$path_results,
                  paste0("sim_obs",".png")), plot=p)
-  
 ```
+
 
 
 This gives:
 
-```{r eval=TRUE, echo=FALSE, message=FALSE, out.width = '80%', fig.cap="Figure 2: plots of simulated vs observed LAI before and after optimization. The gap between simulated and observed values has been drastically reduced: the minimizer has done its job!"}
-knitr::include_graphics("ResultsSpecificVarietal/sim_obs.png")
-```
+
+<img src="ResultsSpecificVarietal/sim_obs.png" title="Figure 2: plots of simulated vs observed LAI before and after optimization. The gap between simulated and observed values has been drastically reduced: the minimizer has done its job!" alt="Figure 2: plots of simulated vs observed LAI before and after optimization. The gap between simulated and observed values has been drastically reduced: the minimizer has done its job!" width="80%" />
+
