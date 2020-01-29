@@ -29,16 +29,50 @@ It is under intensive development, so you can fill an issue or request a feature
 
 For the moment, only parameter estimation functions have been developped. The ([`estim_param`](https://sticsrpacks.github.io/CroptimizR/reference/estim_param.html)) function can be used to perform parameter estimation using multi-start Nelder-Meade simplexe minimization of [different least square criterion](https://sticsrpacks.github.io/CroptimizR/reference/ls_criterion.html). 
 
-Functionnalities for simultaneous estimation of varietal and specific parameters are provided (see [here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html) for an example).
+Functionnalities for simultaneous estimation of varietal and specific plant parameters on multi-varietal datasets are provided (see [here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html) for an example).
 
-CroptimizR is designed to be crop model generic: all the functionalities can be used on any crop model for which an R wrapper can be implemented. For the moment, R wrappers are available for Stics and APSIM crop models (see [SticsOnR](https://github.com/SticsRPacks/SticsOnR) and [ApsimOnR](https://github.com/hol430/ApsimOnR)). A wrapper for SiriusQuality is under development.
+CroptimizR is designed to be crop model generic: all the functionalities can be used on any crop model for which an R wrapper can be implemented. For the moment, R wrappers are available for Stics and APSIM crop models (see [SticsOnR](https://github.com/SticsRPacks/SticsOnR) and [ApsimOnR](https://github.com/hol430/ApsimOnR)). A wrapper for SiriusQuality is under development. CroptimizR does not include these wrappers that must be installed separately (this is detailed in the different vignettes).
 
 Guidelines for developping a wrapper for your favourite crop model are given in the following [vignette](https://SticsRPacks.github.io/CroptimizR/articles/Designing_a_model_wrapper.html).
+
+All the numerical parameters which values can be provided to the model through its R wrapper can be estimated using the provided parameter estimation methods (although it may not work well for integer parameters).
 
 Planned features, installation and examples of use are described in the following sections.
 
 
 ## Planned features
+
+
+### Parameter estimation / model calibration
+
+To estimate the values of a selection of crop models parameters (soil, plant …) from observations of a set of their output variables, 
+
+Main features:
+
+* procedures for **automatic selection of the parameters to estimate** from a given list (e.g. forward selection using criterions such as AIC, MSEP …)
+
+* facilities to describe and perform **calibration in different steps**: different parameters are estimated from different observed situations and variables at each step using different **forcings** (lai, phenological stages) and using the parameters values estimated at the preceding steps,
+
+* facilities to describe and take into account **prior information and constraints** (e.g. inequality constraints) on estimated parameters and output variables,
+
+*	**facilities to transform model outputs** in case observations does not corresponds to the crop model outputs
+
+*	**different types of criterion** to compare simulations and observations (i.e. of objective function to minimize) and different ways of combining these criteria for several variables: e.g. classical ordinary least-square, weighted-least-square, concentrated-likelihood for automatic estimation of error variances, criterion that take into account error correlations … (see e.g. Wallach et al., 2011)
+
+*	different estimation methods:**frequentists (e.g. Nelder-Meade Simplex), Bayesians (e.g. multi-chain MCMC, SIR), global optimization (Evolutionnary Algorithms, GLUE), multi-objective methods,	…**
+
+* methods for evaluating the **predictive performance** of the calibrated model (cross validation …)
+
+Results provided: 
+
+*	estimated values and uncertainties of estimated parameters, 
+
+*	specific diagnostics depending on the estimation method used,
+
+*	evaluation of the predictive performance of the calibrated model, 
+
+*	description of the calibration process followed.
+
 
 ### Probabilistic Uncertainty analysis
 
@@ -80,61 +114,38 @@ Main features:
 
 Results provided: numerical and graphical representations (bar plots / pie charts / temporal plots of sensitivity indices …) of the indices depending on the method
 
-### Parameter estimation / model calibration
-
-To estimate the values of a selection of crop models parameters (soil, plant …) from observations of a set of their output variables, 
-
-Main features:
-
-* procedures for **automatic selection of the parameters to estimate** from a given list (e.g. forward selection using criterions such as AIC, MSEP …)
-
-* facilities to describe and perform **calibration in different steps**: different parameters are estimated from different observed situations and variables at each step using different **forcings** (lai, phenological stages) and using the parameters values estimated at the preceding steps,
-
-* facilities to describe and take into account **prior information and constraints** (e.g. inequality constraints) on estimated parameters and output variables,
-
-*	**facilities to transform model outputs** in case observations does not corresponds to the crop model outputs
-
-*	**different types of criterion** to compare simulations and observations (i.e. of objective function to minimize) and different ways of combining these criteria for several variables: e.g. classical ordinary least-square, weighted-least-square, concentrated-likelihood for automatic estimation of error variances, criterion that take into account error correlations … (see e.g. Wallach et al., 2011)
-
-*	different estimation methods:**frequentists (e.g. Nelder-Meade Simplex), Bayesians (e.g. multi-chain MCMC, SIR), global optimization (Evolutionnary Algorithms, GLUE), multi-objective methods,	…**
-
-* methods for evaluating the **predictive performance** of the calibrated model (cross validation …)
-
-Results provided: 
-
-*	estimated values and uncertainties of estimated parameters, 
-
-*	specific diagnostics depending on the estimation method used,
-
-*	evaluation of the predictive performance of the calibrated model, 
-
-*	description of the calibration process followed.
-
 
 ## Installation
+
+Before installing the package, it is recommanded to update all already installed R packages. This can be done using the command `update.packages()` or clicking on the Update button of the Packages panel of Rstudio. 
 
 The last released version of the package can be installed from [GitHub](https://github.com/) using:
 
 ``` r
-devtools::install_github("SticsRPacks/CroptimizR@v0.1.0.9001")
+devtools::install_github("SticsRPacks/CroptimizR@*release")
 ```
 Or using the lightweight [remotes](https://github.com/r-lib/remotes#readme) package: 
 
 ``` r
 # install.packages("remotes")
-remotes::install_github("SticsRPacks/CroptimizR@v0.1.0.9001")
+remotes::install_github("SticsRPacks/CroptimizR@*release")
 ```
+
+If an update of the XML package is proposed, answer no, it seems that there is a problem of installation for its last version. 
+
+If you want to use CroptimizR with the Stics model, facilities for the installation of all the necessary packages are provided (see installation procedure in this [vignette](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html)).
+
 The package is tested routinely to pass all [CRAN](https://CRAN.R-project.org) tests using Travis-CI, but it is not yet released to the CRAN servers: CroptimizR is still under development and users are not yet widespread enough to bother CRAN people and use their free server time.
 
 ## Examples
 
 A simple introductory example of model calibration using the Stics model is given in this [vignette](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html).
 
-A more complex one with simultaneous estimation of specific and varietal parameters is given  [here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html).
+A more complex one with simultaneous estimation of specific and varietal plant parameters is given  [here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html).
 
 An example using the ApsimX model is detailed [here](https://SticsRPacks.github.io/CroptimizR/articles/ApsimX_parameter_estimation_simple_case.html).
 
-See [here](https://sticsrpacks.github.io/CroptimizR/reference/estim_param.html) for a detailed description of the input and output arguments of the estim_param function (or type "? estim_param" in an R console after having installed and loaded the CroptimizR package).
+See [here](https://sticsrpacks.github.io/CroptimizR/reference/estim_param.html) for a detailed description of the input and output arguments of the estim_param function (or type `? estim_param` in an R console after having installed and loaded the CroptimizR package).
 
 ## Code of conduct
 
