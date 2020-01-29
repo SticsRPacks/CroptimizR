@@ -19,17 +19,17 @@
 #' @keywords internal
 #'
 
-optim_switch <- function(param_names,obs_list,crit_function,model_function,model_options=NULL,optim_method="nloptr.simplex",optim_options=NULL,prior_information) {
+optim_switch <- function(param_names,obs_list,crit_function,model_function,model_options=NULL,optim_method="nloptr.simplex",optim_options=NULL,param_info) {
 
   if (optim_method=="nloptr.simplex" || optim_method=="simplex") {
 
     res=wrap_nloptr(param_names=param_names,obs_list=obs_list,crit_function=crit_function,model_function=model_function,model_options=model_options,
-                optim_options=optim_options,prior_information=prior_information)
+                optim_options=optim_options,param_info=param_info)
 
   } else if (optim_method=="BayesianTools.dreamzs" || optim_method=="dreamzs") {
 
     res=wrap_BayesianTools(param_names=param_names,obs_list=obs_list,crit_function=crit_function,model_function=model_function,model_options=model_options,
-                optim_options=optim_options,prior_information=prior_information)
+                optim_options=optim_options,param_info=param_info)
 
   } else {
 

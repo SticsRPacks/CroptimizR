@@ -17,7 +17,7 @@
 #' @keywords internal
 #'
 
-wrap_nloptr <- function(param_names,obs_list,crit_function,model_function,model_options=NULL,optim_options=NULL,prior_information) {
+wrap_nloptr <- function(param_names,obs_list,crit_function,model_function,model_options=NULL,optim_options=NULL,param_info) {
 
   if (is.null((nb_rep=optim_options$nb_rep))) { nb_rep=1 }
   if (is.null((xtol_rel=optim_options$xtol_rel))) { xtol_rel=1e-4 }
@@ -33,13 +33,13 @@ wrap_nloptr <- function(param_names,obs_list,crit_function,model_function,model_
   crit_options_loc$crit_function=crit_function
   crit_options_loc$model_function=model_function
   crit_options_loc$model_options=model_options
-  crit_options_loc$prior_information=prior_information
+  crit_options_loc$param_info=param_info
 
-  bounds=get_params_bounds(prior_information)
-  user_init_values=get_params_init_values(prior_information)
+  bounds=get_params_bounds(param_info)
+  user_init_values=get_params_init_values(param_info)
 
   # Sample initial values and include user provided ones
-  init_values=sample_params(prior_information,nb_rep,ranseed)
+  init_values=sample_params(param_info,nb_rep,ranseed)
   for (param in param_names) {
     idx=which(!is.na(user_init_values[,param]))
     init_values[idx,param]=user_init_values[idx,param]

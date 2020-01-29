@@ -99,13 +99,13 @@ obs_list[[sit_name]]=obs_list[[sit_name]][,c("Date",var_name)]
 
 ```
 
-## Set prior information on the parameters to estimate
+## Set information on the parameters to estimate
 
-prior_information determines the list of parameters that will be estimated in the parameter estimation process and associated prior information (only uniform distributions for the moment, others will come soon).
+param_info determines the list of parameters that will be estimated in the parameter estimation process and associated bounds. 
 
 ```{r message=FALSE, warning=FALSE}
-# 2 parameters here: dlaimax and durvieF, of prior distributions U([0.0005,0.0025]) and U([50,400])
-prior_information=list(lb=c(dlaimax=0.0005, durvieF=50),
+# 2 parameters here: dlaimax and durvieF, of bounds [0.0005,0.0025] and [50,400].
+param_info=list(lb=c(dlaimax=0.0005, durvieF=50),
                        ub=c(dlaimax=0.0025, durvieF=400))
 ```
 
@@ -146,7 +146,7 @@ optim_results=estim_param(obs_list=obs_list,
                             model_function=stics_wrapper,
                             model_options=model_options,
                             optim_options=optim_options,
-                            prior_information=prior_information)
+                            param_info=param_info)
 
 ```
 

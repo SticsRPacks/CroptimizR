@@ -1,4 +1,4 @@
-#' @title Extract parameter initial values from prior information
+#' @title Extract parameter initial values from parameter information
 #'
 #' @inheritParams estim_param
 #'
@@ -7,47 +7,47 @@
 #'
 #' @examples
 #' # Simple cases
-#' prior_information=list(init_values=c(dlaimax=0.001, durvieF=200),
+#' param_info=list(init_values=c(dlaimax=0.001, durvieF=200),
 #'                        lb=c(dlaimax=0.0001, durvieF=50),
 #'                        ub=c(dlaimax=0.01, durvieF=400))
-#' CroptimizR:::get_params_init_values(prior_information)
+#' CroptimizR:::get_params_init_values(param_info)
 #'
-#' prior_information=list(init_values=data.frame(dlaimax=c(0.001,0.002), durvieF=c(50,200)),
+#' param_info=list(init_values=data.frame(dlaimax=c(0.001,0.002), durvieF=c(50,200)),
 #'                        lb=c(dlaimax=0.0001, durvieF=50),
 #'                        ub=c(dlaimax=0.01, durvieF=400))
-#' CroptimizR:::get_params_init_values(prior_information)
+#' CroptimizR:::get_params_init_values(param_info)
 #'
 #' # Cases with groups of situations per parameter
-#' prior_information=list()
-#' prior_information$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1",
+#' param_info=list()
+#' param_info$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1",
 #'                                                "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),
 #'                                init_values=0.001,lb=0.0001,ub=0.1)
-#' prior_information$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
+#' param_info$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
 #'                                              c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),
 #'                                init_values=c(200,300),lb=50,ub=400)
-#' CroptimizR:::get_params_init_values(prior_information)
+#' CroptimizR:::get_params_init_values(param_info)
 #'
-#' prior_information=list()
-#' prior_information$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1",
+#' param_info=list()
+#' param_info$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1",
 #'                                                "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),
 #'                                init_values=c(0.001,0.002),lb=0.0001,ub=0.1)
-#' prior_information$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
+#' param_info$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
 #'                                              c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),
 #'                                init_values=data.frame(c(200,300),c(250,350)),lb=50,ub=400)
-#' CroptimizR:::get_params_init_values(prior_information)
+#' CroptimizR:::get_params_init_values(param_info)
 #'
 #' @keywords internal
 #'
-get_params_init_values <- function(prior_information) {
+get_params_init_values <- function(param_info) {
 
   init_values=NULL
-  params_names=get_params_names(prior_information)
+  params_names=get_params_names(param_info)
 
 
   # Simple case, no simultaneous estimation of varietal and specific parameters
-  if (!is.null(prior_information$init_values)) {
+  if (!is.null(param_info$init_values)) {
 
-    init_values=as.data.frame(prior_information$init_values)
+    init_values=as.data.frame(param_info$init_values)
 
     # check if colnames were set to params_names, if not set them
     # and handle translation if necessary
@@ -68,35 +68,35 @@ get_params_init_values <- function(prior_information) {
     }
 
   # Case of simultaneous estimation of varietal and specific parameters
-  } else if (is.list(prior_information[[1]])) {
+  } else if (is.list(param_info[[1]])) {
 
     # check if colnames were set to params_names, if not set them
     # and handle translation if necessary
-    for (i in 1:length(prior_information)) {
+    for (i in 1:length(param_info)) {
 
-      if (!is.null(prior_information[[i]]$init_values)) {
+      if (!is.null(param_info[[i]]$init_values)) {
 
-        prior_information[[i]]$init_values=
-          as.data.frame(prior_information[[i]]$init_values)
+        param_info[[i]]$init_values=
+          as.data.frame(param_info[[i]]$init_values)
 
-        if (ncol(prior_information[[i]]$init_values) !=
-            length(prior_information[[i]]$sit_list)) {
+        if (ncol(param_info[[i]]$init_values) !=
+            length(param_info[[i]]$sit_list)) {
 
-          prior_information[[i]]$init_values=t(prior_information[[i]]$init_values)
-          rownames(prior_information[[i]]$init_values)=
-            1:nrow(prior_information[[i]]$init_values)
+          param_info[[i]]$init_values=t(param_info[[i]]$init_values)
+          rownames(param_info[[i]]$init_values)=
+            1:nrow(param_info[[i]]$init_values)
 
         }
 
       } else {
 
-        prior_information[[i]]$init_values=data.frame(NA)
+        param_info[[i]]$init_values=data.frame(NA)
 
       }
 
     }
 
-    init_values=do.call(cbind, sapply(prior_information, function(x) x$init_values))
+    init_values=do.call(cbind, sapply(param_info, function(x) x$init_values))
     if (all(is.na(init_values))) {
       init_values=NULL
     } else {

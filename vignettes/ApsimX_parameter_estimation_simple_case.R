@@ -84,7 +84,7 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 #  # 2 parameters here: ExtinctionCoeff and RUE, of prior distributions U([0.4,0.6]) and U([1.4,1.6])
-#  prior_information <-
+#  param_info <-
 #    list(lb=c(.Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue=0.4,
 #              .Simulations.Replacements.Wheat.Leaf.Photosynthesis.RUE.FixedValue=1.4),
 #         ub=c(.Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue=0.6,
@@ -116,7 +116,7 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 #                              model_function=apsimx_wrapper,
 #                              model_options=model_options,
 #                              optim_options=optim_options,
-#                              prior_information=prior_information)
+#                              param_info=param_info)
 #  
 
 ## ----echo=TRUE, eval=FALSE----------------------------------------------------

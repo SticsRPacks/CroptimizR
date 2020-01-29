@@ -126,13 +126,13 @@ obs_list=obs_list[sit_name]
 names(obs_list) <- sit_name
 ```
 
-## Set prior information on the parameters to estimate
+## Set information on the parameters to estimate
 
-`prior_information` determines the list of parameters that will be estimated in the parameter estimation process and associated bounds information (only uniform distributions for the moment, others will come soon).
+`param_info` determines the list of parameters that will be estimated in the parameter estimation process and associated bounds information (only uniform distributions for the moment, others will come soon).
 
 ```{r message=FALSE, warning=FALSE}
-# 2 parameters here: ExtinctionCoeff and RUE, of prior distributions U([0.4,0.6]) and U([1.4,1.6])
-prior_information <- 
+# 2 parameters here: ExtinctionCoeff and RUE, of bounds [0.4,0.6] and [1.4,1.6]
+param_info <- 
   list(lb=c(.Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue=0.4,
             .Simulations.Replacements.Wheat.Leaf.Photosynthesis.RUE.FixedValue=1.4),
        ub=c(.Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue=0.6,
@@ -181,7 +181,7 @@ optim_results=estim_param(obs_list=obs_list,
                             model_function=apsimx_wrapper,
                             model_options=model_options,
                             optim_options=optim_options,
-                            prior_information=prior_information)
+                            param_info=param_info)
 
 ```
 

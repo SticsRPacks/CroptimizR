@@ -16,12 +16,8 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 #  library("CroptimizR")
 #  
 #  # Download the example USMs:
-#  data_dir= normalizePath(tempdir(), winslash = "/", mustWork = FALSE)
-#  data_dir_zip= normalizePath(file.path(data_dir,"master.zip"), winslash = "/", mustWork = FALSE)
-#  download.file("https://github.com/SticsRPacks/data/archive/master.zip", data_dir_zip)
-#  unzip(data_dir_zip, exdir = data_dir)
-#  unlink(data_dir_zip)
-#  data_dir= file.path(normalizePath(list.dirs(data_dir)[2], winslash = "/"),"study_case_1","V9.0")
+#  
+#  data_dir= file.path(SticsRFiles::download_data(),"study_case_1","V9.0")
 #  # NB: all examples are now in data_dir
 #  
 #  # Define the path to the local version of JavaStics
@@ -62,7 +58,7 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 #  # 2 parameters here: dlaimax and durvieF, of prior distributions U([0.0005,0.0025]) and U([50,400])
-#  prior_information=list(lb=c(dlaimax=0.0005, durvieF=50),
+#  param_info=list(lb=c(dlaimax=0.0005, durvieF=50),
 #                         ub=c(dlaimax=0.0025, durvieF=400))
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
@@ -86,7 +82,7 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 #                              model_function=stics_wrapper,
 #                              model_options=model_options,
 #                              optim_options=optim_options,
-#                              prior_information=prior_information)
+#                              param_info=param_info)
 #  
 
 ## ----echo=TRUE, eval=FALSE----------------------------------------------------
