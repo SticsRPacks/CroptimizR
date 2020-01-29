@@ -70,33 +70,27 @@ wrap_nloptr <- function(param_names,obs_list,crit_function,model_function,model_
   ind_min_crit=which.min(sapply(nlo, function(x) x$objective))
 
   # Graph and print the results
-  grDevices::pdf(file = file.path(path_results,"EstimatedVSinit.pdf") , width = 9, height = 9)
-  for (ipar in 1:nb_params) {
-    graphics::plot(init_values[,ipar], est_values[,ipar],
-         main = "Estimated vs Initial values of the parameters for different repetitions",
-         graphics::text(init_values[,ipar], est_values[,ipar], pos=1,col="black"),
-         xlim = c(bounds$lb[ipar],bounds$ub[ipar]),
-         ylim = c(bounds$lb[ipar],bounds$ub[ipar]),
-         xlab = paste("Initial value for", param_names[ipar]),
-         ylab = paste("Estimated value for", param_names[ipar]))
-    graphics::text(init_values[ind_min_crit,ipar], est_values[ind_min_crit,ipar],
-         labels = ind_min_crit, pos=1,col="red")
-  }
-  grDevices::dev.off()
-
-  # pdf(file = file.path(path_results,"ConvergencePlots.pdf") , width = 9, height = 9)
-  # for (ipar in 1:(nb_params+1)) {
-  #   plot(init_values[,ipar], est_values[,ipar],
-  #        main = "Estimated vs Initial values of the parameters for different repetitions",
-  #        text(init_values[,ipar], est_values[,ipar], pos=1,col="black"),
-  #        xlim = c(bounds$lb[ipar],bounds$ub[ipar]),
-  #        ylim = c(bounds$lb[ipar],bounds$ub[ipar]),
-  #        xlab = paste("Initial value for", param_names[ipar]),
-  #        ylab = paste("Estimated value for", param_names[ipar]))
-  #   text(init_values[ind_min_crit,ipar], est_values[ind_min_crit,ipar],
-  #        labels = ind_min_crit, pos=1,col="red")
-  #}
-  # dev.off()
+  tryCatch(
+    {
+      grDevices::pdf(file = file.path(path_results,"EstimatedVSinit.pdf") , width = 9, height = 9)
+      for (ipar in 1:nb_params) {
+        graphics::plot(init_values[,ipar], est_values[,ipar],
+                       main = "Estimated vs Initial values of the parameters for different repetitions",
+                       graphics::text(init_values[,ipar], est_values[,ipar], pos=1,col="black"),
+                       xlim = c(bounds$lb[ipar],bounds$ub[ipar]),
+                       ylim = c(bounds$lb[ipar],bounds$ub[ipar]),
+                       xlab = paste("Initial value for", param_names[ipar]),
+                       ylab = paste("Estimated value for", param_names[ipar]))
+        graphics::text(init_values[ind_min_crit,ipar], est_values[ind_min_crit,ipar],
+                       labels = ind_min_crit, pos=1,col="red")
+      }
+      grDevices::dev.off()
+    },
+    error=function(cond) {
+      warning("Error trying to create ",path_results,"/EstimatedVSinit.pdf file. It is maybe opened in a pdf viewer and locked. It will not be created.")
+      message(cond)
+      flush.console()
+      })
 
 
   # Save the results of nloptr
@@ -106,7 +100,8 @@ wrap_nloptr <- function(param_names,obs_list,crit_function,model_function,model_
   for (ipar in 1:nb_params) {
     print(paste("Estimated value for", param_names[ipar], ": ", est_values[ind_min_crit,ipar]))
   }
-  print(paste("Minimum value of the criterion :", nlo[[ind_min_crit]]$objective))
+  print(paste("Minimum value of the criterion:", nlo[[ind_min_crit]]$objective))
+  print(paste("Complementary graphs and results can be found in ", path_results))
 
   final_values <- est_values[ind_min_crit,]
   names(final_values) <- param_names

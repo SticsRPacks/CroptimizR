@@ -67,34 +67,8 @@ wrap_BayesianTools <- function(param_names,obs_list,crit_function,model_function
   nb_iterations=nrow(post_sample)/nb_chains
 
   # Generate graphs and prints
-  grDevices::pdf(file = file.path(path_results,"iterAndDensityPlots.pdf") , width = 9, height = 9)
-  graphics::plot(out)
-  grDevices::dev.off()
 
-  grDevices::pdf(file = file.path(path_results,"marginalPlots.pdf") , width = 9, height = 9)
-  marginalPlot(out)
-  grDevices::dev.off()
-
-  if (nb_params>=2) {
-    grDevices::pdf(file = file.path(path_results,"correlationPlots.pdf") , width = 9, height = 9)
-    correlationPlot(out)
-    grDevices::dev.off()
-  }
-
-  if (nb_params>=2) {
-    # seems that it does not work for a single parameter
-    # also, Nbiteration must be > thin+50 otherwise coda::gelman.plot end with an error
-    if ( nb_iterations>=(optim_options_DREAMzs$thin+50) ) {
-      grDevices::pdf(file = file.path(path_results,"gelmanDiagPlots.pdf") , width = 9, height = 9)
-      gelmanDiagnostics(out, thin=optim_options_DREAMzs$thin, plot = T)
-      grDevices::dev.off()
-    } else {
-      gelmanDiagnostics(out, thin=optim_options_DREAMzs$thin, plot = F)
-      warning(paste0("Number of iterations in DREAM after burnin phase is too low (",nb_iterations,") to generate gelmanDiagPlots.pdf (should be superior to thin+50)"))
-    }
-  }
-
-  # Print results
+  ## Print results
   codaObject = getSample(out, start = 1, coda = TRUE)  # thin=1
   tmp=summary(codaObject)
   if (nb_params>=2) {
@@ -102,14 +76,77 @@ wrap_BayesianTools <- function(param_names,obs_list,crit_function,model_function
   else {
     print(tmp)
   }
+  print(paste("Complementary graphs and results can be found in ", path_results))
 
-  # Save and return the results
+  ## Save the results
   res <- list(statistics = tmp$statistics,
               quantiles = tmp$quantiles,
               MAP = MAP(out)$parametersMAP,
               post_sample=post_sample,
               out = out)
   save(res, file = file.path(path_results,"optim_results.Rdata"))
+
+  ## Graphs the results
+  tryCatch(
+    {
+      grDevices::pdf(file = file.path(path_results,"iterAndDensityPlots.pdf") , width = 9, height = 9)
+      graphics::plot(out)
+      grDevices::dev.off()
+    },
+    error=function(cond) {
+      warning("Error trying to create ",path_results,"/iterAndDensityPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will not be created.")
+      message(cond)
+      flush.console()
+    })
+
+  tryCatch(
+    {
+      grDevices::pdf(file = file.path(path_results,"marginalPlots.pdf") , width = 9, height = 9)
+      marginalPlot(out)
+      grDevices::dev.off()
+    },
+    error=function(cond) {
+      warning("Error trying to create ",path_results,"/marginalPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will not be created.")
+      message(cond)
+      flush.console()
+    })
+
+  if (nb_params>=2) {
+    tryCatch(
+      {
+        grDevices::pdf(file = file.path(path_results,"correlationPlots.pdf") , width = 9, height = 9)
+        correlationPlot(out)
+        grDevices::dev.off()
+      },
+      error=function(cond) {
+        warning("Error trying to create ",path_results,"/correlationPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will not be created.")
+        message(cond)
+        flush.console()
+      })
+  }
+
+  if (nb_params>=2) {
+    # seems that it does not work for a single parameter
+    # also, Nbiteration must be > thin+50 otherwise coda::gelman.plot end with an error
+    if ( nb_iterations>=(optim_options_DREAMzs$thin+50) ) {
+      tryCatch(
+        {
+          grDevices::pdf(file = file.path(path_results,"gelmanDiagPlots.pdf") , width = 9, height = 9)
+          gelmanDiagnostics(out, thin=optim_options_DREAMzs$thin, plot = T)
+          grDevices::dev.off()
+        },
+        error=function(cond) {
+          warning("Error trying to create ",path_results,"/gelmanDiagPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will not be created.")
+          message(cond)
+          flush.console()
+        })
+
+    } else {
+      gelmanDiagnostics(out, thin=optim_options_DREAMzs$thin, plot = F)
+      warning(paste0("Number of iterations in DREAM after burnin phase is too low (",nb_iterations,") to generate gelmanDiagPlots.pdf (should be superior to thin+50)"))
+    }
+  }
+
   return(res)
 
 }
