@@ -83,7 +83,7 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 #  names(obs_list) <- sit_name
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
-#  # 2 parameters here: ExtinctionCoeff and RUE, of prior distributions U([0.4,0.6]) and U([1.4,1.6])
+#  # 2 parameters here: ExtinctionCoeff and RUE, of bounds [0.4,0.6] and [1.4,1.6]
 #  param_info <-
 #    list(lb=c(.Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue=0.4,
 #              .Simulations.Replacements.Wheat.Leaf.Photosynthesis.RUE.FixedValue=1.4),
