@@ -120,9 +120,13 @@ obs_list[[sit_name]]=obs_list[[sit_name]][,c("Date",var_name)]
 
 ## Set information on the parameters to estimate
 
-**`param_info` determines the list of parameters that will be estimated in the parameter estimation process from the situations, variables and dates defined in `obs_list`**, and associated bounds (-Inf and Inf can be used in bounds list).
+**`param_info` must contain information about the parameters that will be estimated in the parameter estimation process from the situations, variables and dates defined in `obs_list`**.
+
+It must include the definition of their upper and lower bounds (-Inf and Inf can be used). This will determine the list of estimated parameters.
 
 All the numerical parameters which values can be provided to the model through its R wrapper can be estimated using the provided parameter estimation methods (although it may not work well for integer parameters).
+
+Initial values for the minimization can also be provided in `param_info` (see `? estim_param`).
 
 
 ```{r message=FALSE, warning=FALSE}
