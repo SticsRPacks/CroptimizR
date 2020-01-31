@@ -1,5 +1,6 @@
+## ----init, include=FALSE------------------------------------------------------
 params <-
-list(eval_rmd = FALSE, apsimx_path = c(Models = ""))
+list(eval_rmd = FALSE)
 
 ## ----setup, eval=TRUE, include=FALSE------------------------------------------
 # Global options
@@ -8,8 +9,10 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 ## ----setup_initializations, message=FALSE, results=FALSE, warning=FALSE-------
 #  
 #  # Install and load the needed libraries
-#  devtools::install_github("SticsRPacks/CroptimizR@*release")
-#  library("CroptimizR")
+#  if(!require("CroptimizR")){
+#    devtools::install_github("SticsRPacks/CroptimizR@*release")
+#    library("CroptimizR")
+#  }
 #  if(!require("ApsimOnR")){
 #    devtools::install_github("ApsimOnR")
 #    library("ApsimOnR")
@@ -18,28 +21,15 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 #    install.packages("dplyr",repos="http://cran.irsn.fr")
 #    library("dplyr")
 #  }
-#  if(!require("nloptr")){
-#    install.packages("nloptr",repos="http://cran.irsn.fr")
-#    library("nloptr")
-#  }
-#  if(!require("DiceDesign")){
-#    install.packages("DiceDesign",repos="http://cran.irsn.fr")
-#    library("DiceDesign")
-#  }
-#  if(!require("doParallel")){
-#    install.packages("doParallel",repos="http://cran.irsn.fr")
-#    library("doParallel")
-#  }
 #  
-#  # Define the path to the local version of ApsimX (should be something like C:/path/to/apsimx/bin/Models.exe on windows, and /usr/local/bin/Models on linux)
-#  apsimx_path <- params$apsimx_path
+#  # DEFINE THE PATH TO THE LOCALLY INSTALLED VERSION OF APSIM (should be something like C:/path/to/apsimx/bin/Models.exe on windows, and /usr/local/bin/Models on linux)
+#  apsimx_path <- path_to_Apsim
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 #  
 #  sit_name="GattonRowSpacingRowSpace25cm"  # among "GattonRowSpacingRowSpace25cm", "GattonRowSpacingRowSpace50cm","GattonRowSpacingRowSpaceN0"
 #  
 #  var_name = c("Wheat.Leaf.LAI") # or "Wheat.AboveGround.Wt"
-#  
 
 ## ----results='hide', message=FALSE, warning=FALSE-----------------------------
 #  
@@ -68,8 +58,6 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 #  
 #  # Run the model (on all situations found in the apsimx_file)
 #  sim_before_optim=apsimx_wrapper(model_options=model_options)
-#  
-#  
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 #  # At the moment, observed data are read from the db file after the first simulation ran before optimization.
@@ -89,7 +77,6 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 #              .Simulations.Replacements.Wheat.Leaf.Photosynthesis.RUE.FixedValue=1.4),
 #         ub=c(.Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue=0.6,
 #              .Simulations.Replacements.Wheat.Leaf.Photosynthesis.RUE.FixedValue=1.6))
-#  
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 #  
@@ -108,7 +95,6 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 #  
 #  optim_options$ranseed <- 1234 # set random seed so that each execution give the same results
 #                                # If you want randomization, don't set it.
-#  
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 #  
@@ -117,12 +103,11 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 #                              model_options=model_options,
 #                              optim_options=optim_options,
 #                              param_info=param_info)
-#  
 
 ## ----echo=TRUE, eval=FALSE----------------------------------------------------
-#  ## [1] "Estimated value for .Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue :  0.432140042063685"
-#  ## [1] "Estimated value for .Simulations.Replacements.Wheat.Leaf.Photosynthesis.RUE.FixedValue :  1.6"
-#  ## [1] "Minimum value of the criterion : 6.37702433098772e-05"
+#  ##  [1] "Estimated value for .Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue :  0.432140042063685"
+#  ##  [1] "Estimated value for .Simulations.Replacements.Wheat.Leaf.Photosynthesis.RUE.FixedValue :  1.6"
+#  ##  [1] "Minimum value of the criterion : 6.37702433098772e-05"
 
 ## ----eval=TRUE, echo=FALSE, out.width = '50%'---------------------------------
 
@@ -130,10 +115,9 @@ knitr::include_graphics("ResultsSimpleCaseApsim/estimInit_ExtinctionCoeff.png")
 
 knitr::include_graphics("ResultsSimpleCaseApsim/estimInit_RUE.png")
 
-
 ## ----eval=FALSE, echo=TRUE----------------------------------------------------
-#  load(file.path(optim_options$path_results,"optim_results.Rdata"))
-#  nlo[[2]]
+#  ## load(file.path(optim_options$path_results,"optim_results.Rdata"))
+#  ## nlo[[2]]
 
 ## ----echo=FALSE, eval=TRUE----------------------------------------------------
 load(file.path("ResultsSimpleCaseApsim","optim_results.Rdata"))
@@ -143,7 +127,6 @@ print(nlo[[2]])
 #  
 #  sim_after_optim=apsimx_wrapper(param_values=optim_results$final_values,
 #                                 model_options=model_options)
-#  
 
 ## ----results='hide', message=FALSE, warning=FALSE-----------------------------
 #  png(file.path(optim_options$path_results,"sim_obs_plots.png"),
@@ -159,7 +142,6 @@ print(nlo[[2]])
 #  plot(sim_after_optim$sim_list[[sit_name]][,c("Date",var_name)],type="l",
 #       main="After optimization",ylim=c(0,Ymax+Ymax*0.1))
 #  points(obs_list[[sit_name]]$Date,obs_list[[sit_name]][[var_name]],col="red")
-#  
 
 ## ----eval=TRUE, echo=FALSE, message=FALSE, out.width = '80%', fig.cap="Figure 2: plots of simulated and observed target variable before and after optimization. The gap between simulated and observed values has been drastically reduced: the minimizer has done its job!"----
 knitr::include_graphics("ResultsSimpleCaseApsim/sim_obs_plots.png")
