@@ -18,8 +18,8 @@
 #'           situation,
 #'           \eqn{ f_{jk}(X_i;\theta) } the corresponding model prediction, and \eqn{n_j} the number of measurements of variable \eqn{j}. \cr
 #'           `crit_log_cwss` computes the log of this equation. \cr
-#'           In this criterion, one assume that all errors (model and observations errors for all variables, dates and situations) are independent, and that the error variance is constant over tme but may be different between variables \eqn{j}.
-#'           These error variance are automatically estimated.
+#'           In this criterion, one assume that all errors (model and observations errors for all variables, dates and situations) are independent, and that the error variance is constant over time but may be different between variables \eqn{j}.
+#'           These error variances are automatically estimated.
 #'           More details about this criterion are given in Wallach et al. (2011), equation 5.
 #'   \item `crit_log_cwss_corr`: log transformation of concentrated version of weighted sum of squares with hypothesis of high correlation between errors for different measurements over time \cr
 #'           The original criterion is: \cr
