@@ -56,10 +56,10 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 #                              param_info=param_info)
 
 ## ----eval=FALSE, echo=TRUE----------------------------------------------------
-#  ## ## [1] "Estimated value for dlaimax :  0.001111705"
-#  ## ## [1] "Estimated value for durvieF1 :  359.7516"
-#  ## ## [1] "Estimated value for durvieF2 :  384.4479"
-#  ## ## [1] "Minimum value of the criterion : 7.98187472584448"
+#  ## [1] "Estimated value for dlaimax :  0.00112078439658861"
+#  ## [1] "Estimated value for durvieF1 :  400"
+#  ## [1] "Estimated value for durvieF2 :  213.495265823847"
+#  ## [1] "Minimum value of the criterion: -1.48441926984469"
 
 ## ----eval=TRUE, echo=FALSE, out.width = '45%'---------------------------------
 knitr::include_graphics("ResultsSpecificVarietal/estimInit_dlaimax.PNG")
@@ -72,9 +72,9 @@ knitr::include_graphics("ResultsSpecificVarietal/estimInit_durvieF_var2.PNG")
 #    install.packages("gridExtra",repos="http://cran.irsn.fr")
 #    library("gridExtra")
 #  }
-#  if(!require("Metrics")){
-#    install.packages("Metrics",repos="http://cran.irsn.fr")
-#    library("Metrics")
+#  if(!require("hydroGOF")){
+#    install.packages("hydroGOF",repos="http://cran.irsn.fr")
+#    library("hydroGOF")
 #  }
 #  if(!require("grid")){
 #    install.packages("grid",repos="http://cran.irsn.fr")
@@ -94,8 +94,8 @@ knitr::include_graphics("ResultsSpecificVarietal/estimInit_durvieF_var2.PNG")
 #                                model_options=model_options)
 #  
 #  # transform into data.frame and intersect for using ggplot2
-#  sim_before_df = bind_rows(sim_before_optim$sim_list,.id = 'Situation')
-#  sim_after_df = bind_rows(sim_after_optim$sim_list,.id = 'Situation')
+#  sim_before_df = bind_rows(sim_before_optim$sim_list[[1]],.id = 'Situation')
+#  sim_after_df = bind_rows(sim_after_optim$sim_list[[1]],.id = 'Situation')
 #  obs_df = bind_rows(obs_list,.id = 'Situation')
 #  sim_before_df = rename(sim_before_df,LAI_sim=lai_n)
 #  sim_after_df = rename(sim_after_df,LAI_sim=lai_n)

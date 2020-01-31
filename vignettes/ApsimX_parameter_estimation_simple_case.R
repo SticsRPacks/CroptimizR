@@ -105,9 +105,9 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 #                              param_info=param_info)
 
 ## ----echo=TRUE, eval=FALSE----------------------------------------------------
-#  ##  [1] "Estimated value for .Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue :  0.432140042063685"
-#  ##  [1] "Estimated value for .Simulations.Replacements.Wheat.Leaf.Photosynthesis.RUE.FixedValue :  1.6"
-#  ##  [1] "Minimum value of the criterion : 6.37702433098772e-05"
+#  ## [1] "Estimated value for .Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue :  0.432140042063685"
+#  ## [1] "Estimated value for .Simulations.Replacements.Wheat.Leaf.Photosynthesis.RUE.FixedValue :  1.6"
+#  ## [1] "Minimum value of the criterion: -9.66022388221585"
 
 ## ----eval=TRUE, echo=FALSE, out.width = '50%'---------------------------------
 
@@ -135,13 +135,15 @@ print(nlo[[2]])
 #  
 #  # Simulated and observed LAI before optimization
 #  Ymax=max(max(obs_list[[sit_name]][,var_name], na.rm=TRUE),
-#           max(sim_before_optim$sim_list[[sit_name]][,var_name], na.rm=TRUE))
-#  plot(sim_before_optim$sim_list[[sit_name]][,c("Date",var_name)],type="l",
+#           max(sim_before_optim$sim_list[[1]][[sit_name]][,var_name], na.rm=TRUE))
+#  plot(sim_before_optim$sim_list[[1]][[sit_name]][,c("Date",var_name)],type="l",
 #       main="Before optimization",ylim=c(0,Ymax+Ymax*0.1))
 #  points(obs_list[[sit_name]]$Date,obs_list[[sit_name]][[var_name]],col="red")
-#  plot(sim_after_optim$sim_list[[sit_name]][,c("Date",var_name)],type="l",
+#  plot(sim_after_optim$sim_list[[1]][[sit_name]][,c("Date",var_name)],type="l",
 #       main="After optimization",ylim=c(0,Ymax+Ymax*0.1))
 #  points(obs_list[[sit_name]]$Date,obs_list[[sit_name]][[var_name]],col="red")
+#  
+#  dev.off()
 
 ## ----eval=TRUE, echo=FALSE, message=FALSE, out.width = '80%', fig.cap="Figure 2: plots of simulated and observed target variable before and after optimization. The gap between simulated and observed values has been drastically reduced: the minimizer has done its job!"----
 knitr::include_graphics("ResultsSimpleCaseApsim/sim_obs_plots.png")

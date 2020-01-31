@@ -75,9 +75,9 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 #                              param_info=param_info)
 
 ## ----echo=TRUE, eval=FALSE----------------------------------------------------
-#  ## ## [1] "Estimated value for dlaimax :  0.00169614928696274"
-#  ## ## [1] "Estimated value for durvieF :  53.9691276907021"
-#  ## ## [1] "Minimum value of the criterion : 112.530331140718"
+#  ## [1] "Estimated value for dlaimax :  0.00169614928696274"
+#  ## [1] "Estimated value for durvieF :  53.9691276907021"
+#  ## [1] "Minimum value of the criterion: 4.72322279544591"
 
 ## ----eval=TRUE, echo=FALSE, out.width = '45%'---------------------------------
 
@@ -104,13 +104,13 @@ print(nlo[[2]])
 #  
 #  # Simulated and observed LAI before optimization
 #  Ymax=max(max(obs_list[[sit_name]][,var_name], na.rm=TRUE),
-#           max(sim_before_optim$sim_list[[sit_name]][,var_name], na.rm=TRUE))
-#  plot(sim_before_optim$sim_list[[sit_name]][,c("Date",var_name)],type="l",
+#           max(sim_before_optim$sim_list[[1]][[sit_name]][,var_name], na.rm=TRUE))
+#  plot(sim_before_optim$sim_list[[1]][[sit_name]][,c("Date",var_name)],type="l",
 #       main="Before optimization",ylim=c(0,Ymax+Ymax*0.1))
 #  points(obs_list[[sit_name]],col="green")
 #  
 #  # Simulated and observed LAI after optimization
-#  plot(sim_after_optim$sim_list[[sit_name]][,c("Date",var_name)],type="l",
+#  plot(sim_after_optim$sim_list[[1]][[sit_name]][,c("Date",var_name)],type="l",
 #       main="After optimization",ylim=c(0,Ymax+Ymax*0.1))
 #  points(obs_list[[sit_name]],col="green")
 #  
