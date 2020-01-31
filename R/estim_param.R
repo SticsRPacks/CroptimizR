@@ -108,7 +108,7 @@
 
 
 
-estim_param <- function(obs_list,crit_function=crit_cwss,model_function,model_options=NULL,
+estim_param <- function(obs_list,crit_function=crit_log_cwss,model_function,model_options=NULL,
                         optim_method="nloptr.simplex",optim_options=NULL,param_info) {
 
   # Check inputs
