@@ -1,9 +1,3 @@
-
-```{r init, include=FALSE}
-params <-
-list(eval_rmd = FALSE)
-```
-
 ---
 title: "Parameter estimation with the Stics crop Model: a simple case"
 output:

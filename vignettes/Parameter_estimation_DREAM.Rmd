@@ -1,11 +1,4 @@
 
-
-```{r init, include=FALSE}
-params <-
-list(eval_rmd = FALSE)
-```
-
-
 ---
 title: "Parameter estimation with the DREAM-zs algorithm"
 output: rmarkdown::html_vignette
@@ -20,6 +13,7 @@ vignette: >
 params:
   eval_rmd: FALSE
 ---
+
 
 
 

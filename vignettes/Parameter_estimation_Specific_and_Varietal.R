@@ -1,4 +1,3 @@
-## ----init, include=FALSE------------------------------------------------------
 params <-
 list(eval_rmd = FALSE)
 
