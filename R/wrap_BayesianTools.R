@@ -52,6 +52,8 @@ wrap_BayesianTools <- function(param_names,obs_list,crit_function,model_function
     bayesianSetup = createBayesianSetup(likelihood = likelihood, prior=prior,
                                         names=param_names)
 
+  } else {
+    optim_options_DREAMzs=within(optim_options_DREAMzs,rm("PreviousResults"))
   }
 
   # Perform the Bayesian analysis
