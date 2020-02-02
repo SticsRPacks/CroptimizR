@@ -3,6 +3,7 @@
 export(crit_log_cwss)
 export(crit_log_cwss_corr)
 export(estim_param)
+export(filter_obs)
 export(likelihood_log_ciidn)
 export(likelihood_log_ciidn_corr)
 importFrom(BayesianTools,MAP)

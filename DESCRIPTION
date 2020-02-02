@@ -22,8 +22,10 @@ Imports:
     DiceDesign,
     BayesianTools,
     coda,
-	rstudioapi,
-	crayon
+    rstudioapi,
+    crayon,
+    dplyr,
+    lubridate
 Suggests:
     testthat (>= 2.1.0),
     covr,

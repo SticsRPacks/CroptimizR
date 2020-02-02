@@ -114,8 +114,8 @@ estim_param <- function(obs_list,crit_function=crit_log_cwss,model_function,mode
   # Check inputs
 
   ## obs_list
-  if (!is.list(obs_list) || !all(sapply(obs_list, function(x) is.data.frame(x))) ) {
-    stop("Incorrect format for argument obs_list. Should be a named list containing data.frames.")
+  if (!CroptimizR:::is.obs(obs_list)) {
+    stop("Incorrect format for argument obs_list.")
   }
   ## crit_function
   if (!is.function(crit_function)) {
