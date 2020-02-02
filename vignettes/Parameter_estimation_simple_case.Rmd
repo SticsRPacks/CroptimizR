@@ -98,23 +98,20 @@ sim_before_optim=stics_wrapper(model_options=model_options)
 
 For Stics, observation files must for the moment have exactly the same names as the corresponding USMs and be stored in a unique folder to be read by the get_obs function. This will be improved in next versions.
 
-In this example, we only keep observations for situation (i.e. USM for Stics) `sit_name` and variable `var_name`.
+In this example, we only keep observations for situation (i.e. USM for Stics) `sit_name` and variable `var_name`. 
 
-**`obs_list` defines the list of situations, variables and dates that will be used to estimate the parameters.**
+**`obs_list` defines the list of situations, variables and dates that will be used to estimate the parameters. Use the function `filter_obs` (see `? filter_obs`) for removing situations, variables and/or dates from an observation list.**
 
 In variables and parameters names, "(\*)" must be replaced by "_\*" to be handled by R (e.g. lai(n) is denoted here lai_n).
 
 
 ```{r message=FALSE, warning=FALSE}
 
-sit_name="bo96iN+"  ## among bo96iN+, bou00t1, bou00t3, bou99t1, bou99t3,
-                    ## lu96iN+, lu96iN6 or lu97iN+
-
+sit_name="bo96iN+"  
+var_name="lai_n" 
 obs_list=get_obs(file.path(data_dir,"XmlFiles"),
                           obs_filenames = paste0(sit_name,".obs"))
-
-var_name="lai_n"    ## lai_n or masec_n
-obs_list[[sit_name]]=obs_list[[sit_name]][,c("Date",var_name)]
+obs_list=filter_obs(obs_list, var_names=var_name,include=TRUE)
 ```
 
 
@@ -139,8 +136,8 @@ param_info=list(lb=c(dlaimax=0.0005, durvieF=50),
 ## Set options for the parameter estimation method
 
 `optim_options` must contain the options of the parameter estimation method.
-Here we defined a few options for the simplex method of the nloptr package (default method in estim_param).
-The full set of options for the simplex method can be found in the [vignette of nloptr package](https://cran.r-project.org/web/packages/nloptr/vignettes/nloptr.pdf).
+Here we defined a few important options for the simplex method of the nloptr package (default method in estim_param).
+The see the full set of options available for the simplex method, type `? nl.opts`
 
 The number of repetitions is advised to be set to at least 5, while 10 is a reasonable maximum value.
 `maxeval` should be used to stop the minimization only if results have to be produced within a given duration, otherwise set it to a high value so that the minimization stops when the criterion based on `xtol_rel` is satisfied.
@@ -188,6 +185,7 @@ The results printed in output on the R console are the following:
 ```
 
 
+
 Complementary graphs and data are stored in the `optim_options$path_results` folder. Among them, the EstimatedVSinit.pdf file containing the following figures:
 
 
@@ -215,6 +213,10 @@ load(file.path("ResultsSimpleCase","optim_results.Rdata"))
 print(nlo[[2]])
 ```
 
+
+`nlo` is a list of size the number of repetitions. Each element stores many information about the corresponding minimization,
+including the optimal values of the parameters (field `solution`) and the message indicating why the minimization stopped (field `message`).
+`nlo` is also returned in output of `estim_param`.
 
 
 ## Run the model after optimization

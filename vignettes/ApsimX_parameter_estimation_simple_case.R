@@ -67,8 +67,7 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 #                                 model_options$observed_table_name,
 #                                 model_options$variable_names,
 #                                 names(sim_before_optim$sim_list))
-#  obs_list=obs_list[sit_name]
-#  names(obs_list) <- sit_name
+#  obs_list=filter_obs(obs_list, sit_names=sit_name,include=TRUE)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 #  # 2 parameters here: ExtinctionCoeff and RUE, of bounds [0.4,0.6] and [1.4,1.6]

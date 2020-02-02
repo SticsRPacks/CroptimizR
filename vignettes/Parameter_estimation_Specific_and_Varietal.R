@@ -27,7 +27,7 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 #  # Read observation files
 #  obs_list=get_obs(file.path(data_dir,"XmlFiles"))
-#  obs_list=lapply(obs_list,"[",c("Date","lai_n"))
+#  obs_list=filter_obs(obs_list, var_names=c("lai_n"),include=TRUE)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 #  param_info=list()

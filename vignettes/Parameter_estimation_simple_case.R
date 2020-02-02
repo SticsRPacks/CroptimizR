@@ -38,14 +38,11 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 #  
-#  sit_name="bo96iN+"  ## among bo96iN+, bou00t1, bou00t3, bou99t1, bou99t3,
-#                      ## lu96iN+, lu96iN6 or lu97iN+
-#  
+#  sit_name="bo96iN+"
+#  var_name="lai_n"
 #  obs_list=get_obs(file.path(data_dir,"XmlFiles"),
 #                            obs_filenames = paste0(sit_name,".obs"))
-#  
-#  var_name="lai_n"    ## lai_n or masec_n
-#  obs_list[[sit_name]]=obs_list[[sit_name]][,c("Date",var_name)]
+#  obs_list=filter_obs(obs_list, var_names=var_name,include=TRUE)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 #  # 2 parameters here: dlaimax and durvieF, of bounds [0.0005,0.0025] and [50,400].
