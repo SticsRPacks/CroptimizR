@@ -16,17 +16,11 @@ coverage](https://codecov.io/gh/SticsRPacks/CroptimizR/branch/master/graph/badge
 This package is dedicated to Probabilistic Uncertainty analysis,
 Sensitivity analysis and Parameter estimation for crop models.
 
-It is under intensive development, so you can fill an issue or request a
-feature [here](https://github.com/SticsRPacks/CroptimizR/issues) at any
-time. The list of functions accessible to the users is provided in this
-[webpage](https://sticsrpacks.github.io/CroptimizR/reference/index.html).
-
 For the moment, only parameter estimation functions have been
 developped. The
 ([`estim_param`](https://sticsrpacks.github.io/CroptimizR/reference/estim_param.html))
-function can be used to perform parameter estimation using multi-start
-Nelder-Meade simplexe minimization of [different least square
-criteria](https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html).
+function can be used to perform parameter estimation using [different
+methods](https://SticsRPacks.github.io/CroptimizR/articles/Available_parameter_estimation_algorithms.html).
 
 Functionnalities for simultaneous estimation of varietal and specific
 plant parameters on multi-varietal datasets are provided (see
@@ -52,7 +46,15 @@ estimation methods (although it may not work well for integer
 parameters).
 
 Planned features, installation and examples of use are described in the
-following sections.
+following sections. The list of functions accessible to the users is
+provided in this
+[webpage](https://sticsrpacks.github.io/CroptimizR/reference/index.html).
+
+**The package is under intensive development and is still in a beta
+version.**
+
+You can fill an issue or request a feature
+[here](https://github.com/SticsRPacks/CroptimizR/issues) at any time.
 
 ## Planned features
 
@@ -222,6 +224,9 @@ plant parameters is given
 
 An example using the ApsimX model is detailed
 [here](https://SticsRPacks.github.io/CroptimizR/articles/ApsimX_parameter_estimation_simple_case.html).
+
+An example using the DREAM-zs Bayesian algorithm is detailed
+[here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html).
 
 See
 [here](https://sticsrpacks.github.io/CroptimizR/reference/estim_param.html)
