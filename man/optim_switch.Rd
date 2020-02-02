@@ -6,7 +6,7 @@
 \usage{
 optim_switch(param_names, obs_list, crit_function, model_function,
   model_options = NULL, optim_method = "nloptr.simplex",
-  optim_options = NULL, prior_information)
+  optim_options = NULL, param_info)
 }
 \arguments{
 \item{param_names}{Name(s) of parameters to estimate (a parameter name must
@@ -38,22 +38,21 @@ differences on parameters values between 2 iterations (optional, default=1e-5)
 \code{maxeval}, the maximum number of criterion evaluation (optional, default=500)
 \code{path_results}, the path where to store the results (optional, default=getwd())}
 
-\item{prior_information}{Prior information on the parameters to estimate.
-For the moment only uniform distribution are allowed.
+\item{param_info}{Information on the parameters to estimate.
 Either
 a list containing:
 \itemize{
-\item (named) vectors of upper and lower bounds (\code{ub} and \code{lb}),
+\item (named) vectors of upper and lower bounds (\code{ub} and \code{lb}) (-Inf and Inf can be used),
 \item \code{init_values}, A data.frame containing initial
-values to test for the parameters (optional, if not provided (or if less values
-than number of repetitions of the minimization are provided), the (or part
-of the) initial values will be randomly generated using LHS sampling within
-parameter bounds.
+values to test for the parameters (optional, if not provided, or if less values
+than number of repetitions of the minimization are provided), the, or part
+of the, initial values will be randomly generated using LHS sampling within
+parameter bounds).
 or
 a named list containing for each parameter the list of situations per group
 (\code{sit_list}), the vector of upper and lower bounds (one value per group)
 (\code{ub} and \code{lb}) and the list of initial values per group
-\code{init_values} (data.frame, one column per group).
+\code{init_values} (data.frame, one column per group, optional).
 }}
 }
 \value{

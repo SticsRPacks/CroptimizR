@@ -2,27 +2,26 @@
 % Please edit documentation in R/get_params_names.R
 \name{get_params_names}
 \alias{get_params_names}
-\title{Extract param names from prior information}
+\title{Extract param names from parameter information}
 \usage{
-get_params_names(prior_information, short_list = FALSE)
+get_params_names(param_info, short_list = FALSE)
 }
 \arguments{
-\item{prior_information}{Prior information on the parameters to estimate.
-For the moment only uniform distribution are allowed.
+\item{param_info}{Information on the parameters to estimate.
 Either
 a list containing:
 \itemize{
-\item (named) vectors of upper and lower bounds (\code{ub} and \code{lb}),
+\item (named) vectors of upper and lower bounds (\code{ub} and \code{lb}) (-Inf and Inf can be used),
 \item \code{init_values}, A data.frame containing initial
-values to test for the parameters (optional, if not provided (or if less values
-than number of repetitions of the minimization are provided), the (or part
-of the) initial values will be randomly generated using LHS sampling within
-parameter bounds.
+values to test for the parameters (optional, if not provided, or if less values
+than number of repetitions of the minimization are provided), the, or part
+of the, initial values will be randomly generated using LHS sampling within
+parameter bounds).
 or
 a named list containing for each parameter the list of situations per group
 (\code{sit_list}), the vector of upper and lower bounds (one value per group)
 (\code{ub} and \code{lb}) and the list of initial values per group
-\code{init_values} (data.frame, one column per group).
+\code{init_values} (data.frame, one column per group, optional).
 }}
 
 \item{short_list}{TRUE to return a list without replicated parameters which
@@ -33,35 +32,35 @@ happens for simultaneous estimation of specific and varietal parameters
 A vector of parameter names
 }
 \description{
-Extract param names from prior information
+Extract param names from parameter information
 }
 \examples{
 
 # A simple case
-prior_information <- list(
+param_info <- list(
   lb = c(dlaimax = 0.0005, durvieF = 50),
   ub = c(dlaimax = 0.0025, durvieF = 400)
 )
-CroptimizR:::get_params_names(prior_information)
+CroptimizR:::get_params_names(param_info)
 
 # A case with groups of situations per parameter
-prior_information <- list()
-prior_information$dlaimax <- list(
+param_info <- list()
+param_info$dlaimax <- list(
   sit_list = list(c(
     "bou99t3", "bou00t3", "bou99t1", "bou00t1",
     "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"
   )),
   lb = 0.0005, ub = 0.0025
 )
-prior_information$durvieF <- list(
+param_info$durvieF <- list(
   sit_list = list(
     c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
     c("bou99t3", "bou00t3", "bou99t1", "bou00t1")
   ),
   lb = c(50, 50), ub = c(400, 400)
 )
-CroptimizR:::get_params_names(prior_information)
-CroptimizR:::get_params_names(prior_information, short_list=TRUE)
+CroptimizR:::get_params_names(param_info)
+CroptimizR:::get_params_names(param_info, short_list=TRUE)
 
 
 }

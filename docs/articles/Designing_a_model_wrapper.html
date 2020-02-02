@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Elements for implementing a crop model R wrapper • CroptimizR</title>
+<title>Guidelines for implementing a crop model R wrapper for CroptimizR • CroptimizR</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -13,10 +13,9 @@
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Elements for implementing a crop model R wrapper">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Guidelines for implementing a crop model R wrapper for CroptimizR">
 <meta property="og:description" content="">
 <meta property="og:image" content="/logo.png">
 <meta name="twitter:card" content="summary">
@@ -46,7 +45,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fa fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -64,13 +63,7 @@
       <a href="../articles/ApsimX_parameter_estimation_simple_case.html">Parameter estimation with the ApsimX crop Model: a simple case</a>
     </li>
     <li>
-      <a href="../articles/Designing_a_model_wrapper.html">Elements for implementing a crop model R wrapper</a>
-    </li>
-    <li>
-      <a href="../articles/Parameter_estimation_simple_case.html">Parameter estimation with the Stics crop Model: a simple case</a>
-    </li>
-    <li>
-      <a href="../articles/Parameter_estimation_Specific_and_Varietal.html">Parameter estimation with the Stics crop Model: a case with specific and varietal parameters</a>
+      <a href="../articles/Designing_a_model_wrapper.html">Guidelines for implementing a crop model R wrapper for CroptimizR</a>
     </li>
   </ul>
 </li>
@@ -78,7 +71,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/SticsRPacks/CroptimizR">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fa fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -91,16 +84,15 @@
 <!--/.navbar -->
 
       
-
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1>Elements for implementing a crop model R wrapper</h1>
-                        <h4 class="author">Patrice Lecharpentier</h4>
+      <h1>Guidelines for implementing a crop model R wrapper for CroptimizR</h1>
+                        <h4 class="author">Samuel Buis</h4>
             <address class="author_afil">
-      INRA - Agroclim<br><h4 class="author">Samuel Buis</h4>
+      INRAE - EMMAH<br><h4 class="author">Patrice Lecharpentier</h4>
             <address class="author_afil">
-      INRA - EMMAH<br><h4 class="date">2020-01-14</h4>
+      INRAE - Agroclim<br><h4 class="date">2020-01-29</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/master/vignettes/Designing_a_model_wrapper.Rmd"><code>vignettes/Designing_a_model_wrapper.Rmd</code></a></small>
       <div class="hidden name"><code>Designing_a_model_wrapper.Rmd</code></div>
@@ -114,340 +106,295 @@
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
-<p>Talk about the contexts of use of this wrapper and // computations.</p>
+<p>R wrappers are necessary to couple crop models with CroptimizR. An R wrapper is basically an R function able to run model simulations for prescribed values of some of its input parameters and to return the values of its simulated outputs. It must have specific arguments, returned values and behavior, as detailed in the following.</p>
 </div>
-<div id="definition" class="section level2">
+<div id="how-to-write-a-basic-version-of-a-model-wrapper-for-croptimizr" class="section level2">
 <h2 class="hasAnchor">
-<a href="#definition" class="anchor"></a>Definition</h2>
-<p>The R model wrapper aims to use the original model code/executable file (or using other mechanisms depending on the model)… with specific conditions (input files or data) defined for simulations situations (i.e. local conditions as model parameters and wheather data, initializations of state variables at the simulation starting point/date).</p>
-<p>One can provide as supplemental inputs, parameters values for overloading default values (got from files, …) and output definition list for different situations (desired variables values for dates list).</p>
-<p>The wrapper is composed of several functionnalities:</p>
+<a href="#how-to-write-a-basic-version-of-a-model-wrapper-for-croptimizr" class="anchor"></a>How to write a basic version of a model wrapper for CroptimizR</h2>
+<p>We will detail here what is mandatory in terms of interface of the wrapper and expected behavior. Optional issues for more advanced users are detailed in the next section</p>
+<div id="model-wrapper-interface" class="section level3">
+<h3 class="hasAnchor">
+<a href="#model-wrapper-interface" class="anchor"></a>Model wrapper interface</h3>
+<p>Here’s a header for a basic version of a model wrapper:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co">#' @title MyModel wrapper for CroptimizR</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="co">#'</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="co">#' @description This function run my crop model and may force it with the values </span></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="co">#' of the parameters defined in the param_values argument. It returns the values </span></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="co">#' of the (possibly selected) simulated outputs.</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="co">#'</span></span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="co">#' @param model_options List containing any information needed to run the model. </span></span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="co">#'</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="co">#' @param param_values Either a named vector or a named 3D array.</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="co">#' Use a named vector that contains the values and names of the parameters to force whatever</span></span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="co">#' the simulated situations.</span></span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="co">#' If one wants to force the model with different values of parameters for the</span></span>
+<span id="cb1-13"><a href="#cb1-13"></a><span class="co">#' simulated situations or to simulate the situations several times but with different</span></span>
+<span id="cb1-14"><a href="#cb1-14"></a><span class="co">#' values of the parameters, use a 3D array containing the value(s) and names of the</span></span>
+<span id="cb1-15"><a href="#cb1-15"></a><span class="co">#' parameters to force for each situation to simulate. This array contains the different</span></span>
+<span id="cb1-16"><a href="#cb1-16"></a><span class="co">#' parameters values (first dimension) for the different parameters (second dimension)</span></span>
+<span id="cb1-17"><a href="#cb1-17"></a><span class="co">#' and for the different situations (third dimension).</span></span>
+<span id="cb1-18"><a href="#cb1-18"></a><span class="co">#'</span></span>
+<span id="cb1-19"><a href="#cb1-19"></a><span class="co">#' @param sit_var_dates_mask (optional)</span></span>
+<span id="cb1-20"><a href="#cb1-20"></a><span class="co">#' Has no effect in this version of the wrapper</span></span>
+<span id="cb1-21"><a href="#cb1-21"></a><span class="co">#'</span></span>
+<span id="cb1-22"><a href="#cb1-22"></a><span class="co">#' @return A list containing simulated values (`sim_list`: a vector of list (one</span></span>
+<span id="cb1-23"><a href="#cb1-23"></a><span class="co">#' element per values of parameters) containing data.frames of simulated output values) and an</span></span>
+<span id="cb1-24"><a href="#cb1-24"></a><span class="co">#' error code (`error`) indicating if at least one simulation ended with an error.</span></span>
+<span id="cb1-25"><a href="#cb1-25"></a></span>
+<span id="cb1-26"><a href="#cb1-26"></a>model_wrapper &lt;-<span class="st"> </span><span class="cf">function</span>( model_options, <span class="dt">param_values=</span><span class="ot">NULL</span>, </span>
+<span id="cb1-27"><a href="#cb1-27"></a>                           <span class="dt">site_var_dates_mask=</span><span class="ot">NULL</span>) {</span>
+<span id="cb1-28"><a href="#cb1-28"></a>  ...</span>
+<span id="cb1-29"><a href="#cb1-29"></a>  </span>
+<span id="cb1-30"><a href="#cb1-30"></a>}</span></code></pre></div>
+<p>Each argument detailed here is mandatory for any CroptimizR model wrapper. You can use this header to develop yours. Note that site_var_dates_mask will have no effect in this basic version of the wrapper.</p>
+<p>The shape of the param_values argument is imposed by CroptimizR. This is not the case of the model_options argument (except the fact that is must be a list): its content must be defined by the developper of the model wrapper. Put in this list what you need to run the model (e.g. path to the executable, path the directory containing model input files for the simulated situations, …).</p>
+</div>
+<div id="minimum-required-functionalities" class="section level3">
+<h3 class="hasAnchor">
+<a href="#minimum-required-functionalities" class="anchor"></a>Minimum required functionalities</h3>
 <ul>
-<li><p>Using specific model options</p></li>
-<li><p>Forcing external parameters values</p></li>
-<li><p>Working on multiple situations</p></li>
-<li><p>Performing parallel calculations (optionally)</p></li>
-<li><p>Selecting outputs or not (specific for each situation)</p></li>
-<li><p>Running the model</p></li>
-<li><p>Gathering all outputs</p></li>
+<li><p>Run the model on a specified set of situations A situation corresponds to a simulation (for example a specific treatment on a given soil for a given period). The names of the situations are the names of dimension 3 of param_values. They will be given by the end user when calling CroptimizR functions. To retrieve them, use <code>dimnames(param_values)[[3]]</code>.</p></li>
+<li><p>Force the model with specified values of its parameters The values of the parameters are specified in the param_values array. The names of the parameters are the names of dimension 2 of param_values. To retrieve them use <code>dimnames(param_values)[[2]]</code>. Different values can be defined for different situations and multiple values can be defined for a given situation. param_values can for example contain:</p></li>
+</ul>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>param_values &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>( <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="fl">0.001</span>, <span class="fl">0.002</span>, <span class="dv">50</span>, <span class="dv">50</span>,</span>
+<span id="cb2-2"><a href="#cb2-2"></a>                         <span class="fl">0.001</span>, <span class="fl">0.002</span>, <span class="dv">60</span>, <span class="dv">60</span>,</span>
+<span id="cb2-3"><a href="#cb2-3"></a>                         <span class="fl">0.001</span>, <span class="fl">0.002</span>, <span class="dv">70</span>, <span class="dv">70</span>),</span>
+<span id="cb2-4"><a href="#cb2-4"></a>                       <span class="dt">dim=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">2</span>,<span class="dv">2</span>,<span class="dv">3</span>),</span>
+<span id="cb2-5"><a href="#cb2-5"></a>                       <span class="dt">dimnames=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="ot">NULL</span>,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"param1"</span>, <span class="st">"param2"</span>),<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"situation1"</span>, <span class="st">"situation2"</span>, <span class="st">"situation3"</span>)))</span>
+<span id="cb2-6"><a href="#cb2-6"></a></span>
+<span id="cb2-7"><a href="#cb2-7"></a>param_values</span></code></pre></div>
+<pre><code>## , , situation1
+## 
+##      param1 param2
+## [1,]  0.001     50
+## [2,]  0.002     50
+## 
+## , , situation2
+## 
+##      param1 param2
+## [1,]  0.001     60
+## [2,]  0.002     60
+## 
+## , , situation3
+## 
+##      param1 param2
+## [1,]  0.001     70
+## [2,]  0.002     70</code></pre>
+<p>In this case for example, values c(0.001, 50) and c(0.002, 50) of parameters param1 and param2 must be given in input of the model for situation1, c(0.001, 60) and c(0.002, 60) for situation2 and c(0.001, 70) and c(0.002, 70) for situation3.</p>
+<ul>
+<li>Retrieve the simulated results for all simulated variables The results must be stored in <code>result$sim_list</code> variable. <code>sim_list</code> is a vector of list, of size the size of the first dimension of param_values. You can initialize it like this: <code>result$sim_list &lt;- vector("list",dim(param_values)[1])</code>. Each element of the list should contains a list of data.frame, one per situation, with the results obtained for all simulated variables and dates. The data.frame must have one column called Date containing the simulations dates in POSIXct format (see R function <code><a href="https://www.rdocumentation.org/packages/base/topics/as.POSIXlt">base::as.POSIXct</a></code>). The other columns contains the values of the simulated variables and their names must be put as column names.</li>
+</ul>
+<p>For example, given the param_values array defined above, sim_list should look like:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="op">$</span>sim_list</span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="op">$</span>sim_list[[<span class="dv">1</span>]]</span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="op">$</span>sim_list[[<span class="dv">1</span>]]<span class="op">$</span>situation1</span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="co"># A tibble: *** x ***</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a>   Date                  var1    var2    var3  ...</span>
+<span id="cb4-6"><a href="#cb4-6"></a><span class="co">#&gt;   &lt;dttm&gt;              &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; </span></span>
+<span id="cb4-7"><a href="#cb4-7"></a><span class="co">#&gt; 1 1994-10-17 00:00:00  0      2.53    4.80</span></span>
+<span id="cb4-8"><a href="#cb4-8"></a><span class="co">#&gt; 2 1994-10-18 00:00:00  0      2.31    4.66</span></span>
+<span id="cb4-9"><a href="#cb4-9"></a><span class="co">#&gt; 3 1994-10-19 00:00:00  0      4.55    4.44</span></span>
+<span id="cb4-10"><a href="#cb4-10"></a><span class="co">#</span></span>
+<span id="cb4-11"><a href="#cb4-11"></a></span>
+<span id="cb4-12"><a href="#cb4-12"></a><span class="op">$</span>sim_list[[<span class="dv">1</span>]]<span class="op">$</span>situation2</span>
+<span id="cb4-13"><a href="#cb4-13"></a><span class="co"># A tibble: *** x ***</span></span>
+<span id="cb4-14"><a href="#cb4-14"></a>   Date                  var1    var2    var3  ...</span>
+<span id="cb4-15"><a href="#cb4-15"></a><span class="co">#&gt;   &lt;dttm&gt;              &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; </span></span>
+<span id="cb4-16"><a href="#cb4-16"></a><span class="co">#&gt; 1 1995-10-17 00:00:00  0      2.60    4.80</span></span>
+<span id="cb4-17"><a href="#cb4-17"></a><span class="co">#&gt; 2 1995-10-18 00:00:00  0      3.42    4.70</span></span>
+<span id="cb4-18"><a href="#cb4-18"></a><span class="co">#&gt; 3 1995-10-19 00:00:00  0      5.25    4.45</span></span>
+<span id="cb4-19"><a href="#cb4-19"></a><span class="co">#</span></span>
+<span id="cb4-20"><a href="#cb4-20"></a></span>
+<span id="cb4-21"><a href="#cb4-21"></a><span class="op">$</span>sim_list[[<span class="dv">1</span>]]<span class="op">$</span>situation3</span>
+<span id="cb4-22"><a href="#cb4-22"></a><span class="co"># A tibble: *** x ***</span></span>
+<span id="cb4-23"><a href="#cb4-23"></a>   Date                  var1    var2    var3  ...</span>
+<span id="cb4-24"><a href="#cb4-24"></a><span class="co">#&gt;   &lt;dttm&gt;              &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; </span></span>
+<span id="cb4-25"><a href="#cb4-25"></a><span class="co">#&gt; 1 1996-10-17 00:00:00  0      2.41    4.81</span></span>
+<span id="cb4-26"><a href="#cb4-26"></a><span class="co">#&gt; 2 1996-10-18 00:00:00  0      3.03    4.71</span></span>
+<span id="cb4-27"><a href="#cb4-27"></a><span class="co">#&gt; 3 1996-10-19 00:00:00  0      5.10    4.47</span></span>
+<span id="cb4-28"><a href="#cb4-28"></a><span class="co">#</span></span>
+<span id="cb4-29"><a href="#cb4-29"></a></span>
+<span id="cb4-30"><a href="#cb4-30"></a></span>
+<span id="cb4-31"><a href="#cb4-31"></a><span class="op">$</span>sim_list[[<span class="dv">2</span>]]</span>
+<span id="cb4-32"><a href="#cb4-32"></a><span class="op">$</span>sim_list[[<span class="dv">2</span>]]<span class="op">$</span>situation1</span>
+<span id="cb4-33"><a href="#cb4-33"></a><span class="co"># A tibble: *** x ***</span></span>
+<span id="cb4-34"><a href="#cb4-34"></a>   Date                  var1    var2    var3  ...</span>
+<span id="cb4-35"><a href="#cb4-35"></a><span class="co">#&gt;   &lt;dttm&gt;              &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; </span></span>
+<span id="cb4-36"><a href="#cb4-36"></a><span class="co">#&gt; 1 1994-10-17 00:00:00  0.1    2.55    4.80</span></span>
+<span id="cb4-37"><a href="#cb4-37"></a><span class="co">#&gt; 2 1994-10-18 00:00:00  0.1    2.32    4.66</span></span>
+<span id="cb4-38"><a href="#cb4-38"></a><span class="co">#&gt; 3 1994-10-19 00:00:00  0.1    4.57    4.44</span></span>
+<span id="cb4-39"><a href="#cb4-39"></a><span class="co">#</span></span>
+<span id="cb4-40"><a href="#cb4-40"></a></span>
+<span id="cb4-41"><a href="#cb4-41"></a><span class="op">$</span>sim_list[[<span class="dv">2</span>]]<span class="op">$</span>situation2</span>
+<span id="cb4-42"><a href="#cb4-42"></a><span class="co"># A tibble: *** x ***</span></span>
+<span id="cb4-43"><a href="#cb4-43"></a>   Date                  var1    var2    var3  ...</span>
+<span id="cb4-44"><a href="#cb4-44"></a><span class="co">#&gt;   &lt;dttm&gt;              &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; </span></span>
+<span id="cb4-45"><a href="#cb4-45"></a><span class="co">#&gt; 1 1995-10-17 00:00:00  0.1    2.62    4.80</span></span>
+<span id="cb4-46"><a href="#cb4-46"></a><span class="co">#&gt; 2 1995-10-18 00:00:00  0.1    3.40    4.70</span></span>
+<span id="cb4-47"><a href="#cb4-47"></a><span class="co">#&gt; 3 1995-10-19 00:00:00  0.1    5.26    4.45</span></span>
+<span id="cb4-48"><a href="#cb4-48"></a><span class="co">#</span></span>
+<span id="cb4-49"><a href="#cb4-49"></a></span>
+<span id="cb4-50"><a href="#cb4-50"></a><span class="op">$</span>sim_list[[<span class="dv">2</span>]]<span class="op">$</span>situation3</span>
+<span id="cb4-51"><a href="#cb4-51"></a><span class="co"># A tibble: *** x ***</span></span>
+<span id="cb4-52"><a href="#cb4-52"></a>   Date                  var1    var2    var3  ...</span>
+<span id="cb4-53"><a href="#cb4-53"></a><span class="co">#&gt;   &lt;dttm&gt;              &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; </span></span>
+<span id="cb4-54"><a href="#cb4-54"></a><span class="co">#&gt; 1 1996-10-17 00:00:00  0.1    2.42    4.81</span></span>
+<span id="cb4-55"><a href="#cb4-55"></a><span class="co">#&gt; 2 1996-10-18 00:00:00  0.1    3.04    4.71</span></span>
+<span id="cb4-56"><a href="#cb4-56"></a><span class="co">#&gt; 3 1996-10-19 00:00:00  0.1    5.11    4.47</span></span>
+<span id="cb4-57"><a href="#cb4-57"></a><span class="co">#</span></span></code></pre></div>
+<ul>
+<li>Return an error code if any simulation failed If any simulation failed for any reason, the variable <code>result$error</code> must contain <code>TRUE</code> and <code>FALSE</code> otherwise.</li>
 </ul>
 </div>
-<div id="writing-the-model-wrapper" class="section level2">
+<div id="implementation" class="section level3">
+<h3 class="hasAnchor">
+<a href="#implementation" class="anchor"></a>Implementation</h3>
+<p>A typical pseudo-code implementation of the wrapper function is thus:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>model_wrapper &lt;-<span class="st"> </span><span class="cf">function</span>( model_options, <span class="dt">param_values=</span><span class="ot">NULL</span>, </span>
+<span id="cb5-2"><a href="#cb5-2"></a>                           <span class="dt">site_var_dates_mask=</span><span class="ot">NULL</span>) {</span>
+<span id="cb5-3"><a href="#cb5-3"></a>  </span>
+<span id="cb5-4"><a href="#cb5-4"></a>  <span class="co"># Initializations</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a>  nb_paramValues &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dim">dim</a></span>(param_values)[<span class="dv">1</span>]</span>
+<span id="cb5-6"><a href="#cb5-6"></a>  param_names &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dimnames">dimnames</a></span>(param_values)[[<span class="dv">2</span>]]</span>
+<span id="cb5-7"><a href="#cb5-7"></a>  situation_names &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dimnames">dimnames</a></span>(param_values)[[<span class="dv">3</span>]]</span>
+<span id="cb5-8"><a href="#cb5-8"></a>  result<span class="op">$</span>sim_list &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/vector">vector</a></span>(<span class="st">"list"</span>,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dim">dim</a></span>(param_values)[<span class="dv">1</span>])</span>
+<span id="cb5-9"><a href="#cb5-9"></a>  results<span class="op">$</span>error=<span class="ot">FALSE</span></span>
+<span id="cb5-10"><a href="#cb5-10"></a>  </span>
+<span id="cb5-11"><a href="#cb5-11"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>nb_paramValues) {</span>
+<span id="cb5-12"><a href="#cb5-12"></a>    </span>
+<span id="cb5-13"><a href="#cb5-13"></a>    <span class="cf">for</span> (situation <span class="cf">in</span> situation_names) {</span>
+<span id="cb5-14"><a href="#cb5-14"></a>      </span>
+<span id="cb5-15"><a href="#cb5-15"></a>      <span class="co"># overwrite model input parameters of names contained in param_names with values retrieved in param_values[i,,situation]</span></span>
+<span id="cb5-16"><a href="#cb5-16"></a>      </span>
+<span id="cb5-17"><a href="#cb5-17"></a>      <span class="co"># run the model</span></span>
+<span id="cb5-18"><a href="#cb5-18"></a>      </span>
+<span id="cb5-19"><a href="#cb5-19"></a>      <span class="co"># read the results and store the data.frame in result$sim_list[[i]][[situation]]</span></span>
+<span id="cb5-20"><a href="#cb5-20"></a>      </span>
+<span id="cb5-21"><a href="#cb5-21"></a>      <span class="cf">if</span> (any error returned by the model or detected <span class="cf">in</span> its results) {</span>
+<span id="cb5-22"><a href="#cb5-22"></a>        results<span class="op">$</span>error=<span class="ot">TRUE</span></span>
+<span id="cb5-23"><a href="#cb5-23"></a>      }</span>
+<span id="cb5-24"><a href="#cb5-24"></a>      </span>
+<span id="cb5-25"><a href="#cb5-25"></a>    }</span>
+<span id="cb5-26"><a href="#cb5-26"></a>    </span>
+<span id="cb5-27"><a href="#cb5-27"></a>  }</span>
+<span id="cb5-28"><a href="#cb5-28"></a>  </span>
+<span id="cb5-29"><a href="#cb5-29"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(results)</span>
+<span id="cb5-30"><a href="#cb5-30"></a>  </span>
+<span id="cb5-31"><a href="#cb5-31"></a>}</span></code></pre></div>
+</div>
+</div>
+<div id="optional-issues" class="section level2">
 <h2 class="hasAnchor">
-<a href="#writing-the-model-wrapper" class="anchor"></a>Writing the model wrapper</h2>
-<div id="function-input-arguments" class="section level3">
-<h3 class="hasAnchor">
-<a href="#function-input-arguments" class="anchor"></a>Function input arguments</h3>
-<p>The names used are just examples to illustrate things.</p>
-<div id="parameters-values" class="section level4">
-<h4 class="hasAnchor">
-<a href="#parameters-values" class="anchor"></a>Parameters values</h4>
+<a href="#optional-issues" class="anchor"></a>Optional issues</h2>
 <ul>
-<li>name: <strong>param_values</strong>
-</li>
-<li><em>optional argument</em></li>
-<li>a <code>named vector</code> of parameters to be forced in the model inputs</li>
+<li>Check wrapper arguments:</li>
 </ul>
-</div>
-<div id="variables-and-dates-situation-list" class="section level4">
-<h4 class="hasAnchor">
-<a href="#variables-and-dates-situation-list" class="anchor"></a>Variables and dates situation list</h4>
+<p>If possible implement any check you can concerning what is given to the wrapper. Print a message using the <code>warning</code> function and return TRUE in <code>results$error</code> if a problem is detected. It may be an unknown model input parameter (<code>dimnames(param_values)[[2]]</code>), situation name (<code>dimnames(param_values)[[3]]</code>), variable name (in <code>site_var_dates_mask</code>) or an incorrect model option (field of <code>model_option</code>) such as an incorrect model path for example.</p>
 <ul>
-<li>name: <strong>site_var_dates_mask</strong>
-</li>
-<li><em>optional argument</em></li>
-<li>a <code>named list</code> (names == situations names) of tables (i.e. data.frames) containing measured values for the variables or a number for the desired combination var/dates and NA in other cases.</li>
+<li>Perform parallel calculations:</li>
 </ul>
-</div>
-<div id="prior-information-for-managing-forcing-parameters" class="section level4">
-<h4 class="hasAnchor">
-<a href="#prior-information-for-managing-forcing-parameters" class="anchor"></a>Prior information for managing forcing parameters</h4>
+<p>If possible with your model (pay attention to concurrency access to model input and output files), managing parallel simulations of the different situations (dimension 3 of param_values) or for the different parameters values (dimension 1 of param_values) may drastically reduce the execution time.</p>
+<p>The doParallel package can be used for that. There are specificities when coding a parallel loop: in particular, a list pre allocated outside of the loop is not shared between cores so return statements must be used inside. Here is an example for illustrating this issue:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># Code of an example of foreach loop algo</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"doParallel"</span>)</span></code></pre></div>
+<pre><code>## Le chargement a nécessité le package : foreach</code></pre>
+<pre><code>## Le chargement a nécessité le package : iterators</code></pre>
+<pre><code>## Le chargement a nécessité le package : parallel</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>test_parallel &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">cores_nb =</span> <span class="dv">1</span>,</span>
+<span id="cb10-2"><a href="#cb10-2"></a>                          <span class="dt">pa =</span> <span class="ot">FALSE</span>,</span>
+<span id="cb10-3"><a href="#cb10-3"></a>                          <span class="dt">max_it =</span> <span class="dv">5</span>) {</span>
+<span id="cb10-4"><a href="#cb10-4"></a><span class="co"># pa: flag to switch from case with pre-allocated list to case with returned statement</span></span>
+<span id="cb10-5"><a href="#cb10-5"></a>  </span>
+<span id="cb10-6"><a href="#cb10-6"></a>  </span>
+<span id="cb10-7"><a href="#cb10-7"></a>  <span class="co"># Launching the cluster</span></span>
+<span id="cb10-8"><a href="#cb10-8"></a>  cl &lt;-<span class="st"> </span><span class="kw">makeCluster</span>(cores_nb)</span>
+<span id="cb10-9"><a href="#cb10-9"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/doParallel/topics/registerDoParallel">registerDoParallel</a></span>(cl)</span>
+<span id="cb10-10"><a href="#cb10-10"></a>  </span>
+<span id="cb10-11"><a href="#cb10-11"></a>  <span class="co"># List preallocation</span></span>
+<span id="cb10-12"><a href="#cb10-12"></a>  out_pa &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/vector">vector</a></span>(<span class="dt">mode =</span> <span class="st">"list"</span>, max_it)</span>
+<span id="cb10-13"><a href="#cb10-13"></a>  </span>
+<span id="cb10-14"><a href="#cb10-14"></a>  <span class="co"># Parallel loop</span></span>
+<span id="cb10-15"><a href="#cb10-15"></a>  out &lt;-<span class="st"> </span><span class="kw">foreach</span>(<span class="dt">i =</span> <span class="dv">1</span><span class="op">:</span>max_it) <span class="op">%dopar%</span><span class="st"> </span>{</span>
+<span id="cb10-16"><a href="#cb10-16"></a>    <span class="cf">if</span> (pa) {  </span>
+<span id="cb10-17"><a href="#cb10-17"></a>      out_pa[[i]] &lt;-<span class="st"> </span>i  <span class="co"># store results in a pre-allocted list</span></span>
+<span id="cb10-18"><a href="#cb10-18"></a>    } <span class="cf">else</span> {</span>
+<span id="cb10-19"><a href="#cb10-19"></a>      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(i)         <span class="co"># return the results</span></span>
+<span id="cb10-20"><a href="#cb10-20"></a>    }</span>
+<span id="cb10-21"><a href="#cb10-21"></a>  }</span>
+<span id="cb10-22"><a href="#cb10-22"></a>  </span>
+<span id="cb10-23"><a href="#cb10-23"></a>  <span class="co"># Stopping the cluster</span></span>
+<span id="cb10-24"><a href="#cb10-24"></a>  <span class="kw">stopCluster</span>(cl)</span>
+<span id="cb10-25"><a href="#cb10-25"></a>  </span>
+<span id="cb10-26"><a href="#cb10-26"></a>  <span class="cf">if</span> (pa) {</span>
+<span id="cb10-27"><a href="#cb10-27"></a>    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(out_pa)</span>
+<span id="cb10-28"><a href="#cb10-28"></a>  } <span class="cf">else</span> {</span>
+<span id="cb10-29"><a href="#cb10-29"></a>    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(out)</span>
+<span id="cb10-30"><a href="#cb10-30"></a>  }</span>
+<span id="cb10-31"><a href="#cb10-31"></a>  </span>
+<span id="cb10-32"><a href="#cb10-32"></a>  </span>
+<span id="cb10-33"><a href="#cb10-33"></a>}</span>
+<span id="cb10-34"><a href="#cb10-34"></a></span>
+<span id="cb10-35"><a href="#cb10-35"></a>cores_nb=<span class="dv">2</span></span>
+<span id="cb10-36"><a href="#cb10-36"></a></span>
+<span id="cb10-37"><a href="#cb10-37"></a><span class="co"># Case with returned statement</span></span>
+<span id="cb10-38"><a href="#cb10-38"></a>out &lt;-<span class="st"> </span><span class="kw">test_parallel</span>(cores_nb)</span>
+<span id="cb10-39"><a href="#cb10-39"></a></span>
+<span id="cb10-40"><a href="#cb10-40"></a><span class="co"># Case with pre-allocated list</span></span>
+<span id="cb10-41"><a href="#cb10-41"></a>out_pa &lt;-<span class="st"> </span><span class="kw">test_parallel</span>(cores_nb, <span class="ot">TRUE</span>)</span>
+<span id="cb10-42"><a href="#cb10-42"></a></span>
+<span id="cb10-43"><a href="#cb10-43"></a>out</span></code></pre></div>
+<pre><code>## [[1]]
+## [1] 1
+## 
+## [[2]]
+## [1] 2
+## 
+## [[3]]
+## [1] 3
+## 
+## [[4]]
+## [1] 4
+## 
+## [[5]]
+## [1] 5</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>out_pa</span></code></pre></div>
+<pre><code>## [[1]]
+## NULL
+## 
+## [[2]]
+## NULL
+## 
+## [[3]]
+## NULL
+## 
+## [[4]]
+## NULL
+## 
+## [[5]]
+## NULL</code></pre>
 <ul>
-<li>name: <strong>prior_information</strong>
-</li>
-<li><em>optional argument</em></li>
-<li>a <code>named list</code> with parameters names fields containing informations used for defining what specific parameters/values to use for a given situation and/or associated parameters bounds (per parameter or parameters repetition associated to situations groups)</li>
+<li>Outputs selection</li>
 </ul>
+<p>The argument <code>sit_var_dates_mask</code> may be used to return a selection of variables and dates per simulated situations. This may save execution time for some models (for example if model results are read in a databasis with specific request per variable).</p>
+<p><code>sit_var_dates_mask</code> is a list of data.frame similar to <code>result$sim_list[[i]]</code>. It indicates the list of variables and dates for each situation for which results must be returned: if <code>sit_var_dates_mask$situation1[j,"var1"]</code> does not contain NA, then the simulated value of variable “var1” at date <code>sit_var_dates_mask$situation1[j,"Date"]</code> must be returned in <code>results$sim_list[[i]][["situation1"]]</code>.</p>
 </div>
-<div id="model-options-list" class="section level4">
-<h4 class="hasAnchor">
-<a href="#model-options-list" class="anchor"></a>Model options list</h4>
-<ul>
-<li>name: <strong>model_options</strong>
-</li>
-<li><em>mandatory argument</em></li>
-<li>a <code>named list</code> of needed informations about the model (see next section for details)</li>
-</ul>
-</div>
-<div id="function-header-example" class="section level4">
-<h4 class="hasAnchor">
-<a href="#function-header-example" class="anchor"></a>Function header example</h4>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="co">#' @title Running situation(s) from txt input files stored in one directory</span></a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="co">#' per `situation`, simulated results are returned in a list</span></a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="co">#'</span></a>
-<a class="sourceLine" id="cb1-4" title="4"><span class="co">#' @description This function uses the model directly through a system call, can</span></a>
-<a class="sourceLine" id="cb1-5" title="5"><span class="co">#' force model input parameters with values given in arguments.</span></a>
-<a class="sourceLine" id="cb1-6" title="6"><span class="co">#'</span></a>
-<a class="sourceLine" id="cb1-7" title="7"><span class="co">#' @param param_values named vector containing the value(s) and names of the</span></a>
-<a class="sourceLine" id="cb1-8" title="8"><span class="co">#' parameters to force (optional)</span></a>
-<a class="sourceLine" id="cb1-9" title="9"><span class="co">#'</span></a>
-<a class="sourceLine" id="cb1-10" title="10"><span class="co">#' @param site_var_dates_mask List of situations, variables and dates for which</span></a>
-<a class="sourceLine" id="cb1-11" title="11"><span class="co">#' simulated values should be returned. Typically a list containing the</span></a>
-<a class="sourceLine" id="cb1-12" title="12"><span class="co">#' observations to which simulations should be compared</span></a>
-<a class="sourceLine" id="cb1-13" title="13"><span class="co">#' (i.e. a list of variables/dates per situation)</span></a>
-<a class="sourceLine" id="cb1-14" title="14"><span class="co">#'</span></a>
-<a class="sourceLine" id="cb1-15" title="15"><span class="co">#' @param prior_information Prior information on the parameters to estimate.</span></a>
-<a class="sourceLine" id="cb1-16" title="16"><span class="co">#' For the moment only uniform distribution are allowed.</span></a>
-<a class="sourceLine" id="cb1-17" title="17"><span class="co">#' Either a list containing (named) vectors of upper and lower</span></a>
-<a class="sourceLine" id="cb1-18" title="18"><span class="co">#' bounds (\code{ub} and \code{lb}), or a named list containing for each</span></a>
-<a class="sourceLine" id="cb1-19" title="19"><span class="co">#' parameter the list of situations per group (\code{sit_list})</span></a>
-<a class="sourceLine" id="cb1-20" title="20"><span class="co">#' and the vector of upper and lower bounds (one value per group) (\code{ub} and \code{lb})</span></a>
-<a class="sourceLine" id="cb1-21" title="21"><span class="co">#'</span></a>
-<a class="sourceLine" id="cb1-22" title="22"><span class="co">#' @param model_options List containing any information needed by the model.</span></a>
-<a class="sourceLine" id="cb1-23" title="23"><span class="co">#' For example: the path of the model executable file,</span></a>
-<a class="sourceLine" id="cb1-24" title="24"><span class="co">#' the path of the directory containing input data</span></a>
-<a class="sourceLine" id="cb1-25" title="25"><span class="co">#'</span></a>
-<a class="sourceLine" id="cb1-26" title="26"><span class="co">#' @return A list containing simulated values (\code{sim_list}) and a flag</span></a>
-<a class="sourceLine" id="cb1-27" title="27"><span class="co">#' (\code{flag_allsim}) indicating if all required situations, variables and</span></a>
-<a class="sourceLine" id="cb1-28" title="28"><span class="co">#' dates were simulated.</span></a>
-<a class="sourceLine" id="cb1-29" title="29"></a>
-<a class="sourceLine" id="cb1-30" title="30">model_wrapper &lt;-<span class="st"> </span><span class="cf">function</span>( <span class="dt">param_values=</span><span class="ot">NULL</span>, <span class="dt">site_var_dates_mask=</span><span class="ot">NULL</span>,</a>
-<a class="sourceLine" id="cb1-31" title="31">                           <span class="dt">prior_information=</span><span class="ot">NULL</span>, model_options ) {</a>
-<a class="sourceLine" id="cb1-32" title="32">  ...</a>
-<a class="sourceLine" id="cb1-33" title="33">  </a>
-<a class="sourceLine" id="cb1-34" title="34">}</a></code></pre></div>
-</div>
-</div>
-<div id="defining-a-model-options-list" class="section level3">
-<h3 class="hasAnchor">
-<a href="#defining-a-model-options-list" class="anchor"></a>Defining a model options list</h3>
-<div id="aim" class="section level4">
-<h4 class="hasAnchor">
-<a href="#aim" class="anchor"></a>Aim</h4>
-<p>The use of this options list is for masking model specific informations when the wrapper function is called automatically by functions managing parameters values forcing. In this case the options list is only transmitted to the model wrapper.</p>
-<p>This is usefull for <code>sensitivity analysis</code> or <code>optimization</code> processes cases, for example.</p>
-</div>
-<div id="list-structure" class="section level4">
-<h4 class="hasAnchor">
-<a href="#list-structure" class="anchor"></a>List structure</h4>
-<ul>
-<li>Mandatory informations needed by the model for functionning<br><strong>For example</strong>
-<ul>
-<li>inputs data directory path/root path</li>
-<li>model executable location path</li>
-<li>…</li>
-</ul>
-</li>
-<li>Additional (optional) informations modifying the wrapper behaviour<br><strong>For example</strong>
-<ul>
-<li>parallel calculation management</li>
-<li>information display management (for example: runs duration)</li>
-<li>warning display management</li>
-<li>…</li>
-</ul>
-</li>
-</ul>
-</div>
-<div id="example-of-a-model-options-interface-function" class="section level4">
-<h4 class="hasAnchor">
-<a href="#example-of-a-model-options-interface-function" class="anchor"></a>Example of a model options interface function</h4>
-<blockquote>
-<p>Based on a model example used with a simple system call</p>
-</blockquote>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">model_wrapper_options &lt;-<span class="st"> </span><span class="cf">function</span>(model_path,</a>
-<a class="sourceLine" id="cb2-2" title="2">                                  data_dir, ... ) {</a>
-<a class="sourceLine" id="cb2-3" title="3">  </a>
-<a class="sourceLine" id="cb2-4" title="4">  <span class="co"># options list template</span></a>
-<a class="sourceLine" id="cb2-5" title="5">  options &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>()</a>
-<a class="sourceLine" id="cb2-6" title="6">  <span class="co"># model executable</span></a>
-<a class="sourceLine" id="cb2-7" title="7">  options<span class="op">$</span>model_path &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/character.html">character</a></span>(<span class="dv">0</span>)</a>
-<a class="sourceLine" id="cb2-8" title="8">  <span class="co"># input data</span></a>
-<a class="sourceLine" id="cb2-9" title="9">  options<span class="op">$</span>data_dir &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/character.html">character</a></span>(<span class="dv">0</span>)</a>
-<a class="sourceLine" id="cb2-10" title="10">  <span class="co"># parallel calculation switch</span></a>
-<a class="sourceLine" id="cb2-11" title="11">  options<span class="op">$</span>parallel &lt;-<span class="st"> </span><span class="ot">FALSE</span></a>
-<a class="sourceLine" id="cb2-12" title="12">  <span class="co"># setting cores number</span></a>
-<a class="sourceLine" id="cb2-13" title="13">  options<span class="op">$</span>cores &lt;-<span class="st"> </span><span class="ot">NA</span></a>
-<a class="sourceLine" id="cb2-14" title="14">  <span class="co"># duration time display switch</span></a>
-<a class="sourceLine" id="cb2-15" title="15">  options<span class="op">$</span>time_display &lt;-<span class="st"> </span><span class="ot">FALSE</span></a>
-<a class="sourceLine" id="cb2-16" title="16">  <span class="co"># warning display switch</span></a>
-<a class="sourceLine" id="cb2-17" title="17">  options<span class="op">$</span>warning_display &lt;-<span class="st"> </span><span class="ot">TRUE</span></a>
-<a class="sourceLine" id="cb2-18" title="18">  </a>
-<a class="sourceLine" id="cb2-19" title="19">  <span class="co"># Getting the options list template content</span></a>
-<a class="sourceLine" id="cb2-20" title="20">  <span class="co"># when running model_wrapper_options()</span></a>
-<a class="sourceLine" id="cb2-21" title="21">  <span class="cf">if</span> (<span class="op">!</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/nargs.html">nargs</a></span>()) <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span>(options)</a>
-<a class="sourceLine" id="cb2-22" title="22">  </a>
-<a class="sourceLine" id="cb2-23" title="23">  <span class="co"># Fixing mandatory fields values</span></a>
-<a class="sourceLine" id="cb2-24" title="24">  options<span class="op">$</span>model_path &lt;-<span class="st"> </span>model_path</a>
-<a class="sourceLine" id="cb2-25" title="25">  options<span class="op">$</span>data_dir &lt;-<span class="st"> </span>data_dir</a>
-<a class="sourceLine" id="cb2-26" title="26">  </a>
-<a class="sourceLine" id="cb2-27" title="27">  <span class="co"># Fixing optional fields:</span></a>
-<a class="sourceLine" id="cb2-28" title="28">  <span class="co"># if names in given list (...) correspond</span></a>
-<a class="sourceLine" id="cb2-29" title="29">  <span class="co"># to exact field names in options list</span></a>
-<a class="sourceLine" id="cb2-30" title="30">  list_names &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span> (options)</a>
-<a class="sourceLine" id="cb2-31" title="31">  add_args &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(...)</a>
-<a class="sourceLine" id="cb2-32" title="32">  </a>
-<a class="sourceLine" id="cb2-33" title="33">  <span class="cf">for</span> (n <span class="cf">in</span> <span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(add_args)) {</a>
-<a class="sourceLine" id="cb2-34" title="34">    <span class="cf">if</span> ( n <span class="op">%in%</span><span class="st"> </span>list_names) {</a>
-<a class="sourceLine" id="cb2-35" title="35">      options[[n]] &lt;-<span class="st"> </span>add_args[[n]]</a>
-<a class="sourceLine" id="cb2-36" title="36">    }</a>
-<a class="sourceLine" id="cb2-37" title="37">  }</a>
-<a class="sourceLine" id="cb2-38" title="38">  </a>
-<a class="sourceLine" id="cb2-39" title="39">  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span>(options)</a>
-<a class="sourceLine" id="cb2-40" title="40">}</a></code></pre></div>
-</div>
-</div>
-<div id="the-output-mask-i-e--site_var_dates_mask" class="section level3">
-<h3 class="hasAnchor">
-<a href="#the-output-mask-i-e--site_var_dates_mask" class="anchor"></a>The output mask (i.e. site_var_dates_mask)</h3>
-<p>The waited structure by the wrapper is for the moment a list of data frames (one for each situation) crossing a list of variables with a list of dates, per situation. In the wrapper, only variables names and Dates list are used for reducing output data.frames for situations. Data.frame content is not usefull for the treament at all.</p>
-<blockquote>
-<p>At the moment, this structure is identical either produced from the observations data or made independently from those.</p>
-</blockquote>
-<p>But this structure will certainly change in the future, to minimize stored information, keeping only the usefull data for selecting output data (optimizing memory storage, process)</p>
-<p>For example, from a list of observation files (useful for evaluation or optimization processes), a named list of data.frame is produced, one for each situation for which the file exists.</p>
-<p>Here is an example for a single file for <code>banana</code> observations:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="co"># remotes::install_github("SticsRPacks/SticsRFiles")</span></a>
-<a class="sourceLine" id="cb3-2" title="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(SticsRFiles)</a>
-<a class="sourceLine" id="cb3-3" title="3">path &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="st">"extdata"</span>,<span class="st">"obs"</span>,<span class="st">"V9.0"</span>), <span class="dt">package =</span> <span class="st">"SticsRFiles"</span>)</a>
-<a class="sourceLine" id="cb3-4" title="4">obs_list &lt;-<span class="st"> </span><span class="kw">get_obs</span>(path)</a>
-<a class="sourceLine" id="cb3-5" title="5"><span class="kw"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span>(obs_list, <span class="cf">function</span>(x) <span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(x,<span class="dv">4</span>))</a></code></pre></div>
-<p>One can give a similar filter list structure defining a customized selection of variables and Dates, but with all values set to NA in data.frames.</p>
-</div>
-<div id="actions-to-be-performed-by-the-model-wrapper" class="section level3">
-<h3 class="hasAnchor">
-<a href="#actions-to-be-performed-by-the-model-wrapper" class="anchor"></a>Actions to be performed by the model wrapper</h3>
-<div id="before-the-loop-over-situations-list" class="section level4">
-<h4 class="hasAnchor">
-<a href="#before-the-loop-over-situations-list" class="anchor"></a>Before the loop over situations list</h4>
-<ul>
-<li>Managing options: checks about its content, reacting from values stored in it<br><strong>For example</strong>:
-<ul>
-<li>checking if paths exist</li>
-<li>checking the model executable, its version, …(libraries availability, …)</li>
-<li>storing fields contents in simple variables (easier to use)</li>
-<li>other kinds of checks or calculations (depending on the model specificities)</li>
-</ul>
-</li>
-</ul>
-</div>
-<div id="inside-the-loop-over-situations-list" class="section level4">
-<h4 class="hasAnchor">
-<a href="#inside-the-loop-over-situations-list" class="anchor"></a>Inside the loop over situations list</h4>
-<ol style="list-style-type: decimal">
-<li>Managing parameters forcing</li>
-</ol>
-<p>From the <code>param_values</code> argument, use a mechanism to force values in the model inputs:</p>
-<ul>
-<li>replacing values in original parameters file(s)</li>
-<li>specific file dedicated to force parameters (exists in Stics)</li>
-<li>passing parameters values through an interface function to the model (for example R -&gt; cpp, fortran,… libraries)</li>
-<li>…</li>
-</ul>
-<p>The parameters values may be associated with data (<code>prior_information</code>) describing which values for which parameters must be applied to each situation extracted from the parameters values vector <code>param_values</code>.</p>
-<p>If <code>prior_information</code> contains the default value (NULL) the same set of parameter values is used for each situation.</p>
-<ul>
-<li>Example of information stored in <code>prior_information</code> and use:</li>
-</ul>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(CroptimizR)</a>
-<a class="sourceLine" id="cb4-2" title="2">sg=<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">p1=</span><span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">sit_list=</span><span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"sit1"</span>,<span class="st">"sit2"</span>,<span class="st">"sit3"</span>),<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"sit4"</span>,<span class="st">"sit5"</span>,<span class="st">"sit6"</span>))),</a>
-<a class="sourceLine" id="cb4-3" title="3">        <span class="dt">p2=</span><span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">sit_list=</span><span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"sit1"</span>,<span class="st">"sit2"</span>,<span class="st">"sit3"</span>,<span class="st">"sit4"</span>,<span class="st">"sit5"</span>,<span class="st">"sit6"</span>))))</a>
-<a class="sourceLine" id="cb4-4" title="4"></a>
-<a class="sourceLine" id="cb4-5" title="5">vec=<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>)</a>
-<a class="sourceLine" id="cb4-6" title="6"></a>
-<a class="sourceLine" id="cb4-7" title="7"><span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(vec) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"p2"</span>,<span class="st">"p1"</span>,<span class="st">"p1"</span>)</a>
-<a class="sourceLine" id="cb4-8" title="8"></a>
-<a class="sourceLine" id="cb4-9" title="9">params_sit2 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/get_params_per_sit.html">get_params_per_sit</a></span>(sg,<span class="st">"sit2"</span>,vec)</a>
-<a class="sourceLine" id="cb4-10" title="10"></a>
-<a class="sourceLine" id="cb4-11" title="11">params_sit2</a></code></pre></div>
-<ol start="2" style="list-style-type: decimal">
-<li>Running the model</li>
-</ol>
-<p>Using a model interface function with a system call or other mechanisms to perform a model run for a situation and get back execution error status.</p>
-<ol start="3" style="list-style-type: decimal">
-<li>Getting output data</li>
-</ol>
-<p>If the model run produces files, a function is used to read and format the date/variables outputs. Otherwise the results may be produced directly by an R model function and are to be formatted as expected too.</p>
-<ol start="4" style="list-style-type: decimal">
-<li>Selecting output data If the optional argument <code>site_var_dates_mask</code> is used to filter data in outputs situations tables, a subset based on rows dates values for columns names (i.e. variables) of site_var_dates_mask is used for each situation.</li>
-</ol>
-</div>
-<div id="managing-optional-parallel-computations-inside-the-loop" class="section level4">
-<h4 class="hasAnchor">
-<a href="#managing-optional-parallel-computations-inside-the-loop" class="anchor"></a>Managing optional parallel computations inside the loop</h4>
-<p>The doParallel package is used and there are specificities when doing a parallel loop especially that a pre allocated list outide of the loop is not shared between cores so return statements must be used inside.</p>
-<p>Here is an example for illustrating what happens:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="co"># Code of an example of foreach loop algo</span></a>
-<a class="sourceLine" id="cb5-2" title="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"doParallel"</span>)</a>
-<a class="sourceLine" id="cb5-3" title="3"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(params<span class="op">$</span>cores_nb)</a>
-<a class="sourceLine" id="cb5-4" title="4"></a>
-<a class="sourceLine" id="cb5-5" title="5">test_parallel &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">cores_nb =</span> <span class="dv">1</span>,</a>
-<a class="sourceLine" id="cb5-6" title="6">                          <span class="dt">pa =</span> <span class="ot">FALSE</span>,</a>
-<a class="sourceLine" id="cb5-7" title="7">                          <span class="dt">max_it =</span> <span class="dv">5</span>) {</a>
-<a class="sourceLine" id="cb5-8" title="8">  </a>
-<a class="sourceLine" id="cb5-9" title="9">  <span class="co"># Launching the cluster</span></a>
-<a class="sourceLine" id="cb5-10" title="10">  cl &lt;-<span class="st"> </span><span class="kw">makeCluster</span>(cores_nb)</a>
-<a class="sourceLine" id="cb5-11" title="11">  <span class="kw">registerDoParallel</span>(cl)</a>
-<a class="sourceLine" id="cb5-12" title="12">  </a>
-<a class="sourceLine" id="cb5-13" title="13">  <span class="co"># List preallocation</span></a>
-<a class="sourceLine" id="cb5-14" title="14">  out_pa &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/vector.html">vector</a></span>(<span class="dt">mode =</span> <span class="st">"list"</span>, max_it)</a>
-<a class="sourceLine" id="cb5-15" title="15">  </a>
-<a class="sourceLine" id="cb5-16" title="16">  <span class="co"># Parallel loop</span></a>
-<a class="sourceLine" id="cb5-17" title="17">  out &lt;-<span class="st"> </span><span class="kw">foreach</span>(<span class="dt">i =</span> <span class="dv">1</span><span class="op">:</span>max_it) <span class="op">%dopar%</span><span class="st"> </span>{</a>
-<a class="sourceLine" id="cb5-18" title="18">    <span class="cf">if</span> (pa) {</a>
-<a class="sourceLine" id="cb5-19" title="19">      out_pa[[i]] &lt;-<span class="st"> </span>i</a>
-<a class="sourceLine" id="cb5-20" title="20">    } <span class="cf">else</span> {</a>
-<a class="sourceLine" id="cb5-21" title="21">      <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span>(i)</a>
-<a class="sourceLine" id="cb5-22" title="22">    }</a>
-<a class="sourceLine" id="cb5-23" title="23">  }</a>
-<a class="sourceLine" id="cb5-24" title="24">  </a>
-<a class="sourceLine" id="cb5-25" title="25">  <span class="co"># Stopping the cluster</span></a>
-<a class="sourceLine" id="cb5-26" title="26">  <span class="kw">stopCluster</span>(cl)</a>
-<a class="sourceLine" id="cb5-27" title="27">  </a>
-<a class="sourceLine" id="cb5-28" title="28">  <span class="cf">if</span> (pa) {</a>
-<a class="sourceLine" id="cb5-29" title="29">    <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span>(out_pa)</a>
-<a class="sourceLine" id="cb5-30" title="30">  } <span class="cf">else</span> {</a>
-<a class="sourceLine" id="cb5-31" title="31">    <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span>(out)</a>
-<a class="sourceLine" id="cb5-32" title="32">  }</a>
-<a class="sourceLine" id="cb5-33" title="33">  </a>
-<a class="sourceLine" id="cb5-34" title="34">  </a>
-<a class="sourceLine" id="cb5-35" title="35">}</a>
-<a class="sourceLine" id="cb5-36" title="36"></a>
-<a class="sourceLine" id="cb5-37" title="37">out &lt;-<span class="st"> </span><span class="kw">test_parallel</span>(params<span class="op">$</span>cores_nb)</a>
-<a class="sourceLine" id="cb5-38" title="38"></a>
-<a class="sourceLine" id="cb5-39" title="39">out_pa &lt;-<span class="st"> </span><span class="kw">test_parallel</span>(params<span class="op">$</span>cores_nb, <span class="ot">TRUE</span>)</a>
-<a class="sourceLine" id="cb5-40" title="40"></a>
-<a class="sourceLine" id="cb5-41" title="41">out</a>
-<a class="sourceLine" id="cb5-42" title="42"></a>
-<a class="sourceLine" id="cb5-43" title="43">out_pa</a></code></pre></div>
-<p>There are also differences with managing warnings and displays in a parallel context. They must be stored in the return list and treated after the loop.</p>
-</div>
-<div id="returning-data-for-all-situations" class="section level4">
-<h4 class="hasAnchor">
-<a href="#returning-data-for-all-situations" class="anchor"></a>Returning data for all situations</h4>
-<blockquote>
-<p>temporary structure: named list of data.frames, and simulation status flag.</p>
-</blockquote>
-<p>The wrapper return a list/collection of situation simulations outputs (filtered or not), for the successful simulations. There is also a simulation status return indicating if all simulations ran successfully or not.</p>
-</div>
-</div>
-</div>
-<div id="examples-of-use-of-model-wrapper" class="section level2">
+<div id="examples" class="section level2">
 <h2 class="hasAnchor">
-<a href="#examples-of-use-of-model-wrapper" class="anchor"></a>Examples of use of model wrapper</h2>
-<p>TODO</p>
+<a href="#examples" class="anchor"></a>Examples</h2>
+<p>Examples of crop model wrappers for CroptimizR can be found in the SticsOnR package (<a href="https://github.com/SticsRPacks/SticsOnR/blob/master/R/stics_wrapper.R" class="uri">https://github.com/SticsRPacks/SticsOnR/blob/master/R/stics_wrapper.R</a>) for the Stics model and in the ApsimOnR package (<a href="https://github.com/hol430/ApsimOnR/blob/master/R/apsimx_wrapper.R" class="uri">https://github.com/hol430/ApsimOnR/blob/master/R/apsimx_wrapper.R</a>) for ApsimX model.</p>
+<p>Note however that the Stics wrapper is a bit complex since it aims not only to be used in CroptimizR but also directly by the user to launch Stics simulations from R. Different datatypes are thus possible for <code>param_values</code> and <code>sit_var_dates_mask</code> to that end.</p>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-
         <div id="tocnav">
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
 <li><a href="#introduction">Introduction</a></li>
-      <li><a href="#definition">Definition</a></li>
-      <li><a href="#writing-the-model-wrapper">Writing the model wrapper</a></li>
-      <li><a href="#examples-of-use-of-model-wrapper">Examples of use of model wrapper</a></li>
+      <li><a href="#how-to-write-a-basic-version-of-a-model-wrapper-for-croptimizr">How to write a basic version of a model wrapper for CroptimizR</a></li>
+      <li><a href="#optional-issues">Optional issues</a></li>
+      <li><a href="#examples">Examples</a></li>
       </ul>
 </div>
       </div>
@@ -455,20 +402,17 @@
 </div>
 
 
-
       <footer><div class="copyright">
   <p>Developed by Samuel Buis, Michel Giner, Patrice Lecharpentier, SticsRpacks.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
 </div>
-
       </footer>
 </div>
 
   
-
 
   </body>
 </html>

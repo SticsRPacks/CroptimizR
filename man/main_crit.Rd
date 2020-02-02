@@ -16,7 +16,7 @@ main_crit(param_values, crit_options)
 \code{model_function} Function implementing the criterion to optimize
 \code{model_options} List of arguments to pass to model function
 \code{situation_names} Name(s) of the situations to simulate
-\code{prior_information} Prior information on the parameters to estimate.
+\code{param_info} Information on the parameters to estimate.
 For the moment only uniform distribution are allowed.
 Either a list containing a vector of upper and lower
 bounds (\code{ub} and \code{lb}), or a list of list containing for each

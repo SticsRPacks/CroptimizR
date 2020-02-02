@@ -1,0 +1,61 @@
+---
+title: "Available parameter estimation algorithms in CroptimizR"
+author: 
+- name: "Samuel Buis"
+  affiliation: "INRAE - EMMAH"
+date: "`r Sys.Date()`"
+output:
+   html_document:
+     toc: true
+     toc_float: true
+bibliography: bibliography.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+For the moment, CroptimizR includes two parameter estimation algorithms:
+
+* a Frequentist one: the Nelder-Mead Simplex [@nelder1965],
+
+* a Bayesian one: DREAM-zs [@vrugt2016].
+
+# Frequentist algorithms
+
+Frequentist methods involve minimizing a goodness-of-fit criterion. Crop models often have discontinuities that make it difficult to use gradient-based minimization methods such as Gauss–Newton
+or Levenberg–Marquardt. A common approach, adopted in CroptimizR, is thus to
+use the Nelder–Mead simplex algorithm, which is adapted to non-smooth functions
+because the search of the optimum is not based on the computation of the
+function’s gradient. Although few theoretical results are available [@lagarias1998], this algorithm is very popular because it can be used for multidimensional
+minimization for essentially any function. 
+
+The simplex algorithm used in CroptimizR is interfaced from the nloptr package [@Nlopt] but a multi-start feature has been implemented in addition. Indeed, as it is a local optimization method, CroptimizR proposes to repeat
+automatically the minimization from different starting parameter values
+to minimize the risk of converging to a local minimum. The user specifies the
+number of repetitions and possibly the starting parameter values (if not provided, they are sampled within the parameters' bounds. To help analyze the behavior of
+the algorithm, CroptimizR generates plots of final estimated parameter values
+versus initial values.
+
+A simple example of application of the method is provided in this [vignette](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html).
+
+
+# Bayesian algorithms
+
+In a Bayesian approach estimated parameters are treated as random variables and one
+seeks to determine their joint probability distribution, called the posterior distribution. The uncertainty in the estimated parameters are thus central in this approach. An advantage of the Bayesian approach is that it uses prior information about the parameters values. 
+
+The DREAM-zs algorithm is a multi-chain MCMC method which is recognized has an efficient method for complex, high-dimensional and multi-modal target distributions. It is extensively described in [@vrugt2016]. In CroptimizR, it is interfaced from the BayesianTools package [@BayesianTools].
+
+It provides different types of plots and results including plots of prior and posterior densities, correlation plots, Gelman diagnostic plot, sample of posterior distribution and associated statistics.
+
+An example of application of the method is provided in this [vignette](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html).
+
+
+# Criteria and likelihoods
+
+For both method, multiple [criteria](https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html) to minimize (for frequentist methods) and [likelihoods](https://sticsrpacks.github.io/CroptimizR/reference/likelihoods.html) (for Bayesian methods) are provided in CroptimizR.
+
+
+# References

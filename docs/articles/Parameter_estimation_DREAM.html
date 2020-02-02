@@ -115,11 +115,18 @@
 <h2 class="hasAnchor">
 <a href="#study-case" class="anchor"></a>Study Case</h2>
 <p>This document presents an example of use of the DREAM-zs algorithm with the Stics crop model.</p>
-<p>DIRE A PARTIR DE QUEL EXEMPLE ON LE FAIT … cf. résultats obtenus avec les 2 exemple pour N=10000</p>
-<p>a simultaneous estimation of one specific and one varietal parameter on a multi-varietal dataset using the Stics model, while a simpler introductory example is presented in this <a href="https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html">vignette</a> (you should look at it first).</p>
-<p>Data comes from a maize crop experiment (see description in Wallach et al., 2011). In this example, 8 situations (USMs in Stics language) will be used for the parameter estimation. This test case correspond to case 1c in (Wallach et al., 2011).</p>
-<p>This part is not shown here, it is the same as this of the <a href="https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html">introductory example</a>.</p>
+<p>The study case is the same as the specific and varietal parameters estimation presented in this <a href="https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html">vignette</a>.</p>
 <p><strong>WARNING: The interface of the DREAM method in CroptimizR is still under development. Results should be taken with care.</strong></p>
+</div>
+<div id="initialisation-step" class="section level2">
+<h2 class="hasAnchor">
+<a href="#initialisation-step" class="anchor"></a>Initialisation step</h2>
+<p>This part is not shown here, it is the same as this of the <a href="https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html">introductory example</a>.</p>
+</div>
+<div id="read-and-select-the-corresponding-observations" class="section level2">
+<h2 class="hasAnchor">
+<a href="#read-and-select-the-corresponding-observations" class="anchor"></a>Read and select the corresponding observations</h2>
+<p>This part is not shown here, it is the same as this of the <a href="https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html">specific and varietal parameters estimation vignette</a>.</p>
 </div>
 <div id="set-options-for-the-dream-method" class="section level2">
 <h2 class="hasAnchor">
@@ -138,7 +145,8 @@
 <a href="#run-the-parameter-estimation" class="anchor"></a>Run the parameter estimation</h2>
 <p>In this case, the parameter estimation algorithm (<code>optim_method</code>argument) and the criterion function (<code>crit_function</code> argument) must be set in input of <code>estim_param</code> function.</p>
 <p>The list of available criteria for Bayesian methods is given by <code>? likelihoods</code></p>
-<p>The <code>param_info</code> argument has the same content as in the vignette **************. For the moment, only uniform distributions of bounds <code>param_info$lb</code> and <code>param_info$ub</code> can be used. Other type of distributions will be provided in next versions.</p>
+<p>The <code>param_info</code> argument has the same content as in the <a href="https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html">specific and varietal parameters estimation vignette</a>.</p>
+<p><strong>For the moment, only uniform distributions of bounds <code>param_info$lb</code> and <code>param_info$ub</code> can be used. Other type of distributions will be provided in next versions.</strong></p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>optim_results=<span class="kw"><a href="../reference/estim_param.html">estim_param</a></span>(<span class="dt">obs_list=</span>obs_list,</span>
 <span id="cb2-2"><a href="#cb2-2"></a>                          <span class="dt">crit_function=</span>likelihood_log_ciidn,</span>
 <span id="cb2-3"><a href="#cb2-3"></a>                          <span class="dt">model_function=</span>stics_wrapper,</span>
@@ -147,44 +155,48 @@
 <span id="cb2-6"><a href="#cb2-6"></a>                          <span class="dt">optim_method=</span><span class="st">"BayesianTools.dreamzs"</span>,</span>
 <span id="cb2-7"><a href="#cb2-7"></a>                          <span class="dt">param_info=</span>param_info)</span></code></pre></div>
 <p>The results printed in output on the R console are the following:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co">## # # # # # # # # # # # # # # # # # # # # # # # # # </span></span>
-<span id="cb3-2"><a href="#cb3-2"></a><span class="co">## ## MCMC chain summary ## </span></span>
-<span id="cb3-3"><a href="#cb3-3"></a><span class="co">## # # # # # # # # # # # # # # # # # # # # # # # # # </span></span>
-<span id="cb3-4"><a href="#cb3-4"></a><span class="co">##  </span></span>
-<span id="cb3-5"><a href="#cb3-5"></a><span class="co">## # MCMC sampler:  DREAMzs </span></span>
-<span id="cb3-6"><a href="#cb3-6"></a><span class="co">## # Nr. Chains:  3 </span></span>
-<span id="cb3-7"><a href="#cb3-7"></a><span class="co">## # Iterations per chain:  401 </span></span>
-<span id="cb3-8"><a href="#cb3-8"></a><span class="co">## # Rejection rate:  0.872 </span></span>
-<span id="cb3-9"><a href="#cb3-9"></a><span class="co">## # Effective sample size:  69 </span></span>
-<span id="cb3-10"><a href="#cb3-10"></a><span class="co">## # Runtime:  1896.71  sec. </span></span>
-<span id="cb3-11"><a href="#cb3-11"></a><span class="co">##  </span></span>
-<span id="cb3-12"><a href="#cb3-12"></a><span class="co">## # Parameters</span></span>
-<span id="cb3-13"><a href="#cb3-13"></a><span class="co">##           psf     MAP   2.5%  median   97.5%</span></span>
-<span id="cb3-14"><a href="#cb3-14"></a><span class="co">## dlaimax 1.028   0.001  0.001   0.001   0.002</span></span>
-<span id="cb3-15"><a href="#cb3-15"></a><span class="co">## durvieF 1.109 363.105 70.079 272.090 399.130</span></span>
-<span id="cb3-16"><a href="#cb3-16"></a><span class="co">## </span></span>
-<span id="cb3-17"><a href="#cb3-17"></a><span class="co">## ## DIC:  70.586 </span></span>
-<span id="cb3-18"><a href="#cb3-18"></a><span class="co">## ## Convergence </span></span>
-<span id="cb3-19"><a href="#cb3-19"></a><span class="co">##  Gelman Rubin multivariate psrf:   </span></span>
-<span id="cb3-20"><a href="#cb3-20"></a><span class="co">##  </span></span>
-<span id="cb3-21"><a href="#cb3-21"></a><span class="co">## ## Correlations </span></span>
-<span id="cb3-22"><a href="#cb3-22"></a><span class="co">##         dlaimax durvieF</span></span>
-<span id="cb3-23"><a href="#cb3-23"></a><span class="co">## dlaimax   1.000  -0.526</span></span>
-<span id="cb3-24"><a href="#cb3-24"></a><span class="co">## durvieF  -0.526   1.000</span></span>
-<span id="cb3-25"><a href="#cb3-25"></a><span class="co">## [1] "Complementary graphs and results can be found in  C:/Users/sbuis/AppData/Local/Temp/RtmpeCUotw/data-master/study_case_1/V9.0"</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co">## ## # # # # # # # # # # # # # # # # # # # # # # # # #</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="co">## ## ## MCMC chain summary ##</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="co">## ## # # # # # # # # # # # # # # # # # # # # # # # # #</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="co">## ##</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a><span class="co">## ## # MCMC sampler:  DREAMzs</span></span>
+<span id="cb3-6"><a href="#cb3-6"></a><span class="co">## ## # Nr. Chains:  3</span></span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="co">## ## # Iterations per chain:  2669</span></span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="co">## ## # Rejection rate:  0.878</span></span>
+<span id="cb3-9"><a href="#cb3-9"></a><span class="co">## ## # Effective sample size:  423</span></span>
+<span id="cb3-10"><a href="#cb3-10"></a><span class="co">## ## # Runtime:  54194.02  sec.</span></span>
+<span id="cb3-11"><a href="#cb3-11"></a><span class="co">## ##</span></span>
+<span id="cb3-12"><a href="#cb3-12"></a><span class="co">## ## # Parameters</span></span>
+<span id="cb3-13"><a href="#cb3-13"></a><span class="co">## ##            psf     MAP    2.5%  median   97.5%</span></span>
+<span id="cb3-14"><a href="#cb3-14"></a><span class="co">## ## dlaimax  1.045   0.001   0.001   0.001   0.001</span></span>
+<span id="cb3-15"><a href="#cb3-15"></a><span class="co">## ## durvieF1 1.000 289.864 213.438 311.226 398.462</span></span>
+<span id="cb3-16"><a href="#cb3-16"></a><span class="co">## ## durvieF2 1.009 208.487 147.158 298.312 443.323</span></span>
+<span id="cb3-17"><a href="#cb3-17"></a><span class="co">## ##</span></span>
+<span id="cb3-18"><a href="#cb3-18"></a><span class="co">## ## ## DIC:  442.256</span></span>
+<span id="cb3-19"><a href="#cb3-19"></a><span class="co">## ## ## Convergence</span></span>
+<span id="cb3-20"><a href="#cb3-20"></a><span class="co">## ##  Gelman Rubin multivariate psrf:</span></span>
+<span id="cb3-21"><a href="#cb3-21"></a><span class="co">## ##</span></span>
+<span id="cb3-22"><a href="#cb3-22"></a><span class="co">## ## ## Correlations</span></span>
+<span id="cb3-23"><a href="#cb3-23"></a><span class="co">## ##          dlaimax durvieF1 durvieF2</span></span>
+<span id="cb3-24"><a href="#cb3-24"></a><span class="co">## ## dlaimax    1.000   -0.074   -0.059</span></span>
+<span id="cb3-25"><a href="#cb3-25"></a><span class="co">## ## durvieF1  -0.074    1.000   -0.029</span></span>
+<span id="cb3-26"><a href="#cb3-26"></a><span class="co">## ## durvieF2  -0.059   -0.029    1.000</span></span></code></pre></div>
 <p>The rejection rate is the rate of rejection of proposed values. According to (Vrugt, 2016), a value between 0.7 and 0.85 is usually indicative of good performance of a MCMC simulation method.</p>
 <p>Effective sample size should be here the number of different values per chain for the parameter vector in the posterior sample.</p>
 <p>Under section “parameters” are given statistics on the posterior sample. MAP means Maximum A Posteriori. It is the values of the parameters among the posterior sample that lead to the maximal value of the posterior density.</p>
 <p>DIC is the Deviance information criterion. It is a commonly applied method to summarize the fit of an MCMC chain. More details about it can be found in the <a href="https://cran.r-project.org/web/packages/BayesianTools/vignettes/BayesianTools.html">vignette of the BayesianTools package</a>.</p>
 <p>The output value of <code>estim_param</code> contains: * <code>statistics</code>, <code>quantiles</code> and <code>MAP</code>: statistics on the posterior sample, * <code>post_sample</code>, a sample of the posterior distribution (excluding the burnin phase), * <code>out</code>: the list returned by the package BayesianTools.</p>
 <p>It is stored with complementary graphs in the <code>optim_options$path_results</code> folder.</p>
-<p>Among these graphs, gelmanDiagPlots.pdf plots the evolution of the Gelman diagnostic. According to (Vrugt, 2016) the algorithm is considered to have converged to the posterior distribution when all the values of this diagnostic are inferior to 1.2. In theory the sample of the posterior distribution should thus be taken only after this (WARNING: it is not the case here, neither in BayesianTools, this should be fixed.).</p>
+<p>Among these graphs, gelmanDiagPlots.pdf plots the evolution of the Gelman diagnostic. According to (Vrugt, 2016) the algorithm is considered to have converged to the posterior distribution when all the values of this diagnostic are inferior to 1.2. In theory the sample of the posterior distribution should thus be taken only after this (WARNING: it is not the case here, neither in BayesianTools, this should be improved).</p>
 <p>In this case, we obtain:</p>
-<p><img src="ResultsSpecificVarietal/estimInit_dlaimax.PNG" width="45%"><img src="ResultsSpecificVarietal/estimInit_durvieF_var1.PNG" width="45%"><img src="ResultsSpecificVarietal/estimInit_durvieF_var2.PNG" width="45%"> Figure 1: Gelman diagnostic.</p>
-<p>marginalPlots.pdf shows estimation of the prior and posterior densities:</p>
-<p><img src="ResultsSpecificVarietal/estimInit_dlaimax.PNG" width="45%"><img src="ResultsSpecificVarietal/estimInit_durvieF_var1.PNG" width="45%"><img src="ResultsSpecificVarietal/estimInit_durvieF_var2.PNG" width="45%"> Figure 2: Prior and posterior densities.</p>
+<p><img src="ResultsSpecificVarietalDREAM/N10000/Gelman_dlaimax.PNG" width="45%"><img src="ResultsSpecificVarietalDREAM/N10000/Gelman_durvieF1.PNG" width="45%"><img src="ResultsSpecificVarietalDREAM/N10000/Gelman_durvieF2.PNG" width="45%"></p>
+<p>Figure 1: Gelman diagnostic.</p>
+<p>marginalPlots.pdf shows estimation of the prior (blue) and posterior (pink) densities:</p>
+<p><img src="ResultsSpecificVarietalDREAM/N10000/densities_dlaimax.PNG" width="45%"><img src="ResultsSpecificVarietalDREAM/N10000/densities_durvieF1.PNG" width="45%"><img src="ResultsSpecificVarietalDREAM/N10000/densities_durvieF2.PNG" width="45%"></p>
+<p>Figure 2: Prior and posterior densities.</p>
 <p>correlationPlots.pdf gives information about the correlation between parameters:</p>
-<p><img src="ResultsSpecificVarietal/estimInit_dlaimax.PNG" width="45%"><img src="ResultsSpecificVarietal/estimInit_durvieF_var1.PNG" width="45%"><img src="ResultsSpecificVarietal/estimInit_durvieF_var2.PNG" width="45%"> Figure 2: Correlation plot.</p>
+<p><img src="ResultsSpecificVarietalDREAM/N10000/correlation_plot.PNG" width="75%"></p>
+<p>Figure 3: Correlation plot.</p>
 </div>
 <div id="launch-a-new-estimation-starting-from-previous-results" class="section level2">
 <h2 class="hasAnchor">
@@ -208,6 +220,8 @@
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
 <li><a href="#study-case">Study Case</a></li>
+      <li><a href="#initialisation-step">Initialisation step</a></li>
+      <li><a href="#read-and-select-the-corresponding-observations">Read and select the corresponding observations</a></li>
       <li><a href="#set-options-for-the-dream-method">Set options for the DREAM method</a></li>
       <li><a href="#run-the-parameter-estimation">Run the parameter estimation</a></li>
       <li><a href="#launch-a-new-estimation-starting-from-previous-results">Launch a new estimation starting from previous results</a></li>

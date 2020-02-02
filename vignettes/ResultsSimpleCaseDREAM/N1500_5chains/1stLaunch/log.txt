@@ -1,0 +1,25 @@
+# # # # # # # # # # # # # # # # # # # # # # # # # 
+## MCMC chain summary ## 
+# # # # # # # # # # # # # # # # # # # # # # # # # 
+ 
+# MCMC sampler:  DREAMzs 
+# Nr. Chains:  5 
+# Iterations per chain:  241 
+# Rejection rate:  0.889 
+# Effective sample size:  63 
+# Runtime:  1600.55  sec. 
+ 
+# Parameters
+          psf    MAP   2.5%  median   97.5%
+dlaimax 1.383  0.002  0.001   0.001   0.002
+durvieF 1.524 53.584 51.494 241.807 380.044
+
+## DIC:  69.679 
+## Convergence 
+ Gelman Rubin multivariate psrf:   
+ 
+## Correlations 
+        dlaimax durvieF
+dlaimax   1.000  -0.696
+durvieF  -0.696   1.000
+[1] "Complementary graphs and results can be found in  C:/Users/sbuis/AppData/Local/Temp/RtmpC4O9rA/data-master/study_case_1/V9.0"

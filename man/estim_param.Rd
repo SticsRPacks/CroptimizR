@@ -4,9 +4,9 @@
 \alias{estim_param}
 \title{main function for parameter estimation}
 \usage{
-estim_param(obs_list, crit_function = crit_cwss, model_function,
+estim_param(obs_list, crit_function = crit_log_cwss, model_function,
   model_options = NULL, optim_method = "nloptr.simplex",
-  optim_options = NULL, prior_information)
+  optim_options = NULL, param_info)
 }
 \arguments{
 \item{obs_list}{List of observed values to use for parameter estimation
@@ -35,22 +35,21 @@ differences on parameters values between 2 iterations (optional, default=1e-5)
 \code{maxeval}, the maximum number of criterion evaluation (optional, default=500)
 \code{path_results}, the path where to store the results (optional, default=getwd())}
 
-\item{prior_information}{Prior information on the parameters to estimate.
-For the moment only uniform distribution are allowed.
+\item{param_info}{Information on the parameters to estimate.
 Either
 a list containing:
 \itemize{
-\item (named) vectors of upper and lower bounds (\code{ub} and \code{lb}),
+\item (named) vectors of upper and lower bounds (\code{ub} and \code{lb}) (-Inf and Inf can be used),
 \item \code{init_values}, A data.frame containing initial
-values to test for the parameters (optional, if not provided (or if less values
-than number of repetitions of the minimization are provided), the (or part
-of the) initial values will be randomly generated using LHS sampling within
-parameter bounds.
+values to test for the parameters (optional, if not provided, or if less values
+than number of repetitions of the minimization are provided), the, or part
+of the, initial values will be randomly generated using LHS sampling within
+parameter bounds).
 or
 a named list containing for each parameter the list of situations per group
 (\code{sit_list}), the vector of upper and lower bounds (one value per group)
 (\code{ub} and \code{lb}) and the list of initial values per group
-\code{init_values} (data.frame, one column per group).
+\code{init_values} (data.frame, one column per group, optional).
 }}
 }
 \value{
@@ -94,8 +93,8 @@ obs_list=get_obs(file.path(data_dir,"XmlFiles"),
 var_name="lai_n"
 obs_list[[sit_name]]=obs_list[[sit_name]][,c("Date",var_name)]
 
-# Set prior information on the parameters to estimate
-prior_information=list(lb=c(dlaimax=0.0005, durvieF=50),
+# Set parameter information on the parameters to estimate
+param_info=list(lb=c(dlaimax=0.0005, durvieF=50),
                        ub=c(dlaimax=0.0025, durvieF=400),
                        init_values=data.frame(dlaimax=c(0.0015), durvieF=c(225)))
 
@@ -115,7 +114,7 @@ optim_results=estim_param(obs_list=obs_list,
                          model_function=stics_wrapper,
                          model_options=model_options,
                          optim_options=optim_options,
-                         prior_information=prior_information)
+                         param_info=param_info)
 
 # See results (graph and Rdata) stored in optim_options$path_results
 
