@@ -104,8 +104,8 @@ In variables and parameters names, "(\*)" must be replaced by "_\*" to be handle
 sit_name="bo96iN+"  
 var_name="lai_n" 
 obs_list=get_obs(file.path(data_dir,"XmlFiles"),
-                          obs_filenames = paste0(sit_name,".obs"))
-obs_list=filter_obs(obs_list, var_names=var_name,include=TRUE)
+                          obs_filenames = "bo96iN+.obs"))
+obs_list=filter_obs(obs_list, var_names="lai_n",include=TRUE)
 ```
 
 

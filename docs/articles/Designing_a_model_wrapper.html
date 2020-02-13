@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CroptimizR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0.9002</span>
       </span>
     </div>
 
@@ -63,7 +63,19 @@
       <a href="../articles/ApsimX_parameter_estimation_simple_case.html">Parameter estimation with the ApsimX crop Model: a simple case</a>
     </li>
     <li>
+      <a href="../articles/Available_parameter_estimation_algorithms.html">Available parameter estimation algorithms in CroptimizR</a>
+    </li>
+    <li>
       <a href="../articles/Designing_a_model_wrapper.html">Guidelines for implementing a crop model R wrapper for CroptimizR</a>
+    </li>
+    <li>
+      <a href="../articles/Parameter_estimation_DREAM.html">Parameter estimation with the DREAM-zs algorithm</a>
+    </li>
+    <li>
+      <a href="../articles/Parameter_estimation_simple_case.html">Parameter estimation with the Stics crop Model: a simple case</a>
+    </li>
+    <li>
+      <a href="../articles/Parameter_estimation_Specific_and_Varietal.html">Parameter estimation with the Stics crop Model: a case with specific and varietal parameters</a>
     </li>
   </ul>
 </li>
@@ -92,7 +104,7 @@
             <address class="author_afil">
       INRAE - EMMAH<br><h4 class="author">Patrice Lecharpentier</h4>
             <address class="author_afil">
-      INRAE - Agroclim<br><h4 class="date">2020-01-29</h4>
+      INRAE - Agroclim<br><h4 class="date">2020-02-13</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/master/vignettes/Designing_a_model_wrapper.Rmd"><code>vignettes/Designing_a_model_wrapper.Rmd</code></a></small>
       <div class="hidden name"><code>Designing_a_model_wrapper.Rmd</code></div>
@@ -142,11 +154,11 @@
 <span id="cb1-24"><a href="#cb1-24"></a><span class="co">#' error code (`error`) indicating if at least one simulation ended with an error.</span></span>
 <span id="cb1-25"><a href="#cb1-25"></a></span>
 <span id="cb1-26"><a href="#cb1-26"></a>model_wrapper &lt;-<span class="st"> </span><span class="cf">function</span>( model_options, <span class="dt">param_values=</span><span class="ot">NULL</span>, </span>
-<span id="cb1-27"><a href="#cb1-27"></a>                           <span class="dt">site_var_dates_mask=</span><span class="ot">NULL</span>) {</span>
+<span id="cb1-27"><a href="#cb1-27"></a>                           <span class="dt">sit_var_dates_mask=</span><span class="ot">NULL</span>) {</span>
 <span id="cb1-28"><a href="#cb1-28"></a>  ...</span>
 <span id="cb1-29"><a href="#cb1-29"></a>  </span>
 <span id="cb1-30"><a href="#cb1-30"></a>}</span></code></pre></div>
-<p>Each argument detailed here is mandatory for any CroptimizR model wrapper. You can use this header to develop yours. Note that site_var_dates_mask will have no effect in this basic version of the wrapper.</p>
+<p>Each argument detailed here is mandatory for any CroptimizR model wrapper. You can use this header to develop yours. Note that sit_var_dates_mask will have no effect in this basic version of the wrapper.</p>
 <p>The shape of the param_values argument is imposed by CroptimizR. This is not the case of the model_options argument (except the fact that is must be a list): its content must be defined by the developper of the model wrapper. Put in this list what you need to run the model (e.g. path to the executable, path the directory containing model input files for the simulated situations, …).</p>
 </div>
 <div id="minimum-required-functionalities" class="section level3">
@@ -251,7 +263,7 @@
 <a href="#implementation" class="anchor"></a>Implementation</h3>
 <p>A typical pseudo-code implementation of the wrapper function is thus:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>model_wrapper &lt;-<span class="st"> </span><span class="cf">function</span>( model_options, <span class="dt">param_values=</span><span class="ot">NULL</span>, </span>
-<span id="cb5-2"><a href="#cb5-2"></a>                           <span class="dt">site_var_dates_mask=</span><span class="ot">NULL</span>) {</span>
+<span id="cb5-2"><a href="#cb5-2"></a>                           <span class="dt">sit_var_dates_mask=</span><span class="ot">NULL</span>) {</span>
 <span id="cb5-3"><a href="#cb5-3"></a>  </span>
 <span id="cb5-4"><a href="#cb5-4"></a>  <span class="co"># Initializations</span></span>
 <span id="cb5-5"><a href="#cb5-5"></a>  nb_paramValues &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dim">dim</a></span>(param_values)[<span class="dv">1</span>]</span>
@@ -289,7 +301,7 @@
 <ul>
 <li>Check wrapper arguments:</li>
 </ul>
-<p>If possible implement any check you can concerning what is given to the wrapper. Print a message using the <code>warning</code> function and return TRUE in <code>results$error</code> if a problem is detected. It may be an unknown model input parameter (<code>dimnames(param_values)[[2]]</code>), situation name (<code>dimnames(param_values)[[3]]</code>), variable name (in <code>site_var_dates_mask</code>) or an incorrect model option (field of <code>model_option</code>) such as an incorrect model path for example.</p>
+<p>If possible implement any check you can concerning what is given to the wrapper. Print a message using the <code>warning</code> function and return TRUE in <code>results$error</code> if a problem is detected. It may be an unknown model input parameter (<code>dimnames(param_values)[[2]]</code>), situation name (<code>dimnames(param_values)[[3]]</code>), variable name (in <code>sit_var_dates_mask</code>) or an incorrect model option (field of <code>model_option</code>) such as an incorrect model path for example.</p>
 <ul>
 <li>Perform parallel calculations:</li>
 </ul>

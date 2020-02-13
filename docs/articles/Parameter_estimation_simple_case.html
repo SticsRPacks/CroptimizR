@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CroptimizR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0.9002</span>
       </span>
     </div>
 
@@ -102,7 +102,7 @@
       <h1>Parameter estimation with the Stics crop Model: a simple case</h1>
                         <h4 class="author">Samuel Buis</h4>
                         
-            <h4 class="date">2020-02-02</h4>
+            <h4 class="date">2020-02-13</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/master/vignettes/Parameter_estimation_simple_case.Rmd"><code>vignettes/Parameter_estimation_simple_case.Rmd</code></a></small>
       <div class="hidden name"><code>Parameter_estimation_simple_case.Rmd</code></div>
@@ -166,8 +166,8 @@
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>sit_name=<span class="st">"bo96iN+"</span>  </span>
 <span id="cb4-2"><a href="#cb4-2"></a>var_name=<span class="st">"lai_n"</span> </span>
 <span id="cb4-3"><a href="#cb4-3"></a>obs_list=<span class="kw">get_obs</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/file.path">file.path</a></span>(data_dir,<span class="st">"XmlFiles"</span>),</span>
-<span id="cb4-4"><a href="#cb4-4"></a>                          <span class="dt">obs_filenames =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(sit_name,<span class="st">".obs"</span>))</span>
-<span id="cb4-5"><a href="#cb4-5"></a>obs_list=<span class="kw"><a href="../reference/filter_obs.html">filter_obs</a></span>(obs_list, <span class="dt">var_names=</span>var_name,<span class="dt">include=</span><span class="ot">TRUE</span>)</span></code></pre></div>
+<span id="cb4-4"><a href="#cb4-4"></a>                          <span class="dt">obs_filenames =</span> <span class="st">"bo96iN+.obs"</span>)<span class="er">)</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a>obs_list=<span class="kw"><a href="../reference/filter_obs.html">filter_obs</a></span>(obs_list, <span class="dt">var_names=</span><span class="st">"lai_n"</span>,<span class="dt">include=</span><span class="ot">TRUE</span>)</span></code></pre></div>
 </div>
 <div id="set-information-on-the-parameters-to-estimate" class="section level2">
 <h2 class="hasAnchor">

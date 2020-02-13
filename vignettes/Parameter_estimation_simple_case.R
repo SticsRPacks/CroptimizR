@@ -40,8 +40,8 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 #  sit_name="bo96iN+"
 #  var_name="lai_n"
 #  obs_list=get_obs(file.path(data_dir,"XmlFiles"),
-#                            obs_filenames = paste0(sit_name,".obs"))
-#  obs_list=filter_obs(obs_list, var_names=var_name,include=TRUE)
+#                            obs_filenames = "bo96iN+.obs"))
+#  obs_list=filter_obs(obs_list, var_names="lai_n",include=TRUE)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 #  # 2 parameters here: dlaimax and durvieF, of bounds [0.0005,0.0025] and [50,400].

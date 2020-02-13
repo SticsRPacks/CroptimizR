@@ -30,8 +30,12 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 #  param_info=list()
-#  param_info$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1", "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),lb=0.0005,ub=0.0025)
-#  param_info$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"), c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),lb=c(50,100),ub=c(400,450))
+#  param_info$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1",
+#                                          "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),
+#                          lb=0.0005,ub=0.0025)
+#  param_info$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
+#                                        c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),
+#                          lb=c(50,100),ub=c(400,450))
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 #  optim_options=list()
