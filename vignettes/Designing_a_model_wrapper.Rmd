@@ -34,39 +34,30 @@ Here's a header for a basic version of a model wrapper:
 ```{r eval=FALSE}
 #' @title MyModel wrapper for CroptimizR
 #'
-#' @description This function run my crop model and may force it with the values 
-#' of the parameters defined in the param_values argument. It returns the values 
-#' of the (possibly selected) simulated outputs.
+#' @description This function runs my crop model and force it with the values 
+#' of the parameters defined in the param_values argument. It returns 
+#' the values of the simulated outputs.
 #'
 #' @param model_options List containing any information needed to run the model. 
 #'
-#' @param param_values Either a named vector or a named 3D array.
-#' Use a named vector that contains the values and names of the parameters to force whatever
-#' the simulated situations.
-#' If one wants to force the model with different values of parameters for the
-#' simulated situations or to simulate the situations several times but with different
-#' values of the parameters, use a 3D array containing the value(s) and names of the
+#' @param param_values Named 3D array that contains the value(s) and names of the
 #' parameters to force for each situation to simulate. This array contains the different
 #' parameters values (first dimension) for the different parameters (second dimension)
 #' and for the different situations (third dimension).
 #'
-#' @param sit_var_dates_mask (optional)
-#' Has no effect in this version of the wrapper
-#'
 #' @return A list containing simulated values (`sim_list`: a vector of list (one
-#' element per values of parameters) containing data.frames of simulated output values) and an
-#' error code (`error`) indicating if at least one simulation ended with an error.
+#' element per values of parameters) containing data.frames of simulated output values 
+#' for each simulated situation) and an error code (`error`) indicating if at least 
+#' one simulation ended with an error.
 
-model_wrapper <- function( model_options, param_values=NULL, 
-                           sit_var_dates_mask=NULL) {
-  ...
-  
+model_wrapper <- function( model_options, param_values, ...) {
+
 }
 
 ```
 
 Each argument detailed here is mandatory for any CroptimizR model wrapper. You can use this header to develop yours.
-Note that sit_var_dates_mask will have no effect in this basic version of the wrapper.
+Be careful, "..." is mandatory at the end of the argument list since CroptimizR may give additional arguments for more advanced wrappers.
 
 The shape of the param_values argument is imposed by CroptimizR. This is not the case of the model_options argument (except the fact that is must be a list): its content must be defined by the developper of the model wrapper. Put in this list what you need to run the model (e.g. path to the executable, path the directory containing model input files for the simulated situations, ...). 
 
@@ -76,6 +67,11 @@ The shape of the param_values argument is imposed by CroptimizR. This is not the
 * Run the model on a specified set of situations
 A situation corresponds to a simulation (for example a specific treatment on a given soil for a given period).
 The names of the situations are the names of dimension 3 of param_values. They will be given by the end user when calling CroptimizR functions. To retrieve them, use `dimnames(param_values)[[3]]`. 
+
+To run your model from R, several technical solutions are possible depending on the language it is implemented with. 
+A simple solution (although not the most computationally efficient) is to run its executable using the R function `system2`.
+Otherwise, different languages can be directly interfaced in R: for example Python, using the R package `reticulate`, C and C++ (see e.g.  (https://www.r-bloggers.com/three-ways-to-call-cc-from-r/)), fortran (see e.g. (https://www.r-bloggers.com/fortran-and-r-speed-things-up/))...
+
 
 * Force the model with specified values of its parameters
 The values of the parameters are specified in the param_values array. The names of the parameters are the names of dimension 2 of param_values.
@@ -99,7 +95,7 @@ In this case for example, values c(0.001, 50) and c(0.002, 50) of parameters par
 The results must be stored in `result$sim_list` variable. `sim_list` is a vector of list, of size the size of the first dimension of param_values.
 You can initialize it like this: `result$sim_list <- vector("list",dim(param_values)[1])`.
 Each element of the list should contains a list of data.frame, one per situation, with the results obtained for all simulated variables and dates.
-The data.frame must have one column called Date containing the simulations dates in POSIXct format (see R function `base::as.POSIXct`). The other columns contains the values of the simulated variables and their names must be put as column names.
+The data.frame must have one column called `Date` containing the simulations dates in POSIXct format (see R function `base::as.POSIXct`). The other columns contains the values of the simulated variables and their names must be put as column names.
 
 For example, given the param_values array defined above, sim_list should look like:
 
@@ -167,7 +163,7 @@ $sim_list[[2]]$situation3
 
 
 * Return an error code if any simulation failed
-If any simulation failed for any reason, the variable `result$error` must contain `TRUE` and `FALSE` otherwise.
+If any simulation failed for any reason, use the R function `warning` to print any useful information about the error and set the variable `result$error` to `TRUE` (and to `FALSE` otherwise).
 
 
 ### Implementation
@@ -176,8 +172,7 @@ A typical pseudo-code implementation of the wrapper function is thus:
 
 ```{r eval=FALSE}
 
-model_wrapper <- function( model_options, param_values=NULL, 
-                           sit_var_dates_mask=NULL) {
+model_wrapper <- function( model_options, param_values, ...) {
   
   # Initializations
   nb_paramValues <- dim(param_values)[1]
@@ -196,7 +191,8 @@ model_wrapper <- function( model_options, param_values=NULL,
       
       # read the results and store the data.frame in result$sim_list[[i]][[situation]]
       
-      if (any error returned by the model or detected in its results) {
+      if (any_error_returned_by_the model_or_detected_in_its_results) {
+        warning("any_useful_information_to_describe_the_error")
         results$error=TRUE
       }
       
@@ -279,10 +275,9 @@ out_pa
 ```
 
 
-
 * Outputs selection
 
-The argument `sit_var_dates_mask` may be used to return a selection of variables and dates per simulated situations.
+An additional argument called `sit_var_dates_mask` can be defined in the wrapper. It can be used to return a selection of variables and dates per simulated situations.
 This may save execution time for some models (for example if model results are read in a databasis with specific request per variable).
 
 `sit_var_dates_mask` is a list of data.frame similar to `result$sim_list[[i]]`. It indicates the list of variables and dates for each situation for which results must be returned: if `sit_var_dates_mask$situation1[j,"var1"]` does not contain NA, then the simulated value of variable "var1" at date `sit_var_dates_mask$situation1[j,"Date"]` must be returned in `results$sim_list[[i]][["situation1"]]`.

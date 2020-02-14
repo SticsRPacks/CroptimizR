@@ -104,7 +104,7 @@
             <address class="author_afil">
       INRAE - EMMAH<br><h4 class="author">Patrice Lecharpentier</h4>
             <address class="author_afil">
-      INRAE - Agroclim<br><h4 class="date">2020-02-13</h4>
+      INRAE - Agroclim<br><h4 class="date">2020-02-14</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/master/vignettes/Designing_a_model_wrapper.Rmd"><code>vignettes/Designing_a_model_wrapper.Rmd</code></a></small>
       <div class="hidden name"><code>Designing_a_model_wrapper.Rmd</code></div>
@@ -130,43 +130,37 @@
 <p>Here’s a header for a basic version of a model wrapper:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co">#' @title MyModel wrapper for CroptimizR</span></span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="co">#'</span></span>
-<span id="cb1-3"><a href="#cb1-3"></a><span class="co">#' @description This function run my crop model and may force it with the values </span></span>
-<span id="cb1-4"><a href="#cb1-4"></a><span class="co">#' of the parameters defined in the param_values argument. It returns the values </span></span>
-<span id="cb1-5"><a href="#cb1-5"></a><span class="co">#' of the (possibly selected) simulated outputs.</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="co">#' @description This function runs my crop model and force it with the values </span></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="co">#' of the parameters defined in the param_values argument. It returns </span></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="co">#' the values of the simulated outputs.</span></span>
 <span id="cb1-6"><a href="#cb1-6"></a><span class="co">#'</span></span>
 <span id="cb1-7"><a href="#cb1-7"></a><span class="co">#' @param model_options List containing any information needed to run the model. </span></span>
 <span id="cb1-8"><a href="#cb1-8"></a><span class="co">#'</span></span>
-<span id="cb1-9"><a href="#cb1-9"></a><span class="co">#' @param param_values Either a named vector or a named 3D array.</span></span>
-<span id="cb1-10"><a href="#cb1-10"></a><span class="co">#' Use a named vector that contains the values and names of the parameters to force whatever</span></span>
-<span id="cb1-11"><a href="#cb1-11"></a><span class="co">#' the simulated situations.</span></span>
-<span id="cb1-12"><a href="#cb1-12"></a><span class="co">#' If one wants to force the model with different values of parameters for the</span></span>
-<span id="cb1-13"><a href="#cb1-13"></a><span class="co">#' simulated situations or to simulate the situations several times but with different</span></span>
-<span id="cb1-14"><a href="#cb1-14"></a><span class="co">#' values of the parameters, use a 3D array containing the value(s) and names of the</span></span>
-<span id="cb1-15"><a href="#cb1-15"></a><span class="co">#' parameters to force for each situation to simulate. This array contains the different</span></span>
-<span id="cb1-16"><a href="#cb1-16"></a><span class="co">#' parameters values (first dimension) for the different parameters (second dimension)</span></span>
-<span id="cb1-17"><a href="#cb1-17"></a><span class="co">#' and for the different situations (third dimension).</span></span>
-<span id="cb1-18"><a href="#cb1-18"></a><span class="co">#'</span></span>
-<span id="cb1-19"><a href="#cb1-19"></a><span class="co">#' @param sit_var_dates_mask (optional)</span></span>
-<span id="cb1-20"><a href="#cb1-20"></a><span class="co">#' Has no effect in this version of the wrapper</span></span>
-<span id="cb1-21"><a href="#cb1-21"></a><span class="co">#'</span></span>
-<span id="cb1-22"><a href="#cb1-22"></a><span class="co">#' @return A list containing simulated values (`sim_list`: a vector of list (one</span></span>
-<span id="cb1-23"><a href="#cb1-23"></a><span class="co">#' element per values of parameters) containing data.frames of simulated output values) and an</span></span>
-<span id="cb1-24"><a href="#cb1-24"></a><span class="co">#' error code (`error`) indicating if at least one simulation ended with an error.</span></span>
-<span id="cb1-25"><a href="#cb1-25"></a></span>
-<span id="cb1-26"><a href="#cb1-26"></a>model_wrapper &lt;-<span class="st"> </span><span class="cf">function</span>( model_options, <span class="dt">param_values=</span><span class="ot">NULL</span>, </span>
-<span id="cb1-27"><a href="#cb1-27"></a>                           <span class="dt">sit_var_dates_mask=</span><span class="ot">NULL</span>) {</span>
-<span id="cb1-28"><a href="#cb1-28"></a>  ...</span>
-<span id="cb1-29"><a href="#cb1-29"></a>  </span>
-<span id="cb1-30"><a href="#cb1-30"></a>}</span></code></pre></div>
-<p>Each argument detailed here is mandatory for any CroptimizR model wrapper. You can use this header to develop yours. Note that sit_var_dates_mask will have no effect in this basic version of the wrapper.</p>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="co">#' @param param_values Named 3D array that contains the value(s) and names of the</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="co">#' parameters to force for each situation to simulate. This array contains the different</span></span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="co">#' parameters values (first dimension) for the different parameters (second dimension)</span></span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="co">#' and for the different situations (third dimension).</span></span>
+<span id="cb1-13"><a href="#cb1-13"></a><span class="co">#'</span></span>
+<span id="cb1-14"><a href="#cb1-14"></a><span class="co">#' @return A list containing simulated values (`sim_list`: a vector of list (one</span></span>
+<span id="cb1-15"><a href="#cb1-15"></a><span class="co">#' element per values of parameters) containing data.frames of simulated output values </span></span>
+<span id="cb1-16"><a href="#cb1-16"></a><span class="co">#' for each simulated situation) and an error code (`error`) indicating if at least </span></span>
+<span id="cb1-17"><a href="#cb1-17"></a><span class="co">#' one simulation ended with an error.</span></span>
+<span id="cb1-18"><a href="#cb1-18"></a></span>
+<span id="cb1-19"><a href="#cb1-19"></a>model_wrapper &lt;-<span class="st"> </span><span class="cf">function</span>( model_options, param_values, ...) {</span>
+<span id="cb1-20"><a href="#cb1-20"></a></span>
+<span id="cb1-21"><a href="#cb1-21"></a>}</span></code></pre></div>
+<p>Each argument detailed here is mandatory for any CroptimizR model wrapper. You can use this header to develop yours. Be careful, “…” is mandatory at the end of the argument list since CroptimizR may give additional arguments for more advanced wrappers.</p>
 <p>The shape of the param_values argument is imposed by CroptimizR. This is not the case of the model_options argument (except the fact that is must be a list): its content must be defined by the developper of the model wrapper. Put in this list what you need to run the model (e.g. path to the executable, path the directory containing model input files for the simulated situations, …).</p>
 </div>
 <div id="minimum-required-functionalities" class="section level3">
 <h3 class="hasAnchor">
 <a href="#minimum-required-functionalities" class="anchor"></a>Minimum required functionalities</h3>
 <ul>
-<li><p>Run the model on a specified set of situations A situation corresponds to a simulation (for example a specific treatment on a given soil for a given period). The names of the situations are the names of dimension 3 of param_values. They will be given by the end user when calling CroptimizR functions. To retrieve them, use <code>dimnames(param_values)[[3]]</code>.</p></li>
-<li><p>Force the model with specified values of its parameters The values of the parameters are specified in the param_values array. The names of the parameters are the names of dimension 2 of param_values. To retrieve them use <code>dimnames(param_values)[[2]]</code>. Different values can be defined for different situations and multiple values can be defined for a given situation. param_values can for example contain:</p></li>
+<li>Run the model on a specified set of situations A situation corresponds to a simulation (for example a specific treatment on a given soil for a given period). The names of the situations are the names of dimension 3 of param_values. They will be given by the end user when calling CroptimizR functions. To retrieve them, use <code>dimnames(param_values)[[3]]</code>.</li>
+</ul>
+<p>To run your model from R, several technical solutions are possible depending on the language it is implemented with. A simple solution (although not the most computationally efficient) is to run its executable using the R function <code>system2</code>. Otherwise, different languages can be directly interfaced in R: for example Python, using the R package <code>reticulate</code>, C and C++ (see e.g. (<a href="https://www.r-bloggers.com/three-ways-to-call-cc-from-r/" class="uri">https://www.r-bloggers.com/three-ways-to-call-cc-from-r/</a>)), fortran (see e.g. (<a href="https://www.r-bloggers.com/fortran-and-r-speed-things-up/" class="uri">https://www.r-bloggers.com/fortran-and-r-speed-things-up/</a>))…</p>
+<ul>
+<li>Force the model with specified values of its parameters The values of the parameters are specified in the param_values array. The names of the parameters are the names of dimension 2 of param_values. To retrieve them use <code>dimnames(param_values)[[2]]</code>. Different values can be defined for different situations and multiple values can be defined for a given situation. param_values can for example contain:</li>
 </ul>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>param_values &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>( <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="fl">0.001</span>, <span class="fl">0.002</span>, <span class="dv">50</span>, <span class="dv">50</span>,</span>
 <span id="cb2-2"><a href="#cb2-2"></a>                         <span class="fl">0.001</span>, <span class="fl">0.002</span>, <span class="dv">60</span>, <span class="dv">60</span>,</span>
@@ -194,7 +188,7 @@
 ## [2,]  0.002     70</code></pre>
 <p>In this case for example, values c(0.001, 50) and c(0.002, 50) of parameters param1 and param2 must be given in input of the model for situation1, c(0.001, 60) and c(0.002, 60) for situation2 and c(0.001, 70) and c(0.002, 70) for situation3.</p>
 <ul>
-<li>Retrieve the simulated results for all simulated variables The results must be stored in <code>result$sim_list</code> variable. <code>sim_list</code> is a vector of list, of size the size of the first dimension of param_values. You can initialize it like this: <code>result$sim_list &lt;- vector("list",dim(param_values)[1])</code>. Each element of the list should contains a list of data.frame, one per situation, with the results obtained for all simulated variables and dates. The data.frame must have one column called Date containing the simulations dates in POSIXct format (see R function <code><a href="https://www.rdocumentation.org/packages/base/topics/as.POSIXlt">base::as.POSIXct</a></code>). The other columns contains the values of the simulated variables and their names must be put as column names.</li>
+<li>Retrieve the simulated results for all simulated variables The results must be stored in <code>result$sim_list</code> variable. <code>sim_list</code> is a vector of list, of size the size of the first dimension of param_values. You can initialize it like this: <code>result$sim_list &lt;- vector("list",dim(param_values)[1])</code>. Each element of the list should contains a list of data.frame, one per situation, with the results obtained for all simulated variables and dates. The data.frame must have one column called <code>Date</code> containing the simulations dates in POSIXct format (see R function <code><a href="https://www.rdocumentation.org/packages/base/topics/as.POSIXlt">base::as.POSIXct</a></code>). The other columns contains the values of the simulated variables and their names must be put as column names.</li>
 </ul>
 <p>For example, given the param_values array defined above, sim_list should look like:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="op">$</span>sim_list</span>
@@ -255,34 +249,34 @@
 <span id="cb4-56"><a href="#cb4-56"></a><span class="co">#&gt; 3 1996-10-19 00:00:00  0.1    5.11    4.47</span></span>
 <span id="cb4-57"><a href="#cb4-57"></a><span class="co">#</span></span></code></pre></div>
 <ul>
-<li>Return an error code if any simulation failed If any simulation failed for any reason, the variable <code>result$error</code> must contain <code>TRUE</code> and <code>FALSE</code> otherwise.</li>
+<li>Return an error code if any simulation failed If any simulation failed for any reason, use the R function <code>warning</code> to print any useful information about the error and set the variable <code>result$error</code> to <code>TRUE</code> (and to <code>FALSE</code> otherwise).</li>
 </ul>
 </div>
 <div id="implementation" class="section level3">
 <h3 class="hasAnchor">
 <a href="#implementation" class="anchor"></a>Implementation</h3>
 <p>A typical pseudo-code implementation of the wrapper function is thus:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>model_wrapper &lt;-<span class="st"> </span><span class="cf">function</span>( model_options, <span class="dt">param_values=</span><span class="ot">NULL</span>, </span>
-<span id="cb5-2"><a href="#cb5-2"></a>                           <span class="dt">sit_var_dates_mask=</span><span class="ot">NULL</span>) {</span>
-<span id="cb5-3"><a href="#cb5-3"></a>  </span>
-<span id="cb5-4"><a href="#cb5-4"></a>  <span class="co"># Initializations</span></span>
-<span id="cb5-5"><a href="#cb5-5"></a>  nb_paramValues &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dim">dim</a></span>(param_values)[<span class="dv">1</span>]</span>
-<span id="cb5-6"><a href="#cb5-6"></a>  param_names &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dimnames">dimnames</a></span>(param_values)[[<span class="dv">2</span>]]</span>
-<span id="cb5-7"><a href="#cb5-7"></a>  situation_names &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dimnames">dimnames</a></span>(param_values)[[<span class="dv">3</span>]]</span>
-<span id="cb5-8"><a href="#cb5-8"></a>  result<span class="op">$</span>sim_list &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/vector">vector</a></span>(<span class="st">"list"</span>,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dim">dim</a></span>(param_values)[<span class="dv">1</span>])</span>
-<span id="cb5-9"><a href="#cb5-9"></a>  results<span class="op">$</span>error=<span class="ot">FALSE</span></span>
-<span id="cb5-10"><a href="#cb5-10"></a>  </span>
-<span id="cb5-11"><a href="#cb5-11"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>nb_paramValues) {</span>
-<span id="cb5-12"><a href="#cb5-12"></a>    </span>
-<span id="cb5-13"><a href="#cb5-13"></a>    <span class="cf">for</span> (situation <span class="cf">in</span> situation_names) {</span>
-<span id="cb5-14"><a href="#cb5-14"></a>      </span>
-<span id="cb5-15"><a href="#cb5-15"></a>      <span class="co"># overwrite model input parameters of names contained in param_names with values retrieved in param_values[i,,situation]</span></span>
-<span id="cb5-16"><a href="#cb5-16"></a>      </span>
-<span id="cb5-17"><a href="#cb5-17"></a>      <span class="co"># run the model</span></span>
-<span id="cb5-18"><a href="#cb5-18"></a>      </span>
-<span id="cb5-19"><a href="#cb5-19"></a>      <span class="co"># read the results and store the data.frame in result$sim_list[[i]][[situation]]</span></span>
-<span id="cb5-20"><a href="#cb5-20"></a>      </span>
-<span id="cb5-21"><a href="#cb5-21"></a>      <span class="cf">if</span> (any error returned by the model or detected <span class="cf">in</span> its results) {</span>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>model_wrapper &lt;-<span class="st"> </span><span class="cf">function</span>( model_options, param_values, ...) {</span>
+<span id="cb5-2"><a href="#cb5-2"></a>  </span>
+<span id="cb5-3"><a href="#cb5-3"></a>  <span class="co"># Initializations</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a>  nb_paramValues &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dim">dim</a></span>(param_values)[<span class="dv">1</span>]</span>
+<span id="cb5-5"><a href="#cb5-5"></a>  param_names &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dimnames">dimnames</a></span>(param_values)[[<span class="dv">2</span>]]</span>
+<span id="cb5-6"><a href="#cb5-6"></a>  situation_names &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dimnames">dimnames</a></span>(param_values)[[<span class="dv">3</span>]]</span>
+<span id="cb5-7"><a href="#cb5-7"></a>  result<span class="op">$</span>sim_list &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/vector">vector</a></span>(<span class="st">"list"</span>,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dim">dim</a></span>(param_values)[<span class="dv">1</span>])</span>
+<span id="cb5-8"><a href="#cb5-8"></a>  results<span class="op">$</span>error=<span class="ot">FALSE</span></span>
+<span id="cb5-9"><a href="#cb5-9"></a>  </span>
+<span id="cb5-10"><a href="#cb5-10"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>nb_paramValues) {</span>
+<span id="cb5-11"><a href="#cb5-11"></a>    </span>
+<span id="cb5-12"><a href="#cb5-12"></a>    <span class="cf">for</span> (situation <span class="cf">in</span> situation_names) {</span>
+<span id="cb5-13"><a href="#cb5-13"></a>      </span>
+<span id="cb5-14"><a href="#cb5-14"></a>      <span class="co"># overwrite model input parameters of names contained in param_names with values retrieved in param_values[i,,situation]</span></span>
+<span id="cb5-15"><a href="#cb5-15"></a>      </span>
+<span id="cb5-16"><a href="#cb5-16"></a>      <span class="co"># run the model</span></span>
+<span id="cb5-17"><a href="#cb5-17"></a>      </span>
+<span id="cb5-18"><a href="#cb5-18"></a>      <span class="co"># read the results and store the data.frame in result$sim_list[[i]][[situation]]</span></span>
+<span id="cb5-19"><a href="#cb5-19"></a>      </span>
+<span id="cb5-20"><a href="#cb5-20"></a>      <span class="cf">if</span> (any_error_returned_by_the model_or_detected_in_its_results) {</span>
+<span id="cb5-21"><a href="#cb5-21"></a>        <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/warning">warning</a></span>(<span class="st">"any_useful_information_to_describe_the_error"</span>)</span>
 <span id="cb5-22"><a href="#cb5-22"></a>        results<span class="op">$</span>error=<span class="ot">TRUE</span></span>
 <span id="cb5-23"><a href="#cb5-23"></a>      }</span>
 <span id="cb5-24"><a href="#cb5-24"></a>      </span>
@@ -387,7 +381,7 @@
 <ul>
 <li>Outputs selection</li>
 </ul>
-<p>The argument <code>sit_var_dates_mask</code> may be used to return a selection of variables and dates per simulated situations. This may save execution time for some models (for example if model results are read in a databasis with specific request per variable).</p>
+<p>An additional argument called <code>sit_var_dates_mask</code> can be defined in the wrapper. It can be used to return a selection of variables and dates per simulated situations. This may save execution time for some models (for example if model results are read in a databasis with specific request per variable).</p>
 <p><code>sit_var_dates_mask</code> is a list of data.frame similar to <code>result$sim_list[[i]]</code>. It indicates the list of variables and dates for each situation for which results must be returned: if <code>sit_var_dates_mask$situation1[j,"var1"]</code> does not contain NA, then the simulated value of variable “var1” at date <code>sit_var_dates_mask$situation1[j,"Date"]</code> must be returned in <code>results$sim_list[[i]][["situation1"]]</code>.</p>
 </div>
 <div id="examples" class="section level2">
