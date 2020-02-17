@@ -53,11 +53,15 @@ main_crit <- function(param_values, crit_options) {
                                   param_values = param_values_array,
                                   sit_var_dates_mask = obs_list)
 
-  if (model_results$error) {
+  # Check results
+  if (!is.null(model_results$error) && model_results$error) {
     warning("Error in model simulations")
   }
   if (is.null(model_results$sim_list[[1]]) || length(model_results$sim_list[[1]])==0) {
     stop("Error: model wrapper returned an empty list!")
+  }
+  if (!is.sim(model_results$sim_list)) {
+    stop("Error: format of results returned by the model wrapper is incorrect!")
   }
 
   # intersect sim and obs

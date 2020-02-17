@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Check format of observation list — is.obs • CroptimizR</title>
+<title>Check format of data storage (for simulation results or observations) — is.data • CroptimizR</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -37,9 +37,9 @@
 
 
 
-<meta property="og:title" content="Check format of observation list — is.obs" />
+<meta property="og:title" content="Check format of data storage (for simulation results or observations) — is.data" />
 
-<meta property="og:description" content="Check format of observation list" />
+<meta property="og:description" content="Check format of data storage (for simulation results or observations)" />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -135,46 +135,51 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Check format of observation list</h1>
+    <h1>Check format of data storage (for simulation results or observations)</h1>
     <small class="dont-index">Source: <a href='https://github.com/SticsRPacks/CroptimizR/blob/master/R/is_data.R'><code>R/is_data.R</code></a></small>
-    <div class="hidden name"><code>is.obs.Rd</code></div>
+    <div class="hidden name"><code>is.data.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Check format of observation list</p>
+    <p>Check format of data storage (for simulation results or observations)</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>is.obs</span>(<span class='no'>obs_list</span>)</pre>
+    <pre class="usage"><span class='fu'>is.data</span>(<span class='no'>data_list</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>obs_list</th>
-      <td><p>List of observed values to check</p></td>
+      <th>data_list</th>
+      <td><p>List of values to check</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>TRUE if obs_list has the good format, FALSE otherwise (+ warnings)</p>
+    <p>TRUE if data_list has the expected format, FALSE otherwise (+ warnings)</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>data is expected to be stored in a vector of named list containing for
+each situation a data.frame with a column "Date" plus one column per variable</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='no'>obs_list</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>sit1</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>Date</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/as.POSIXlt'>as.POSIXct</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"2009-11-30"</span>,<span class='st'>"2009-12-10"</span>)),<span class='kw'>var1</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1.1</span>,<span class='fl'>1.5</span>),<span class='kw'>var2</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>NA</span>,<span class='fl'>2.1</span>)),
+<span class='no'>data_list</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>sit1</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>Date</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/as.POSIXlt'>as.POSIXct</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"2009-11-30"</span>,<span class='st'>"2009-12-10"</span>)),<span class='kw'>var1</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1.1</span>,<span class='fl'>1.5</span>),<span class='kw'>var2</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>NA</span>,<span class='fl'>2.1</span>)),
                  <span class='kw'>sit2</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>Date</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/as.POSIXlt'>as.POSIXct</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"2009-11-30"</span>,<span class='st'>"2009-12-5"</span>)),<span class='kw'>var1</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1.3</span>,<span class='fl'>2</span>)))
-<span class='kw pkg'>CroptimizR</span><span class='kw ns'>:::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/CroptimizR/topics/is.obs'>is.obs</a></span>(<span class='no'>obs_list</span>)</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
+<span class='kw pkg'>CroptimizR</span><span class='kw ns'>:::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/CroptimizR/topics/is.data'>is.data</a></span>(<span class='no'>data_list</span>)</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
 <span class='co'># Missing Date column</span>
-<span class='no'>obs_list</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>sit1</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>var1</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1.1</span>,<span class='fl'>1.5</span>),<span class='kw'>var2</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>NA</span>,<span class='fl'>2.1</span>)),
+<span class='no'>data_list</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>sit1</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>var1</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1.1</span>,<span class='fl'>1.5</span>),<span class='kw'>var2</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>NA</span>,<span class='fl'>2.1</span>)),
                  <span class='kw'>sit2</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>Date</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/as.POSIXlt'>as.POSIXct</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"2009-11-30"</span>,<span class='st'>"2009-12-5"</span>)),<span class='kw'>var1</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1.3</span>,<span class='fl'>2</span>)))
-<span class='kw pkg'>CroptimizR</span><span class='kw ns'>:::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/CroptimizR/topics/is.obs'>is.obs</a></span>(<span class='no'>obs_list</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Incorrect format: all data.frames in the list must contain a column named Date.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable storing observed data has an incorrect format.</span></div><div class='output co'>#&gt; [1] FALSE</div><div class='input'>
+<span class='kw pkg'>CroptimizR</span><span class='kw ns'>:::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/CroptimizR/topics/is.data'>is.data</a></span>(<span class='no'>data_list</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Incorrect format: all data.frames in the list must contain a column named Date.</span></div><div class='output co'>#&gt; [1] FALSE</div><div class='input'>
 <span class='co'># Bad Date format</span>
-<span class='no'>obs_list</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>sit1</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>Date</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"2009-11-30"</span>,<span class='st'>"2009-12-10"</span>),<span class='kw'>var1</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1.1</span>,<span class='fl'>1.5</span>),<span class='kw'>var2</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>NA</span>,<span class='fl'>2.1</span>)),
+<span class='no'>data_list</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>sit1</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>Date</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"2009-11-30"</span>,<span class='st'>"2009-12-10"</span>),<span class='kw'>var1</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1.1</span>,<span class='fl'>1.5</span>),<span class='kw'>var2</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>NA</span>,<span class='fl'>2.1</span>)),
                  <span class='kw'>sit2</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='kw'>Date</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"2009-11-30"</span>,<span class='st'>"2009-12-5"</span>),<span class='kw'>var1</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1.3</span>,<span class='fl'>2</span>)))
-<span class='kw pkg'>CroptimizR</span><span class='kw ns'>:::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/CroptimizR/topics/is.obs'>is.obs</a></span>(<span class='no'>obs_list</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Incorrect format: Date column in data.frame must contain values in Date or POSIXct format.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Variable storing observed data has an incorrect format.</span></div><div class='output co'>#&gt; [1] FALSE</div><div class='input'>
+<span class='kw pkg'>CroptimizR</span><span class='kw ns'>:::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/CroptimizR/topics/is.data'>is.data</a></span>(<span class='no'>data_list</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Incorrect format: Date column in data.frame must contain values in Date or POSIXct format.</span></div><div class='output co'>#&gt; [1] FALSE</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -183,6 +188,8 @@
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

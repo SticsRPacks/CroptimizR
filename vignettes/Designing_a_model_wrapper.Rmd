@@ -95,7 +95,7 @@ In this case for example, values c(0.001, 50) and c(0.002, 50) of parameters par
 The results must be stored in `result$sim_list` variable. `sim_list` is a vector of list, of size the size of the first dimension of param_values.
 You can initialize it like this: `result$sim_list <- vector("list",dim(param_values)[1])`.
 Each element of the list should contains a list of data.frame, one per situation, with the results obtained for all simulated variables and dates.
-The data.frame must have one column called `Date` containing the simulations dates in POSIXct format (see R function `base::as.POSIXct`). The other columns contains the values of the simulated variables and their names must be put as column names.
+The data.frame must have one column called `Date` containing the simulations dates in Date or POSIXct format (see R function`base::as.Date` or `base::as.POSIXct`). The other columns contains the values of the simulated variables and their names must be put as column names.
 
 For example, given the param_values array defined above, sim_list should look like:
 
