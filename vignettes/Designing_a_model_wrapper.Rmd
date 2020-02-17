@@ -187,7 +187,7 @@ model_wrapper <- function( model_options, param_values, ...) {
       
       # overwrite model input parameters of names contained in param_names with values retrieved in param_values[i,,situation]
       
-      # run the model
+      # run the model for the given situation 
       
       # read the results and store the data.frame in result$sim_list[[i]][[situation]]
       
@@ -206,6 +206,47 @@ model_wrapper <- function( model_options, param_values, ...) {
 
    
 ```
+
+
+### Test your wrapper
+
+You can implement the following tests to check your wrapper is working as expected:
+
+* check the results returned by the wrapper (`sim_max$sim_list`) are identical to what is given by your model when used in a standard way (i.e. not through the wrapper)
+
+* run the wrapper with different values of parameters and check it gives different simulated values. You can do that using the following :
+
+```{r eval=FALSE}
+
+param_names=    # set the name of one or several model input parameters in a vector
+param_lb=       # set the lower bounds of these parameters in a vector (no Inf or -Inf ...)
+param_ub=       # set the upper bounds of these parameters in a vector (no Inf or -Inf ...)
+var_name=       # give the name of an output variable sensitive to this (or these) parameter(s)
+situation_name= # give the name of the situation to simulate 
+model_options=  # give the model options
+wrapper=        # give the name of tyour wrapper
+
+  
+param_values_min <- array( param_lb,
+                       dim=c(1,length(param_lb),1),
+                       dimnames=list(NULL,param_names,situation_name))
+
+param_values_max <- array( param_ub,
+                       dim=c(1,length(param_ub),1),
+                       dimnames=list(NULL,param_names,situation_name))
+
+sim_max       <- wrapper(param_values = param_values_min, model_options = model_options)
+
+sim_min       <- wrapper(param_values = param_values_max, model_options = model_options)
+
+print(paste("Sum of differences, variable",var_name,", situation",situation_name," = ",
+             sum(abs(sim_max$sim_list[[1]][[situation_name]][,var_name]-sim_min$sim_list[[1]][[situation_name]][,var_name]),na.rm=TRUE)))
+# Should give a value different from 0.
+   
+```
+
+* Try to play with estim_param on your wrapper for a simple case (e.g. a single situation, variable and parameter, see e.g. (https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html)).
+
 
 
 ## Optional issues
