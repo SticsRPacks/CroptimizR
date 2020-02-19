@@ -8,9 +8,9 @@ filter_obs(obs_list, var_names = NULL, sit_names = NULL,
   dates = NULL, include = FALSE)
 }
 \arguments{
-\item{obs_list}{List of observed values to filter
+\item{obs_list}{List of observed values to use for parameter estimation
 A \code{named list} (names = situations names) of data.frame containing
-one column named Date with the dates (POSIXct format) of the different observations
+one column named Date with the dates (Date or POSIXct format) of the different observations
 and one column per observed variables with either the measured values or NA, if
 the variable is not observed at the given date.}
 

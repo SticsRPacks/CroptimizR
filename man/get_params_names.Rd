@@ -22,6 +22,7 @@ a named list containing for each parameter the list of situations per group
 (\code{sit_list}), the vector of upper and lower bounds (one value per group)
 (\code{ub} and \code{lb}) and the list of initial values per group
 \code{init_values} (data.frame, one column per group, optional).
+(see \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html}{here} for an example)
 }}
 
 \item{short_list}{TRUE to return a list without replicated parameters which
