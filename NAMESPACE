@@ -2,6 +2,7 @@
 
 export(crit_log_cwss)
 export(crit_log_cwss_corr)
+export(crit_ols)
 export(estim_param)
 export(filter_obs)
 export(likelihood_log_ciidn)

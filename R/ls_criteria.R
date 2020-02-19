@@ -11,6 +11,13 @@
 #'
 #' @details The following criteria are proposed ([see html version](https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html) for a better rendering of equations):
 #' \itemize{
+#'   \item `crit_ols`: ordinary least squares \cr
+#'           The sum of squared residues for each variable: \cr
+#'           \deqn{ \sum_{i,j,k} [Y_{ijk}-f_{jk}(X_i;\theta)]^2 }
+#'           where \eqn{ Y_{ijk} } is the observed value for the \eqn{k^{th}} time point of the \eqn{j^{th}} variable in the \eqn{i^{th}}
+#'           situation,
+#'           \eqn{ f_{jk}(X_i;\theta) } the corresponding model prediction, and \eqn{n_j} the number of measurements of variable \eqn{j}. \cr
+#'           In this criterion, one assume that all errors (model and observations errors for all variables, dates and situations) are independent, and that the error variance is constant over time and equal for the different variables \eqn{j}.
 #'   \item `crit_log_cwss`: log transformation of concentrated version of weighted sum of squares \cr
 #'           The concentrated version of weighted sum of squares is: \cr
 #'           \deqn{ \prod_{j} {(\frac{1}{n_j} \sum_{i,k} [Y_{ijk}-f_{jk}(X_i;\theta)]^2 )} ^{n_j/2} }
@@ -39,6 +46,30 @@
 #' @name ls_criteria
 #'
 NULL
+
+
+
+#' @export
+#' @rdname ls_criteria
+crit_ols <- function(sim_list, obs_list) {
+  var_list <- unique(unlist(lapply(obs_list, function(x) colnames(x))))
+  var_list <- setdiff(var_list, "Date")
+
+  result <- 0
+
+  for (var in var_list) {
+    obs <- unlist(sapply(obs_list, function(x) x[is.element(colnames(x), var)]))
+    sim <- unlist(sapply(sim_list, function(x) x[is.element(colnames(x), var)]))
+    res <- obs - sim
+    res <- res[!is.na(res)]
+
+    sz <- length(res)
+
+    result <- result + res %*% res
+  }
+
+  return(as.numeric(result))
+}
 
 
 #' @export
