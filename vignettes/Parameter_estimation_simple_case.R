@@ -37,11 +37,11 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 #  
-#  sit_name="bo96iN+"
-#  var_name="lai_n"
+#  sit_name="bo96iN+"  # can be a vector of situation names if you want to consider several, e.g. c("bo96iN+","bou00t1")
+#  var_name="lai_n"    # can be a vector of variable names if you want to consider several, e.g. c("lai_n","masec_n")
 #  obs_list=get_obs(file.path(data_dir,"XmlFiles"),
-#                            obs_filenames = "bo96iN+.obs"))
-#  obs_list=filter_obs(obs_list, var_names="lai_n",include=TRUE)
+#                            obs_filenames = paste0(sit_name,".obs"))
+#  obs_list=filter_obs(obs_list, var_names=var_name,include=TRUE)
 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 #  # 2 parameters here: dlaimax and durvieF, of bounds [0.0005,0.0025] and [50,400].

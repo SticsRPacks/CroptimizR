@@ -59,7 +59,8 @@ climat.txt, ...) stored per USMs in different directories (which names must be t
 
 If you start from xml formatted input files (JavaStics format: usms.xml, sols.xml, ...)
 the following lines allow generating txt files from xml files.
-In this case, xml files are stored in file.path(data_dir,"XmlFiles").
+In this case, xml files are stored in `file.path(data_dir,"XmlFiles")` and the Stics input files
+(test format) will be stored in `stics_inputs_path=file.path(data_dir,"TxtFiles")`
 
 
 ```{r gen_dirs, results='hide', message=FALSE, warning=FALSE}
@@ -92,7 +93,7 @@ sim_before_optim=stics_wrapper(model_options=model_options)
 
 For Stics, observation files must for the moment have exactly the same names as the corresponding USMs and be stored in a unique folder to be read by the get_obs function. This will be improved in next versions.
 
-In this example, we only keep observations for situation (i.e. USM for Stics) `sit_name` and variable `var_name`. 
+In this example, we only keep observations for situation (i.e. USM for Stics) `sit_name` and variable `var_name`.
 
 **`obs_list` defines the list of situations, variables and dates that will be used to estimate the parameters. Use the function `filter_obs` (see `? filter_obs`) for removing situations, variables and/or dates from an observation list.**
 
@@ -101,11 +102,11 @@ In variables and parameters names, "(\*)" must be replaced by "_\*" to be handle
 
 ```{r message=FALSE, warning=FALSE}
 
-sit_name="bo96iN+"  
-var_name="lai_n" 
+sit_name="bo96iN+"  # can be a vector of situation names if you want to consider several, e.g. c("bo96iN+","bou00t1")
+var_name="lai_n"    # can be a vector of variable names if you want to consider several, e.g. c("lai_n","masec_n")
 obs_list=get_obs(file.path(data_dir,"XmlFiles"),
-                          obs_filenames = "bo96iN+.obs"))
-obs_list=filter_obs(obs_list, var_names="lai_n",include=TRUE)
+                          obs_filenames = paste0(sit_name,".obs"))
+obs_list=filter_obs(obs_list, var_names=var_name,include=TRUE)
 ```
 
 
@@ -131,7 +132,7 @@ param_info=list(lb=c(dlaimax=0.0005, durvieF=50),
 
 `optim_options` must contain the options of the parameter estimation method.
 Here we defined a few important options for the simplex method of the nloptr package (default method in estim_param).
-The see the full set of options available for the simplex method, type `? nl.opts`
+To see the full set of options available for the simplex method, type `? nl.opts`
 
 The number of repetitions is advised to be set to at least 5, while 10 is a reasonable maximum value.
 `maxeval` should be used to stop the minimization only if results have to be produced within a given duration, otherwise set it to a high value so that the minimization stops when the criterion based on `xtol_rel` is satisfied.
