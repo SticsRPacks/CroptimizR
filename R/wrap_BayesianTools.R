@@ -96,9 +96,13 @@ wrap_BayesianTools <- function(param_names,obs_list,crit_function,model_function
       grDevices::dev.off()
     },
     error=function(cond) {
-      warning("Error trying to create ",path_results,"/iterAndDensityPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will not be created.")
+      filename=paste0("iterAndDensityPlots",format(Sys.time(), "%Y_%d_%H_%M_%S"),".pdf")
+      warning("Error trying to create ",path_results,"/iterAndDensityPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
       message(cond)
       flush.console()
+      grDevices::pdf(file = file.path(path_results,filename) , width = 9, height = 9)
+      graphics::plot(out)
+      grDevices::dev.off()
     })
 
   tryCatch(
@@ -108,9 +112,13 @@ wrap_BayesianTools <- function(param_names,obs_list,crit_function,model_function
       grDevices::dev.off()
     },
     error=function(cond) {
-      warning("Error trying to create ",path_results,"/marginalPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will not be created.")
+      filename=paste0("marginalPlots",format(Sys.time(), "%Y_%d_%H_%M_%S"),".pdf")
+      warning("Error trying to create ",path_results,"/marginalPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
       message(cond)
       flush.console()
+      grDevices::pdf(file = file.path(path_results,filename) , width = 9, height = 9)
+      marginalPlot(out)
+      grDevices::dev.off()
     })
 
   if (nb_params>=2) {
@@ -121,9 +129,13 @@ wrap_BayesianTools <- function(param_names,obs_list,crit_function,model_function
         grDevices::dev.off()
       },
       error=function(cond) {
-        warning("Error trying to create ",path_results,"/correlationPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will not be created.")
+        filename=paste0("correlationPlots",format(Sys.time(), "%Y_%d_%H_%M_%S"),".pdf")
+        warning("Error trying to create ",path_results,"/correlationPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
         message(cond)
         flush.console()
+        grDevices::pdf(file = file.path(path_results,filename) , width = 9, height = 9)
+        correlationPlot(out)
+        grDevices::dev.off()
       })
   }
 
@@ -138,9 +150,13 @@ wrap_BayesianTools <- function(param_names,obs_list,crit_function,model_function
           grDevices::dev.off()
         },
         error=function(cond) {
-          warning("Error trying to create ",path_results,"/gelmanDiagPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will not be created.")
+          filename=paste0("gelmanDiagPlots",format(Sys.time(), "%Y_%d_%H_%M_%S"),".pdf")
+          warning("Error trying to create ",path_results,"/gelmanDiagPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
           message(cond)
           flush.console()
+          grDevices::pdf(file = file.path(path_results,filename) , width = 9, height = 9)
+          gelmanDiagnostics(out, thin=optim_options_DREAMzs$thin, plot = T)
+          grDevices::dev.off()
         })
 
     } else {
