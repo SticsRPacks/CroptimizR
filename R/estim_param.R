@@ -111,6 +111,10 @@
 estim_param <- function(obs_list,crit_function=crit_log_cwss,model_function,model_options=NULL,
                         optim_method="nloptr.simplex",optim_options=NULL,param_info) {
 
+  # Measured elapse time
+  tic.clearlog()
+  tic("Total time for parameter estimation")
+
   # Check inputs
 
   ## obs_list
@@ -141,7 +145,15 @@ estim_param <- function(obs_list,crit_function=crit_log_cwss,model_function,mode
   # Run the estimation
 
   param_names=get_params_names(param_info)
-  return(optim_switch(param_names,obs_list,crit_function,model_function,model_options,
-                      optim_method,optim_options,param_info))
+  result=optim_switch(param_names,obs_list,crit_function,model_function,model_options,
+                      optim_method,optim_options,param_info)
 
-  }
+
+  # Measure elapse time
+  toc(log=TRUE)
+  result$total_time=unlist(tic.log(format = TRUE))
+  tic.clearlog()
+
+  return(result)
+
+}

@@ -25,7 +25,8 @@ Imports:
     rstudioapi,
     crayon,
     dplyr,
-    lubridate
+    lubridate,
+	tictoc
 Suggests:
     testthat (>= 2.1.0),
     covr,
