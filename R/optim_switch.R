@@ -31,9 +31,14 @@ optim_switch <- function(param_names,obs_list,crit_function,model_function,model
     res=wrap_BayesianTools(param_names=param_names,obs_list=obs_list,crit_function=crit_function,model_function=model_function,model_options=model_options,
                 optim_options=optim_options,param_info=param_info)
 
+  } else if (optim_method=="optim") {
+
+    res=wrap_optim(param_names=param_names,obs_list=obs_list,crit_function=crit_function,model_function=model_function,model_options=model_options,
+                           optim_options=optim_options,param_info=param_info)
+
   } else {
 
-    stop(paste0("Unknown method ",optim_method,", please choose between nloptr.simplex and BayesianTools.dreamzs."))
+    stop(paste0("Unknown method ",optim_method,", please choose between nloptr.simplex, BayesianTools.dreamzs and optim."))
 
   }
 
