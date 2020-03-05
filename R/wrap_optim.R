@@ -1,6 +1,6 @@
 #' @title A wrapper for optim function
 #'
-#' @inheritParams estim_param
+#' @inheritParams optim_switch
 #' @param param_names Name(s) of parameters to estimate (a parameter name must
 #' be replicated if several groups of situations for this parameter)
 #'
@@ -17,7 +17,7 @@
 #' @keywords internal
 #'
 
-wrap_optim <- function(param_names,obs_list,crit_function,model_function,model_options=NULL,optim_options=NULL,param_info) {
+wrap_optim <- function(param_names,optim_options,param_info,crit_options) {
 
   if (is.null((nb_rep=optim_options$nb_rep))) { nb_rep=1 }
   if (is.null((ranseed=optim_options$ranseed))) { ranseed=NULL }
@@ -27,14 +27,6 @@ wrap_optim <- function(param_names,obs_list,crit_function,model_function,model_o
 
   nb_params=length(param_names)
   set.seed(ranseed)
-
-  crit_options_loc=list()
-  crit_options_loc$param_names=param_names
-  crit_options_loc$obs_list=obs_list
-  crit_options_loc$crit_function=crit_function
-  crit_options_loc$model_function=model_function
-  crit_options_loc$model_options=model_options
-  crit_options_loc$param_info=param_info
 
   bounds=get_params_bounds(param_info)
   user_init_values=get_params_init_values(param_info)
@@ -55,8 +47,8 @@ wrap_optim <- function(param_names,obs_list,crit_function,model_function,model_o
                                   method=method,
 #                          lower=bounds$lb, upper=bounds$ub,
                           control = optim_options,
-#                          hessian=hessian,
-                          crit_options=crit_options_loc)
+                          hessian=hessian,
+                          crit_options=crit_options)
 
     elapsed <- Sys.time() - start_time
     progress <- 1.0 * irep / nb_rep

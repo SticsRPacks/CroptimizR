@@ -34,6 +34,9 @@
 #' (`sit_list`), the vector of upper and lower bounds (one value per group)
 #' (`ub` and `lb`) and the list of initial values per group
 #' `init_values` (data.frame, one column per group, optional).
+#' @param transform_obs Function for transforming observations (optional)
+#' @param transform_sim Function for transforming simulations (optional)
+#'
 #'
 #' @return prints, graphs and a list containing the results of the parameter estimation,
 #' which content depends on the method used, all that saved in the defined in
@@ -109,7 +112,8 @@
 
 
 estim_param <- function(obs_list,crit_function=crit_log_cwss,model_function,model_options=NULL,
-                        optim_method="nloptr.simplex",optim_options=NULL,param_info) {
+                        optim_method="nloptr.simplex",optim_options=NULL,param_info,
+                        transform_obs=NULL, transform_sim=NULL) {
 
   # Measured elapse time
   tic.clearlog()
@@ -145,8 +149,17 @@ estim_param <- function(obs_list,crit_function=crit_log_cwss,model_function,mode
   # Run the estimation
 
   param_names=get_params_names(param_info)
-  result=optim_switch(param_names,obs_list,crit_function,model_function,model_options,
-                      optim_method,optim_options,param_info)
+  crit_options=list()
+  crit_options$param_names=param_names
+  crit_options$obs_list=obs_list
+  crit_options$crit_function=crit_function
+  crit_options$model_function=model_function
+  crit_options$model_options=model_options
+  crit_options$param_info=param_info
+  crit_options$transform_obs=transform_obs
+  crit_options$transform_sim=transform_sim
+
+  result=optim_switch(param_names,optim_method,optim_options,param_info,crit_options)
 
 
   # Measure elapse time

@@ -28,6 +28,9 @@ main_crit <- function(param_values, crit_options) {
   model_function <- crit_options$model_function
   model_options <- crit_options$model_options
   param_info <- crit_options$param_info
+  transform_obs <- crit_options$transform_obs
+  transform_sim <- crit_options$transform_sim
+
   names(param_values) <- param_names
   situation_names <- names(obs_list)
   nb_situations=length(situation_names)
@@ -53,6 +56,11 @@ main_crit <- function(param_values, crit_options) {
                                   param_values = param_values_array,
                                   sit_var_dates_mask = obs_list)
 
+  # Transform simulations
+  if (!is.null(transform_sim)) {
+    model_results <- transform_sim(model_results=model_results, obs_list=obs_list, param_values=param_values, model_options=model_options)
+  }
+
   # Check results
   if (!is.null(model_results$error) && model_results$error) {
     warning("Error in model simulations")
@@ -63,6 +71,12 @@ main_crit <- function(param_values, crit_options) {
   if (!is.sim(model_results$sim_list)) {
     stop("Error: format of results returned by the model wrapper is incorrect!")
   }
+
+  # Transform observations
+  if (!is.null(transform_obs)) {
+    obs_list <- transform_obs(model_results=model_results, obs_list=obs_list, param_values=param_values, model_options=model_options)
+  }
+
 
   # intersect sim and obs
   obs_sim_list <- intersect_sim_obs(model_results$sim_list[[1]], obs_list)

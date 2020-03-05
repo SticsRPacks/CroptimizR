@@ -1,6 +1,6 @@
 #' @title A wrapper for nloptr package
 #'
-#' @inheritParams estim_param
+#' @inheritParams optim_switch
 #' @param param_names Name(s) of parameters to estimate (a parameter name must
 #' be replicated if several groups of situations for this parameter)
 #'
@@ -17,8 +17,7 @@
 #' @keywords internal
 #'
 
-wrap_nloptr <- function(param_names,obs_list,crit_function,model_function,model_options=NULL,optim_options=NULL,param_info) {
-
+wrap_nloptr <- function(param_names,optim_options,param_info,crit_options) {
   if (is.null((nb_rep=optim_options$nb_rep))) { nb_rep=1 }
   if (is.null((xtol_rel=optim_options$xtol_rel))) { xtol_rel=1e-4 }
   if (is.null((maxeval=optim_options$maxeval))) { maxeval=500 }
@@ -26,15 +25,6 @@ wrap_nloptr <- function(param_names,obs_list,crit_function,model_function,model_
   if (is.null((path_results=optim_options$path_results))) { path_results=getwd() }
 
   nb_params=length(param_names)
-
-  crit_options_loc=list()
-  crit_options_loc$param_names=param_names
-  crit_options_loc$obs_list=obs_list
-  crit_options_loc$crit_function=crit_function
-  crit_options_loc$model_function=model_function
-  crit_options_loc$model_options=model_options
-  crit_options_loc$param_info=param_info
-
   bounds=get_params_bounds(param_info)
   user_init_values=get_params_init_values(param_info)
 
@@ -55,7 +45,7 @@ wrap_nloptr <- function(param_names,obs_list,crit_function,model_function,model_
                           opts = list("algorithm"="NLOPT_LN_NELDERMEAD",
                                       "xtol_rel"=xtol_rel, "maxeval"=maxeval,
                                       "ranseed"=ranseed),
-                          crit_options=crit_options_loc)
+                          crit_options=crit_options)
 
     elapsed <- Sys.time() - start_time
     progress <- 1.0 * irep / nb_rep

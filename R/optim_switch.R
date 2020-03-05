@@ -3,38 +3,31 @@
 #' @inheritParams estim_param
 #' @param param_names Name(s) of parameters to estimate (a parameter name must
 #' be replicated if several groups of situations for this parameter)
+#' @param crit_options List containing several arguments given to `estim_param` function:
+#' `param_names`, `obs_list`, `crit_function`, `model_function`, `model_options`,
+#' `param_info`, `transform_obs`, `transform_sim`
+#' that must be passed to main_crit function by the methods wrappers.
 #'
-#' @return prints, graphs and a list containing the results of the parameter estimation.
-#' which content depends on the method used.
-#'   e.g. for Nelder meade simplex in nloptr, this list contains
-#' `final_values`, the vector of estimated values for optimized parameters
-#' for the repetition that lead to the lowest value of the criterion
-#' `init_values`, the vector of initial values for optimized parameters
-#' `est_values`, the vector of estimated values for optimized parameters
-#' for all repetitions
-#' `ind_min_crit`, the index of the repetition that lead to the lowest value
-#' of the criterion
-#' `nlo`, the data structure returned by nloptr
+#' @return prints, graphs and a list containing the results of the parameter estimation,
+#' which content depends on the method used, all that saved in the defined in
+#' `optim_options.path_results`
 #'
 #' @keywords internal
 #'
 
-optim_switch <- function(param_names,obs_list,crit_function,model_function,model_options=NULL,optim_method="nloptr.simplex",optim_options=NULL,param_info) {
+optim_switch <- function(param_names,optim_method,optim_options,param_info,crit_options) {
 
   if (optim_method=="nloptr.simplex" || optim_method=="simplex") {
 
-    res=wrap_nloptr(param_names=param_names,obs_list=obs_list,crit_function=crit_function,model_function=model_function,model_options=model_options,
-                optim_options=optim_options,param_info=param_info)
+    res=wrap_nloptr(param_names=param_names,optim_options=optim_options,param_info=param_info, crit_options)
 
   } else if (optim_method=="BayesianTools.dreamzs" || optim_method=="dreamzs") {
 
-    res=wrap_BayesianTools(param_names=param_names,obs_list=obs_list,crit_function=crit_function,model_function=model_function,model_options=model_options,
-                optim_options=optim_options,param_info=param_info)
+    res=wrap_BayesianTools(param_names=param_names,optim_options=optim_options,param_info=param_info, crit_options)
 
   } else if (optim_method=="optim") {
 
-    res=wrap_optim(param_names=param_names,obs_list=obs_list,crit_function=crit_function,model_function=model_function,model_options=model_options,
-                           optim_options=optim_options,param_info=param_info)
+    res=wrap_optim(param_names=param_names,optim_options=optim_options,param_info=param_info, crit_options)
 
   } else {
 
