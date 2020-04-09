@@ -1,1 +1,5 @@
-If you want to modify the vignettes, please modify the corresponding R codes and generate Rmd files by using the generate_vignettes function the concatenate the R files and creates the Rmd.
+Most of the sections in vignettes cannot be run at package build since it would be too long (some estimation methods require a minimum number of model run).
+
+To be able to test the code inserted in the vignette in spite of that, vignettes are built from R codes. An eval parameter allows to disable the execution of R chunck in the Rmd files whereas they are executed in the R versions. For each vignette, R codes are splitted in different parts so that these parts can be checked separately and/or the variables modified between the different sections for sake of tests. 
+
+If you want to modify the vignettes, please modify the corresponding R codes and generate Rmd files by using the generate_vignettes function that concatenates the R files and creates the Rmd. The sequences of concatenated R files can be seen in generate_vignettes.R but is quite logical (intro then install then init, then estim then post-treatment).
