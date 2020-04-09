@@ -14,7 +14,7 @@ generate_vignette(croptimizR_path = getwd(),
 \item{vignettes}{vector of vignettes' names to generate (chose between those given by default)}
 }
 \value{
-Generate R scripts and RMD file corresponding to the chosen vignettes
+list of path of the generated RMD files
 }
 \description{
 Generate CroptimizR vignettes by assembling R scripts
