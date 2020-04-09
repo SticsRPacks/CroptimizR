@@ -38,5 +38,8 @@ Suggests:
 	hydroGOF,
 	doParallel,
 	devtools
+Remotes:
+    github::SticsRPacks/SticsRPacks@*release,
+	github::ApsimOnR
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
