@@ -15,8 +15,10 @@
 #'
 #' @examples
 #'
-#' obs_list <- list(sit1=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-10")),var1=c(1.1,1.5),var2=c(NA,2.1)),
-#'                  sit2=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-5")),var1=c(1.3,2)))
+#' obs_list <- list(sit1=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-10")),
+#'                                  var1=c(1.1,1.5),var2=c(NA,2.1)),
+#'                  sit2=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-5")),
+#'                                  var1=c(1.3,2)))
 #'
 #' # Keep only var1
 #' filter_obs(obs_list,var_names=c("var1"),include=TRUE)

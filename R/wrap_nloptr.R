@@ -91,7 +91,7 @@ wrap_nloptr <- function(param_names,obs_list,crit_function,model_function,model_
       filename=paste0("EstimatedVSinit",format(Sys.time(), "%Y_%d_%H_%M_%S"),".pdf")
       warning("Error trying to create ",path_results,"/EstimatedVSinit.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
       message(cond)
-      flush.console()
+      utils::flush.console()
       grDevices::pdf(file = file.path(path_results,filename) , width = 9, height = 9)
       for (ipar in 1:nb_params) {
         graphics::plot(init_values[,ipar], est_values[,ipar],
