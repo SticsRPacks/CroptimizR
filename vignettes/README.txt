@@ -1,0 +1,1 @@
+If you want to modify the vignettes, please modify the corresponding R codes and generate Rmd files by using the generate_vignettes function the concatenate the R files and creates the Rmd.
