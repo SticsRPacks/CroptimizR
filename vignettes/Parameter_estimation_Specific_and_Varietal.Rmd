@@ -48,7 +48,7 @@ unzip(data_dir_zip, exdir = data_dir)
 unlink(data_dir_zip)
 data_dir= file.path(normalizePath(list.dirs(data_dir)[2], winslash = "/"),"study_case_1","V9.0")
 # NB: all examples are now in data_dir
-# Define the path to the local version of JavaStics 
+# Define the path to the local version of JavaStics
 javastics_path=file.path(getwd(),"JavaSTICS-1.41-stics-9.0")
 stics_path=file.path(javastics_path,"bin/stics_modulo.exe")
 ```
@@ -87,18 +87,18 @@ param_info$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN
 
 
 ```{r message=FALSE, warning=FALSE}
-optim_options=list() 
-optim_options$nb_rep <- 7 # Number of repetitions of the minimization 
+optim_options=list()
+optim_options$nb_rep <- 7 # Number of repetitions of the minimization
                           # (each time starting with different initial
-                          # values for the estimated parameters) 
-optim_options$maxeval <- 1000 # Maximum number of evaluations of the 
-                            # minimized criteria 
+                          # values for the estimated parameters)
+optim_options$maxeval <- 1000 # Maximum number of evaluations of the
+                            # minimized criteria
 optim_options$xtol_rel <- 1e-04 # Tolerance criterion between two iterations
                                 # (threshold for the relative difference of
-                                # parameter values between the 2 previous 
+                                # parameter values between the 2 previous
                                 # iterations)
 optim_options$path_results <- data_dir # path where to store the results (graph and Rdata)
-optim_options$ranseed <- 1234 # random seed  
+optim_options$ranseed <- 1234 # random seed
 ```
 
 
