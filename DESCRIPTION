@@ -30,6 +30,13 @@ Suggests:
     testthat (>= 2.1.0),
     covr,
     knitr,
-    rmarkdown
+    rmarkdown,
+	SticsRPacks,
+	ApsimOnR,
+	ggplot2,
+	gridExtra,
+	hydroGOF,
+	doParallel,
+	devtools
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
