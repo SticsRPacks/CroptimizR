@@ -39,7 +39,7 @@ Suggests:
 	doParallel,
 	devtools
 Remotes:
-    github::SticsRPacks/SticsRPacks@*release,
+    github::SticsRPacks/SticsRPacks,
 	github::ApsimOnR
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
