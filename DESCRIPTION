@@ -40,6 +40,6 @@ Suggests:
 	devtools
 Remotes:
     github::SticsRPacks/SticsRPacks,
-	github::ApsimOnR
+	github::hol430/ApsimOnR
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
