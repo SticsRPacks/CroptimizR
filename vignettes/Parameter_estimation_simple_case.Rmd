@@ -11,13 +11,17 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 params:
-  eval_rmd: FALSE
+  eval_auto_vignette: TRUE     # automatic execution of the vignette 
+  eval_manual_vignette: FALSE  # manual execution of the vignette (e.g. to create results graphs included in it)
+  eval_auto_test: FALSE  # automatic test execution of the vignette, SET IT TO TRUE IF manual_vignette IS SET TO TRUE
+  path_to_JavaStics: "D:/Home/sbuis/Documents/GitHub/CroptimizR/vignettes/JavaSTICS-1.41-stics-9.0"
+  result_path: "D:/Home/sbuis/Documents/GitHub/CroptimizR/vignettes"
 ---
 
 
 ```{r setup, eval=TRUE, include=FALSE}
 # Global options
-knitr::opts_chunk$set(eval = params$eval_rmd)
+path_to_JavaStics <- params$path_to_JavaStics
 ```
 
 
@@ -34,40 +38,52 @@ The parameter estimation is performed using the Nelder-Meade simplex method impl
 
 ## Initialisation step
 
-
-```{r setup_initializations,  message=FALSE, results=FALSE, warning=FALSE}
-
+```{r setup_install_per_package, eval=params$eval_auto_test, include=FALSE}
 # Install and load the needed libraries
-devtools::install_github("SticsRPacks/SticsRPacks")
-library("SticsRPacks")
+# This one is adapted for manual or test cases (one can first install the version of the libraries we want to test)
+library(SticsOnR)
+library(SticsRFiles)
+library(CroptimizR)
 
-# Download the example USMs:
-data_dir= file.path(SticsRFiles::download_data(),"study_case_1","V9.0")
-# NB: all examples are now in data_dir
+```
+
+```{r setup_install, eval=FALSE, message=FALSE, results=FALSE, warning=FALSE}
+# Install and load the needed libraries
+if(!require("SticsRPacks")){
+  devtools::install_github("SticsRPacks/SticsRPacks")
+  library("SticsRPacks")
+}
+```
+
+```{r setup_initializations, eval=params$eval_auto_test, message=FALSE, results=FALSE, warning=FALSE}
 
 # DEFINE THE PATH TO YOUR LOCALLY INSTALLED VERSION OF JAVASTICS
-javastics_path=file.path(path_to_JavaStics,"JavaSTICS-1.41-stics-9.0")
+javastics_path=path_to_JavaStics
 stics_path=file.path(javastics_path,"bin/stics_modulo.exe")
+
+# Download the example USMs and define the path to the JavaStics workspace (JavaStics XML input files):
+data_dir= file.path(SticsRFiles::download_data(),"study_case_1","V9.0")
+javastics_workspace_path=file.path(data_dir,"XmlFiles")
 ```
 
 
 ## Generate Stics input files from JavaStics input files
 
-The Stics wrapper function used in CroptimizR works on text formatted input files (new_travail.usm,
+The Stics wrapper function used in CroptimizR works on Stics input files (text formatted files new_travail.usm,
 climat.txt, ...) stored per USMs in different directories (which names must be the USM names).
 `stics_inputs_path` is here the path of the directory that will contain these USMs folders.
 
 If you start from xml formatted input files (JavaStics format: usms.xml, sols.xml, ...)
 the following lines allow generating txt files from xml files.
-In this case, xml files are stored in `file.path(data_dir,"XmlFiles")` and the Stics input files
+In this example, xml files are stored in `javastics_workspace_path` and the Stics input files
 (test format) will be stored in `stics_inputs_path=file.path(data_dir,"TxtFiles")`
 
 
-```{r gen_dirs, results='hide', message=FALSE, warning=FALSE}
+```{r gen_dirs, eval=params$eval_auto_test, results='hide', message=FALSE, warning=FALSE}
 stics_inputs_path=file.path(data_dir,"TxtFiles")
 dir.create(stics_inputs_path)
 
-gen_usms_xml2txt(javastics_path = javastics_path, workspace_path = file.path(data_dir,"XmlFiles"),
+gen_usms_xml2txt(javastics_path = javastics_path, workspace_path = javastics_workspace_path,
   target_path = stics_inputs_path, display = TRUE)
 ```
 
@@ -78,7 +94,7 @@ gen_usms_xml2txt(javastics_path = javastics_path, workspace_path = file.path(dat
 Here model parameters values are read in the model input files.
 
 
-```{r results='hide', message=FALSE, warning=FALSE}
+```{r eval=params$eval_auto_test, results='hide', message=FALSE, warning=FALSE}
 
 # Set the model options (see '? stics_wrapper_options' for details)
 model_options=stics_wrapper_options(stics_path,stics_inputs_path,
@@ -100,11 +116,11 @@ In this example, we only keep observations for situation (i.e. USM for Stics) `s
 In variables and parameters names, "(\*)" must be replaced by "_\*" to be handled by R (e.g. lai(n) is denoted here lai_n).
 
 
-```{r message=FALSE, warning=FALSE}
+```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
 
 sit_name="bo96iN+"  # can be a vector of situation names if you want to consider several, e.g. c("bo96iN+","bou00t1")
 var_name="lai_n"    # can be a vector of variable names if you want to consider several, e.g. c("lai_n","masec_n")
-obs_list=get_obs(file.path(data_dir,"XmlFiles"),
+obs_list=get_obs(javastics_workspace_path,
                           obs_filenames = paste0(sit_name,".obs"))
 obs_list=filter_obs(obs_list, var_names=var_name,include=TRUE)
 ```
@@ -121,7 +137,7 @@ All the numerical parameters which values can be provided to the model through i
 Initial values for the minimization can also be provided in `param_info` (see `? estim_param`).
 
 
-```{r message=FALSE, warning=FALSE}
+```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
 # 2 parameters here: dlaimax and durvieF, of bounds [0.0005,0.0025] and [50,400].
 param_info=list(lb=c(dlaimax=0.0005, durvieF=50),
                        ub=c(dlaimax=0.0025, durvieF=400))
@@ -138,7 +154,7 @@ The number of repetitions is advised to be set to at least 5, while 10 is a reas
 `maxeval` should be used to stop the minimization only if results have to be produced within a given duration, otherwise set it to a high value so that the minimization stops when the criterion based on `xtol_rel` is satisfied.
 
 
-```{r message=FALSE, warning=FALSE}
+```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
 optim_options=list()
 optim_options$nb_rep <- 7 # Number of repetitions of the minimization
                           # (each time starting with different initial
@@ -162,7 +178,7 @@ optim_method argument. For the moment it is the only method interfaced (others w
 Same for crit_function: a value is set by default (`crit_log_cwss`, see `? crit_log_cwss` for more details and list of available criteria). Others will be proposed in next versions of CroptimizR. The user can implement and give in argument its own criterion (see inputs and outputs required in the `crit_log_cwss` function).
 
 
-```{r results='hide', message=FALSE, warning=FALSE}
+```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
 optim_results=estim_param(obs_list=obs_list,
                             model_function=stics_wrapper,
                             model_options=model_options,
@@ -184,7 +200,7 @@ The results printed in output on the R console are the following:
 Complementary graphs and data are stored in the `optim_options$path_results` folder. Among them, the EstimatedVSinit.pdf file containing the following figures:
 
 
-```{r eval=TRUE, echo=FALSE, out.width = '45%'}
+```{r eval=params$eval_auto_vignette, echo=FALSE, out.width = '45%'}
 
 knitr::include_graphics("ResultsSimpleCase/estimInit_dlaimax.PNG")
 
@@ -203,7 +219,7 @@ The `optim_options$path_results` folder also contains the optim_results.Rdata fi
 
 ... this returns:
 
-```{r echo=FALSE, eval=TRUE, warning=FALSE}
+```{r echo=FALSE, eval=params$eval_auto_vignette, warning=FALSE}
 load(file.path("ResultsSimpleCase","optim_results.Rdata"))
 print(nlo[[2]])
 ```
@@ -220,7 +236,7 @@ We run here the Stics model using the estimated values of the parameters.
 In this case, the `param_values` argument of the stics_wrapper function is thus set so that estimated values of the parameters overwrite the values defined in the model input files.
 
 
-```{r message=FALSE, warning=FALSE}
+```{r eval=params$eval_manual_vignette, message=FALSE, warning=FALSE}
 sim_after_optim=stics_wrapper(param_values=optim_results$final_values,
                               model_options=model_options)
 ```
@@ -230,7 +246,7 @@ sim_after_optim=stics_wrapper(param_values=optim_results$final_values,
 
 
 
-```{r results='hide', warning=FALSE, message=FALSE}
+```{r eval=params$eval_manual_vignette, warning=FALSE, message=FALSE}
 png(file.path(optim_options$path_results,"sim_obs_plots.png"),
     width = 15, height = 10, units = "cm", res=1000)
 par(mfrow = c(1,2))
@@ -254,8 +270,14 @@ dev.off()
 This gives:
 
 
-```{r eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE, out.width = '80%', fig.cap="Figure 2: plots of simulated and observed target variable before and after optimization. The gap between simulated and observed values has been drastically reduced: the minimizer has done its job!"}
+```{r eval=params$eval_auto_vignette, echo=FALSE, message=FALSE, warning=FALSE, out.width = '80%', fig.cap="Figure 2: plots of simulated and observed target variable before and after optimization. The gap between simulated and observed values has been drastically reduced: the minimizer has done its job!"}
 knitr::include_graphics("ResultsSimpleCase/sim_obs_plots.png")
 ```
 
 
+```{r move_results, eval=params$eval_manual_vignette, include=FALSE}
+# Move the files produced since the temp. folder is removed after Rmd execution
+file.copy(file.path(optim_options$path_results,"EstimatedVSinit.pdf"),params$result_path)
+file.copy(file.path(optim_options$path_results,"optim_results.Rdata"),params$result_path)
+file.copy(file.path(optim_options$path_results,"sim_obs_plots.png"),params$result_path)
+```
