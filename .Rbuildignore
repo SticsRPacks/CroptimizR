@@ -8,6 +8,7 @@
 ^pkgdown$
 CODE_OF_CONDUCT.md
 README.Rmd
+^bin$
 
 # temporary
 R/tests.txt
