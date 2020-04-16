@@ -29,6 +29,7 @@
 #' than number of repetitions of the minimization are provided), the, or part
 #' of the, initial values will be randomly generated using LHS sampling within
 #' parameter bounds).
+#'
 #' or
 #' a named list containing for each parameter the list of situations per group
 #' (`sit_list`), the vector of upper and lower bounds (one value per group)
@@ -45,13 +46,6 @@
 #'
 #' @export
 #'
-#' @examples
-#' \dontrun{
-#' # See the different vignettes in [CroptimizR website](https://sticsrpacks.github.io/CroptimizR/)
-#' for examples.
-#' }
-
-
 
 estim_param <- function(obs_list,crit_function=crit_log_cwss,model_function,model_options=NULL,
                         optim_method="nloptr.simplex",optim_options=NULL,param_info) {
