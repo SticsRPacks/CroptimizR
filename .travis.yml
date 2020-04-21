@@ -2,11 +2,11 @@
 
 language: R
 cache: packages
-
+ 
 os:
   - linux
   - osx
- 
+
 jobs:
    include:
      - stage: trigger downstream
