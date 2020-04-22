@@ -7,6 +7,12 @@ os:
   - linux
   - osx
 
+# libglpk-dev is needed because of DHARMa #166, see https://github.com/florianhartig/DHARMa/issues/166
+addons:
+  apt:
+    packages:
+      - libglpk-dev
+      
 jobs:
    include:
      - stage: trigger downstream
