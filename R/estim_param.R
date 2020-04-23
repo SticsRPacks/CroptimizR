@@ -149,15 +149,10 @@ estim_param <- function(obs_list,crit_function=crit_log_cwss,model_function,mode
   # Run the estimation
 
   param_names=get_params_names(param_info)
-  crit_options=list()
-  crit_options$param_names=param_names
-  crit_options$obs_list=obs_list
-  crit_options$crit_function=crit_function
-  crit_options$model_function=model_function
-  crit_options$model_options=model_options
-  crit_options$param_info=param_info
-  crit_options$transform_obs=transform_obs
-  crit_options$transform_sim=transform_sim
+  crit_options=list(param_names=param_names, obs_list=obs_list,
+                    crit_function=crit_function, model_function=model_function,
+                    model_options=model_options, param_info=param_info,
+                    transform_obs=transform_obs, transform_sim=transform_sim)
 
   result=optim_switch(param_names,optim_method,optim_options,param_info,crit_options)
 
