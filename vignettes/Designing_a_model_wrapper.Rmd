@@ -10,6 +10,10 @@ output:
    html_document:
      toc: true
      toc_float: true
+vignette: >
+  %\VignetteIndexEntry{Designing a model wrapper}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}

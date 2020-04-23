@@ -1,10 +1,6 @@
 #' @title Filter observation list to exclude situations, variables or dates
 #'
-#' @param obs_list List of observed values to filter
-#' A `named list` (names = situations names) of data.frame containing
-#' one column named Date with the dates (POSIXct format) of the different observations
-#' and one column per observed variables with either the measured values or NA, if
-#' the variable is not observed at the given date.
+#' @inheritParams estim_param
 #' @param var_names (optional, if not given all variables will be kept) Vector containing the names of the variables to include or exclude
 #' @param sit_names (optional, if not given all situations will be kept) Vector containing the names of the situations to include or exclude
 #' @param dates (optional, if not given all dates will be kept) Vector containing the dates (POSIXct format) to include or exclude
@@ -19,8 +15,10 @@
 #'
 #' @examples
 #'
-#' obs_list <- list(sit1=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-10")),var1=c(1.1,1.5),var2=c(NA,2.1)),
-#'                  sit2=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-5")),var1=c(1.3,2)))
+#' obs_list <- list(sit1=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-10")),
+#'                                  var1=c(1.1,1.5),var2=c(NA,2.1)),
+#'                  sit2=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-5")),
+#'                                  var1=c(1.3,2)))
 #'
 #' # Keep only var1
 #' filter_obs(obs_list,var_names=c("var1"),include=TRUE)

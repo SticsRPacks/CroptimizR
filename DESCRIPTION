@@ -31,6 +31,16 @@ Suggests:
     testthat (>= 2.1.0),
     covr,
     knitr,
-    rmarkdown
+    rmarkdown,
+	SticsRPacks,
+	ApsimOnR,
+	ggplot2,
+	gridExtra,
+	hydroGOF,
+	doParallel,
+	devtools
+Remotes:
+    github::SticsRPacks/SticsRPacks,
+	github::hol430/ApsimOnR
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)

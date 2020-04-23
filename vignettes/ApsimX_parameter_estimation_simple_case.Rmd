@@ -42,7 +42,7 @@ if(!require("CroptimizR")){
   library("CroptimizR")
 }
 if(!require("ApsimOnR")){
-  devtools::install_github("ApsimOnR")
+  devtools::install_github("hol430/ApsimOnR")
   library("ApsimOnR")
 }
 if(!require("dplyr")){

@@ -8,6 +8,7 @@
 ^pkgdown$
 CODE_OF_CONDUCT.md
 README.Rmd
+^bin$
 
 # temporary
 R/tests.txt
@@ -17,5 +18,6 @@ vignettes/JavaSTICS-1.41-stics-9.0
 vignettes/ApsimX_parameter_estimation_simple_case_files
 vignettes/Parameter_estimation_Specific_and_Varietal_files
 vignettes/Parameter_estimation_simple_case_files
+vignettes/README.txt
 ^doc$
 ^Meta$

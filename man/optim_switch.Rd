@@ -14,29 +14,29 @@ be replicated if several groups of situations for this parameter)}
 
 \item{obs_list}{List of observed values to use for parameter estimation
 A \code{named list} (names = situations names) of data.frame containing
-one column named Date with the dates (POSIXct format) of the different observations
+one column named Date with the dates (Date or POSIXct format) of the different observations
 and one column per observed variables with either the measured values or NA, if
 the variable is not observed at the given date.}
 
 \item{crit_function}{Function implementing the criterion to optimize
-(optional, default=crit_cwss). See
+(optional, see default value in the function signature). See
 \href{https://sticsrpacks.github.io/CroptimizR/reference/ls_criterion.html}{here}
 for more details about the list of proposed criterion.}
 
-\item{model_function}{Crop Model wrapper function to use}
+\item{model_function}{Crop Model wrapper function to use.}
 
-\item{model_options}{List of options for the Crop Model wrapper (optional,
-see help of the Crop Model wrapper function used)}
+\item{model_options}{List of options for the Crop Model wrapper (see help of
+the Crop Model wrapper function used).}
 
 \item{optim_method}{Name of the parameter estimation method to use (optional,
-default="nloptr.simplex", the only one available for the moment)}
+see default value in the function signature). For the moment, can be "simplex"
+or "dreamzs". See \href{https://sticsrpacks.github.io/CroptimizR/articles/Available_parameter_estimation_algorithms.html}{here}
+for a brief description and references on the available methods.}
 
-\item{optim_options}{List of options of the parameter estimation method:
-\code{nb_rep}, the number of repetitions (optional, default=1)
-\code{xtol_rel}, the tolerance for the stopping criterion on relative
-differences on parameters values between 2 iterations (optional, default=1e-5)
-\code{maxeval}, the maximum number of criterion evaluation (optional, default=500)
-\code{path_results}, the path where to store the results (optional, default=getwd())}
+\item{optim_options}{List of options of the parameter estimation method.
+\code{path_results} The path where to store the results (optional, default=getwd())
+Click on the links to see the specific options for the \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html}{simplex}
+and \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html}{DreamZS} methods.}
 
 \item{param_info}{Information on the parameters to estimate.
 Either
@@ -48,12 +48,14 @@ values to test for the parameters (optional, if not provided, or if less values
 than number of repetitions of the minimization are provided), the, or part
 of the, initial values will be randomly generated using LHS sampling within
 parameter bounds).
+}
+
 or
 a named list containing for each parameter the list of situations per group
 (\code{sit_list}), the vector of upper and lower bounds (one value per group)
 (\code{ub} and \code{lb}) and the list of initial values per group
 \code{init_values} (data.frame, one column per group, optional).
-}}
+(see \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html}{here} for an example)}
 }
 \value{
 prints, graphs and a list containing the results of the parameter estimation.

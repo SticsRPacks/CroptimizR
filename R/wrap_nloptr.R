@@ -77,10 +77,25 @@ wrap_nloptr <- function(param_names,optim_options,param_info,crit_options) {
       grDevices::dev.off()
     },
     error=function(cond) {
-      warning("Error trying to create ",path_results,"/EstimatedVSinit.pdf file. It is maybe opened in a pdf viewer and locked. It will not be created.")
+
+      filename=paste0("EstimatedVSinit",format(Sys.time(), "%Y_%d_%H_%M_%S"),".pdf")
+      warning("Error trying to create ",path_results,"/EstimatedVSinit.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
       message(cond)
-      flush.console()
-      })
+      utils::flush.console()
+      grDevices::pdf(file = file.path(path_results,filename) , width = 9, height = 9)
+      for (ipar in 1:nb_params) {
+        graphics::plot(init_values[,ipar], est_values[,ipar],
+                       main = "Estimated vs Initial values of the parameters for different repetitions",
+                       graphics::text(init_values[,ipar], est_values[,ipar], pos=1,col="black"),
+                       xlim = c(bounds$lb[ipar],bounds$ub[ipar]),
+                       ylim = c(bounds$lb[ipar],bounds$ub[ipar]),
+                       xlab = paste("Initial value for", param_names[ipar]),
+                       ylab = paste("Estimated value for", param_names[ipar]))
+        graphics::text(init_values[ind_min_crit,ipar], est_values[ind_min_crit,ipar],
+                       labels = ind_min_crit, pos=1,col="red")
+      }
+      grDevices::dev.off()
+    })
 
 
   # Save the results of nloptr

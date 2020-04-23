@@ -234,6 +234,20 @@ for a detailed description of the input and output arguments of the
 estim\_param function (or type `? estim_param` in an R console after
 having installed and loaded the CroptimizR package).
 
+## Getting help
+
+If you have any question or suggestion or if you want to report a bug,
+please do it via the GitHub
+[issues](https://github.com/SticsRPacks/CroptimizR/issues).
+
+Thanks for that, this would greatly help us to improve this package.
+
+## Citation
+
+If you have used this package for a study that led to a publication or
+report, please cite us. To get the suggested citation, run
+`citation("CroptimizR")`.
+
 ## Code of conduct
 
 Please note that this project is released with a [Contributor Code of

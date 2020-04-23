@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CroptimizR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0.9003</span>
       </span>
     </div>
 
@@ -98,7 +98,19 @@
       <a href="../articles/ApsimX_parameter_estimation_simple_case.html">Parameter estimation with the ApsimX crop Model: a simple case</a>
     </li>
     <li>
+      <a href="../articles/Available_parameter_estimation_algorithms.html">Available parameter estimation algorithms in CroptimizR</a>
+    </li>
+    <li>
       <a href="../articles/Designing_a_model_wrapper.html">Guidelines for implementing a crop model R wrapper for CroptimizR</a>
+    </li>
+    <li>
+      <a href="../articles/Parameter_estimation_DREAM.html">Parameter estimation with the DREAM-zs algorithm</a>
+    </li>
+    <li>
+      <a href="../articles/Parameter_estimation_simple_case.html">Parameter estimation with the Stics crop Model: a simple case</a>
+    </li>
+    <li>
+      <a href="../articles/Parameter_estimation_Specific_and_Varietal.html">Parameter estimation with the Stics crop Model: a case with specific and varietal parameters</a>
     </li>
   </ul>
 </li>
@@ -149,34 +161,32 @@ be replicated if several groups of situations for this parameter)</p></td>
       <th>obs_list</th>
       <td><p>List of observed values to use for parameter estimation
 A <code>named list</code> (names = situations names) of data.frame containing
-one column named Date with the dates (POSIXct format) of the different observations
+one column named Date with the dates (Date or POSIXct format) of the different observations
 and one column per observed variables with either the measured values or NA, if
 the variable is not observed at the given date.</p></td>
     </tr>
     <tr>
       <th>crit_function</th>
       <td><p>Function implementing the criterion to optimize
-(optional, default=crit_cwss). See
+(optional, see default value in the function signature). See
 <a href='https://sticsrpacks.github.io/CroptimizR/reference/ls_criterion.html'>here</a>
 for more details about the list of proposed criterion.</p></td>
     </tr>
     <tr>
       <th>model_function</th>
-      <td><p>Crop Model wrapper function to use</p></td>
+      <td><p>Crop Model wrapper function to use.</p></td>
     </tr>
     <tr>
       <th>model_options</th>
-      <td><p>List of options for the Crop Model wrapper (optional,
-see help of the Crop Model wrapper function used)</p></td>
+      <td><p>List of options for the Crop Model wrapper (see help of
+the Crop Model wrapper function used).</p></td>
     </tr>
     <tr>
       <th>optim_options</th>
-      <td><p>List of options of the parameter estimation method:
-<code>nb_rep</code>, the number of repetitions (optional, default=1)
-<code>xtol_rel</code>, the tolerance for the stopping criterion on relative
-differences on parameters values between 2 iterations (optional, default=1e-5)
-<code>maxeval</code>, the maximum number of criterion evaluation (optional, default=500)
-<code>path_results</code>, the path where to store the results (optional, default=getwd())</p></td>
+      <td><p>List of options of the parameter estimation method.
+<code>path_results</code> The path where to store the results (optional, default=getwd())
+Click on the links to see the specific options for the <a href='https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html'>simplex</a>
+and <a href='https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html'>DreamZS</a> methods.</p></td>
     </tr>
     <tr>
       <th>param_info</th>
@@ -193,7 +203,8 @@ or
 a named list containing for each parameter the list of situations per group
 (<code>sit_list</code>), the vector of upper and lower bounds (one value per group)
 (<code>ub</code> and <code>lb</code>) and the list of initial values per group
-<code>init_values</code> (data.frame, one column per group, optional).</p></li>
+<code>init_values</code> (data.frame, one column per group, optional).
+(see <a href='https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html'>here</a> for an example)</p></li>
 </ul></td>
     </tr>
     </table>

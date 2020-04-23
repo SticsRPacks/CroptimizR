@@ -9,6 +9,10 @@ output:
      toc: true
      toc_float: true
 bibliography: bibliography.bib
+vignette: >
+  %\VignetteIndexEntry{Available parameter estimation algorithms}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}

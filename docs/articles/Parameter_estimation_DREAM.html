@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CroptimizR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0.9003</span>
       </span>
     </div>
 
@@ -102,7 +102,7 @@
       <h1>Parameter estimation with the DREAM-zs algorithm</h1>
                         <h4 class="author">Samuel Buis</h4>
                         
-            <h4 class="date">2020-02-02</h4>
+            <h4 class="date">2020-04-14</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/master/vignettes/Parameter_estimation_DREAM.Rmd"><code>vignettes/Parameter_estimation_DREAM.Rmd</code></a></small>
       <div class="hidden name"><code>Parameter_estimation_DREAM.Rmd</code></div>
@@ -128,17 +128,34 @@
 <a href="#read-and-select-the-corresponding-observations" class="anchor"></a>Read and select the corresponding observations</h2>
 <p>This part is not shown here, it is the same as this of the <a href="https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html">specific and varietal parameters estimation vignette</a>.</p>
 </div>
+<div id="set-information-on-the-parameters-to-estimate" class="section level2">
+<h2 class="hasAnchor">
+<a href="#set-information-on-the-parameters-to-estimate" class="anchor"></a>Set information on the parameters to estimate</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>param_info=<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>()</span>
+<span id="cb1-2"><a href="#cb1-2"></a>param_info<span class="op">$</span>dlaimax=<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">sit_list=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"bou99t3"</span>, <span class="st">"bou00t3"</span>, <span class="st">"bou99t1"</span>, <span class="st">"bou00t1"</span>,</span>
+<span id="cb1-3"><a href="#cb1-3"></a>                                        <span class="st">"bo96iN+"</span>, <span class="st">"lu96iN+"</span>, <span class="st">"lu96iN6"</span>, <span class="st">"lu97iN+"</span>)),</span>
+<span id="cb1-4"><a href="#cb1-4"></a>                        <span class="dt">lb=</span><span class="fl">0.0005</span>,<span class="dt">ub=</span><span class="fl">0.0025</span>)</span>
+<span id="cb1-5"><a href="#cb1-5"></a>param_info<span class="op">$</span>durvieF=<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">sit_list=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"bo96iN+"</span>, <span class="st">"lu96iN+"</span>, <span class="st">"lu96iN6"</span>, <span class="st">"lu97iN+"</span>),</span>
+<span id="cb1-6"><a href="#cb1-6"></a>                                      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"bou99t3"</span>, <span class="st">"bou00t3"</span>, <span class="st">"bou99t1"</span>, <span class="st">"bou00t1"</span>)),</span>
+<span id="cb1-7"><a href="#cb1-7"></a>                        <span class="dt">lb=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">50</span>,<span class="dv">100</span>),<span class="dt">ub=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">400</span>,<span class="dv">450</span>))</span></code></pre></div>
+</div>
+<div id="set-options-for-the-model" class="section level2">
+<h2 class="hasAnchor">
+<a href="#set-options-for-the-model" class="anchor"></a>Set options for the model</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>model_options=<span class="kw">stics_wrapper_options</span>(stics_path,stics_inputs_path,</span>
+<span id="cb2-2"><a href="#cb2-2"></a>                                    <span class="dt">parallel=</span><span class="ot">TRUE</span>)</span></code></pre></div>
+</div>
 <div id="set-options-for-the-dream-method" class="section level2">
 <h2 class="hasAnchor">
 <a href="#set-options-for-the-dream-method" class="anchor"></a>Set options for the DREAM method</h2>
 <p>The main basic options are set here. The reader can refer to <code>? DREAMzs</code> (see doc for input argument <code>settings</code>) for documentation on more advanced ones. Note that <code>startValue</code> can also be used to provide initial values for the Markov Chains (in that case, it must be a matrix having as many lines as desired number of Markov Chains and a number of columns equivalent to the number of estimated parameters, ordered in the same way as <code>param_info$lb</code> and <code>param_info$ub</code>).</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>optim_options=<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>() </span>
-<span id="cb1-2"><a href="#cb1-2"></a>optim_options<span class="op">$</span>iterations &lt;-<span class="st"> </span><span class="dv">10000</span> <span class="co"># Total number of iterations </span></span>
-<span id="cb1-3"><a href="#cb1-3"></a>                                  <span class="co"># (=&gt; optim_options$iterations/optim_options$startValue </span></span>
-<span id="cb1-4"><a href="#cb1-4"></a>                                  <span class="co"># iterations per chain)</span></span>
-<span id="cb1-5"><a href="#cb1-5"></a>optim_options<span class="op">$</span>startValue &lt;-<span class="st"> </span><span class="dv">3</span> <span class="co"># Number of markov chains</span></span>
-<span id="cb1-6"><a href="#cb1-6"></a>optim_options<span class="op">$</span>path_results &lt;-<span class="st"> </span>data_dir <span class="co"># path where to store the results (graph and Rdata)</span></span>
-<span id="cb1-7"><a href="#cb1-7"></a>optim_options<span class="op">$</span>ranseed &lt;-<span class="st"> </span><span class="dv">1234</span> <span class="co"># seed for random numbers</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>optim_options=<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>() </span>
+<span id="cb3-2"><a href="#cb3-2"></a>optim_options<span class="op">$</span>iterations &lt;-<span class="st"> </span><span class="dv">10000</span> <span class="co"># Total number of iterations </span></span>
+<span id="cb3-3"><a href="#cb3-3"></a>                                  <span class="co"># (=&gt; optim_options$iterations/optim_options$startValue </span></span>
+<span id="cb3-4"><a href="#cb3-4"></a>                                  <span class="co"># iterations per chain)</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a>optim_options<span class="op">$</span>startValue &lt;-<span class="st"> </span><span class="dv">3</span> <span class="co"># Number of markov chains</span></span>
+<span id="cb3-6"><a href="#cb3-6"></a>optim_options<span class="op">$</span>path_results &lt;-<span class="st"> </span>data_dir <span class="co"># path where to store the results (graph and Rdata)</span></span>
+<span id="cb3-7"><a href="#cb3-7"></a>optim_options<span class="op">$</span>ranseed &lt;-<span class="st"> </span><span class="dv">1234</span> <span class="co"># seed for random numbers</span></span></code></pre></div>
 </div>
 <div id="run-the-parameter-estimation" class="section level2">
 <h2 class="hasAnchor">
@@ -147,40 +164,40 @@
 <p>The list of available criteria for Bayesian methods is given by <code>? likelihoods</code></p>
 <p>The <code>param_info</code> argument has the same content as in the <a href="https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html">specific and varietal parameters estimation vignette</a>.</p>
 <p><strong>For the moment, only uniform distributions of bounds <code>param_info$lb</code> and <code>param_info$ub</code> can be used. Other type of distributions will be provided in next versions.</strong></p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>optim_results=<span class="kw"><a href="../reference/estim_param.html">estim_param</a></span>(<span class="dt">obs_list=</span>obs_list,</span>
-<span id="cb2-2"><a href="#cb2-2"></a>                          <span class="dt">crit_function=</span>likelihood_log_ciidn,</span>
-<span id="cb2-3"><a href="#cb2-3"></a>                          <span class="dt">model_function=</span>stics_wrapper,</span>
-<span id="cb2-4"><a href="#cb2-4"></a>                          <span class="dt">model_options=</span>model_options,</span>
-<span id="cb2-5"><a href="#cb2-5"></a>                          <span class="dt">optim_options=</span>optim_options,</span>
-<span id="cb2-6"><a href="#cb2-6"></a>                          <span class="dt">optim_method=</span><span class="st">"BayesianTools.dreamzs"</span>,</span>
-<span id="cb2-7"><a href="#cb2-7"></a>                          <span class="dt">param_info=</span>param_info)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>optim_results=<span class="kw"><a href="../reference/estim_param.html">estim_param</a></span>(<span class="dt">obs_list=</span>obs_list,</span>
+<span id="cb4-2"><a href="#cb4-2"></a>                          <span class="dt">crit_function=</span>likelihood_log_ciidn,</span>
+<span id="cb4-3"><a href="#cb4-3"></a>                          <span class="dt">model_function=</span>stics_wrapper,</span>
+<span id="cb4-4"><a href="#cb4-4"></a>                          <span class="dt">model_options=</span>model_options,</span>
+<span id="cb4-5"><a href="#cb4-5"></a>                          <span class="dt">optim_options=</span>optim_options,</span>
+<span id="cb4-6"><a href="#cb4-6"></a>                          <span class="dt">optim_method=</span><span class="st">"BayesianTools.dreamzs"</span>,</span>
+<span id="cb4-7"><a href="#cb4-7"></a>                          <span class="dt">param_info=</span>param_info)</span></code></pre></div>
 <p>The results printed in output on the R console are the following:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co">## ## # # # # # # # # # # # # # # # # # # # # # # # # #</span></span>
-<span id="cb3-2"><a href="#cb3-2"></a><span class="co">## ## ## MCMC chain summary ##</span></span>
-<span id="cb3-3"><a href="#cb3-3"></a><span class="co">## ## # # # # # # # # # # # # # # # # # # # # # # # # #</span></span>
-<span id="cb3-4"><a href="#cb3-4"></a><span class="co">## ##</span></span>
-<span id="cb3-5"><a href="#cb3-5"></a><span class="co">## ## # MCMC sampler:  DREAMzs</span></span>
-<span id="cb3-6"><a href="#cb3-6"></a><span class="co">## ## # Nr. Chains:  3</span></span>
-<span id="cb3-7"><a href="#cb3-7"></a><span class="co">## ## # Iterations per chain:  2669</span></span>
-<span id="cb3-8"><a href="#cb3-8"></a><span class="co">## ## # Rejection rate:  0.878</span></span>
-<span id="cb3-9"><a href="#cb3-9"></a><span class="co">## ## # Effective sample size:  423</span></span>
-<span id="cb3-10"><a href="#cb3-10"></a><span class="co">## ## # Runtime:  54194.02  sec.</span></span>
-<span id="cb3-11"><a href="#cb3-11"></a><span class="co">## ##</span></span>
-<span id="cb3-12"><a href="#cb3-12"></a><span class="co">## ## # Parameters</span></span>
-<span id="cb3-13"><a href="#cb3-13"></a><span class="co">## ##            psf     MAP    2.5%  median   97.5%</span></span>
-<span id="cb3-14"><a href="#cb3-14"></a><span class="co">## ## dlaimax  1.045   0.001   0.001   0.001   0.001</span></span>
-<span id="cb3-15"><a href="#cb3-15"></a><span class="co">## ## durvieF1 1.000 289.864 213.438 311.226 398.462</span></span>
-<span id="cb3-16"><a href="#cb3-16"></a><span class="co">## ## durvieF2 1.009 208.487 147.158 298.312 443.323</span></span>
-<span id="cb3-17"><a href="#cb3-17"></a><span class="co">## ##</span></span>
-<span id="cb3-18"><a href="#cb3-18"></a><span class="co">## ## ## DIC:  442.256</span></span>
-<span id="cb3-19"><a href="#cb3-19"></a><span class="co">## ## ## Convergence</span></span>
-<span id="cb3-20"><a href="#cb3-20"></a><span class="co">## ##  Gelman Rubin multivariate psrf:</span></span>
-<span id="cb3-21"><a href="#cb3-21"></a><span class="co">## ##</span></span>
-<span id="cb3-22"><a href="#cb3-22"></a><span class="co">## ## ## Correlations</span></span>
-<span id="cb3-23"><a href="#cb3-23"></a><span class="co">## ##          dlaimax durvieF1 durvieF2</span></span>
-<span id="cb3-24"><a href="#cb3-24"></a><span class="co">## ## dlaimax    1.000   -0.074   -0.059</span></span>
-<span id="cb3-25"><a href="#cb3-25"></a><span class="co">## ## durvieF1  -0.074    1.000   -0.029</span></span>
-<span id="cb3-26"><a href="#cb3-26"></a><span class="co">## ## durvieF2  -0.059   -0.029    1.000</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co">## ## # # # # # # # # # # # # # # # # # # # # # # # # #</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="co">## ## ## MCMC chain summary ##</span></span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="co">## ## # # # # # # # # # # # # # # # # # # # # # # # # #</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="co">## ##</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a><span class="co">## ## # MCMC sampler:  DREAMzs</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a><span class="co">## ## # Nr. Chains:  3</span></span>
+<span id="cb5-7"><a href="#cb5-7"></a><span class="co">## ## # Iterations per chain:  2669</span></span>
+<span id="cb5-8"><a href="#cb5-8"></a><span class="co">## ## # Rejection rate:  0.878</span></span>
+<span id="cb5-9"><a href="#cb5-9"></a><span class="co">## ## # Effective sample size:  423</span></span>
+<span id="cb5-10"><a href="#cb5-10"></a><span class="co">## ## # Runtime:  54194.02  sec.</span></span>
+<span id="cb5-11"><a href="#cb5-11"></a><span class="co">## ##</span></span>
+<span id="cb5-12"><a href="#cb5-12"></a><span class="co">## ## # Parameters</span></span>
+<span id="cb5-13"><a href="#cb5-13"></a><span class="co">## ##            psf     MAP    2.5%  median   97.5%</span></span>
+<span id="cb5-14"><a href="#cb5-14"></a><span class="co">## ## dlaimax  1.045   0.001   0.001   0.001   0.001</span></span>
+<span id="cb5-15"><a href="#cb5-15"></a><span class="co">## ## durvieF1 1.000 289.864 213.438 311.226 398.462</span></span>
+<span id="cb5-16"><a href="#cb5-16"></a><span class="co">## ## durvieF2 1.009 208.487 147.158 298.312 443.323</span></span>
+<span id="cb5-17"><a href="#cb5-17"></a><span class="co">## ##</span></span>
+<span id="cb5-18"><a href="#cb5-18"></a><span class="co">## ## ## DIC:  442.256</span></span>
+<span id="cb5-19"><a href="#cb5-19"></a><span class="co">## ## ## Convergence</span></span>
+<span id="cb5-20"><a href="#cb5-20"></a><span class="co">## ##  Gelman Rubin multivariate psrf:</span></span>
+<span id="cb5-21"><a href="#cb5-21"></a><span class="co">## ##</span></span>
+<span id="cb5-22"><a href="#cb5-22"></a><span class="co">## ## ## Correlations</span></span>
+<span id="cb5-23"><a href="#cb5-23"></a><span class="co">## ##          dlaimax durvieF1 durvieF2</span></span>
+<span id="cb5-24"><a href="#cb5-24"></a><span class="co">## ## dlaimax    1.000   -0.074   -0.059</span></span>
+<span id="cb5-25"><a href="#cb5-25"></a><span class="co">## ## durvieF1  -0.074    1.000   -0.029</span></span>
+<span id="cb5-26"><a href="#cb5-26"></a><span class="co">## ## durvieF2  -0.059   -0.029    1.000</span></span></code></pre></div>
 <p>The rejection rate is the rate of rejection of proposed values. According to (Vrugt, 2016), a value between 0.7 and 0.85 is usually indicative of good performance of a MCMC simulation method.</p>
 <p>Effective sample size should be here the number of different values per chain for the parameter vector in the posterior sample.</p>
 <p>Under section “parameters” are given statistics on the posterior sample. MAP means Maximum A Posteriori. It is the values of the parameters among the posterior sample that lead to the maximal value of the posterior density.</p>
@@ -202,15 +219,15 @@
 <h2 class="hasAnchor">
 <a href="#launch-a-new-estimation-starting-from-previous-results" class="anchor"></a>Launch a new estimation starting from previous results</h2>
 <p>In case one wants to increase the number of iterations, because the algorithm has not yet converged or the posterior sample is considered to small, there is a possibility to re-launch the method from the point is has stopped using the <code>PreviousResults</code> option:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>optim_options<span class="op">$</span>PreviousResults=optim_results<span class="op">$</span>out</span>
-<span id="cb4-2"><a href="#cb4-2"></a>optim_options<span class="op">$</span>iterations &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="co"># Total number of new iterations</span></span>
-<span id="cb4-3"><a href="#cb4-3"></a>optim_results=<span class="kw"><a href="../reference/estim_param.html">estim_param</a></span>(<span class="dt">obs_list=</span>obs_list,</span>
-<span id="cb4-4"><a href="#cb4-4"></a>                          <span class="dt">crit_function=</span>likelihood_log_ciidn,</span>
-<span id="cb4-5"><a href="#cb4-5"></a>                          <span class="dt">model_function=</span>stics_wrapper,</span>
-<span id="cb4-6"><a href="#cb4-6"></a>                          <span class="dt">model_options=</span>model_options,</span>
-<span id="cb4-7"><a href="#cb4-7"></a>                          <span class="dt">optim_options=</span>optim_options,</span>
-<span id="cb4-8"><a href="#cb4-8"></a>                          <span class="dt">optim_method=</span><span class="st">"BayesianTools.dreamzs"</span>,</span>
-<span id="cb4-9"><a href="#cb4-9"></a>                          <span class="dt">param_info=</span>param_info)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>optim_options<span class="op">$</span>PreviousResults=optim_results<span class="op">$</span>out</span>
+<span id="cb6-2"><a href="#cb6-2"></a>optim_options<span class="op">$</span>iterations &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="co"># Total number of new iterations</span></span>
+<span id="cb6-3"><a href="#cb6-3"></a>optim_results=<span class="kw"><a href="../reference/estim_param.html">estim_param</a></span>(<span class="dt">obs_list=</span>obs_list,</span>
+<span id="cb6-4"><a href="#cb6-4"></a>                          <span class="dt">crit_function=</span>likelihood_log_ciidn,</span>
+<span id="cb6-5"><a href="#cb6-5"></a>                          <span class="dt">model_function=</span>stics_wrapper,</span>
+<span id="cb6-6"><a href="#cb6-6"></a>                          <span class="dt">model_options=</span>model_options,</span>
+<span id="cb6-7"><a href="#cb6-7"></a>                          <span class="dt">optim_options=</span>optim_options,</span>
+<span id="cb6-8"><a href="#cb6-8"></a>                          <span class="dt">optim_method=</span><span class="st">"BayesianTools.dreamzs"</span>,</span>
+<span id="cb6-9"><a href="#cb6-9"></a>                          <span class="dt">param_info=</span>param_info)</span></code></pre></div>
 </div>
   </div>
 
@@ -222,6 +239,8 @@
 <li><a href="#study-case">Study Case</a></li>
       <li><a href="#initialisation-step">Initialisation step</a></li>
       <li><a href="#read-and-select-the-corresponding-observations">Read and select the corresponding observations</a></li>
+      <li><a href="#set-information-on-the-parameters-to-estimate">Set information on the parameters to estimate</a></li>
+      <li><a href="#set-options-for-the-model">Set options for the model</a></li>
       <li><a href="#set-options-for-the-dream-method">Set options for the DREAM method</a></li>
       <li><a href="#run-the-parameter-estimation">Run the parameter estimation</a></li>
       <li><a href="#launch-a-new-estimation-starting-from-previous-results">Launch a new estimation starting from previous results</a></li>
