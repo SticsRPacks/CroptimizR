@@ -54,8 +54,8 @@ estim_param <- function(obs_list,crit_function=crit_log_cwss,model_function,mode
                         transform_obs=NULL, transform_sim=NULL) {
 
   # Measured elapse time
-  tic.clearlog()
-  tic("Total time for parameter estimation")
+  tictoc::tic.clearlog()
+  tictoc::tic("Total time for parameter estimation")
 
   # Check inputs
 
@@ -96,9 +96,9 @@ estim_param <- function(obs_list,crit_function=crit_log_cwss,model_function,mode
 
 
   # Measure elapse time
-  toc(log=TRUE)
-  result$total_time=unlist(tic.log(format = TRUE))
-  tic.clearlog()
+  tictoc::toc(log=TRUE)
+  result$total_time=unlist(tictoc::tic.log(format = TRUE))
+  tictoc::tic.clearlog()
 
   return(result)
 
