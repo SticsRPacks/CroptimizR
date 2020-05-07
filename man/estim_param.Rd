@@ -4,19 +4,13 @@
 \alias{estim_param}
 \title{main function for parameter estimation}
 \usage{
-estim_param(
-  obs_list,
-  crit_function = crit_log_cwss,
-  model_function,
-  model_options = NULL,
-  optim_method = "nloptr.simplex",
-  optim_options = NULL,
-  param_info
-)
+estim_param(obs_list, crit_function = crit_log_cwss, model_function,
+  model_options = NULL, optim_method = "nloptr.simplex", optim_options,
+  param_info, transform_obs = NULL, transform_sim = NULL)
 }
 \arguments{
 \item{obs_list}{List of observed values to use for parameter estimation
-A \verb{named list} (names = situations names) of data.frame containing
+A \code{named list} (names = situations names) of data.frame containing
 one column named Date with the dates (Date or POSIXct format) of the different observations
 and one column per observed variables with either the measured values or NA, if
 the variable is not observed at the given date.}
@@ -59,6 +53,10 @@ a named list containing for each parameter the list of situations per group
 (\code{ub} and \code{lb}) and the list of initial values per group
 \code{init_values} (data.frame, one column per group, optional).
 (see \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html}{here} for an example)}
+
+\item{transform_obs}{Function for transforming observations (optional)}
+
+\item{transform_sim}{Function for transforming simulations (optional)}
 }
 \value{
 prints, graphs and a list containing the results of the parameter estimation,

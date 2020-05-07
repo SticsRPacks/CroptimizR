@@ -4,35 +4,11 @@
 \alias{wrap_BayesianTools}
 \title{A wrapper for BayesianTools package}
 \usage{
-wrap_BayesianTools(
-  param_names,
-  obs_list,
-  crit_function,
-  model_function,
-  model_options = NULL,
-  optim_options = NULL,
-  param_info
-)
+wrap_BayesianTools(param_names, optim_options, param_info, crit_options)
 }
 \arguments{
 \item{param_names}{Name(s) of parameters to estimate (a parameter name must
 be replicated if several groups of situations for this parameter)}
-
-\item{obs_list}{List of observed values to use for parameter estimation
-A \verb{named list} (names = situations names) of data.frame containing
-one column named Date with the dates (Date or POSIXct format) of the different observations
-and one column per observed variables with either the measured values or NA, if
-the variable is not observed at the given date.}
-
-\item{crit_function}{Function implementing the criterion to optimize
-(optional, see default value in the function signature). See
-\href{https://sticsrpacks.github.io/CroptimizR/reference/ls_criterion.html}{here}
-for more details about the list of proposed criterion.}
-
-\item{model_function}{Crop Model wrapper function to use.}
-
-\item{model_options}{List of options for the Crop Model wrapper (see help of
-the Crop Model wrapper function used).}
 
 \item{optim_options}{List of options of the parameter estimation method.
 \code{path_results} The path where to store the results (optional, default=getwd())
@@ -57,6 +33,11 @@ a named list containing for each parameter the list of situations per group
 (\code{ub} and \code{lb}) and the list of initial values per group
 \code{init_values} (data.frame, one column per group, optional).
 (see \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html}{here} for an example)}
+
+\item{crit_options}{List containing several arguments given to \code{estim_param} function:
+\code{param_names}, \code{obs_list}, \code{crit_function}, \code{model_function}, \code{model_options},
+\code{param_info}, \code{transform_obs}, \code{transform_sim}
+that must be passed to main_crit function by the methods wrappers.}
 }
 \value{
 prints, graphs and a list containing:

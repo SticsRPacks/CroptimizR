@@ -2,10 +2,13 @@
 % Please edit documentation in R/ls_criteria.R
 \name{ls_criteria}
 \alias{ls_criteria}
+\alias{crit_ols}
 \alias{crit_log_cwss}
 \alias{crit_log_cwss_corr}
 \title{Criteria to optimize}
 \usage{
+crit_ols(sim_list, obs_list)
+
 crit_log_cwss(sim_list, obs_list)
 
 crit_log_cwss_corr(sim_list, obs_list)
@@ -25,6 +28,13 @@ difference between observed and simulated values of model output variables.
 \details{
 The following criteria are proposed (\href{https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html}{see html version} for a better rendering of equations):
 \itemize{
+\item \code{crit_ols}: ordinary least squares \cr
+The sum of squared residues for each variable: \cr
+\deqn{ \sum_{i,j,k} [Y_{ijk}-f_{jk}(X_i;\theta)]^2 }
+where \eqn{ Y_{ijk} } is the observed value for the \eqn{k^{th}} time point of the \eqn{j^{th}} variable in the \eqn{i^{th}}
+situation,
+\eqn{ f_{jk}(X_i;\theta) } the corresponding model prediction, and \eqn{n_j} the number of measurements of variable \eqn{j}. \cr
+In this criterion, one assume that all errors (model and observations errors for all variables, dates and situations) are independent, and that the error variance is constant over time and equal for the different variables \eqn{j}.
 \item \code{crit_log_cwss}: log transformation of concentrated version of weighted sum of squares \cr
 The concentrated version of weighted sum of squares is: \cr
 \deqn{ \prod_{j} {(\frac{1}{n_j} \sum_{i,k} [Y_{ijk}-f_{jk}(X_i;\theta)]^2 )} ^{n_j/2} }
