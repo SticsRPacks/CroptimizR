@@ -4,15 +4,22 @@
 \alias{wrap_nloptr}
 \title{A wrapper for nloptr package}
 \usage{
-wrap_nloptr(param_names, obs_list, crit_function, model_function,
-  model_options = NULL, optim_options = NULL, param_info)
+wrap_nloptr(
+  param_names,
+  obs_list,
+  crit_function,
+  model_function,
+  model_options = NULL,
+  optim_options = NULL,
+  param_info
+)
 }
 \arguments{
 \item{param_names}{Name(s) of parameters to estimate (a parameter name must
 be replicated if several groups of situations for this parameter)}
 
 \item{obs_list}{List of observed values to use for parameter estimation
-A \code{named list} (names = situations names) of data.frame containing
+A \verb{named list} (names = situations names) of data.frame containing
 one column named Date with the dates (Date or POSIXct format) of the different observations
 and one column per observed variables with either the measured values or NA, if
 the variable is not observed at the given date.}

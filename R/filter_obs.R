@@ -89,9 +89,9 @@ filter_obs <- function(obs_list, var_names=NULL, sit_names=NULL, dates=NULL, inc
     }
     ## Filter
     if (include) {
-      df=dplyr::filter(df,Date==dates)
+      df=dplyr::filter(df,.data$Date==dates)
     } else {
-      df=dplyr::filter(df,Date!=dates)
+      df=dplyr::filter(df,.data$Date!=dates)
       if (nrow(df)==0) {
         warning("All dates have been excluded from the list.")
         return(NULL)
