@@ -36,21 +36,31 @@ wrap_nloptr <- function(param_names,optim_options,param_info,crit_options) {
   }
 
   # Run nloptr for each repetition
-  nlo <- list()
+  nlo <- vector("list",nb_rep)
+  nlo<-lapply(nlo,function(x) {x<-list(objective=NA,solution=rep(NA,nb_params))})
+
   start_time <- Sys.time()
   for (irep in 1:nb_rep){
 
-    nlo[[irep]] <- nloptr::nloptr(x0 = as.numeric(init_values[irep,]), eval_f = main_crit,
+    try(nlo[[irep]] <- nloptr::nloptr(x0 = as.numeric(init_values[irep,]), eval_f = main_crit,
                           lb = bounds$lb, ub = bounds$ub,
                           opts = list("algorithm"="NLOPT_LN_NELDERMEAD",
                                       "xtol_rel"=xtol_rel, "maxeval"=maxeval,
                                       "ranseed"=ranseed),
-                          crit_options=crit_options)
+                          crit_options=crit_options))
 
     elapsed <- Sys.time() - start_time
     progress <- 1.0 * irep / nb_rep
     remaining <- elapsed / progress - elapsed
     print(sprintf('Working: %.2f%%. ETA: %.2f', progress * 100, remaining))
+  }
+  if (all(is.na(sapply(nlo,function(x) x$objective)))) {
+    stop(paste("All",nb_rep,
+               "repetitions of the parameter estimation lead to an error.",
+               "\n   * Please look at warning messages."))
+  } else if (any(is.na(sapply(nlo,function(x) x$objective)))) {
+    warning(paste("Some repetitions of the parameter estimation aborted.",
+               "\n   * Please look at other warning messages for more details."))
   }
 
   # Get the estimated values
@@ -60,6 +70,11 @@ wrap_nloptr <- function(param_names,optim_options,param_info,crit_options) {
   ind_min_crit=which.min(sapply(nlo, function(x) x$objective))
 
   # Graph and print the results
+  tmp<-rbind(bounds$lb,bounds$ub,do.call(rbind,lapply(nlo,`[[`,"solution")))
+  tmp[is.infinite(tmp)]<-NA
+  minvalue<-apply(tmp,2,min,na.rm=TRUE); maxvalue<-apply(tmp,2,max,na.rm=TRUE)
+  minvalue<-minvalue-0.05*(maxvalue-minvalue); maxvalue<-maxvalue+0.05*(maxvalue-minvalue)
+
   tryCatch(
     {
       grDevices::pdf(file = file.path(path_results,"EstimatedVSinit.pdf") , width = 9, height = 9)
@@ -67,8 +82,8 @@ wrap_nloptr <- function(param_names,optim_options,param_info,crit_options) {
         graphics::plot(init_values[,ipar], est_values[,ipar],
                        main = "Estimated vs Initial values of the parameters for different repetitions",
                        graphics::text(init_values[,ipar], est_values[,ipar], pos=1,col="black"),
-                       xlim = c(bounds$lb[ipar],bounds$ub[ipar]),
-                       ylim = c(bounds$lb[ipar],bounds$ub[ipar]),
+                       xlim = c(minvalue[ipar],maxvalue[ipar]),
+                       ylim = c(minvalue[ipar],maxvalue[ipar]),
                        xlab = paste("Initial value for", param_names[ipar]),
                        ylab = paste("Estimated value for", param_names[ipar]))
         graphics::text(init_values[ind_min_crit,ipar], est_values[ind_min_crit,ipar],
@@ -78,7 +93,7 @@ wrap_nloptr <- function(param_names,optim_options,param_info,crit_options) {
     },
     error=function(cond) {
 
-      filename=paste0("EstimatedVSinit",format(Sys.time(), "%Y_%d_%H_%M_%S"),".pdf")
+      filename=paste0("EstimatedVSinit_new.pdf")
       warning("Error trying to create ",path_results,"/EstimatedVSinit.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
       message(cond)
       utils::flush.console()
@@ -87,8 +102,8 @@ wrap_nloptr <- function(param_names,optim_options,param_info,crit_options) {
         graphics::plot(init_values[,ipar], est_values[,ipar],
                        main = "Estimated vs Initial values of the parameters for different repetitions",
                        graphics::text(init_values[,ipar], est_values[,ipar], pos=1,col="black"),
-                       xlim = c(bounds$lb[ipar],bounds$ub[ipar]),
-                       ylim = c(bounds$lb[ipar],bounds$ub[ipar]),
+                       xlim = c(minvalue[ipar],maxvalue[ipar]),
+                       ylim = c(minvalue[ipar],maxvalue[ipar]),
                        xlab = paste("Initial value for", param_names[ipar]),
                        ylab = paste("Estimated value for", param_names[ipar]))
         graphics::text(init_values[ind_min_crit,ipar], est_values[ind_min_crit,ipar],

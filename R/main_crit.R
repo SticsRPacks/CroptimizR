@@ -21,6 +21,17 @@
 #'
 main_crit <- function(param_values, crit_options) {
 
+  on.exit({
+    if (is.na(crit)) {
+        filename <- file.path(crit_options$path_results,paste0("debug_crit_NA.Rdata"))
+        save(param_values, obs_list, model_results, file=filename)
+        warning(paste("The optimized criterion has taken the NA value. \n  * Parameter values, obs_list and model results will be saved in",
+                      filename,"for sake of debugging."))
+        # just warns in this case. The optimization method may handle the problem which
+        # may happend only for certain parameter values ...).
+      }
+    })
+
   # Initializations
   param_names <- crit_options$param_names
   obs_list <- crit_options$obs_list
@@ -52,45 +63,71 @@ main_crit <- function(param_values, crit_options) {
                            dimnames=list(NULL,param_names_sl,situation_names))
 
   # Call model function
-  model_results <- model_function(model_options = model_options,
+  model_results <- NULL
+  try(model_results <- model_function(model_options = model_options,
                                   param_values = param_values_array,
-                                  sit_var_dates_mask = obs_list)
+                                  sit_var_dates_mask = obs_list))
+  # Check results, return NA if incorrect
+  if (is.null(model_results) || (!is.null(model_results$error) && model_results$error)) {
+    warning("Error in model simulations.")
+    return(crit<-NA)
+  }
+  if (is.null(model_results$sim_list[[1]]) || length(model_results$sim_list[[1]])==0) {
+    warning("Model wrapper returned an empty list!")
+    return(crit<-NA)
+  }
+  if (!is.sim(model_results$sim_list)) {
+    warning("Format of results returned by the model wrapper is incorrect!")
+    return(crit<-NA)
+  }
+
 
   # Transform simulations
   if (!is.null(transform_sim)) {
     model_results <- transform_sim(model_results=model_results, obs_list=obs_list, param_values=param_values, model_options=model_options)
   }
-
-  # Check results
-  if (!is.null(model_results$error) && model_results$error) {
-    warning("Error in model simulations")
+  # Check results, return NA if incorrect
+  if (is.null(model_results) || (!is.null(model_results$error) && model_results$error)) {
+    warning("Error in transformation of simulation results.")
+    return(crit<-NA)
   }
   if (is.null(model_results$sim_list[[1]]) || length(model_results$sim_list[[1]])==0) {
-    stop("Error: model wrapper returned an empty list!")
+    warning("Transformation of simulation results returned an empty list!")
+    return(crit<-NA)
   }
   if (!is.sim(model_results$sim_list)) {
-    stop("Error: format of results returned by the model wrapper is incorrect!")
+    warning("Format of results returned by transformation of model results is incorrect!")
+    return(crit<-NA)
   }
+
 
   # Transform observations
   if (!is.null(transform_obs)) {
     obs_list <- transform_obs(model_results=model_results, obs_list=obs_list, param_values=param_values, model_options=model_options)
   }
+  # Check results, return NA if incorrect
+  if ( is.null(obs_list) || !is.obs(obs_list) ) {
+    warning("Transformation of observations returned an empty list or a list with an unexpected format.")
+    return(crit<-NA)
+  }
 
 
-  # intersect sim and obs
+  # Intersect sim and obs
   obs_sim_list <- intersect_sim_obs(model_results$sim_list[[1]], obs_list)
   if (!is.list(obs_sim_list)) {
-    stop("Error: intersection of simulations and observations is empty (no date and/or variable in common)!")
+    warning("Intersection of simulations and observations is empty (no date and/or variable in common)!")
+    return(crit<-NA)
   }
   if (any(sapply(obs_sim_list$sim_list,function(x) any(sapply(x,is.nan)))) || any(sapply(obs_sim_list$sim_list,function(x) any(sapply(x,is.infinite))))) {
-    stop("Error: the model wrapper returned NaN or infinite values: \n ",obs_sim_list$sim_list,"\n Estimated parameters: ",paste(param_names,collapse=" "),", values: ",paste(param_values, collapse=" "))
+    warning("The model wrapper returned NaN or infinite values: \n ",obs_sim_list$sim_list,"\n Estimated parameters: ",paste(param_names,collapse=" "),", values: ",paste(param_values, collapse=" "))
+    return(crit<-NA)
   }
+
 
   # Compute criterion value
   crit=crit_function(obs_sim_list$sim_list, obs_sim_list$obs_list)
   if (is.nan(crit)) {
-    stop(paste0("Error: optimized criterion returned NaN value. \n Estimated parameters: ",paste(param_names,collapse=" "),", values: ",paste(param_values, collapse=" ")))
+    warning(paste0("Optimized criterion returned NaN value. \n Estimated parameters: ",paste(param_names,collapse=" "),", values: ",paste(param_values, collapse=" ")))
   }
 
   return(crit)

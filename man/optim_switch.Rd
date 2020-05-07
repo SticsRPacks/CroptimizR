@@ -4,29 +4,12 @@
 \alias{optim_switch}
 \title{Call the required parameter estimation method}
 \usage{
-optim_switch(param_names, obs_list, crit_function, model_function,
-  model_options = NULL, optim_method = "nloptr.simplex",
-  optim_options = NULL, param_info)
+optim_switch(param_names, optim_method, optim_options, param_info,
+  crit_options)
 }
 \arguments{
 \item{param_names}{Name(s) of parameters to estimate (a parameter name must
 be replicated if several groups of situations for this parameter)}
-
-\item{obs_list}{List of observed values to use for parameter estimation
-A \code{named list} (names = situations names) of data.frame containing
-one column named Date with the dates (Date or POSIXct format) of the different observations
-and one column per observed variables with either the measured values or NA, if
-the variable is not observed at the given date.}
-
-\item{crit_function}{Function implementing the criterion to optimize
-(optional, see default value in the function signature). See
-\href{https://sticsrpacks.github.io/CroptimizR/reference/ls_criterion.html}{here}
-for more details about the list of proposed criterion.}
-
-\item{model_function}{Crop Model wrapper function to use.}
-
-\item{model_options}{List of options for the Crop Model wrapper (see help of
-the Crop Model wrapper function used).}
 
 \item{optim_method}{Name of the parameter estimation method to use (optional,
 see default value in the function signature). For the moment, can be "simplex"
@@ -36,7 +19,10 @@ for a brief description and references on the available methods.}
 \item{optim_options}{List of options of the parameter estimation method.
 \code{path_results} The path where to store the results (optional, default=getwd())
 Click on the links to see the specific options for the \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html}{simplex}
-and \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html}{DreamZS} methods.}
+and \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html}{DreamZS} methods.
+\code{nmax_NA} In case the optimized criterion returns NA, the parameter estimation
+process will stop as soon as the criterion takes the NA value \code{nmax_NA} times
+in a row (optional, default=10)}
 
 \item{param_info}{Information on the parameters to estimate.
 Either
@@ -56,19 +42,16 @@ a named list containing for each parameter the list of situations per group
 (\code{ub} and \code{lb}) and the list of initial values per group
 \code{init_values} (data.frame, one column per group, optional).
 (see \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html}{here} for an example)}
+
+\item{crit_options}{List containing several arguments given to \code{estim_param} function:
+\code{param_names}, \code{obs_list}, \code{crit_function}, \code{model_function}, \code{model_options},
+\code{param_info}, \code{transform_obs}, \code{transform_sim}
+that must be passed to main_crit function by the methods wrappers.}
 }
 \value{
-prints, graphs and a list containing the results of the parameter estimation.
-which content depends on the method used.
-e.g. for Nelder meade simplex in nloptr, this list contains
-\code{final_values}, the vector of estimated values for optimized parameters
-for the repetition that lead to the lowest value of the criterion
-\code{init_values}, the vector of initial values for optimized parameters
-\code{est_values}, the vector of estimated values for optimized parameters
-for all repetitions
-\code{ind_min_crit}, the index of the repetition that lead to the lowest value
-of the criterion
-\code{nlo}, the data structure returned by nloptr
+prints, graphs and a list containing the results of the parameter estimation,
+which content depends on the method used, all that saved in the defined in
+\code{optim_options.path_results}
 }
 \description{
 Call the required parameter estimation method

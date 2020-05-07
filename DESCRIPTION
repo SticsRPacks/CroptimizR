@@ -26,6 +26,7 @@ Imports:
     crayon,
     dplyr,
     lubridate,
+	rlang,
 	tictoc
 Suggests:
     testthat (>= 2.1.0),

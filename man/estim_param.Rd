@@ -6,7 +6,8 @@
 \usage{
 estim_param(obs_list, crit_function = crit_log_cwss, model_function,
   model_options = NULL, optim_method = "nloptr.simplex",
-  optim_options = NULL, param_info)
+  optim_options = list(path_results = getwd(), nmax_NA = 10), param_info,
+  transform_obs = NULL, transform_sim = NULL)
 }
 \arguments{
 \item{obs_list}{List of observed values to use for parameter estimation
@@ -33,7 +34,10 @@ for a brief description and references on the available methods.}
 \item{optim_options}{List of options of the parameter estimation method.
 \code{path_results} The path where to store the results (optional, default=getwd())
 Click on the links to see the specific options for the \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html}{simplex}
-and \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html}{DreamZS} methods.}
+and \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html}{DreamZS} methods.
+\code{nmax_NA} In case the optimized criterion returns NA, the parameter estimation
+process will stop as soon as the criterion takes the NA value \code{nmax_NA} times
+in a row (optional, default=10)}
 
 \item{param_info}{Information on the parameters to estimate.
 Either
@@ -53,6 +57,10 @@ a named list containing for each parameter the list of situations per group
 (\code{ub} and \code{lb}) and the list of initial values per group
 \code{init_values} (data.frame, one column per group, optional).
 (see \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html}{here} for an example)}
+
+\item{transform_obs}{Function for transforming observations (optional)}
+
+\item{transform_sim}{Function for transforming simulations (optional)}
 }
 \value{
 prints, graphs and a list containing the results of the parameter estimation,
