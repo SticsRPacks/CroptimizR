@@ -36,6 +36,8 @@
 #' (`ub` and `lb`) and the list of initial values per group
 #' `init_values` (data.frame, one column per group, optional).
 #' (see [here](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html) for an example)
+#' @param transform_obs Function for transforming observations (optional)
+#' @param transform_sim Function for transforming simulations (optional)
 #'
 #' @return prints, graphs and a list containing the results of the parameter estimation,
 #' which content depends on the method used, all that saved in the defined in
@@ -47,8 +49,14 @@
 #' @export
 #'
 
-estim_param <- function(obs_list,crit_function=crit_log_cwss,model_function,model_options=NULL,
-                        optim_method="nloptr.simplex",optim_options=NULL,param_info) {
+estim_param <- function(obs_list,crit_function=crit_log_cwss,model_function,
+                        model_options=NULL, optim_method="nloptr.simplex",
+                        optim_options,param_info,
+                        transform_obs=NULL, transform_sim=NULL) {
+
+  # Measured elapse time
+  tictoc::tic.clearlog()
+  tictoc::tic("Total time for parameter estimation")
 
   # Check inputs
 
@@ -78,9 +86,21 @@ estim_param <- function(obs_list,crit_function=crit_log_cwss,model_function,mode
 
 
   # Run the estimation
-
   param_names=get_params_names(param_info)
-  return(optim_switch(param_names,obs_list,crit_function,model_function,model_options,
-                      optim_method,optim_options,param_info))
+  crit_options=list(param_names=param_names, obs_list=obs_list,
+                    crit_function=crit_function, model_function=model_function,
+                    model_options=model_options, param_info=param_info,
+                    transform_obs=transform_obs, transform_sim=transform_sim,
+                    path_results=optim_options$path_results)
 
-  }
+  result=optim_switch(param_names,optim_method,optim_options,param_info,crit_options)
+
+
+  # Measure elapse time
+  tictoc::toc(log=TRUE)
+  result$total_time=unlist(tictoc::tic.log(format = TRUE))
+  tictoc::tic.clearlog()
+
+  return(result)
+
+}

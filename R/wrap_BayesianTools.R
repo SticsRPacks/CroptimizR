@@ -1,6 +1,6 @@
 #' @title A wrapper for BayesianTools package
 #'
-#' @inheritParams estim_param
+#' @inheritParams optim_switch
 #' @param param_names Name(s) of parameters to estimate (a parameter name must
 #' be replicated if several groups of situations for this parameter)
 #'
@@ -11,7 +11,7 @@
 #' @importFrom BayesianTools applySettingsDefault createUniformPrior createBayesianSetup runMCMC marginalPlot correlationPlot gelmanDiagnostics getSample MAP
 #'
 
-wrap_BayesianTools <- function(param_names,obs_list,crit_function,model_function,model_options=NULL,optim_options=NULL,param_info) {
+wrap_BayesianTools <- function(param_names,optim_options,param_info,crit_options) {
 
   if (is.null((ranseed=optim_options$ranseed))) { ranseed=NULL }
   if (is.null((path_results=optim_options$path_results))) { path_results=getwd() }
@@ -34,14 +34,7 @@ wrap_BayesianTools <- function(param_names,obs_list,crit_function,model_function
   set.seed(ranseed)
   nb_params=length(param_names)
 
-  crit_options_loc=list()
-  crit_options_loc$param_names=param_names
-  crit_options_loc$obs_list=obs_list
-  crit_options_loc$crit_function=crit_function
-  crit_options_loc$model_function=model_function
-  crit_options_loc$model_options=model_options
-  crit_options_loc$param_info=param_info
-  likelihood<-function(x) {return(main_crit(x,crit_options_loc))}
+  likelihood<-function(x) {return(main_crit(x,crit_options))}
 
   # Create the Bayesian setup if it is an initial run of the method
   bayesianSetup=optim_options$PreviousResults
