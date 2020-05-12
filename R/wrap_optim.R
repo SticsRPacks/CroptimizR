@@ -150,6 +150,7 @@ wrap_optim <- function(param_names,optim_options,param_info,crit_options) {
   res <- list(final_values = final_values,
               init_values = init_values,
               est_values = est_values,
+              min_crit_value = optim[[ind_min_crit]]$value,
               ind_min_crit = ind_min_crit,
               optim = optim)
   return(res)

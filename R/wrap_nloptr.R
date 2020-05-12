@@ -128,6 +128,7 @@ wrap_nloptr <- function(param_names,optim_options,param_info,crit_options) {
   res <- list(final_values = final_values,
               init_values = init_values,
               est_values = est_values,
+              min_crit_value = nlo[[ind_min_crit]]$objective,
               ind_min_crit = ind_min_crit,
               nlo = nlo)
   return(res)
