@@ -27,7 +27,7 @@ path_to_JavaStics <- params$path_to_JavaStics
 #  # Generate Stics input files from JavaStics input files
 #  dir.create(stics_inputs_path)
 #  gen_usms_xml2txt(javastics_path = javastics_path, workspace_path = javastics_workspace_path,
-#    target_path = stics_inputs_path, display = TRUE)
+#    target_path = stics_inputs_path, verbose = TRUE)
 
 ## ----eval=params$eval_auto_test, message=FALSE, warning=FALSE-----------------
 #  # Read observation files
