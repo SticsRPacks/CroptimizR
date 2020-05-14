@@ -26,7 +26,6 @@ path_to_JavaStics <- params$path_to_JavaStics
 #  
 #  # DEFINE THE PATH TO YOUR LOCALLY INSTALLED VERSION OF JAVASTICS
 #  javastics_path=path_to_JavaStics
-#  stics_path=file.path(javastics_path,"bin/stics_modulo.exe")
 #  
 #  # Download the example USMs and define the path to the JavaStics workspace (JavaStics XML input files):
 #  data_dir= file.path(SticsRFiles::download_data(),"study_case_1","V9.0")
@@ -42,8 +41,7 @@ path_to_JavaStics <- params$path_to_JavaStics
 ## ----eval=params$eval_auto_test, results='hide', message=FALSE, warning=FALSE----
 #  
 #  # Set the model options (see '? stics_wrapper_options' for details)
-#  model_options=stics_wrapper_options(stics_path,stics_inputs_path,
-#                                      parallel=FALSE)
+#  model_options= stics_wrapper_options(javastics_path, data_dir = stics_inputs_path, parallel=FALSE)
 #  
 #  # Run the model on all situations found in stics_inputs_path
 #  sim_before_optim=stics_wrapper(model_options=model_options)
@@ -52,9 +50,8 @@ path_to_JavaStics <- params$path_to_JavaStics
 #  
 #  sit_name="bo96iN+"  # can be a vector of situation names if you want to consider several, e.g. c("bo96iN+","bou00t1")
 #  var_name="lai_n"    # can be a vector of variable names if you want to consider several, e.g. c("lai_n","masec_n")
-#  obs_list=get_obs(javastics_workspace_path,
-#                            obs_filenames = paste0(sit_name,".obs"))
-#  obs_list=filter_obs(obs_list, var_names=var_name,include=TRUE)
+#  obs_list= get_obs(javastics_workspace_path, usm_name = sit_name)
+#  obs_list= filter_obs(obs_list, var_names= var_name, include=TRUE)
 
 ## ----eval=params$eval_auto_test, message=FALSE, warning=FALSE-----------------
 #  # 2 parameters here: dlaimax and durvieF, of bounds [0.0005,0.0025] and [50,400].
