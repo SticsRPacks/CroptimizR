@@ -13,6 +13,8 @@
 #'
 #' @export
 #'
+#' @importFrom rlang .data
+#'
 #' @examples
 #'
 #' obs_list <- list(sit1=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-10")),
@@ -89,9 +91,9 @@ filter_obs <- function(obs_list, var_names=NULL, sit_names=NULL, dates=NULL, inc
     }
     ## Filter
     if (include) {
-      df=dplyr::filter(df,.data$Date==dates)
+      df= dplyr::filter(df,.data$Date==dates)
     } else {
-      df=dplyr::filter(df,.data$Date!=dates)
+      df= dplyr::filter(df,.data$Date!=dates)
       if (nrow(df)==0) {
         warning("All dates have been excluded from the list.")
         return(NULL)
