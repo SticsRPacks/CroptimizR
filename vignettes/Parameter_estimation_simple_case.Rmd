@@ -59,7 +59,6 @@ if(!require("SticsRPacks")){
 
 # DEFINE THE PATH TO YOUR LOCALLY INSTALLED VERSION OF JAVASTICS
 javastics_path=path_to_JavaStics
-stics_path=file.path(javastics_path,"bin/stics_modulo.exe")
 
 # Download the example USMs and define the path to the JavaStics workspace (JavaStics XML input files):
 data_dir= file.path(SticsRFiles::download_data(),"study_case_1","V9.0")
@@ -84,7 +83,7 @@ stics_inputs_path=file.path(data_dir,"TxtFiles")
 dir.create(stics_inputs_path)
 
 gen_usms_xml2txt(javastics_path = javastics_path, workspace_path = javastics_workspace_path,
-  target_path = stics_inputs_path, display = TRUE)
+  target_path = stics_inputs_path, verbose = TRUE)
 ```
 
 
@@ -97,8 +96,7 @@ Here model parameters values are read in the model input files.
 ```{r eval=params$eval_auto_test, results='hide', message=FALSE, warning=FALSE}
 
 # Set the model options (see '? stics_wrapper_options' for details)
-model_options=stics_wrapper_options(stics_path,stics_inputs_path,
-                                    parallel=FALSE)
+model_options= stics_wrapper_options(javastics_path, data_dir = stics_inputs_path, parallel=FALSE)
 
 # Run the model on all situations found in stics_inputs_path
 sim_before_optim=stics_wrapper(model_options=model_options)

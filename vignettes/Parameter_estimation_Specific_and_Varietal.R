@@ -18,7 +18,6 @@ path_to_JavaStics <- params$path_to_JavaStics
 #  
 #  # DEFINE THE PATH TO YOUR LOCALLY INSTALLED VERSION OF JAVASTICS
 #  javastics_path=path_to_JavaStics
-#  stics_path=file.path(javastics_path,"bin/stics_modulo.exe")
 #  
 #  # Download the example USMs and define the path to the JavaStics workspace (JavaStics XML input files):
 #  data_dir= file.path(SticsRFiles::download_data(),"study_case_1","V9.0")
@@ -28,7 +27,7 @@ path_to_JavaStics <- params$path_to_JavaStics
 #  # Generate Stics input files from JavaStics input files
 #  dir.create(stics_inputs_path)
 #  gen_usms_xml2txt(javastics_path = javastics_path, workspace_path = javastics_workspace_path,
-#    target_path = stics_inputs_path, display = TRUE)
+#    target_path = stics_inputs_path, verbose = TRUE)
 
 ## ----eval=params$eval_auto_test, message=FALSE, warning=FALSE-----------------
 #  # Read observation files
@@ -46,8 +45,7 @@ path_to_JavaStics <- params$path_to_JavaStics
 
 ## ----eval=params$eval_auto_test, message=FALSE, warning=FALSE-----------------
 #  
-#  model_options=stics_wrapper_options(stics_path,stics_inputs_path,
-#                                      parallel=TRUE)
+#  model_options= stics_wrapper_options(javastics_path, data_dir = stics_inputs_path, parallel=TRUE)
 
 ## ----eval=params$eval_auto_test, message=FALSE, warning=FALSE-----------------
 #  
