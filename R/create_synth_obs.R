@@ -1,7 +1,7 @@
 #' @keywords internal
 #'
 #'
-create_synth_obs<-function(wrapper, model_options,t_obs,p_true)
+create_synth_obs<-function(wrapper, model_options,t_obs,p_true,sigma=c(LAI=0.1,biom=1))
 {
   observed<-list()
   res<-list()
@@ -50,11 +50,7 @@ create_synth_obs<-function(wrapper, model_options,t_obs,p_true)
 
       n<-length(t_obs)
 
-      data_list_res_syn<-data_list_res[which(data_list_res$Date == date_obs[1]),]
-      for ( k in c(2:(n))){
-        data_list_res_syn<-rbind(data_list_res_syn,data_list_res[which(data_list_res$Date == date_obs[i]),])
-      }
-
+      data_list_res_syn<-data_list_res[which(data_list_res$Date %in% date_obs),]
       data_list_res_obs=data_list_res_syn
 
 
@@ -70,6 +66,7 @@ create_synth_obs<-function(wrapper, model_options,t_obs,p_true)
       list_obs<-cbind(data_list_res_syn,data_list_res_obs$LAI_obs,data_list_res_obs$biom_obs)
       names(list_obs)[4]<-paste("LAI_obs")
       names(list_obs)[5]<-paste("biom_obs")
+      list_obs
       observed$sim_list[[i]][[situation]]<-list_obs
       observed$error<-FALSE
   }
