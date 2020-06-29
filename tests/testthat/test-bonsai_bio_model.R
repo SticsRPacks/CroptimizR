@@ -1,5 +1,6 @@
 
 
+
 context("Test the bonsai-bio model")
 
 weather_data_path <- system.file(file.path("extdata", "Bonsai_bio", "temperature_PAR.csv"),
@@ -46,7 +47,7 @@ biom_t0=0
 
 
 
-test_that("bonsai_bio", {
+test_that("bonsai_bio", { #t1 et tfin vont changer , biom est mesuré en 2 ans par exp (1,2,3 ca depend des cultures),
   expect_equal(CroptimizR:::bonsai_bio(t1,tfin,p,T,PaR,biom_t0)[,"biom"], biom,tolerance=1e-4)
   expect_equal(CroptimizR:::bonsai_bio(t1,tfin,p,T,PaR,biom_t0)[,"LAI"], LAI,tolerance=1e-4)
   expect_equal(CroptimizR:::bonsai_bio(t1,tfin,p1,T,PaR,biom_t0)[,"biom"], c(1:232)*0,tolerance=1e-4)
@@ -57,5 +58,5 @@ test_that("bonsai_bio", {
   expect_equal(CroptimizR:::bonsai_bio(t1,tfin,p3,T,PaR,biom_t0)[,"LAI"], c(1:232)*0,tolerance=1e-4)
 })
 
-
+#interface
 

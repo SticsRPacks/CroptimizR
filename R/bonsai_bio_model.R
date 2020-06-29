@@ -54,44 +54,25 @@ biom <-function(p,LAI_t,PAR_t,biom_t){
 
 bonsai_bio <- function(t1,tfin,p,T,PAR,biom_t0)
 {
-# Initialisation
-  p_bonsai <- p
-  p_biom <- p
 
 # On calcule le LAI pour tous les jours definis dans T.
-  biom_tmp=c(1:tfin)
-
-  LAI_total=bonsai(p_bonsai,T);
+  LAI_total=bonsai(p,T);
 
 # On ne renvoie le LAI que pour la periode demandee.
   LAI=LAI_total[t1:tfin];
 
 # Calcul de la biomasse pour la periode demandee
 
-# Cas t1=1
-# Le premier jour, le LAI est different de 0, mais pas la biomasse.
-# A partir du deuxieme jour, une valeur est calculee pour la biomasse (qui
-# est donc supposee se faire dans la nuit, apres le LAI ...).
-  if (t1==1){
-    biom_tmp[1]=0;
-  }else{
-    biom_tmp[1]=biom_t0;
-  }
-
 # Calcul sur le reste de la periode
-  i=2;
-  for (t in max(2,t1):tfin)
+  biom_tmp=rep(0,tfin)
+  for (t in 2:tfin)
   {
-    biom_tmp[i]=biom(p_biom,LAI_total[t-1],PAR[t-1],biom_tmp[i-1]);
-    i=i+1;
+    biom_tmp[t]=biom(p,LAI_total[t-1],PAR[t-1],biom_tmp[t-1]);
   }
 
 # Mise en forme des resultats
-  if (t1==1){
-    biom=biom_tmp;
-  }else{
-    biom=biom_tmp[2:tfin-t1+2];
-  }
+  biom=biom_tmp[t1:tfin];
 
   return(cbind(LAI,biom))
 }
+

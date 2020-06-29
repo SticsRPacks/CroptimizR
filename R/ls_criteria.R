@@ -50,7 +50,7 @@ NULL
 
 
 #' @export
-#' @rdname ls_criteria
+#' @rdname ls_criteriaùf
 crit_ols <- function(sim_list, obs_list) {
   var_list <- unique(unlist(lapply(obs_list, function(x) colnames(x))))
   var_list <- setdiff(var_list, "Date")
