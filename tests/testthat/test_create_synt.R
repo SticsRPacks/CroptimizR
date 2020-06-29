@@ -1,7 +1,5 @@
 ############################
 
-library(testthat)
-
 context("test_create_synt")
 
 temp_data_path <- system.file(file.path("extdata", "Bonsai_bio", "Tmoy_France_INRA_STATION_33550003 - R_mJ_m2.csv"),
