@@ -16,20 +16,30 @@ wrap_BayesianTools <- function(param_names,optim_options,param_info,crit_options
   if (is.null((ranseed=optim_options$ranseed))) { ranseed=NULL }
   if (is.null((path_results=optim_options$path_results))) { path_results=getwd() }
 
-  default=applySettingsDefault(settings = NULL, sampler = "DREAMzs")
+  if (is.null((optim_options$method))) {
+    method <- "DREAMzs"
+  } else {
+      method <- optim_options$method
+      optim_options=within(optim_options,rm("method"))
+  }
+
+  default=applySettingsDefault(settings = NULL, sampler = method)
+
+  # Put default values for options not set by the user
+  sapply(names(default),function(x) {if (is.null(optim_options[[x]])) {optim_options[[x]]<<-default[[x]]}})
+
   # if burnin has not been set , set it by default to adaptation if it is set
-  if (is.null((optim_options$thin))) { optim_options$thin=default$thin } # useful for post-treatment
-  if (is.null((optim_options$adaptation))) { optim_options$adaptation=default$adaptation }
-  if (is.null((optim_options$burnin))) { optim_options$burnin=default$burnin }
-  if(optim_options$adaptation <1) optim_options$adaptation <- optim_options$adaptation*optim_options$iterations
-  if (optim_options$burnin<optim_options$adaptation) {
-    warning(paste0("burnin (=",optim_options$burnin,") < adaptation (=",optim_options$adaptation,")
+  if (method=="DREAMzs") {
+    if(optim_options$adaptation <1) optim_options$adaptation <- optim_options$adaptation*optim_options$iterations
+    if (optim_options$burnin<optim_options$adaptation) {
+      warning(paste0("burnin (=",optim_options$burnin,") < adaptation (=",optim_options$adaptation,")
                   => burnin is set equal to adaptation."))
-    optim_options$burnin=optim_options$adaptation
+      optim_options$burnin=optim_options$adaptation
+    }
   }
 
   # Don't pass CroptimizR options to BayesianTools ... this lead to an error ...
-  optim_options_DREAMzs=within(optim_options,rm("ranseed","path_results"))
+  optim_options_BT=within(optim_options,rm("ranseed","path_results"))
 
   set.seed(ranseed)
   nb_params=length(param_names)
@@ -46,12 +56,12 @@ wrap_BayesianTools <- function(param_names,optim_options,param_info,crit_options
                                         names=param_names)
 
   } else {
-    optim_options_DREAMzs=within(optim_options_DREAMzs,rm("PreviousResults"))
+    optim_options_BT=within(optim_options_BT,rm("PreviousResults"))
   }
 
   # Perform the Bayesian analysis
-  out <- runMCMC(bayesianSetup = bayesianSetup, sampler = "DREAMzs",
-                 settings = optim_options_DREAMzs)
+  out <- runMCMC(bayesianSetup = bayesianSetup, sampler = method,
+                 settings = optim_options_BT)
 
   # Get a sample of the posterior
   post_sample=getSample(out,coda=FALSE)
@@ -135,11 +145,11 @@ wrap_BayesianTools <- function(param_names,optim_options,param_info,crit_options
   if (nb_params>=2) {
     # seems that it does not work for a single parameter
     # also, Nbiteration must be > thin+50 otherwise coda::gelman.plot end with an error
-    if ( nb_iterations>=(optim_options_DREAMzs$thin+50) ) {
+    if ( nb_iterations>=(optim_options_BT$thin+50) ) {
       tryCatch(
         {
           grDevices::pdf(file = file.path(path_results,"gelmanDiagPlots.pdf") , width = 9, height = 9)
-          gelmanDiagnostics(out, thin=optim_options_DREAMzs$thin, plot = T)
+          gelmanDiagnostics(out, thin=optim_options_BT$thin, plot = T)
           grDevices::dev.off()
         },
         error=function(cond) {
@@ -148,13 +158,13 @@ wrap_BayesianTools <- function(param_names,optim_options,param_info,crit_options
           message(cond)
           utils::flush.console()
           grDevices::pdf(file = file.path(path_results,filename) , width = 9, height = 9)
-          gelmanDiagnostics(out, thin=optim_options_DREAMzs$thin, plot = T)
+          gelmanDiagnostics(out, thin=optim_options_BT$thin, plot = T)
           grDevices::dev.off()
         })
 
     } else {
-      gelmanDiagnostics(out, thin=optim_options_DREAMzs$thin, plot = F)
-      warning(paste0("Number of iterations in DREAM after burnin phase is too low (",nb_iterations,") to generate gelmanDiagPlots.pdf (should be superior to thin+50)"))
+      gelmanDiagnostics(out, thin=optim_options_BT$thin, plot = F)
+      warning(paste0("Number of iterations after burnin phase is too low (",nb_iterations,") to generate gelmanDiagPlots.pdf (should be superior to thin+50)"))
     }
   }
 
