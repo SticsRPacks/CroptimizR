@@ -86,7 +86,7 @@ wrap_optim <- function(param_names,optim_options,param_info,crit_options) {
 
 
   # Get the estimated values
-  est_values=t(sapply(optim,function(x) x$par))
+  est_values=t(rbind(sapply(optim,`[[`,"par")))
 
   # Which repetion has the smallest criterion
   ind_min_crit=which.min(sapply(optim, function(x) {if (!is.null(x$value)) x$value}))
