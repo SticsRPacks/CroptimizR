@@ -39,7 +39,9 @@ wrap_BayesianTools <- function(param_names,optim_options,param_info,crit_options
   }
 
   # Don't pass CroptimizR options to BayesianTools ... this lead to an error ...
-  optim_options_BT=within(optim_options,rm("ranseed","path_results"))
+  optim_options_BT<-optim_options
+  if (!is.null(optim_options$ranseed)) optim_options_BT<-within(optim_options_BT,rm("ranseed"))
+  if (!is.null(optim_options$path_results)) optim_options_BT<-within(optim_options_BT,rm("path_results"))
 
   set.seed(ranseed)
   nb_params=length(param_names)
