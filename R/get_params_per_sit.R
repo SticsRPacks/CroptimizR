@@ -28,11 +28,13 @@ get_params_per_sit <- function(sit_groups, situation, param_vec) {
   if (is.list(sit_groups[[1]])) {
     param_names <-  CroptimizR:::get_params_names(sit_groups, short_list=TRUE)
     index <- sapply(sit_groups, function(x1) which(sapply(x1$sit_list, function(x2) is.element(situation, x2))))
+    index <- unlist(index[sapply(index,function(x) length(x)>0)])
     nb_groups <- sapply(sit_groups, function(x) length(x$sit_list))
-    nb_groups <- c(0, cumsum(nb_groups[-length(nb_groups)]))
-    index <- index + nb_groups
-    res <- param_vec[index]
-    names(res)  <- param_names
+    offset <- c(0, cumsum(nb_groups[-length(nb_groups)]))
+    names(offset)<-names(nb_groups)
+    index <- index + offset[names(index)]
+    res <- stats::setNames(rep(NA, length(param_names)),param_names)
+    res[names(index)] <- param_vec[index]
     return(res)
   } else { # no groups of situations defined
     return(param_vec)
