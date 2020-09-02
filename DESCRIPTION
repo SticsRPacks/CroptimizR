@@ -42,8 +42,8 @@ Suggests:
 	doParallel,
 	devtools
 Remotes:
-    github::SticsRPacks/SticsRFiles@release,
-    github::SticsRPacks/SticsOnR@release,
+    github::SticsRPacks/SticsRFiles@*release,
+    github::SticsRPacks/SticsOnR@*release,
 	github::hol430/ApsimOnR
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
