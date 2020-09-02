@@ -33,7 +33,8 @@ Suggests:
     covr,
     knitr,
     rmarkdown,
-	SticsRPacks,
+	SticsRFiles,
+	SticsOnR,
 	ApsimOnR,
 	ggplot2,
 	gridExtra,
@@ -41,7 +42,8 @@ Suggests:
 	doParallel,
 	devtools
 Remotes:
-    github::SticsRPacks/SticsRPacks,
+    github::SticsRPacks/SticsRFiles@release,
+    github::SticsRPacks/SticsOnR@release,
 	github::hol430/ApsimOnR
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
