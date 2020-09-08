@@ -24,7 +24,7 @@ p_true <- array( c(p,p1,p2,p3),
                                          "33550003_2013_100360","84007004_2016_050260")))
 
 
-t_obs<-c(140,150,160,170,180,190,200)
+t_obs<-c(140,145,150,155,160,165,170,175,180,185,190,195,200,205,210,215,220,225,230)
 wrapper<-CroptimizR:::bonsai_bio_wrapper
 
 obs_list<-CroptimizR:::create_synth_obs(wrapper, model_options2,t_obs,p_true)

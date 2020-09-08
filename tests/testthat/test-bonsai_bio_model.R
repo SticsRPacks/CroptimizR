@@ -1,3 +1,4 @@
+library(testthat)
 context("Test the bonsai-bio model")
 
 weather_data_path <- system.file(file.path("extdata", "Bonsai_bio", "temperature_PAR.csv"),
