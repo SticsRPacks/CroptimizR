@@ -1,6 +1,8 @@
 #' @keywords internal
 #'
 #'
+#'
+sigma=c(LAI=0.1,biom=1)
 create_synth_obs<-function(wrapper, model_options,t_obs,p_true,sigma=c(LAI=0.1,biom=1))
 {
   observed<-list()
@@ -54,8 +56,8 @@ create_synth_obs<-function(wrapper, model_options,t_obs,p_true,sigma=c(LAI=0.1,b
       data_list_res_obs=data_list_res_syn
 
 
-      noise1<-rnorm(n,0,0.1)
-      noise2<-rnorm(n,0,1)
+      noise1<-rnorm(n,0,sigma["LAI"])
+      noise2<-rnorm(n,0,sigma["biom"])
 
       data_list_res_obs$LAI<-data_list_res_syn$LAI+noise1
       data_list_res_obs$biom<-data_list_res_syn$biom+noise2
