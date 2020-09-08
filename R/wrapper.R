@@ -24,15 +24,25 @@
 
 
 
-bonsai_bio_wrapper <- function( model_options, param_values) {
-
+bonsai_bio_wrapper <- function( model_options, param_values,...) {
+  defaut=model_options$param_values_default
+  defaut_new=array( dim=c(dim(param_values)[1],length(defaut),dim(param_values)[3]),
+                    dimnames=list(NULL,names(model_options$param_values_default)
+                                  ,names(param_values[1,1,])))
+  for (i in 1:dim(param_values)[3]){
+    defaut_new[,,i]=defaut
+  }
   # Initializations
   results <- list()
   path <- model_options$path
   begin_end<-(model_options$begin_end)
   temper <- read.csv2(path)
 
-
+  if (!is.null(model_options$param_values_default)) {
+    tmp=defaut_new
+    tmp[,dimnames(param_values)[[2]],]=param_values
+  }
+  param_values_t <- tmp
 
   NUM_POSTE = as.numeric(as.vector(temper[,"NUM_POSTE"]))
   AN        = as.numeric(as.vector(temper[,"AN"]))
@@ -52,10 +62,10 @@ bonsai_bio_wrapper <- function( model_options, param_values) {
 
   situation_names=paste(Poste_An$NUM_POSTE,Poste_An$AN,sep="_")
   situation_names=paste(situation_names,begin_end,sep="_")
-  situation_names<-intersect(situation_names,dimnames(param_values)[[3]])
+  situation_names<-intersect(situation_names,dimnames(param_values_t)[[3]])
 
-  nb_paramValues <- dim(param_values)[1]
-  param_names <- dimnames(param_values)[[2]]
+  nb_paramValues <- dim(param_values_t)[1]
+  param_names <- dimnames(param_values_t)[[2]]
 
   results$sim_list <-  vector("list",nb_paramValues)
   results$error=FALSE
@@ -82,8 +92,8 @@ bonsai_bio_wrapper <- function( model_options, param_values) {
 
         tab<-table[which(table$NUM_POSTE==as.numeric(substr(situation,1,8)) &
                            table$AN==as.numeric(substr(situation,10,13))),]
-        LAI =CroptimizR:::bonsai_bio(t1,tfin,param_values[i,,situation],tab$TM,tab$PAR,0)[,"LAI"]
-        biom=CroptimizR:::bonsai_bio(t1,tfin,param_values[i,,situation],tab$TM,tab$PAR,0)[,"biom"]
+        LAI =CroptimizR:::bonsai_bio(t1,tfin,param_values_t[i,,situation],tab$TM,tab$PAR,0)[,"LAI"]
+        biom=CroptimizR:::bonsai_bio(t1,tfin,param_values_t[i,,situation],tab$TM,tab$PAR,0)[,"biom"]
 
         results$sim_list[[i]][[situation]]=dplyr::tibble(Date=as.POSIXct(as.character(as.Date(t1:tfin,origin=paste0(as.numeric(substr(situation,10,13)),"-01-01"))),
                                                                   format="%Y-%m-%d",tz="UTC"),LAI=LAI,biom=biom)
