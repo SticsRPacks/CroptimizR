@@ -46,7 +46,7 @@ wrap_nloptr <- function(param_names,optim_options,param_info,crit_options) {
     try(nlo[[irep]] <- nloptr::nloptr(x0 = as.numeric(init_values[irep,]), eval_f = main_crit,
                           lb = bounds$lb, ub = bounds$ub,
                           opts = list("algorithm"="NLOPT_LN_NELDERMEAD",
-                                      "xtol_rel"=xtol_rel, "maxeval"=maxeval,
+                                      "xtol_rel"=xtol_rel, "maxeval"=maxeval,"ftol_rel"=ftol_rel,
                                       "ranseed"=ranseed),
                           crit_options=crit_options))
 
@@ -65,8 +65,11 @@ wrap_nloptr <- function(param_names,optim_options,param_info,crit_options) {
   }
 
   # Get the estimated values
-  est_values=t(sapply(nlo,function(x) x$solution))
 
+  est_values=t(sapply(nlo,function(x) x$solution))
+  if (length(param_info$lb)==1){
+    est_values=t(est_values)
+  }
   # Which repetion has the smallest criterion
   ind_min_crit=which.min(sapply(nlo, function(x) x$objective))
 
