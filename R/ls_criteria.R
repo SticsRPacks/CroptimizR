@@ -88,7 +88,7 @@ crit_log_cwss <- function(sim_list, obs_list) {
 
     sz <- length(res)
 
-    result <- result + (sz / 2) * (log(1 / sz) + log(res %*% res))
+    result <- result + (sz / 2) * (log(1 / sz) + log((res %*% res)+1e-308))
   }
 
   return(as.numeric(result))
