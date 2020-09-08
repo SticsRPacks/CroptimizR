@@ -29,6 +29,10 @@ optim_switch <- function(param_names,optim_method,optim_options,param_info,crit_
 
     res=wrap_optim(param_names=param_names,optim_options=optim_options,param_info=param_info, crit_options)
 
+  } else if (optim_method=="genoud") {
+
+    res=wrap_rgenoud(param_names=param_names,optim_options=optim_options,param_info=param_info, crit_options)
+
   } else {
 
     stop(paste0("Unknown method ",optim_method,", please choose between nloptr.simplex, BayesianTools.dreamzs and optim."))
