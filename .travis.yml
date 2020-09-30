@@ -13,17 +13,17 @@ addons:
     packages:
       - libglpk-dev
       
-jobs:
-   include:
-     - stage: trigger downstream
-       jdk: oraclejdk8
-       script: |
-         echo "TRAVIS_BRANCH=$TRAVIS_BRANCH TRAVIS_PULL_REQUEST=$TRAVIS_PULL_REQUEST TRAVIS_ACCESS=$TRAVIS_ACCESS_TOKEN"
-         if [[ ($TRAVIS_BRANCH == master) &&
-               ($TRAVIS_PULL_REQUEST == false) ]] ; then
-           curl -LO --retry 3 https://github.com/SticsRPacks/CroptimizR/bin/trigger-travis.sh
-           sh bin/trigger-travis.sh SticsRPacks SticsRTests $TRAVIS_ACCESS_TOKEN
-         fi
+#jobs:
+#   include:
+#     - stage: trigger downstream
+#       jdk: oraclejdk8
+#       script: |
+#         echo "TRAVIS_BRANCH=$TRAVIS_BRANCH TRAVIS_PULL_REQUEST=$TRAVIS_PULL_REQUEST TRAVIS_ACCESS=$TRAVIS_ACCESS_TOKEN"
+#         if [[ ($TRAVIS_BRANCH == master) &&
+#               ($TRAVIS_PULL_REQUEST == false) ]] ; then
+#           curl -LO --retry 3 https://github.com/SticsRPacks/CroptimizR/bin/trigger-travis.sh
+#           sh bin/trigger-travis.sh SticsRPacks SticsRTests $TRAVIS_ACCESS_TOKEN
+#         fi
 
 after_success:
   - Rscript -e 'covr::codecov()'
