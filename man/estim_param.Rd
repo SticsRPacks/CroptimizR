@@ -55,11 +55,11 @@ a named list containing for each parameter the list of situations per group
 \code{init_values} (data.frame, one column per group, optional).
 (see \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html}{here} for an example)}
 
-\item{transform_obs}{User function for transforming observations (optional)}
+\item{transform_obs}{User function for transforming observations before each criterion evaluation (optional), see details section for more information}
 
-\item{transform_sim}{User function for transforming simulations (optional)}
+\item{transform_sim}{User function for transforming simulations before each criterion evaluation  (optional), see details section for more information}
 
-\item{satisfy_par_const}{User function for including constraints on estimated parameters (optional)}
+\item{satisfy_par_const}{User function for including constraints on estimated parameters (optional), see details section for more information}
 }
 \value{
 prints, graphs and a list containing the results of the parameter estimation,
@@ -68,6 +68,29 @@ which content depends on the method used, all that saved in the defined in
 }
 \description{
 main function for parameter estimation
+}
+\details{
+The optional argument \code{transform_obs} must be a function with 4 arguments:
+o model_results: the list of simulated results returned by the mode_wrapper used
+o obs_list: the list of observations as given to estim_param function
+o param_values: a named vector containing the current parameters values proposed by the estimation algorithm
+o model_options: the list of model options as given to estim_param function
+It must return a list of observations (same format as \code{obs_list} argument) that
+will be used to compute the criterion to optimize.
+
+The optional argument \code{transform_sim} must be a function with 4 arguments:
+o model_results: the list of simulated results returned by the mode_wrapper used
+o obs_list: the list of observations as given to estim_param function
+o param_values: a named vector containing the current parameters values proposed by the estimation algorithm
+o model_options: the list of model options as given to estim_param function
+It must return a list of simulated results (same format as this returned by the model wrapper used)
+that will be used to compute the criterion to optimize.
+
+The optional argument \code{satisfy_par_const} must be a function with 2 arguments:
+o param_values: a named vector containing the current parameters values proposed by the estimation algorithm
+o model_options: the list of model options as given to estim_param function
+It must return a logical indicating if the parameters values satisfies the constraints
+(freely defined by the user in the function body) or not.
 }
 \seealso{
 For more detail and examples, see the different vignettes in
