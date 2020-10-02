@@ -61,16 +61,18 @@ main_crit <- function(param_values, crit_options) {
                            dimnames=list(NULL,param_names_sl,situation_names))
 
   # Apply constraints on the parameters
-  if (!is.null(satisfy_par_const) & !satisfy_par_const(param_values=param_values_array, model_options=model_options)) {
-    crit_type<-crit_function()
-    if (stringr::str_detect(crit_type,"ls")) {
-      return(crit<-Inf)
-    } else if (stringr::str_detect(crit_type,"log-likelihood")) {
+  if (!is.null(satisfy_par_const)) {
+    if (!satisfy_par_const(param_values=param_values_array, model_options=model_options)) {
+      crit_type<-crit_function()
+      if (stringr::str_detect(crit_type,"ls")) {
+        return(crit<-Inf)
+      } else if (stringr::str_detect(crit_type,"log-likelihood")) {
         return(crit<--Inf)
-    } else if (stringr::str_detect(crit_type,"likelihood")) {
+      } else if (stringr::str_detect(crit_type,"likelihood")) {
         return(crit<-0)
-    } else {
+      } else {
         warning("Unknown type for criterion (argument crit_function of estim_param): contraints on parameters will not be taken into account.")
+      }
     }
   }
 
