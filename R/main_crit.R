@@ -55,37 +55,34 @@ main_crit <- function(param_values, crit_options) {
   # Transform parameters
   # TO DO
 
-  # Distribute the param values in a big array storing param values per usms
-  param_values_df=sapply(situation_names, function(x) CroptimizR:::get_params_per_sit(param_info,x,param_values))
-  param_values_array=array(unlist(param_values_df),dim=c(1,nb_params_sl,nb_situations),
-                           dimnames=list(NULL,param_names_sl,situation_names))
-
   # Apply constraints on the parameters
-  if (!is.null(satisfy_par_const) & !satisfy_par_const(param_values=param_values_array, model_options=model_options)) {
-    crit_type<-crit_function()
-    if (stringr::str_detect(crit_type,"ls")) {
-      return(crit<-Inf)
-    } else if (stringr::str_detect(crit_type,"log-likelihood")) {
+  if (!is.null(satisfy_par_const)) {
+    if (!satisfy_par_const(param_values=param_values, model_options=model_options)) {
+      crit_type<-crit_function()
+      if (stringr::str_detect(crit_type,"ls")) {
+        return(crit<-Inf)
+      } else if (stringr::str_detect(crit_type,"log-likelihood")) {
         return(crit<--Inf)
-    } else if (stringr::str_detect(crit_type,"likelihood")) {
+      } else if (stringr::str_detect(crit_type,"likelihood")) {
         return(crit<-0)
-    } else {
+      } else {
         warning("Unknown type for criterion (argument crit_function of estim_param): contraints on parameters will not be taken into account.")
+      }
     }
   }
 
   # Call model function
   model_results <- NULL
   try(model_results <- model_function(model_options = model_options,
-                                  param_values = param_values_array,
+                                  param_values = param_values,
                                   sit_var_dates_mask = obs_list))
   # Check results, return NA if incorrect
   if (is.null(model_results) || (!is.null(model_results$error) && model_results$error)) {
-    warning("Error in model simulations.")
+    warning(paste("Error in model simulations for parameters values",paste0(param_values,collapse=",")))
     return(crit<-NA)
   }
-  if (is.null(model_results$sim_list[[1]]) || length(model_results$sim_list[[1]])==0) {
-    warning("Model wrapper returned an empty list!")
+  if (is.null(model_results$sim_list) || length(model_results$sim_list)==0) {
+    warning(paste("Model wrapper returned an empty list for parameters values",paste0(param_values,collapse=",")))
     return(crit<-NA)
   }
   if (!is.sim(model_results$sim_list)) {
@@ -103,7 +100,7 @@ main_crit <- function(param_values, crit_options) {
     warning("Error in transformation of simulation results.")
     return(crit<-NA)
   }
-  if (is.null(model_results$sim_list[[1]]) || length(model_results$sim_list[[1]])==0) {
+  if (is.null(model_results$sim_list) || length(model_results$sim_list)==0) {
     warning("Transformation of simulation results returned an empty list!")
     return(crit<-NA)
   }
@@ -125,7 +122,7 @@ main_crit <- function(param_values, crit_options) {
 
 
   # Intersect sim and obs
-  obs_sim_list <- intersect_sim_obs(model_results$sim_list[[1]], obs_list)
+  obs_sim_list <- intersect_sim_obs(model_results$sim_list, obs_list)
   if (!is.list(obs_sim_list)) {
     warning("Intersection of simulations and observations is empty (no date and/or variable in common)!")
     return(crit<-NA)
