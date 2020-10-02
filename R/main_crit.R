@@ -41,6 +41,7 @@ main_crit <- function(param_values, crit_options) {
   param_info <- crit_options$param_info
   transform_obs <- crit_options$transform_obs
   transform_sim <- crit_options$transform_sim
+  satisfy_par_const <- crit_options$satisfy_par_const
 
   names(param_values) <- param_names
   situation_names <- names(obs_list)
@@ -51,9 +52,6 @@ main_crit <- function(param_values, crit_options) {
   # Denormalize parameters
   # TO DO
 
-  # Apply constraints on the parameters
-  # TO DO
-
   # Transform parameters
   # TO DO
 
@@ -61,6 +59,20 @@ main_crit <- function(param_values, crit_options) {
   param_values_df=sapply(situation_names, function(x) CroptimizR:::get_params_per_sit(param_info,x,param_values))
   param_values_array=array(unlist(param_values_df),dim=c(1,nb_params_sl,nb_situations),
                            dimnames=list(NULL,param_names_sl,situation_names))
+
+  # Apply constraints on the parameters
+  if (!is.null(satisfy_par_const) & !satisfy_par_const(param_values=param_values_array, model_options=model_options)) {
+    crit_type<-crit_function()
+    if (stringr::str_detect(crit_type,"ls")) {
+      return(crit<-Inf)
+    } else if (stringr::str_detect(crit_type,"log-likelihood")) {
+        return(crit<--Inf)
+    } else if (stringr::str_detect(crit_type,"likelihood")) {
+        return(crit<-0)
+    } else {
+        warning("Unknown type for criterion (argument crit_function of estim_param): contraints on parameters will not be taken into account.")
+    }
+  }
 
   # Call model function
   model_results <- NULL

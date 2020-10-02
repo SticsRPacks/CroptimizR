@@ -36,8 +36,32 @@
 #' (`ub` and `lb`) and the list of initial values per group
 #' `init_values` (data.frame, one column per group, optional).
 #' (see [here](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html) for an example)
-#' @param transform_obs Function for transforming observations (optional)
-#' @param transform_sim Function for transforming simulations (optional)
+#' @param transform_obs User function for transforming observations before each criterion evaluation (optional), see details section for more information
+#' @param transform_sim User function for transforming simulations before each criterion evaluation  (optional), see details section for more information
+#' @param satisfy_par_const User function for including constraints on estimated parameters (optional), see details section for more information
+#'
+#' @details
+#'   The optional argument `transform_obs` must be a function with 4 arguments:
+#'      o model_results: the list of simulated results returned by the mode_wrapper used
+#'      o obs_list: the list of observations as given to estim_param function
+#'      o param_values: a named vector containing the current parameters values proposed by the estimation algorithm
+#'      o model_options: the list of model options as given to estim_param function
+#'   It must return a list of observations (same format as `obs_list` argument) that
+#'   will be used to compute the criterion to optimize.
+#'
+#'   The optional argument `transform_sim` must be a function with 4 arguments:
+#'      o model_results: the list of simulated results returned by the mode_wrapper used
+#'      o obs_list: the list of observations as given to estim_param function
+#'      o param_values: a named vector containing the current parameters values proposed by the estimation algorithm
+#'      o model_options: the list of model options as given to estim_param function
+#'   It must return a list of simulated results (same format as this returned by the model wrapper used)
+#'   that will be used to compute the criterion to optimize.
+#'
+#'   The optional argument `satisfy_par_const` must be a function with 2 arguments:
+#'      o param_values: a named vector containing the current parameters values proposed by the estimation algorithm
+#'      o model_options: the list of model options as given to estim_param function
+#'   It must return a logical indicating if the parameters values satisfies the constraints
+#'   (freely defined by the user in the function body) or not.
 #'
 #' @return prints, graphs and a list containing the results of the parameter estimation,
 #' which content depends on the method used, all that saved in the defined in
@@ -52,7 +76,7 @@
 estim_param <- function(obs_list,crit_function=crit_log_cwss,model_function,
                         model_options=NULL, optim_method="nloptr.simplex",
                         optim_options,param_info,
-                        transform_obs=NULL, transform_sim=NULL) {
+                        transform_obs=NULL, transform_sim=NULL, satisfy_par_const=NULL) {
 
   # Measured elapse time
   tictoc::tic.clearlog()
@@ -91,6 +115,7 @@ estim_param <- function(obs_list,crit_function=crit_log_cwss,model_function,
                     crit_function=crit_function, model_function=model_function,
                     model_options=model_options, param_info=param_info,
                     transform_obs=transform_obs, transform_sim=transform_sim,
+                    satisfy_par_const=satisfy_par_const,
                     path_results=optim_options$path_results)
 
   result=optim_switch(param_names,optim_method,optim_options,param_info,crit_options)
