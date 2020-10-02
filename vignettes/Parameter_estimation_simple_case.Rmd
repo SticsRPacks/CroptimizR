@@ -211,14 +211,14 @@ The `optim_options$path_results` folder also contains the optim_results.Rdata fi
 
 ```{r eval=FALSE, echo=TRUE}
 ## load(file.path(optim_options$path_results,"optim_results.Rdata"))
-## nlo[[2]]
+## res$nlo[[2]]
 ```
 
 ... this returns:
 
 ```{r echo=FALSE, eval=params$eval_auto_vignette, warning=FALSE}
 load(file.path("ResultsSimpleCase","optim_results.Rdata"))
-print(nlo[[2]])
+print(res$nlo[[2]])
 ```
 
 
