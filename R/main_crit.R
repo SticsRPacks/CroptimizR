@@ -55,6 +55,13 @@ main_crit <- function(param_values, crit_options) {
   # Transform parameters
   # TO DO
 
+  if  ("sit_list" %in% names(param_info[[1]])) {
+    param_values_df <- sapply(situation_names,
+                              function(x) CroptimizR:::get_params_per_sit(param_info,x,param_values),
+                              simplify=FALSE)
+    param_values <- dplyr::bind_rows(param_values_df, .id="situation")
+  }
+
   # Apply constraints on the parameters
   if (!is.null(satisfy_par_const)) {
     if (!satisfy_par_const(param_values=param_values, model_options=model_options)) {
