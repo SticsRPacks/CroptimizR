@@ -50,11 +50,9 @@ following sections. The list of functions accessible to the users is
 provided in this
 [webpage](https://sticsrpacks.github.io/CroptimizR/reference/index.html).
 
-**The package is under intensive development and is still in a beta
-version.**
-
-You can fill an issue or request a feature
-[here](https://github.com/SticsRPacks/CroptimizR/issues) at any time.
+**The package is under intensive development, you can fill an issue or
+request a feature
+[here](https://github.com/SticsRPacks/CroptimizR/issues) at any time.**
 
 ## Planned features
 
