@@ -146,9 +146,8 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>optim_switch</span>(<span class='no'>param_names</span>, <span class='no'>obs_list</span>, <span class='no'>crit_function</span>, <span class='no'>model_function</span>,
-  <span class='kw'>model_options</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>optim_method</span> <span class='kw'>=</span> <span class='st'>"nloptr.simplex"</span>,
-  <span class='kw'>optim_options</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>param_info</span>)</pre>
+    <pre class="usage"><span class='fu'>optim_switch</span>(<span class='no'>param_names</span>, <span class='no'>optim_method</span>, <span class='no'>optim_options</span>, <span class='no'>param_info</span>,
+  <span class='no'>crit_options</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -157,30 +156,6 @@
       <th>param_names</th>
       <td><p>Name(s) of parameters to estimate (a parameter name must
 be replicated if several groups of situations for this parameter)</p></td>
-    </tr>
-    <tr>
-      <th>obs_list</th>
-      <td><p>List of observed values to use for parameter estimation
-A <code>named list</code> (names = situations names) of data.frame containing
-one column named Date with the dates (Date or POSIXct format) of the different observations
-and one column per observed variables with either the measured values or NA, if
-the variable is not observed at the given date.</p></td>
-    </tr>
-    <tr>
-      <th>crit_function</th>
-      <td><p>Function implementing the criterion to optimize
-(optional, see default value in the function signature). See
-<a href='https://sticsrpacks.github.io/CroptimizR/reference/ls_criterion.html'>here</a>
-for more details about the list of proposed criterion.</p></td>
-    </tr>
-    <tr>
-      <th>model_function</th>
-      <td><p>Crop Model wrapper function to use.</p></td>
-    </tr>
-    <tr>
-      <th>model_options</th>
-      <td><p>List of options for the Crop Model wrapper (see help of
-the Crop Model wrapper function used).</p></td>
     </tr>
     <tr>
       <th>optim_method</th>
@@ -206,30 +181,30 @@ a list containing:</p><ul>
 values to test for the parameters (optional, if not provided, or if less values
 than number of repetitions of the minimization are provided), the, or part
 of the, initial values will be randomly generated using LHS sampling within
-parameter bounds).
-or
+parameter bounds).</p></li>
+</ul>
+
+<p>or
 a named list containing for each parameter the list of situations per group
 (<code>sit_list</code>), the vector of upper and lower bounds (one value per group)
 (<code>ub</code> and <code>lb</code>) and the list of initial values per group
 <code>init_values</code> (data.frame, one column per group, optional).
-(see <a href='https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html'>here</a> for an example)</p></li>
-</ul></td>
+(see <a href='https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html'>here</a> for an example)</p></td>
+    </tr>
+    <tr>
+      <th>crit_options</th>
+      <td><p>List containing several arguments given to <code>estim_param</code> function:
+<code>param_names</code>, <code>obs_list</code>, <code>crit_function</code>, <code>model_function</code>, <code>model_options</code>,
+<code>param_info</code>, <code>transform_obs</code>, <code>transform_sim</code>
+that must be passed to main_crit function by the methods wrappers.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>prints, graphs and a list containing the results of the parameter estimation.
-which content depends on the method used.
-e.g. for Nelder meade simplex in nloptr, this list contains
-<code>final_values</code>, the vector of estimated values for optimized parameters
-for the repetition that lead to the lowest value of the criterion
-<code>init_values</code>, the vector of initial values for optimized parameters
-<code>est_values</code>, the vector of estimated values for optimized parameters
-for all repetitions
-<code>ind_min_crit</code>, the index of the repetition that lead to the lowest value
-of the criterion
-<code>nlo</code>, the data structure returned by nloptr</p>
+    <p>prints, graphs and a list containing the results of the parameter estimation,
+which content depends on the method used, all that saved in the defined in
+<code>optim_options.path_results</code></p>
     
 
   </div>

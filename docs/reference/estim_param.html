@@ -147,8 +147,9 @@
     </div>
 
     <pre class="usage"><span class='fu'>estim_param</span>(<span class='no'>obs_list</span>, <span class='kw'>crit_function</span> <span class='kw'>=</span> <span class='no'>crit_log_cwss</span>, <span class='no'>model_function</span>,
-  <span class='kw'>model_options</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>optim_method</span> <span class='kw'>=</span> <span class='st'>"nloptr.simplex"</span>,
-  <span class='kw'>optim_options</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>param_info</span>)</pre>
+  <span class='kw'>model_options</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>optim_method</span> <span class='kw'>=</span> <span class='st'>"nloptr.simplex"</span>, <span class='no'>optim_options</span>,
+  <span class='no'>param_info</span>, <span class='kw'>transform_obs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>transform_sim</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>satisfy_par_const</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -201,14 +202,27 @@ a list containing:</p><ul>
 values to test for the parameters (optional, if not provided, or if less values
 than number of repetitions of the minimization are provided), the, or part
 of the, initial values will be randomly generated using LHS sampling within
-parameter bounds).
-or
+parameter bounds).</p></li>
+</ul>
+
+<p>or
 a named list containing for each parameter the list of situations per group
 (<code>sit_list</code>), the vector of upper and lower bounds (one value per group)
 (<code>ub</code> and <code>lb</code>) and the list of initial values per group
 <code>init_values</code> (data.frame, one column per group, optional).
-(see <a href='https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html'>here</a> for an example)</p></li>
-</ul></td>
+(see <a href='https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html'>here</a> for an example)</p></td>
+    </tr>
+    <tr>
+      <th>transform_obs</th>
+      <td><p>User function for transforming observations before each criterion evaluation (optional), see details section for more information</p></td>
+    </tr>
+    <tr>
+      <th>transform_sim</th>
+      <td><p>User function for transforming simulations before each criterion evaluation  (optional), see details section for more information</p></td>
+    </tr>
+    <tr>
+      <th>satisfy_par_const</th>
+      <td><p>User function for including constraints on estimated parameters (optional), see details section for more information</p></td>
     </tr>
     </table>
     
@@ -218,18 +232,34 @@ a named list containing for each parameter the list of situations per group
 which content depends on the method used, all that saved in the defined in
 <code>optim_options.path_results</code></p>
     
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The optional argument <code>transform_obs</code> must be a function with 4 arguments:
+o model_results: the list of simulated results returned by the mode_wrapper used
+o obs_list: the list of observations as given to estim_param function
+o param_values: a named vector containing the current parameters values proposed by the estimation algorithm
+o model_options: the list of model options as given to estim_param function
+It must return a list of observations (same format as <code>obs_list</code> argument) that
+will be used to compute the criterion to optimize.</p>
+<p>The optional argument <code>transform_sim</code> must be a function with 4 arguments:
+o model_results: the list of simulated results returned by the mode_wrapper used
+o obs_list: the list of observations as given to estim_param function
+o param_values: a named vector containing the current parameters values proposed by the estimation algorithm
+o model_options: the list of model options as given to estim_param function
+It must return a list of simulated results (same format as this returned by the model wrapper used)
+that will be used to compute the criterion to optimize.</p>
+<p>The optional argument <code>satisfy_par_const</code> must be a function with 2 arguments:
+o param_values: a named vector containing the current parameters values proposed by the estimation algorithm
+o model_options: the list of model options as given to estim_param function
+It must return a logical indicating if the parameters values satisfies the constraints
+(freely defined by the user in the function body) or not.</p>
+    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>For more detail and examples, see the different vignettes in
 <a href='https://sticsrpacks.github.io/CroptimizR/'>CroptimizR website</a></p></div>
     
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"># NOT RUN {
-# See the different vignettes in [CroptimizR website](https://sticsrpacks.github.io/CroptimizR/)
-for examples.
-# }
-</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -238,10 +268,10 @@ for examples.
       
       <li><a href="#value">Value</a></li>
 
+      <li><a href="#details">Details</a></li>
+
       <li><a href="#see-also">See also</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+          </ul>
 
   </div>
 </div>
