@@ -12,7 +12,7 @@ Authors@R: c(person("Samuel", "Buis",, "samuel.buis@inra.fr", c("aut", "cre")),
 Description: CroptimizR allow users to perform parameter estimation, uncertainty and sensitivity analysis for the Stics model. Learn more ar https://SticsRPacks.github.io/CroptimizR/.
 URL: https://github.com/SticsRPacks/CroptimizR
 BugReports: https://github.com/SticsRPacks/CroptimizR/issues
-License: file LICENSE
+License: CeCILL-C
 Encoding: UTF-8
 LazyData: true
 ByteCompile: true
