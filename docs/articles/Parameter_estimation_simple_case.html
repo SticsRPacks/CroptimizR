@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CroptimizR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9000</span>
       </span>
     </div>
 
@@ -102,7 +102,7 @@
       <h1>Parameter estimation with the Stics crop Model: a simple case</h1>
                         <h4 class="author">Samuel Buis</h4>
                         
-            <h4 class="date">2020-10-06</h4>
+            <h4 class="date">2020-10-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/master/vignettes/Parameter_estimation_simple_case.Rmd"><code>vignettes/Parameter_estimation_simple_case.Rmd</code></a></small>
       <div class="hidden name"><code>Parameter_estimation_simple_case.Rmd</code></div>
@@ -254,13 +254,13 @@
 <span id="cb13-4"><a href="#cb13-4"></a></span>
 <span id="cb13-5"><a href="#cb13-5"></a><span class="co"># Simulated and observed LAI before optimization</span></span>
 <span id="cb13-6"><a href="#cb13-6"></a>Ymax=<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Extremes">max</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Extremes">max</a></span>(obs_list[[sit_name]][,var_name], <span class="dt">na.rm=</span><span class="ot">TRUE</span>),</span>
-<span id="cb13-7"><a href="#cb13-7"></a>         <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Extremes">max</a></span>(sim_before_optim<span class="op">$</span>sim_list[[<span class="dv">1</span>]][[sit_name]][,var_name], <span class="dt">na.rm=</span><span class="ot">TRUE</span>))</span>
-<span id="cb13-8"><a href="#cb13-8"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(sim_before_optim<span class="op">$</span>sim_list[[<span class="dv">1</span>]][[sit_name]][,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"Date"</span>,var_name)],<span class="dt">type=</span><span class="st">"l"</span>,</span>
+<span id="cb13-7"><a href="#cb13-7"></a>         <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Extremes">max</a></span>(sim_before_optim<span class="op">$</span>sim_list[[sit_name]][,var_name], <span class="dt">na.rm=</span><span class="ot">TRUE</span>))</span>
+<span id="cb13-8"><a href="#cb13-8"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(sim_before_optim<span class="op">$</span>sim_list[[sit_name]][,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"Date"</span>,var_name)],<span class="dt">type=</span><span class="st">"l"</span>,</span>
 <span id="cb13-9"><a href="#cb13-9"></a>     <span class="dt">main=</span><span class="st">"Before optimization"</span>,<span class="dt">ylim=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>,Ymax<span class="op">+</span>Ymax<span class="op">*</span><span class="fl">0.1</span>))</span>
 <span id="cb13-10"><a href="#cb13-10"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/points">points</a></span>(obs_list[[sit_name]],<span class="dt">col=</span><span class="st">"green"</span>)</span>
 <span id="cb13-11"><a href="#cb13-11"></a></span>
 <span id="cb13-12"><a href="#cb13-12"></a><span class="co"># Simulated and observed LAI after optimization</span></span>
-<span id="cb13-13"><a href="#cb13-13"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(sim_after_optim<span class="op">$</span>sim_list[[<span class="dv">1</span>]][[sit_name]][,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"Date"</span>,var_name)],<span class="dt">type=</span><span class="st">"l"</span>,</span>
+<span id="cb13-13"><a href="#cb13-13"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(sim_after_optim<span class="op">$</span>sim_list[[sit_name]][,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"Date"</span>,var_name)],<span class="dt">type=</span><span class="st">"l"</span>,</span>
 <span id="cb13-14"><a href="#cb13-14"></a>     <span class="dt">main=</span><span class="st">"After optimization"</span>,<span class="dt">ylim=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>,Ymax<span class="op">+</span>Ymax<span class="op">*</span><span class="fl">0.1</span>))</span>
 <span id="cb13-15"><a href="#cb13-15"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/points">points</a></span>(obs_list[[sit_name]],<span class="dt">col=</span><span class="st">"green"</span>)</span>
 <span id="cb13-16"><a href="#cb13-16"></a></span>

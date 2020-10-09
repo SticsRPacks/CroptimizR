@@ -108,8 +108,8 @@ knitr::include_graphics("ResultsSpecificVarietal/estimInit_durvieF_var2.PNG")
 #                                model_options=model_options)
 #  
 #  # transform into data.frame and intersect for using ggplot2
-#  sim_before_df = bind_rows(sim_before_optim$sim_list[[1]],.id = 'Situation')
-#  sim_after_df = bind_rows(sim_after_optim$sim_list[[1]],.id = 'Situation')
+#  sim_before_df = bind_rows(sim_before_optim$sim_list,.id = 'Situation')
+#  sim_after_df = bind_rows(sim_after_optim$sim_list,.id = 'Situation')
 #  obs_df = bind_rows(obs_list,.id = 'Situation')
 #  sim_before_df = rename(sim_before_df,LAI_sim=lai_n)
 #  sim_after_df = rename(sim_after_df,LAI_sim=lai_n)

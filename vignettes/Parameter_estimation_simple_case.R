@@ -110,13 +110,13 @@ print(res$nlo[[2]])
 #  
 #  # Simulated and observed LAI before optimization
 #  Ymax=max(max(obs_list[[sit_name]][,var_name], na.rm=TRUE),
-#           max(sim_before_optim$sim_list[[1]][[sit_name]][,var_name], na.rm=TRUE))
-#  plot(sim_before_optim$sim_list[[1]][[sit_name]][,c("Date",var_name)],type="l",
+#           max(sim_before_optim$sim_list[[sit_name]][,var_name], na.rm=TRUE))
+#  plot(sim_before_optim$sim_list[[sit_name]][,c("Date",var_name)],type="l",
 #       main="Before optimization",ylim=c(0,Ymax+Ymax*0.1))
 #  points(obs_list[[sit_name]],col="green")
 #  
 #  # Simulated and observed LAI after optimization
-#  plot(sim_after_optim$sim_list[[1]][[sit_name]][,c("Date",var_name)],type="l",
+#  plot(sim_after_optim$sim_list[[sit_name]][,c("Date",var_name)],type="l",
 #       main="After optimization",ylim=c(0,Ymax+Ymax*0.1))
 #  points(obs_list[[sit_name]],col="green")
 #  
