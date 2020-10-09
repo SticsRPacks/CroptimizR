@@ -42,6 +42,7 @@ main_crit <- function(param_values, crit_options) {
   transform_obs <- crit_options$transform_obs
   transform_sim <- crit_options$transform_sim
   satisfy_par_const <- crit_options$satisfy_par_const
+  var_names <- crit_options$var_names
 
   names(param_values) <- param_names
   situation_names <- names(obs_list)
@@ -80,7 +81,15 @@ main_crit <- function(param_values, crit_options) {
 
 
   sit_names <- situation_names
-  var_names <- setdiff(unique(unlist(lapply(obs_list, names))),"Date")
+  if (is.null(var_names)) {
+    var_names <- setdiff(unique(unlist(lapply(obs_list, names))),"Date")
+    sit_var_dates_mask <- obs_list
+  } else {
+    # use var_names as given by the user in argument of estim_param
+    # set sit_var_dates_mask to NULL so that it can not be used in place of var_names
+    # to select variables
+    sit_var_dates_mask <- NULL
+  }
 
   # Call model function
   model_results <- NULL
@@ -88,7 +97,10 @@ main_crit <- function(param_values, crit_options) {
                                   param_values = param_values,
                                   sit_names = sit_names,
                                   var_names = var_names,
-                                  sit_var_dates_mask = obs_list))
+                                  sit_var_dates_mask = sit_var_dates_mask))
+
+
+
   # Check results, return NA if incorrect
   if (is.null(model_results) || (!is.null(model_results$error) && model_results$error)) {
     warning(paste("Error in model simulations for parameters values",paste0(param_values,collapse=",")))
