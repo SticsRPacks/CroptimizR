@@ -107,7 +107,15 @@ estim_param <- function(obs_list,crit_function=crit_log_cwss,model_function,
               !all(sapply(param_info, function(x) all(is.element(c("lb","ub"),names(x))))) ) {
     stop("Incorrect format for argument param_info. Should contains lb and ub vectors.")
   }
-
+  if (any(sapply(param_info, function(x) is.element("sit_list",names(x))))) {
+    if (!all(sapply(param_info, function(x) is.element("sit_list",names(x))))) {
+      stop("sit_list is defined for at least one parameter in argument param_info but not for all.")
+    }
+    if (!all(unlist(sapply(param_info, function(x) setequal(unlist(x$sit_list),names(obs_list)),
+                           simplify = FALSE)))) {
+      stop("List of situations in argument param_info$***$sit_list are not identical to observed ones (names(obs_list)) for at least one parameter.")
+    }
+  }
 
   # Run the estimation
   param_names=get_params_names(param_info)
