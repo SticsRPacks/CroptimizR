@@ -93,11 +93,11 @@ knitr::include_graphics("ResultsSimpleCase/estimInit_durvieF.PNG")
 
 ## ----eval=FALSE, echo=TRUE----------------------------------------------------
 #  ## load(file.path(optim_options$path_results,"optim_results.Rdata"))
-#  ## nlo[[2]]
+#  ## res$nlo[[2]]
 
 ## ----echo=FALSE, eval=params$eval_auto_vignette, warning=FALSE----------------
 load(file.path("ResultsSimpleCase","optim_results.Rdata"))
-print(nlo[[2]])
+print(res$nlo[[2]])
 
 ## ----eval=params$eval_manual_vignette, message=FALSE, warning=FALSE-----------
 #  sim_after_optim=stics_wrapper(param_values=optim_results$final_values,

@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CroptimizR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0.9003</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
       </span>
     </div>
 
@@ -102,7 +102,7 @@
       <h1>Parameter estimation with the Stics crop Model: a case with specific and varietal parameters</h1>
                         <h4 class="author">Samuel Buis</h4>
                         
-            <h4 class="date">2020-04-14</h4>
+            <h4 class="date">2020-10-06</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/master/vignettes/Parameter_estimation_Specific_and_Varietal.Rmd"><code>vignettes/Parameter_estimation_Specific_and_Varietal.Rmd</code></a></small>
       <div class="hidden name"><code>Parameter_estimation_Specific_and_Varietal.Rmd</code></div>
@@ -146,8 +146,7 @@
 <div id="set-options-for-the-model" class="section level2">
 <h2 class="hasAnchor">
 <a href="#set-options-for-the-model" class="anchor"></a>Set options for the model</h2>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>model_options=<span class="kw">stics_wrapper_options</span>(stics_path,stics_inputs_path,</span>
-<span id="cb3-2"><a href="#cb3-2"></a>                                    <span class="dt">parallel=</span><span class="ot">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>model_options=<span class="st"> </span><span class="kw">stics_wrapper_options</span>(javastics_path, <span class="dt">data_dir =</span> stics_inputs_path, <span class="dt">parallel=</span><span class="ot">TRUE</span>)</span></code></pre></div>
 </div>
 <div id="set-options-for-the-parameter-estimation-method" class="section level2">
 <h2 class="hasAnchor">
