@@ -1,13 +1,31 @@
+#' @title A wrapper for rgenoud package
+#'
+#' @description This function wraps the rgenoud package
+#'
+#' @inheritParams optim_switch
+#'
+#' @param param_names Name(s) of parameters to estimate (a parameter name must
+#' be replicated if several groups of situations for this parameter)
+#'
+#' @return prints, graphs and a list containing:
+#' `final_values`, the vector of estimated values for optimized parameters
+#' for the repetition that lead to the lowest value of the criterion
+#' `init_values`, the vector of initial values for optimized parameters
+#' `min_crit_value`, the minimum value of the criterion
+#' `res_genoud`, the data structure returned by the genoud function
+#'
+#'@keywords internal
+#'
+#'
+
 wrap_rgenoud <- function(param_names,optim_options,param_info,crit_options,...) {
 
   if (is.null((solution.tolerance=optim_options$solution.tolerance))) { solution.tolerance=1e-4 }
   if (is.null((max.generations=optim_options$max.generations))) { max.generations=500 }
   if (is.null((pop.size=optim_options$pop.size))) { pop.size=300 }
   if (is.null((ranseed=optim_options$ranseed))) { ranseed=NULL }
-
   if (is.null((lexical=optim_options$lexical))) { lexical=FALSE }
   if (is.null((print.level=optim_options$print.level))) { print.level=2 }
-
   if (is.null((P1=optim_options$P1))) { P1=50 }
   if (is.null((P2=optim_options$P2))) { P2=50 }
   if (is.null((P3=optim_options$P3))) { P3=50 }
@@ -34,10 +52,14 @@ wrap_rgenoud <- function(param_names,optim_options,param_info,crit_options,...) 
 
   # Sample initial values and include user provided ones
   init_values=sample_params(param_info,pop.size,ranseed)
+
   for (param in param_names) {
     idx=which(!is.na(user_init_values[,param]))
     init_values[idx,param]=user_init_values[idx,param]
   }
+
+  if (is.null((starting.values=optim_options$starting.values)))
+    { starting.values=init_values }
 
   domains=matrix(c(bounds$lb,bounds$ub),length(bounds$lb),2)
 
@@ -49,10 +71,10 @@ wrap_rgenoud <- function(param_names,optim_options,param_info,crit_options,...) 
                                   ,max=FALSE
                                   ,Domains = domains
                                   #,instance.number= 0
-                                  ,starting.values = init_values
+                                  ,starting.values = starting.values
                                   ,crit_options = crit_options
                                   ,solution.tolerance = solution.tolerance
-                                  ,optim.method = optim.method   # if nelder-meade, boundary.enforcement must be inferior to 2
+                                  ,optim.method = optim.method
                                   ,pop.size = pop.size
                                   ,max.generations = max.generations
                                   ,lexical = lexical
