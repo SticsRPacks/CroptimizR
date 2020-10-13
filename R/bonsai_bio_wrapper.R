@@ -1,11 +1,12 @@
-#' @title MyModel wrapper for CroptimizR
+#' @title Bonsai-bio wrapper to create LAI and biomass  result
 #'
 #' @description This function runs my crop model and force it with the values
 #' of the parameters defined in the param_values argument. It returns
 #' the values of the simulated outputs.
 #'
 #' @param model_options List containing any information needed to run the model.There
-#' are 3 elements : path for finding the file, the beginning day, the end.
+#' are 3 elements : path for finding the file, the beginning day, the end and the parameters
+#' by defaut which are given before estimation.
 #'
 #' @param param_values Named 3D array that contains the value(s) and names of the
 #' parameters to force for each situation to simulate. This array contains the different
@@ -14,8 +15,7 @@
 #'
 #' @return A list containing simulated values (`sim_list`: a vector of list (one
 #' element per values of parameters) containing data.frames of simulated output values
-#' for each simulated situation) and an error code (`error`) indicating if at least
-#' one simulation ended with an error.
+#' for each simulated situation)
 #'
 #'
 #'
@@ -57,9 +57,6 @@ bonsai_bio_wrapper <- function( model_options, param_values,...) {
 
   Poste_An<-(unique(data.frame(NUM_POSTE,AN)))
 
-
-
-
   situation_names=paste(Poste_An$NUM_POSTE,Poste_An$AN,sep="_")
   situation_names=paste(situation_names,begin_end,sep="_")
   situation_names<-intersect(situation_names,dimnames(param_values_t)[[3]])
@@ -71,15 +68,12 @@ bonsai_bio_wrapper <- function( model_options, param_values,...) {
   results$error=FALSE
 
 
-
-
-
-
   for (i in 1:nb_paramValues) {
 
     for (situation in situation_names) {
 
-      # overwrite model input parameters of names contained in param_names with values retrieved in param_values[i,,situation]
+      # overwrite model input parameters of names contained
+      #in param_names with values retrieved in param_values[i,,situation]
 
       # run the model for the given situation
       t1  =as.numeric(substr(situation,15,17))
@@ -95,20 +89,14 @@ bonsai_bio_wrapper <- function( model_options, param_values,...) {
         LAI =CroptimizR:::bonsai_bio(t1,tfin,param_values_t[i,,situation],tab$TM,tab$PAR,0)[,"LAI"]
         biom=CroptimizR:::bonsai_bio(t1,tfin,param_values_t[i,,situation],tab$TM,tab$PAR,0)[,"biom"]
 
-        results$sim_list[[i]][[situation]]=dplyr::tibble(Date=as.POSIXct(as.character(as.Date(t1:tfin,origin=paste0(as.numeric(substr(situation,10,13)),"-01-01"))),
-                                                                  format="%Y-%m-%d",tz="UTC"),LAI=LAI,biom=biom)
+        results$sim_list[[i]][[situation]]=dplyr::tibble(Date=as.POSIXct(as.character(as.Date(t1:tfin
+                                           ,origin=paste0(as.numeric(substr(situation,10,13)),"-01-01")))
+                                           ,format="%Y-%m-%d",tz="UTC"),LAI=LAI,biom=biom)
       }
-
-
 
       }
 
       # read the results and store the data.frame in result$sim_list[[i]][[situation]]
-
-
   }
-
   return(results)
-
 }
-
