@@ -1,9 +1,22 @@
 #' @keywords internal
 #'
+#' @description This function creates synthetic observations for a given model wrapper.
+#' It runs the model wrapper for prescribed "true" values of its parameters, selects
+#' results at given dates and adds a gaussian noise.
 #'
+#' @param wrapper: the model wrapper to use
+#' @param model_options List of options associated to the model wrapper
+#' @param p_true: Named 3D array that contains the value(s) and names of the
+#' "true" values of the parameters to use for each situation to simulate. This array contains the different
+#' parameters values (first dimension) for the different parameters (second dimension)
+#' and for the different situations (third dimension).
+#' @param t_obs: list of dates to select in model results
+#' @param sigma: named vector that contains the standard deviations of the gaussian
+#' noise for each simulated variables
 #'
-sigma=c(LAI=0.1,biom=1)
-create_synth_obs<-function(wrapper, model_options,t_obs,p_true,sigma=c(LAI=0.1,biom=1))
+#' @return List of synthetic observations
+#'
+create_synth_obs<-function(wrapper, model_options, t_obs, p_true, sigma)
 {
   observed<-list()
   res<-list()
