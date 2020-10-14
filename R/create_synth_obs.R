@@ -18,6 +18,9 @@
 #'
 create_synth_obs<-function(wrapper, model_options, t_obs, p_true, sigma)
 {
+  # First of all, we install the neccessary variables and calculate the observed values
+  # by the function bonsai_bio_wrapper in the CroptimizR package
+
   observed<-list()
   res<-list()
   path <- model_options$path
@@ -33,12 +36,6 @@ create_synth_obs<-function(wrapper, model_options, t_obs, p_true, sigma)
   table<-matrix(c(NUM_POSTE,AN,MOIS,JOUR,TM,PAR),ncol=6)
   colnames(table)<-c("NUM_POSTE","AN","MOIS","JOUR","TM","PAR")
   table<-as.data.frame(table)
-
-
-#  date<-as.data.frame(sim_list)[,1]
-#  LAI <-as.data.frame(sim_list)[,2]
-#  biom<-as.data.frame(sim_list)[,3]
-
 
 
   Poste_An<-(unique(data.frame(NUM_POSTE,AN)))
@@ -69,8 +66,12 @@ create_synth_obs<-function(wrapper, model_options, t_obs, p_true, sigma)
       data_list_res_obs=data_list_res_syn
 
 
+      # After calculating the observed values, we will creat the synthetic ones
+      # by add the noise in LAI and biomass results
+
       noise1<-rnorm(n,0,sigma["LAI"])
       noise2<-rnorm(n,0,sigma["biom"])
+
 
       data_list_res_obs$LAI<-data_list_res_syn$LAI+noise1
       data_list_res_obs$biom<-data_list_res_syn$biom+noise2
