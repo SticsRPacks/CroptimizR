@@ -10,7 +10,8 @@ Authors@R: c(person("Samuel", "Buis",, "samuel.buis@inra.fr", c("aut", "cre")),
  person("Benjamin", "Dumont",, "benjamin.dumont@uliege.be", c("rev")),
  person("SticsRpacks",role=c("aut","cph")))
 Description: CroptimizR allow users to perform parameter estimation, uncertainty and sensitivity analysis for the Stics model. Learn more ar https://SticsRPacks.github.io/CroptimizR/.
-URL: https://github.com/SticsRPacks/CroptimizR
+URL: https://github.com/SticsRPacks/CroptimizR, 
+ https://doi.org/10.5281/zenodo.4066451
 BugReports: https://github.com/SticsRPacks/CroptimizR/issues
 License: file LICENSE
 Encoding: UTF-8
