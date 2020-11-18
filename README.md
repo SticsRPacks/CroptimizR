@@ -10,6 +10,7 @@ public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostat
 status](https://travis-ci.org/SticsRPacks/CroptimizR.svg?branch=master)](https://travis-ci.org/SticsRPacks/CroptimizR)
 [![Codecov test
 coverage](https://codecov.io/gh/SticsRPacks/CroptimizR/branch/master/graph/badge.svg)](https://codecov.io/gh/SticsRPacks/CroptimizR?branch=master)
+[![DOI](https://zenodo.org/badge/187874725.svg)](https://zenodo.org/badge/latestdoi/187874725)
 
 ## Overview
 
