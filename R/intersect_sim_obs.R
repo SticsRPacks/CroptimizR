@@ -12,10 +12,10 @@ intersect_sim_obs <- function(sim_list, obs_list) {
   # Intersect situations
   situations <- intersect(names(sim_list), names(obs_list))
   if (length(situations) < length(names(sim_list))) {
-    sim_list[[setdiff(names(sim_list), situations)]] <- NULL
+    sim_list[setdiff(names(sim_list), situations)] <- NULL
   }
   if (length(situations) < length(names(obs_list))) {
-    obs_list[[setdiff(names(obs_list), situations)]] <- NULL
+    obs_list[setdiff(names(obs_list), situations)] <- NULL
   }
 
   # Intersect variables
