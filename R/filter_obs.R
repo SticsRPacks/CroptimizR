@@ -33,6 +33,9 @@
 filter_obs <- function(obs_list, var_names=NULL, sit_names=NULL, dates=NULL, include=FALSE) {
 
   # Check obs_list format
+  if (is.null(obs_list)) {
+    stop("obs_list is NULL.")
+  }
   if (!CroptimizR:::is.obs(obs_list)) {
     stop("Incorrect format for argument obs_list.")
   }
