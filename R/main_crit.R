@@ -49,6 +49,7 @@ main_crit <- function(param_values, crit_options) {
   nb_situations=length(situation_names)
   param_names_sl=get_params_names(param_info, short_list = TRUE)
   nb_params_sl=length(param_names_sl)
+  crit <- NA
 
   # Denormalize parameters
   # TO DO
@@ -65,7 +66,16 @@ main_crit <- function(param_values, crit_options) {
 
   # Apply constraints on the parameters
   if (!is.null(satisfy_par_const)) {
-    if (!satisfy_par_const(param_values=param_values, model_options=model_options)) {
+    flag_const <- tryCatch(
+      satisfy_par_const(param_values=param_values, model_options=model_options),
+      error=function(cond) {
+        message(paste("Caught an error while executing the user function for including
+        constraints on estimated parameters (argument satisfy_par_const of estim_param function). \n
+                 param_values=",paste(param_values,collapse=",")))
+        print(cond)
+        stop()
+      })
+    if (!flag_const) {
       crit_type<-crit_function()
       if (stringr::str_detect(crit_type,"ls")) {
         return(crit<-Inf)
@@ -118,7 +128,16 @@ main_crit <- function(param_values, crit_options) {
 
   # Transform simulations
   if (!is.null(transform_sim)) {
-    model_results <- transform_sim(model_results=model_results, obs_list=obs_list, param_values=param_values, model_options=model_options)
+    model_results <- tryCatch(
+      transform_sim(model_results=model_results, obs_list=obs_list, param_values=param_values,
+                    model_options=model_options),
+      error=function(cond) {
+        message(paste("Caught an error while executing the user function for transforming
+        simulations (argument transform_sim of estim_param function). \n
+                 param_values=",paste(param_values,collapse=",")))
+        print(cond)
+        stop()
+      })
   }
   # Check results, return NA if incorrect
   if (is.null(model_results) || (!is.null(model_results$error) && model_results$error)) {
@@ -137,7 +156,16 @@ main_crit <- function(param_values, crit_options) {
 
   # Transform observations
   if (!is.null(transform_obs)) {
-    obs_list <- transform_obs(model_results=model_results, obs_list=obs_list, param_values=param_values, model_options=model_options)
+    obs_list <- tryCatch(
+      transform_obs(model_results=model_results, obs_list=obs_list, param_values=param_values,
+                    model_options=model_options),
+      error=function(cond) {
+        message(paste("Caught an error while executing the user function for transforming
+        observations (argument transform_obs of estim_param function). \n
+                 param_values=",paste(param_values,collapse=",")))
+        print(cond)
+        stop()
+      })
   }
   # Check results, return NA if incorrect
   if ( is.null(obs_list) || !is.obs(obs_list) ) {
