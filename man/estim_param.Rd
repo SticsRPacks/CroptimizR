@@ -6,8 +6,8 @@
 \usage{
 estim_param(obs_list, crit_function = crit_log_cwss, model_function,
   model_options = NULL, optim_method = "nloptr.simplex", optim_options,
-  param_info, transform_obs = NULL, transform_sim = NULL,
-  satisfy_par_const = NULL, var_names = NULL)
+  param_info, forced_param_values = NULL, transform_obs = NULL,
+  transform_sim = NULL, satisfy_par_const = NULL, var_names = NULL)
 }
 \arguments{
 \item{obs_list}{List of observed values to use for parameter estimation
@@ -55,6 +55,12 @@ a named list containing for each parameter the list of situations per group
 \code{init_values} (data.frame, one column per group, optional).
 (see \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html}{here}
 for an example)}
+
+\item{forced_param_values}{Named vector, must contain the values for the model parameters
+to force (optional, NULL by default). These values will be transfered to the
+model wrapper through its param_values argument so that the given parameters
+always take the same values for each model simulation. Should not include values
+for estimated parameters (i.e. parameters defined in \code{param_info} argument).}
 
 \item{transform_obs}{User function for transforming observations before each criterion
 evaluation (optional), see details section for more information}

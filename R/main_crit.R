@@ -43,6 +43,7 @@ main_crit <- function(param_values, crit_options) {
   transform_sim <- crit_options$transform_sim
   satisfy_par_const <- crit_options$satisfy_par_const
   var_names <- crit_options$var_names
+  forced_param_values <- crit_options$forced_param_values
 
   names(param_values) <- param_names
   situation_names <- names(obs_list)
@@ -57,11 +58,19 @@ main_crit <- function(param_values, crit_options) {
   # Transform parameters
   # TO DO
 
+  # Handle the case of group of parameters (i.e. different values depending on the situations)
   if  ("sit_list" %in% names(param_info[[1]])) {
     param_values_df <- sapply(situation_names,
                               function(x) CroptimizR:::get_params_per_sit(param_info,x,param_values),
                               simplify=FALSE)
     param_values <- dplyr::bind_rows(param_values_df, .id="situation")
+  }
+
+  # Handle the parameters to force
+  if (is.vector(param_values)) {
+    param_values <- c(param_values,forced_param_values)
+  } else {
+    param_values <- dplyr::bind_cols(param_values,tibble::tibble(!!!forced_param_values))
   }
 
   # Apply constraints on the parameters

@@ -37,6 +37,11 @@
 #' `init_values` (data.frame, one column per group, optional).
 #' (see [here](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html)
 #' for an example)
+#' @param forced_param_values Named vector, must contain the values for the model parameters
+#' to force (optional, NULL by default). These values will be transfered to the
+#' model wrapper through its param_values argument so that the given parameters
+#' always take the same values for each model simulation. Should not include values
+#' for estimated parameters (i.e. parameters defined in `param_info` argument).
 #' @param transform_obs User function for transforming observations before each criterion
 #' evaluation (optional), see details section for more information
 #' @param transform_sim User function for transforming simulations before each criterion
@@ -85,9 +90,9 @@
 #' @export
 #'
 
-estim_param <- function(obs_list,crit_function=crit_log_cwss,model_function,
+estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
                         model_options=NULL, optim_method="nloptr.simplex",
-                        optim_options,param_info,
+                        optim_options, param_info, forced_param_values=NULL,
                         transform_obs=NULL, transform_sim=NULL, satisfy_par_const=NULL,
                         var_names=NULL) {
 
@@ -129,16 +134,31 @@ estim_param <- function(obs_list,crit_function=crit_log_cwss,model_function,
       stop("List of situations in argument param_info$***$sit_list are not identical to observed ones (names(obs_list)) for at least one parameter.")
     }
   }
+  param_names=get_params_names(param_info)
+
+  ## forced_param_values
+  if (!is.null(forced_param_values)) {
+    if (!is.vector(forced_param_values)) {
+      stop("Incorrect format for argument forced_param_values, should be a vector.")
+    }
+    if (any(names(forced_param_values) %in% param_names)) {
+      stop("The following parameters are defined both in forced_param_values and param_info
+           arguments of estim_param function while they should not (a parameter cannot
+           be both forced and estimated):",paste(intersect(names(forced_param_values),param_names),
+                                                 collapse=","))
+    }
+  }
+
 
   # Run the estimation
-  param_names=get_params_names(param_info)
   crit_options=list(param_names=param_names, obs_list=obs_list,
                     crit_function=crit_function, model_function=model_function,
                     model_options=model_options, param_info=param_info,
                     transform_obs=transform_obs, transform_sim=transform_sim,
                     satisfy_par_const=satisfy_par_const,
                     path_results=optim_options$path_results,
-                    var_names=var_names)
+                    var_names=var_names,
+                    forced_param_values=forced_param_values)
 
   result=optim_switch(param_names,optim_method,optim_options,param_info,crit_options)
 
