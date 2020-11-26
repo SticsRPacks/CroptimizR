@@ -29,7 +29,8 @@ Imports:
     lubridate,
 	rlang,
 	tictoc,
-	stringr
+	stringr,
+	tibble
 Suggests:
     testthat (>= 2.1.0),
     covr,
