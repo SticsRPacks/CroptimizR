@@ -1,6 +1,7 @@
 Package: CroptimizR
 Type: Package
 Title: A Package for Parameter Estimation, Uncertainty and Sensitivity Analysis for the Stics Model  https://github.com/SticsRPacks/CroptimizR
+Title: A Package for Parameter Estimation, Uncertainty and Sensitivity Analysis for Crop Models  https://github.com/SticsRPacks/CroptimizR
 Date: 2019-06-24
 Version: 0.2.0.9000
 Authors@R: c(person("Samuel", "Buis",, "samuel.buis@inra.fr", c("aut", "cre")),
@@ -10,6 +11,7 @@ Authors@R: c(person("Samuel", "Buis",, "samuel.buis@inra.fr", c("aut", "cre")),
  person("Benjamin", "Dumont",, "benjamin.dumont@uliege.be", c("rev")),
  person("SticsRpacks",role=c("aut","cph")))
 Description: CroptimizR allow users to perform parameter estimation, uncertainty and sensitivity analysis for the Stics model. Learn more at https://SticsRPacks.github.io/CroptimizR/.
+Description: CroptimizR allows users to perform parameter estimation, uncertainty and sensitivity analysis for crop models. Learn more at https://SticsRPacks.github.io/CroptimizR/.
 URL: https://github.com/SticsRPacks/CroptimizR, 
  https://doi.org/10.5281/zenodo.4066451
 BugReports: https://github.com/SticsRPacks/CroptimizR/issues
