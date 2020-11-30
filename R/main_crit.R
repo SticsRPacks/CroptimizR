@@ -68,9 +68,9 @@ main_crit <- function(param_values, crit_options) {
 
   # Handle the parameters to force
   if (is.vector(param_values)) {
-    param_values <- c(param_values,forced_param_values)
+    param_values <- c(forced_param_values,param_values)
   } else {
-    param_values <- dplyr::bind_cols(param_values,tibble::tibble(!!!forced_param_values))
+    param_values <- dplyr::bind_cols(tibble::tibble(!!!forced_param_values),param_values)
   }
 
   # Apply constraints on the parameters
