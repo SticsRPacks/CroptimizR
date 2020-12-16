@@ -108,10 +108,10 @@ model_options= stics_wrapper_options(javastics_path, data_dir = stics_inputs_pat
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
 
 optim_options=list()
-optim_options$nb_rep <- 2 # 7 # Number of repetitions of the minimization
+optim_options$nb_rep <- 7 # Number of repetitions of the minimization
                           # (each time starting with different initial
                           # values for the estimated parameters)
-optim_options$maxeval <- 2 # 1000 # Maximum number of evaluations of the
+optim_options$maxeval <- 1000 # Maximum number of evaluations of the
                             # minimized criteria
 optim_options$xtol_rel <- 1e-04 # Tolerance criterion between two iterations
                                 # (threshold for the relative difference of
