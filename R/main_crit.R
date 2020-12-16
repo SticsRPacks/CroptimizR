@@ -23,13 +23,13 @@ main_crit <- function(param_values, crit_options) {
 
   on.exit({
     if (is.na(crit)) {
-        filename <- file.path(crit_options$path_results,paste0("debug_crit_NA.Rdata"))
-        save(param_values, obs_list, model_results, file=filename)
-        warning(paste("The optimized criterion has taken the NA value. \n  * Parameter values, obs_list and model results will be saved in",
-                      filename,"for sake of debugging."))
-        # just warns in this case. The optimization method may handle the problem which
-        # may happend only for certain parameter values ...).
-      }
+      warning(paste("The optimized criterion has taken the NA value. \n  * Parameter values, obs_list and model results will be saved in",
+                    filename,"for sake of debugging."))
+      # just warns in this case. The optimization method may handle the problem which
+      # may happend only for certain parameter values ...).
+      filename <- file.path(crit_options$path_results,paste0("debug_crit_NA.Rdata"))
+      save(param_values, obs_list, model_results, file=filename)
+    }
     })
 
   # Initializations
@@ -69,7 +69,7 @@ main_crit <- function(param_values, crit_options) {
   # Handle the parameters to force
   if (is.vector(param_values)) {
     param_values <- c(forced_param_values,param_values)
-  } else {
+  } else if(!is.null(forced_param_values)) {
     param_values <- dplyr::bind_cols(tibble::tibble(!!!forced_param_values),param_values)
   }
 
