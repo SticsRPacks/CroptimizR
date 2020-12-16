@@ -43,10 +43,12 @@ Suggests:
 	gridExtra,
 	hydroGOF,
 	doParallel,
-	devtools
+	devtools,
+	CroPlotR
 Remotes:
     github::SticsRPacks/SticsRFiles@*release,
     github::SticsRPacks/SticsOnR@*release,
+    github::SticsRPacks/CroPlotR@*release,
 	github::hol430/ApsimOnR
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
