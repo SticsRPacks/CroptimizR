@@ -28,13 +28,11 @@ path_to_JavaStics <- params$path_to_JavaStics
 ## Study Case
 
 This document presents an example of a simple parameter estimation using the Stics model with a single situation, a single observed variable and 2 estimated parameters, just to illustrate how to use the package.
-A more complex example with simultaneous estimation of specific and varietal plant parameters from a multi-varietal dataset is presented in another [vignette](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html).
+A more complex example with simultaneous estimation of specific and varietal plant parameters from a multi-varietal dataset is presented in another [vignette](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html). Parameter estimation on chained situations (e.g. rotations) are also possible with the Stics model (see `successive_usms` in argument `model_options` of `stics_wrapper`). A vignette will be provided in next versions.
 
-**Please note that parameter estimation on intercrops and chained situations (e.g. rotations) are not possible for the moment with the Stics model. It will be provided in next versions.**
+Data for the following example comes from a maize crop experiment (see description in Wallach et al., 2011).
 
-Data comes from a maize crop experiment (see description in Wallach et al., 2011).
-
-The parameter estimation is performed using the Nelder-Meade simplex method implemented in the nloptr package.
+The parameter estimation is performed using the Nelder-Mead simplex method implemented in the nloptr package.
 
 ## Initialisation step
 
@@ -44,6 +42,9 @@ The parameter estimation is performed using the Nelder-Meade simplex method impl
 library(SticsOnR)
 library(SticsRFiles)
 library(CroptimizR)
+library(CroPlotR)
+library(ggplot2)
+library(gridExtra)
 
 ```
 
@@ -61,7 +62,8 @@ if(!require("SticsRPacks")){
 javastics_path=path_to_JavaStics
 
 # Download the example USMs and define the path to the JavaStics workspace (JavaStics XML input files):
-data_dir= file.path(SticsRFiles::download_data(),"study_case_1","V9.0")
+data_dir= file.path(SticsRFiles::download_data(example_dirs="study_case_1", version_name = "V9.0"))
+
 javastics_workspace_path=file.path(data_dir,"XmlFiles")
 ```
 
@@ -170,7 +172,7 @@ optim_options$ranseed <- 1234 # set random seed so that each execution give the 
 
 ## Run the optimization
 
-The Nelder-Meade simplex is the default method => no need to set the
+The Nelder-Mead simplex is the default method => no need to set the
 optim_method argument. For the moment it is the only method interfaced (others will come soon).
 Same for crit_function: a value is set by default (`crit_log_cwss`, see `? crit_log_cwss` for more details and list of available criteria). Others will be proposed in next versions of CroptimizR. The user can implement and give in argument its own criterion (see inputs and outputs required in the `crit_log_cwss` function).
 
@@ -241,26 +243,23 @@ sim_after_optim=stics_wrapper(param_values=optim_results$final_values,
 
 ## Plot the results
 
-
+Here we use the [CroPlotR](https://github.com/SticsRPacks/CroPlotR) package for comparing simulations and observations. As CroptimizR, CroPlotR can be used with any crop model.
 
 ```{r eval=params$eval_manual_vignette, warning=FALSE, message=FALSE}
-png(file.path(optim_options$path_results,"sim_obs_plots.png"),
-    width = 15, height = 10, units = "cm", res=1000)
-par(mfrow = c(1,2))
+p <- plot(sim_before_optim$sim_list, obs=obs_list, select_dyn = c("common"))
+p1 <- p[[sit_name]] + labs(title="Before Optimization") +
+  theme(plot.title = element_text(size = 9, hjust = 0.5))
+  
+p <- plot(sim_after_optim$sim_list, obs=obs_list, select_dyn = c("common"))
+p2 <- p[[sit_name]] + labs(title="After Optimization") + 
+  ylim(NA,ggplot_build(p1)$layout$panel_params[[1]]$y.range[2]) +
+  theme(plot.title = element_text(size = 9, hjust = 0.5))
 
-# Simulated and observed LAI before optimization
-Ymax=max(max(obs_list[[sit_name]][,var_name], na.rm=TRUE),
-         max(sim_before_optim$sim_list[[sit_name]][,var_name], na.rm=TRUE))
-plot(sim_before_optim$sim_list[[sit_name]][,c("Date",var_name)],type="l",
-     main="Before optimization",ylim=c(0,Ymax+Ymax*0.1))
-points(obs_list[[sit_name]],col="green")
+p <- grid.arrange(grobs=list(p1,p2), nrow=1, ncol=2, widths=c(5,5))
+# Save the graph
+ggsave(file.path(optim_options$path_results,
+                 paste0("sim_obs_plots",".png")), plot=p)
 
-# Simulated and observed LAI after optimization
-plot(sim_after_optim$sim_list[[sit_name]][,c("Date",var_name)],type="l",
-     main="After optimization",ylim=c(0,Ymax+Ymax*0.1))
-points(obs_list[[sit_name]],col="green")
-
-dev.off()
 ```
 
 
@@ -274,7 +273,7 @@ knitr::include_graphics("ResultsSimpleCase/sim_obs_plots.png")
 
 ```{r move_results, eval=params$eval_manual_vignette, include=FALSE}
 # Move the files produced since the temp. folder is removed after Rmd execution
-file.copy(file.path(optim_options$path_results,"EstimatedVSinit.pdf"),params$result_path)
-file.copy(file.path(optim_options$path_results,"optim_results.Rdata"),params$result_path)
-file.copy(file.path(optim_options$path_results,"sim_obs_plots.png"),params$result_path)
+file.copy(file.path(optim_options$path_results,"EstimatedVSinit.pdf"),params$result_path, overwrite = TRUE)
+file.copy(file.path(optim_options$path_results,"optim_results.Rdata"),params$result_path, overwrite = TRUE)
+file.copy(file.path(optim_options$path_results,"sim_obs_plots.png"),params$result_path, overwrite = TRUE)
 ```

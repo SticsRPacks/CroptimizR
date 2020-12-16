@@ -30,7 +30,7 @@ This document presents an example of a simultaneous estimation of one specific a
 
 Data comes from a maize crop experiment (see description in Wallach et al., 2011). In this example, 8 situations (USMs in Stics language) will be used for the parameter estimation. This test case correspond to case 1c in (Wallach et al., 2011).
 
-The parameter estimation is performed using the Nelder-Meade simplex method implemented in the nloptr package.
+The parameter estimation is performed using the Nelder-Mead simplex method implemented in the nloptr package.
 
 
 ## Initialisation step
@@ -43,6 +43,9 @@ This part is not shown here, it is the same as this of the [introductory example
 library(SticsOnR)
 library(SticsRFiles)
 library(CroptimizR)
+library(CroPlotR)
+library(ggplot2)
+library(gridExtra)
 ```
 
 
@@ -52,7 +55,7 @@ library(CroptimizR)
 javastics_path=path_to_JavaStics
 
 # Download the example USMs and define the path to the JavaStics workspace (JavaStics XML input files):
-data_dir= file.path(SticsRFiles::download_data(),"study_case_1","V9.0")
+data_dir= file.path(SticsRFiles::download_data(example_dirs="study_case_1", version_name = "V9.0"))
 javastics_workspace_path=file.path(data_dir,"XmlFiles")
 stics_inputs_path=file.path(data_dir,"TxtFiles")
 
@@ -105,10 +108,10 @@ model_options= stics_wrapper_options(javastics_path, data_dir = stics_inputs_pat
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
 
 optim_options=list()
-optim_options$nb_rep <- 7 # Number of repetitions of the minimization
+optim_options$nb_rep <- 2 # 7 # Number of repetitions of the minimization
                           # (each time starting with different initial
                           # values for the estimated parameters)
-optim_options$maxeval <- 1000 # Maximum number of evaluations of the
+optim_options$maxeval <- 2 # 1000 # Maximum number of evaluations of the
                             # minimized criteria
 optim_options$xtol_rel <- 1e-04 # Tolerance criterion between two iterations
                                 # (threshold for the relative difference of
@@ -121,7 +124,7 @@ optim_options$ranseed <- 1234 # random seed
 
 ## Run the optimization
 
-The Nelder-Meade simplex is the default method => no need to set the
+The Nelder-Mead simplex is the default method => no need to set the
 optim_method argument. For the moment it is the only method interfaced (others will come soon).
 Same for crit_function: a value is set by default (`crit_log_cwss`, see `? crit_log_cwss` for more details and list of available criteria). Others will be proposed in next versions of CroptimizR. The user can implement and give in argument its own criterion (see inputs and outputs required in the `crit_log_cwss` function).
 
@@ -162,76 +165,29 @@ Figure 1: plots of estimated vs initial values of parameters dlaimax and durvieF
 
 A couple of plots to check if the calibration reduced the difference between simulations and observations.
 
-
 ```{r eval=params$eval_manual_vignette, message=FALSE, warning=FALSE}
-# Install a few packages needed for the following
-if(!require("gridExtra")){
-  install.packages("gridExtra",repos="http://cran.irsn.fr")
-  library("gridExtra")
-}
-if(!require("hydroGOF")){
-  install.packages("hydroGOF",repos="http://cran.irsn.fr")
-  library("hydroGOF")
-}
-if(!require("grid")){
-  install.packages("grid",repos="http://cran.irsn.fr")
-  library("grid")
-}
-if(!require("dplyr")){
-  install.packages("dplyr",repos="http://cran.irsn.fr")
-  library("dplyr")
-}
-if(!require("ggplot2")){
-  install.packages("ggplot2",repos="http://cran.irsn.fr")
-  library("ggplot2")
-}
+
 # Run the model without and with forcing the optimized values of the parameters
 sim_before_optim=stics_wrapper(model_options=model_options)
 sim_after_optim=stics_wrapper(param_values=optim_results$final_values,
                               model_options=model_options)
-  
-# transform into data.frame and intersect for using ggplot2
-sim_before_df = bind_rows(sim_before_optim$sim_list,.id = 'Situation')
-sim_after_df = bind_rows(sim_after_optim$sim_list,.id = 'Situation')
-obs_df = bind_rows(obs_list,.id = 'Situation')
-sim_before_df = rename(sim_before_df,LAI_sim=lai_n)
-sim_after_df = rename(sim_after_df,LAI_sim=lai_n)
-obs_df = rename(obs_df,LAI_obs=lai_n)
-sim_before_obs_df = merge.data.frame(sim_before_df,obs_df,by = c('Situation','Date'), all.x = TRUE)
-sim_after_obs_df = merge.data.frame(sim_after_df,obs_df,by = c('Situation','Date'), all.x = TRUE)
-# Compute RMSE
-rmse_before = rmse(sim_before_obs_df$LAI_obs,sim_before_obs_df$LAI_sim)
-rmse_after = rmse(sim_after_obs_df$LAI_obs,sim_after_obs_df$LAI_sim)
-# Plot the graphs
-max_LAI_sim=max(c(sim_before_obs_df$LAI_sim,sim_after_obs_df$LAI_sim,na.rm=TRUE),na.rm=TRUE)
-max_LAI_obs=max(sim_before_obs_df$LAI_obs,na.rm=TRUE)
-p1=ggplot(sim_before_obs_df, aes(x = LAI_obs, y = LAI_sim)) + 
-  geom_point(shape=21, size = 3, color = 'blue',
-             fill="white",alpha = 0.8,stroke = 1) +
-  theme(text = element_text(size=16)) + 
-  theme(aspect.ratio=1) +
-  labs(x = "Observed LAI", y = "Simulated LAI") +
-  geom_abline(intercept = 0, slope = 1, size = 0.5, color = "blue") +
-  xlim(0,max_LAI_obs) +  ylim(0,max_LAI_sim) +
-  ggtitle(paste("Before optimization \n RMSE=",round(rmse_before,2))) +
-  theme(plot.title = element_text(hjust = 0.5))
-p2=ggplot(sim_after_obs_df, aes(x = LAI_obs, y = LAI_sim)) + 
-  geom_point(shape=21, size = 3, color = 'blue',
-             fill="white",alpha = 0.8,stroke = 1) +
-  theme(text = element_text(size=16)) + 
-  theme(aspect.ratio=1) +
-  labs(x = "Observed LAI", y = "Simulated LAI") +
-  geom_abline(intercept = 0, slope = 1, size = 0.5, color = "blue") +
-  xlim(0,max_LAI_obs) +  ylim(0,max_LAI_sim) +
-  ggtitle(paste("After optimization \n RMSE=",round(rmse_after,2))) +
-  theme(plot.title = element_text(hjust = 0.5))
+
+stats <- summary(sim_before_optim$sim_list, obs= obs_list)
+p <- plot(sim_before_optim$sim_list, obs= obs_list, type = "scatter", all_situations = TRUE)
+p1 <- p[[1]] + labs(title=paste("Before Optimization, \n RMSE=",round(stats$RMSE,digits=2))) +
+  theme(plot.title = element_text(size = 9, hjust = 0.5))
+
+stats <- summary(sim_after_optim$sim_list, obs= obs_list)
+p <- plot(sim_after_optim$sim_list, obs= obs_list, type = "scatter", all_situations = TRUE) 
+p2 <- p[[1]] + labs(title=paste("After Optimization, \n RMSE=",round(stats$RMSE,digits=2))) +
+  theme(plot.title = element_text(size = 9, hjust = 0.5))
+
 p=grid.arrange(grobs=list(p1,p2), nrow=1, ncol=2)
 # Save the graph
 ggsave(file.path(optim_options$path_results,
                  paste0("sim_obs",".png")), plot=p)
+
 ```
-
-
 
 This gives:
 
@@ -243,7 +199,7 @@ knitr::include_graphics("ResultsSpecificVarietal/sim_obs.png")
 
 ```{r move_results, eval=params$eval_manual_vignette, include=FALSE}
 # Move the files produced since the temp. folder is removed after Rmd execution
-file.copy(file.path(optim_options$path_results,"EstimatedVSinit.pdf"),params$result_path)
-file.copy(file.path(optim_options$path_results,"optim_results.Rdata"),params$result_path)
-file.copy(file.path(optim_options$path_results,"sim_obs.png"),params$result_path)
+file.copy(file.path(optim_options$path_results,"EstimatedVSinit.pdf"),params$result_path, overwrite = TRUE)
+file.copy(file.path(optim_options$path_results,"optim_results.Rdata"),params$result_path, overwrite = TRUE)
+file.copy(file.path(optim_options$path_results,"sim_obs.png"),params$result_path, overwrite = TRUE)
 ```
