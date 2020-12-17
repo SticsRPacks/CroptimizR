@@ -35,6 +35,10 @@ jobs:
           r-version: ${{ matrix.config.r }}
 
       - uses: r-lib/actions/setup-pandoc@master
+        
+      - name: Install libglpk-dev
+        if: runner.os != 'Windows'
+        run: sudo apt-get install libglpk-dev
 
       - name: Query dependencies
         run: |
