@@ -38,7 +38,7 @@ jobs:
         
       - name: Install libglpk-dev
         if: runner.os == 'Linux'
-        run: sudo apt-get install libglpk-dev
+        run: sudo apt-get install libglpk-dev libicu55
 
       - name: Query dependencies
         run: |
