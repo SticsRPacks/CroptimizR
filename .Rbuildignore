@@ -21,3 +21,4 @@ vignettes/Parameter_estimation_simple_case_files
 vignettes/README.txt
 ^doc$
 ^Meta$
+^\.github$
