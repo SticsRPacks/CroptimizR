@@ -63,7 +63,7 @@ get_params_init_values <- function(param_info) {
       names(init_values)=params_names
       rownames(init_values)=1:nrow(init_values)
     } else {
-      init_values=init_values[,params_names] # to ensure that params_names and
+      init_values=init_values[,params_names, drop=FALSE] # to ensure that params_names and
                                              # init_values have columns in same order
     }
 
