@@ -195,6 +195,13 @@ main_crit <- function(param_values, crit_options) {
   }
 
 
+  # Filter reserved columns that should not be taken into account in the computation of the criterion
+  obs_sim_list$sim_list <- sapply(obs_sim_list$sim_list, function(x) {x[ , !(names(x) %in% "Plant"),drop=FALSE]},
+                                  simplify = F)
+  obs_sim_list$obs_list <- sapply(obs_sim_list$obs_list, function(x) {x[ , !(names(x) %in% "Plant"),drop=FALSE]},
+                                  simplify = F)
+
+
   # Compute criterion value
   crit=crit_function(obs_sim_list$sim_list, obs_sim_list$obs_list)
   if (is.nan(crit)) {
