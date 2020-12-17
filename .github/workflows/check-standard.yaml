@@ -68,7 +68,6 @@ jobs:
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
           install.packages('xslt')
-          install.packages('stringi')
         shell: Rscript {0}
 
       - name: Check
