@@ -43,7 +43,7 @@ jobs:
       - name: Install libicu55 (dependency for r stringi)
         if: runner.os == 'Linux'
         run: |
-          sudo add-apt-repository "deb http://security.ubuntu.com/ubuntu fossa-security main"
+          sudo add-apt-repository "deb http://security.ubuntu.com/ubuntu focal-security main"
           sudo apt-get update
           sudo apt-get install libicu55
 
