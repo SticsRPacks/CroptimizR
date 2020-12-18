@@ -40,6 +40,10 @@ jobs:
         if: runner.os == 'Linux'
         run: sudo apt-get install libglpk-dev
 
+      - name: Install libicu (dependency for r stringi)
+        if: runner.os == 'Linux'
+        run: sudo apt-get install libicu-dev
+
       - name: Query dependencies
         run: |
           install.packages('remotes')
