@@ -55,7 +55,7 @@ jobs:
 
       - name: Trying installation of stringi as a user
         run: |
-          install.packages('stringi')
+          install.packages('stringi',configure.args="--disable-pkg-config")
         shell: Rscript {0}
 
 
