@@ -40,9 +40,16 @@ jobs:
         if: runner.os == 'Linux'
         run: sudo apt-get install libglpk-dev
 
-      - name: Install libicu (dependency for r stringi)
+      - name: Install libicu55 (dependency for r stringi)
         if: runner.os == 'Linux'
-        run: sudo apt-get install libicu-dev
+        run: |
+          sudo add-apt-repository "deb http://security.ubuntu.com/ubuntu fossa-security main"
+          sudo apt-get update
+          sudo apt-get install libicu55
+
+      #- name: Install libicu (dependency for r stringi)
+      #  if: runner.os == 'Linux'
+      #  run: sudo apt-get install libicu-dev
 
       - name: Query dependencies
         run: |
