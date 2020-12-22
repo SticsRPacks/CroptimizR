@@ -46,6 +46,7 @@ jobs:
           sudo add-apt-repository "deb http://security.ubuntu.com/ubuntu focal-security main"
           sudo apt-get update
           sudo apt install libicu-dev
+          ls -al /usr/lib/x86_64-linux-gnu/libicu*
 
       - name: Query dependencies
         run: |
