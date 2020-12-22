@@ -21,7 +21,7 @@ jobs:
           - {os: windows-latest, r: 'release'}
           - {os: macOS-latest, r: 'release'}
           # - {os: macOS-latest, r: 'devel'}
-          - {os: ubuntu-20.04, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/xenial/latest"}
+          - {os: ubuntu-20.04, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
 
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
@@ -57,8 +57,8 @@ jobs:
       - name: Trying installation of stringi as root under Linux
         if: runner.os == 'Linux'
         run: |
-          #sudo Rscript -e "install.packages('stringi', repos='http://cran.rstudio.com/')"
-          sudo apt install r-api-3.5 r-cran-stringi
+          sudo Rscript -e "install.packages('stringi', repos='http://cran.rstudio.com/')"
+          #sudo apt install r-api-3.5 r-cran-stringi
           #sudo ln -s /usr/lib/x86_64-linux-gnu/libicui18n.so /usr/lib/x86_64-linux-gnu/libicui18n.so.55
         #shell: Rscript {0}
 
