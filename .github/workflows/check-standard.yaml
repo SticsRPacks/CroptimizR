@@ -58,6 +58,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo Rscript -e "install.packages('stringi', repos='http://cran.rstudio.com/')"
+          sudo ln -s /usr/lib/x86_64-linux-gnu/libicui18n.so /usr/lib/x86_64-linux-gnu/libicui18n.so.55
         #shell: Rscript {0}
 
 
