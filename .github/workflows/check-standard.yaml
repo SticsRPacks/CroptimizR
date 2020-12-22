@@ -58,7 +58,7 @@ jobs:
       - name: Trying installation of stringi as root under Linux
         if: runner.os == 'Linux'
         run: |
-          sudo Rscript -e "install.packages('stringi', repos='http://cran.rstudio.com/')"
+          #sudo Rscript -e "install.packages('stringi', repos='http://cran.rstudio.com/')"
           #sudo apt install r-api-3.5 r-cran-stringi
           #sudo ln -s /usr/lib/x86_64-linux-gnu/libicui18n.so /usr/lib/x86_64-linux-gnu/libicui18n.so.55
         #shell: Rscript {0}
@@ -86,6 +86,7 @@ jobs:
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
           install.packages('xslt')
+          install.packages('stringi')
         shell: Rscript {0}
 
       - name: Check
