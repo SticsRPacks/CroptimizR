@@ -54,9 +54,10 @@ jobs:
           saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
         shell: Rscript {0}
 
-      - name: Trying installation of stringi as root
+      - name: Trying installation of stringi as root under Linux
+        if: runner.os == 'Linux'
         run: |
-          sudo Rscript -e "install.packages('stringi', lib='/usr/local/lib/R/site-library')
+          sudo Rscript -e "install.packages('stringi', lib='/usr/local/lib/R/site-library')"
         #shell: Rscript {0}
 
 
