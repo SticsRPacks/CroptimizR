@@ -40,13 +40,13 @@ jobs:
         if: runner.os == 'Linux'
         run: sudo apt-get install libglpk-dev
 
-      - name: Install libicu55 (dependency for r stringi)
+      - name: Fix for access to libicu* libs
         if: runner.os == 'Linux'
         run: |
-          sudo add-apt-repository "deb http://security.ubuntu.com/ubuntu focal-security main"
-          sudo apt-get update
-          sudo apt install libicu-dev
-          ls -al /usr/lib/x86_64-linux-gnu/libicu*
+          #sudo add-apt-repository "deb http://security.ubuntu.com/ubuntu focal-security main"
+          #sudo apt-get update
+          #sudo apt install libicu-dev
+          export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/x86_64-linux-gnu
 
       - name: Query dependencies
         run: |
