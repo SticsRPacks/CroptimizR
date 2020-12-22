@@ -57,7 +57,7 @@ jobs:
       - name: Trying installation of stringi as root under Linux
         if: runner.os == 'Linux'
         run: |
-          sudo Rscript -e "install.packages('stringi', lib='/usr/local/lib/R/site-library')"
+          sudo Rscript -e "install.packages('stringi')"
         #shell: Rscript {0}
 
 
