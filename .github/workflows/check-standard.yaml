@@ -54,9 +54,9 @@ jobs:
           saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
         shell: Rscript {0}
 
-      - name: Trying installation of stringi as a user
+      - name: Trying installation of stringi
         run: |
-          install.packages('stringi',configure.args="--disable-pkg-config")
+          install.packages('stringi',configure.args="--disable-pkg-config", lib="/usr/local/lib/R/site-library")
         shell: Rscript {0}
 
 
