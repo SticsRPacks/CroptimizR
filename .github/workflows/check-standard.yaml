@@ -39,10 +39,6 @@ jobs:
         if: runner.os == 'Linux'
         run: sudo apt-get install libglpk-dev
 
-      #- name: Fix for access to libicu* libs
-      #  if: runner.os == 'Linux'
-      #  run: #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/x86_64-linux-gnu
-
       - name: Query dependencies
         run: |
           install.packages('remotes')
