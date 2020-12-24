@@ -20,9 +20,6 @@ jobs:
         config:
           - {os: windows-latest, r: 'release'}
           - {os: macOS-latest, r: 'release'}
-          # - {os: macOS-latest, r: 'devel'}
-          #- {os: ubuntu-20.04, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
-          #- {os: ubuntu-18.04, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/bionic/latest"}
           - {os: ubuntu-20.04, r: 'release'}
 
     env:
@@ -42,28 +39,15 @@ jobs:
         if: runner.os == 'Linux'
         run: sudo apt-get install libglpk-dev
 
-      - name: Fix for access to libicu* libs
-        if: runner.os == 'Linux'
-        run: |
-          #sudo add-apt-repository "deb http://security.ubuntu.com/ubuntu focal-security main"
-          #sudo apt-get update
-          #sudo apt install libicu-dev
-          export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/x86_64-linux-gnu
+      #- name: Fix for access to libicu* libs
+      #  if: runner.os == 'Linux'
+      #  run: #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/x86_64-linux-gnu
 
       - name: Query dependencies
         run: |
           install.packages('remotes')
           saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
         shell: Rscript {0}
-
-      - name: Trying installation of stringi as root under Linux
-        if: runner.os == 'Linux'
-        run: |
-          #sudo Rscript -e "install.packages('stringi', repos='http://cran.rstudio.com/')"
-          #sudo apt install r-api-3.5 r-cran-stringi
-          #sudo ln -s /usr/lib/x86_64-linux-gnu/libicui18n.so /usr/lib/x86_64-linux-gnu/libicui18n.so.55
-        #shell: Rscript {0}
-
 
       - name: Cache R packages
         if: runner.os != 'Windows'
