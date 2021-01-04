@@ -205,10 +205,10 @@ installation procedure in this
 [vignette](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html)).
 
 The package is tested routinely to pass all
-[CRAN](https://CRAN.R-project.org) tests using Travis-CI, but it is not
-yet released to the CRAN servers: CroptimizR is still under development
-and users are not yet widespread enough to bother CRAN people and use
-their free server time.
+[CRAN](https://CRAN.R-project.org) tests using GitHub-actions, but it is
+not yet released to the CRAN servers: CroptimizR is still under
+development and users are not yet widespread enough to bother CRAN
+people and use their free server time.
 
 ## Examples
 
