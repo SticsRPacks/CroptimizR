@@ -57,7 +57,8 @@ request a feature
 
 If you want to be notified when a new release of this package is made,
 you can tick the Releases box in the “Watch / Unwatch =\> Custom” menu
-at the top right of this page.
+at the top right of [this
+page](https://github.com/SticsRPacks/CroptimizR).
 
 ## Planned features
 
