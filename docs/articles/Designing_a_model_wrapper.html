@@ -104,7 +104,7 @@
             <address class="author_afil">
       INRAE - EMMAH<br><h4 class="author">Patrice Lecharpentier</h4>
             <address class="author_afil">
-      INRAE - Agroclim<br><h4 class="date">2020-10-09</h4>
+      INRAE - Agroclim<br><h4 class="date">2021-01-15</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/master/vignettes/Designing_a_model_wrapper.Rmd"><code>vignettes/Designing_a_model_wrapper.Rmd</code></a></small>
       <div class="hidden name"><code>Designing_a_model_wrapper.Rmd</code></div>
@@ -173,8 +173,8 @@
 <ul>
 <li>Return the simulated results for all simulated variables</li>
 </ul>
-<p>The value returned by the model wrapper must be a list, noted <code>results</code> in the following. This list must contain an element named <code>sim_list</code>. <code>sim_list</code> must be a named list (names = situations names) of size the number of situations to simulate. You can initialize it like this:</p>
-<p><code>results$sim_list &lt;- setNames(vector("list",length(sit_names)), nm = sit_names)</code>.</p>
+<p>The value returned by the model wrapper must be a list, noted <code>results</code> in the following. This list must contain an element named <code>sim_list</code>. <code>sim_list</code> must be a named list (names = situations names) of size the number of situations to simulate and having the attribute “cropr_simulation” (to use the <a href="https://github.com/SticsRPacks/CroPlotR">CroPlotR package</a>). You can initialize it like this:</p>
+<p><code>results$sim_list &lt;- setNames(vector("list",length(sit_names)), nm = sit_names)</code> <code>attr(results$sim_list, "class")= "cropr_simulation"</code></p>
 <p>Each element of the list should contains a data.frame (or a tibble) with the results obtained for all simulated variables and dates for the given situation.</p>
 <p>The data.frames must have one column called <code>Date</code> containing the simulations dates, in Date or POSIXct format (see R function <code><a href="https://www.rdocumentation.org/packages/base/topics/as.Date">base::as.Date</a></code> or <code><a href="https://www.rdocumentation.org/packages/base/topics/as.POSIXlt">base::as.POSIXct</a></code>). The other columns contains the values of the simulated variables, and their names must be put as column names.</p>
 <p>For example, if <code>sit_names</code> is `c(“situation1”,“situation2”,“situation3”), sim_list should look like:</p>
@@ -218,28 +218,29 @@
 <span id="cb3-4"><a href="#cb3-4"></a>  param_names &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(param_values)</span>
 <span id="cb3-5"><a href="#cb3-5"></a>  results &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">sim_list =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/setNames">setNames</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/vector">vector</a></span>(<span class="st">"list"</span>,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(sit_names)), <span class="dt">nm =</span> sit_names)),</span>
 <span id="cb3-6"><a href="#cb3-6"></a>                 error=<span class="ot">FALSE</span><span class="er">)</span></span>
-<span id="cb3-7"><a href="#cb3-7"></a>  </span>
-<span id="cb3-8"><a href="#cb3-8"></a>  <span class="cf">for</span> (situation <span class="cf">in</span> sit_names) {</span>
-<span id="cb3-9"><a href="#cb3-9"></a>      </span>
-<span id="cb3-10"><a href="#cb3-10"></a>      <span class="co"># overwrite model input parameters of names contained in param_names with values </span></span>
-<span id="cb3-11"><a href="#cb3-11"></a>      <span class="co"># retrieved in param_values</span></span>
-<span id="cb3-12"><a href="#cb3-12"></a>      </span>
-<span id="cb3-13"><a href="#cb3-13"></a>      <span class="co"># run the model for the given situation </span></span>
-<span id="cb3-14"><a href="#cb3-14"></a>      </span>
-<span id="cb3-15"><a href="#cb3-15"></a>      <span class="co"># read the results and store the data.frame in result$sim_list[[situation]]</span></span>
-<span id="cb3-16"><a href="#cb3-16"></a>      </span>
-<span id="cb3-17"><a href="#cb3-17"></a>      <span class="cf">if</span> (any_error_returned_by_the model_or_detected_in_its_results) {</span>
-<span id="cb3-18"><a href="#cb3-18"></a>        <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/warning">warning</a></span>(<span class="st">"any_useful_information_to_describe_the_error"</span>)</span>
-<span id="cb3-19"><a href="#cb3-19"></a>        results<span class="op">$</span>error=<span class="ot">TRUE</span></span>
-<span id="cb3-20"><a href="#cb3-20"></a>      }</span>
-<span id="cb3-21"><a href="#cb3-21"></a>      </span>
-<span id="cb3-22"><a href="#cb3-22"></a>    }</span>
-<span id="cb3-23"><a href="#cb3-23"></a>    </span>
-<span id="cb3-24"><a href="#cb3-24"></a>  }</span>
-<span id="cb3-25"><a href="#cb3-25"></a>  </span>
-<span id="cb3-26"><a href="#cb3-26"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(results)</span>
-<span id="cb3-27"><a href="#cb3-27"></a>  </span>
-<span id="cb3-28"><a href="#cb3-28"></a><span class="er">}</span></span></code></pre></div>
+<span id="cb3-7"><a href="#cb3-7"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/attr">attr</a></span>(results<span class="op">$</span>sim_list, <span class="st">"class"</span>)=<span class="st"> "cropr_simulation"</span></span>
+<span id="cb3-8"><a href="#cb3-8"></a>  </span>
+<span id="cb3-9"><a href="#cb3-9"></a>  <span class="cf">for</span> (situation <span class="cf">in</span> sit_names) {</span>
+<span id="cb3-10"><a href="#cb3-10"></a>      </span>
+<span id="cb3-11"><a href="#cb3-11"></a>      <span class="co"># overwrite model input parameters of names contained in param_names with values </span></span>
+<span id="cb3-12"><a href="#cb3-12"></a>      <span class="co"># retrieved in param_values</span></span>
+<span id="cb3-13"><a href="#cb3-13"></a>      </span>
+<span id="cb3-14"><a href="#cb3-14"></a>      <span class="co"># run the model for the given situation </span></span>
+<span id="cb3-15"><a href="#cb3-15"></a>      </span>
+<span id="cb3-16"><a href="#cb3-16"></a>      <span class="co"># read the results and store the data.frame in result$sim_list[[situation]]</span></span>
+<span id="cb3-17"><a href="#cb3-17"></a>      </span>
+<span id="cb3-18"><a href="#cb3-18"></a>      <span class="cf">if</span> (any_error_returned_by_the model_or_detected_in_its_results) {</span>
+<span id="cb3-19"><a href="#cb3-19"></a>        <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/warning">warning</a></span>(<span class="st">"any_useful_information_to_describe_the_error"</span>)</span>
+<span id="cb3-20"><a href="#cb3-20"></a>        results<span class="op">$</span>error=<span class="ot">TRUE</span></span>
+<span id="cb3-21"><a href="#cb3-21"></a>      }</span>
+<span id="cb3-22"><a href="#cb3-22"></a>      </span>
+<span id="cb3-23"><a href="#cb3-23"></a>    }</span>
+<span id="cb3-24"><a href="#cb3-24"></a>    </span>
+<span id="cb3-25"><a href="#cb3-25"></a>  }</span>
+<span id="cb3-26"><a href="#cb3-26"></a>  </span>
+<span id="cb3-27"><a href="#cb3-27"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(results)</span>
+<span id="cb3-28"><a href="#cb3-28"></a>  </span>
+<span id="cb3-29"><a href="#cb3-29"></a><span class="er">}</span></span></code></pre></div>
 </div>
 <div id="test-your-wrapper" class="section level3">
 <h3 class="hasAnchor">
@@ -470,42 +471,43 @@
 <span id="cb15-58"><a href="#cb15-58"></a>  </span>
 <span id="cb15-59"><a href="#cb15-59"></a>  results &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">sim_list =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/setNames">setNames</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/vector">vector</a></span>(<span class="st">"list"</span>,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(sit_names)), <span class="dt">nm =</span> sit_names),</span>
 <span id="cb15-60"><a href="#cb15-60"></a>                 <span class="dt">error=</span><span class="ot">FALSE</span>)</span>
-<span id="cb15-61"><a href="#cb15-61"></a></span>
-<span id="cb15-62"><a href="#cb15-62"></a>  <span class="cf">for</span> (sit <span class="cf">in</span> sit_names) {</span>
-<span id="cb15-63"><a href="#cb15-63"></a>    </span>
-<span id="cb15-64"><a href="#cb15-64"></a>    <span class="co"># Retrieve year, emergence and crop_duration from situation name</span></span>
-<span id="cb15-65"><a href="#cb15-65"></a>    tmp &lt;-<span class="st"> </span>stringr<span class="op">::</span><span class="kw"><a href="https://stringr.tidyverse.org/reference/str_split.html">str_split</a></span>(sit,<span class="st">"_"</span>)</span>
-<span id="cb15-66"><a href="#cb15-66"></a>    year &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/numeric">as.numeric</a></span>(tmp[[<span class="dv">1</span>]][[<span class="dv">1</span>]])</span>
-<span id="cb15-67"><a href="#cb15-67"></a></span>
-<span id="cb15-68"><a href="#cb15-68"></a>    <span class="co"># Check inputs</span></span>
-<span id="cb15-69"><a href="#cb15-69"></a>    <span class="cf">if</span> (year<span class="op">&lt;</span><span class="dv">1</span>) {</span>
-<span id="cb15-70"><a href="#cb15-70"></a>      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/warning">warning</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(<span class="st">"sit_name"</span>,sit,</span>
-<span id="cb15-71"><a href="#cb15-71"></a>                    <span class="st">"not well defined, first part is supposed to be a year!"</span>))</span>
-<span id="cb15-72"><a href="#cb15-72"></a>      results<span class="op">$</span>error=<span class="ot">TRUE</span></span>
-<span id="cb15-73"><a href="#cb15-73"></a>      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(results)</span>
-<span id="cb15-74"><a href="#cb15-74"></a>    }</span>
-<span id="cb15-75"><a href="#cb15-75"></a>    <span class="cf">if</span> (<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/all">all</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(param_values) <span class="op">%in%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"max_lai"</span>, <span class="st">"inc_slope"</span>, <span class="st">"dec_slope"</span>, </span>
-<span id="cb15-76"><a href="#cb15-76"></a>                                        <span class="st">"julday_incslope"</span>, <span class="st">"julday_decslope"</span>))) {</span>
-<span id="cb15-77"><a href="#cb15-77"></a>      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/warning">warning</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(<span class="st">"Unknown parameters in param_values:"</span>,</span>
-<span id="cb15-78"><a href="#cb15-78"></a>                    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(param_values),<span class="dt">collapse =</span> <span class="st">","</span>)))</span>
-<span id="cb15-79"><a href="#cb15-79"></a>      results<span class="op">$</span>error=<span class="ot">TRUE</span></span>
-<span id="cb15-80"><a href="#cb15-80"></a>      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(results)</span>
-<span id="cb15-81"><a href="#cb15-81"></a>    }</span>
-<span id="cb15-82"><a href="#cb15-82"></a>    </span>
-<span id="cb15-83"><a href="#cb15-83"></a>    <span class="co"># Call the lai_toymodel with varying arguments depending on what is given in </span></span>
-<span id="cb15-84"><a href="#cb15-84"></a>    <span class="co"># param_values</span></span>
-<span id="cb15-85"><a href="#cb15-85"></a>    res_laitm &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/do.call">do.call</a></span>(<span class="st">'lai_toymodel'</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">as.list</a></span>(param_values), </span>
-<span id="cb15-86"><a href="#cb15-86"></a>                                           <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">year=</span>year)))</span>
-<span id="cb15-87"><a href="#cb15-87"></a>    </span>
-<span id="cb15-88"><a href="#cb15-88"></a>    <span class="co"># Fill the result variable</span></span>
-<span id="cb15-89"><a href="#cb15-89"></a>    results<span class="op">$</span>sim_list[[sit]] &lt;-<span class="st">  </span>dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/reexports.html">tibble</a></span>(<span class="dt">Date=</span>res_laitm<span class="op">$</span>dates, </span>
-<span id="cb15-90"><a href="#cb15-90"></a>                                              <span class="dt">lai=</span>res_laitm<span class="op">$</span>lai)</span>
-<span id="cb15-91"><a href="#cb15-91"></a>    </span>
-<span id="cb15-92"><a href="#cb15-92"></a>  }</span>
-<span id="cb15-93"><a href="#cb15-93"></a>  </span>
-<span id="cb15-94"><a href="#cb15-94"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(results)</span>
-<span id="cb15-95"><a href="#cb15-95"></a></span>
-<span id="cb15-96"><a href="#cb15-96"></a>}</span></code></pre></div>
+<span id="cb15-61"><a href="#cb15-61"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/attr">attr</a></span>(results<span class="op">$</span>sim_list, <span class="st">"class"</span>)=<span class="st"> "cropr_simulation"</span></span>
+<span id="cb15-62"><a href="#cb15-62"></a></span>
+<span id="cb15-63"><a href="#cb15-63"></a>  <span class="cf">for</span> (sit <span class="cf">in</span> sit_names) {</span>
+<span id="cb15-64"><a href="#cb15-64"></a>    </span>
+<span id="cb15-65"><a href="#cb15-65"></a>    <span class="co"># Retrieve year, emergence and crop_duration from situation name</span></span>
+<span id="cb15-66"><a href="#cb15-66"></a>    tmp &lt;-<span class="st"> </span>stringr<span class="op">::</span><span class="kw"><a href="https://stringr.tidyverse.org/reference/str_split.html">str_split</a></span>(sit,<span class="st">"_"</span>)</span>
+<span id="cb15-67"><a href="#cb15-67"></a>    year &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/numeric">as.numeric</a></span>(tmp[[<span class="dv">1</span>]][[<span class="dv">1</span>]])</span>
+<span id="cb15-68"><a href="#cb15-68"></a></span>
+<span id="cb15-69"><a href="#cb15-69"></a>    <span class="co"># Check inputs</span></span>
+<span id="cb15-70"><a href="#cb15-70"></a>    <span class="cf">if</span> (year<span class="op">&lt;</span><span class="dv">1</span>) {</span>
+<span id="cb15-71"><a href="#cb15-71"></a>      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/warning">warning</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(<span class="st">"sit_name"</span>,sit,</span>
+<span id="cb15-72"><a href="#cb15-72"></a>                    <span class="st">"not well defined, first part is supposed to be a year!"</span>))</span>
+<span id="cb15-73"><a href="#cb15-73"></a>      results<span class="op">$</span>error=<span class="ot">TRUE</span></span>
+<span id="cb15-74"><a href="#cb15-74"></a>      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(results)</span>
+<span id="cb15-75"><a href="#cb15-75"></a>    }</span>
+<span id="cb15-76"><a href="#cb15-76"></a>    <span class="cf">if</span> (<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/all">all</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(param_values) <span class="op">%in%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"max_lai"</span>, <span class="st">"inc_slope"</span>, <span class="st">"dec_slope"</span>, </span>
+<span id="cb15-77"><a href="#cb15-77"></a>                                        <span class="st">"julday_incslope"</span>, <span class="st">"julday_decslope"</span>))) {</span>
+<span id="cb15-78"><a href="#cb15-78"></a>      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/warning">warning</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(<span class="st">"Unknown parameters in param_values:"</span>,</span>
+<span id="cb15-79"><a href="#cb15-79"></a>                    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(param_values),<span class="dt">collapse =</span> <span class="st">","</span>)))</span>
+<span id="cb15-80"><a href="#cb15-80"></a>      results<span class="op">$</span>error=<span class="ot">TRUE</span></span>
+<span id="cb15-81"><a href="#cb15-81"></a>      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(results)</span>
+<span id="cb15-82"><a href="#cb15-82"></a>    }</span>
+<span id="cb15-83"><a href="#cb15-83"></a>    </span>
+<span id="cb15-84"><a href="#cb15-84"></a>    <span class="co"># Call the lai_toymodel with varying arguments depending on what is given in </span></span>
+<span id="cb15-85"><a href="#cb15-85"></a>    <span class="co"># param_values</span></span>
+<span id="cb15-86"><a href="#cb15-86"></a>    res_laitm &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/do.call">do.call</a></span>(<span class="st">'lai_toymodel'</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">as.list</a></span>(param_values), </span>
+<span id="cb15-87"><a href="#cb15-87"></a>                                           <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">year=</span>year)))</span>
+<span id="cb15-88"><a href="#cb15-88"></a>    </span>
+<span id="cb15-89"><a href="#cb15-89"></a>    <span class="co"># Fill the result variable</span></span>
+<span id="cb15-90"><a href="#cb15-90"></a>    results<span class="op">$</span>sim_list[[sit]] &lt;-<span class="st">  </span>dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/reexports.html">tibble</a></span>(<span class="dt">Date=</span>res_laitm<span class="op">$</span>dates, </span>
+<span id="cb15-91"><a href="#cb15-91"></a>                                              <span class="dt">lai=</span>res_laitm<span class="op">$</span>lai)</span>
+<span id="cb15-92"><a href="#cb15-92"></a>    </span>
+<span id="cb15-93"><a href="#cb15-93"></a>  }</span>
+<span id="cb15-94"><a href="#cb15-94"></a>  </span>
+<span id="cb15-95"><a href="#cb15-95"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(results)</span>
+<span id="cb15-96"><a href="#cb15-96"></a></span>
+<span id="cb15-97"><a href="#cb15-97"></a>}</span></code></pre></div>
 <p>The little code below shows an example of parameter estimation using this wrapper:</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>tmp &lt;-<span class="st"> </span><span class="kw">laitm_simple_wrapper</span>(<span class="dt">sit_names=</span><span class="st">"2005_a"</span>, <span class="dt">param_values =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dt">inc_slope=</span><span class="dv">25</span>, <span class="dt">dec_slope=</span><span class="dv">10</span>))</span>
 <span id="cb16-2"><a href="#cb16-2"></a></span>
@@ -556,55 +558,56 @@
 <span id="cb17-28"><a href="#cb17-28"></a>  </span>
 <span id="cb17-29"><a href="#cb17-29"></a>  results &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">sim_list =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/setNames">setNames</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/vector">vector</a></span>(<span class="st">"list"</span>,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(sit_names)), </span>
 <span id="cb17-30"><a href="#cb17-30"></a>                                      <span class="dt">nm =</span> sit_names), <span class="dt">error=</span><span class="ot">FALSE</span>)</span>
-<span id="cb17-31"><a href="#cb17-31"></a></span>
-<span id="cb17-32"><a href="#cb17-32"></a>  param_values &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class="kw"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span>(<span class="op">!!!</span>param_values)  <span class="co"># convert param_values in a tibble</span></span>
-<span id="cb17-33"><a href="#cb17-33"></a>  </span>
-<span id="cb17-34"><a href="#cb17-34"></a>  <span class="cf">for</span> (sit <span class="cf">in</span> sit_names) {</span>
-<span id="cb17-35"><a href="#cb17-35"></a>    </span>
-<span id="cb17-36"><a href="#cb17-36"></a>    <span class="co"># Retrieve year, emergence and crop_duration from situation name</span></span>
-<span id="cb17-37"><a href="#cb17-37"></a>    tmp &lt;-<span class="st"> </span>stringr<span class="op">::</span><span class="kw"><a href="https://stringr.tidyverse.org/reference/str_split.html">str_split</a></span>(sit,<span class="st">"_"</span>)</span>
-<span id="cb17-38"><a href="#cb17-38"></a>    year &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/numeric">as.numeric</a></span>(tmp[[<span class="dv">1</span>]][[<span class="dv">1</span>]])</span>
-<span id="cb17-39"><a href="#cb17-39"></a></span>
-<span id="cb17-40"><a href="#cb17-40"></a>    <span class="co"># Check inputs</span></span>
-<span id="cb17-41"><a href="#cb17-41"></a>    <span class="cf">if</span> (year<span class="op">&lt;</span><span class="dv">1</span>) {</span>
-<span id="cb17-42"><a href="#cb17-42"></a>      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/warning">warning</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(<span class="st">"sit_name"</span>,sit,</span>
-<span id="cb17-43"><a href="#cb17-43"></a>                    <span class="st">"not well defined, first part is supposed to be a year!"</span>))</span>
-<span id="cb17-44"><a href="#cb17-44"></a>      results<span class="op">$</span>error=<span class="ot">TRUE</span></span>
-<span id="cb17-45"><a href="#cb17-45"></a>      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(results)</span>
-<span id="cb17-46"><a href="#cb17-46"></a>    }</span>
-<span id="cb17-47"><a href="#cb17-47"></a>    </span>
-<span id="cb17-48"><a href="#cb17-48"></a>    <span class="co"># extract the parameters values to apply for the given situation</span></span>
-<span id="cb17-49"><a href="#cb17-49"></a>    params &lt;-<span class="st"> </span><span class="ot">NULL</span></span>
-<span id="cb17-50"><a href="#cb17-50"></a>    <span class="cf">if</span> (<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/NULL">is.null</a></span>(param_values)) {</span>
-<span id="cb17-51"><a href="#cb17-51"></a>      <span class="cf">if</span> (<span class="op">!</span><span class="st"> "situation"</span> <span class="op">%in%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(param_values)) {</span>
-<span id="cb17-52"><a href="#cb17-52"></a>        params &lt;-<span class="st"> </span>param_values</span>
-<span id="cb17-53"><a href="#cb17-53"></a>      } <span class="cf">else</span> {</span>
-<span id="cb17-54"><a href="#cb17-54"></a>        params &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(param_values, situation<span class="op">==</span>sit) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb17-55"><a href="#cb17-55"></a><span class="st">          </span>dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="op">-</span>situation)</span>
-<span id="cb17-56"><a href="#cb17-56"></a>      }</span>
-<span id="cb17-57"><a href="#cb17-57"></a>    }</span>
-<span id="cb17-58"><a href="#cb17-58"></a>    <span class="cf">if</span> (<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/all">all</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(params) <span class="op">%in%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"max_lai"</span>, <span class="st">"inc_slope"</span>, <span class="st">"dec_slope"</span>, </span>
-<span id="cb17-59"><a href="#cb17-59"></a>                                  <span class="st">"julday_incslope"</span>, <span class="st">"julday_decslope"</span>))) {</span>
-<span id="cb17-60"><a href="#cb17-60"></a>      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/warning">warning</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(<span class="st">"Unknown parameters in param_values:"</span>,</span>
-<span id="cb17-61"><a href="#cb17-61"></a>                    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(param_values),<span class="dt">collapse =</span> <span class="st">","</span>)))</span>
-<span id="cb17-62"><a href="#cb17-62"></a>      results<span class="op">$</span>error=<span class="ot">TRUE</span></span>
-<span id="cb17-63"><a href="#cb17-63"></a>      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(results)</span>
-<span id="cb17-64"><a href="#cb17-64"></a>    }</span>
-<span id="cb17-65"><a href="#cb17-65"></a></span>
-<span id="cb17-66"><a href="#cb17-66"></a>    <span class="co"># Call the lai_toymodel with varying arguments depending on what is given in </span></span>
-<span id="cb17-67"><a href="#cb17-67"></a>    <span class="co"># param_values</span></span>
-<span id="cb17-68"><a href="#cb17-68"></a>    res_laitm &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/do.call">do.call</a></span>(<span class="st">'lai_toymodel'</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">as.list</a></span>(params), </span>
-<span id="cb17-69"><a href="#cb17-69"></a>                                           <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">year=</span>year)))</span>
-<span id="cb17-70"><a href="#cb17-70"></a>    </span>
-<span id="cb17-71"><a href="#cb17-71"></a>    <span class="co"># Fill the result variable</span></span>
-<span id="cb17-72"><a href="#cb17-72"></a>    results<span class="op">$</span>sim_list[[sit]] &lt;-<span class="st">  </span>dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/reexports.html">tibble</a></span>(<span class="dt">Date=</span>res_laitm<span class="op">$</span>dates, </span>
-<span id="cb17-73"><a href="#cb17-73"></a>                                              <span class="dt">lai=</span>res_laitm<span class="op">$</span>lai)</span>
-<span id="cb17-74"><a href="#cb17-74"></a>    </span>
-<span id="cb17-75"><a href="#cb17-75"></a>  }</span>
-<span id="cb17-76"><a href="#cb17-76"></a>  </span>
-<span id="cb17-77"><a href="#cb17-77"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(results)</span>
-<span id="cb17-78"><a href="#cb17-78"></a></span>
-<span id="cb17-79"><a href="#cb17-79"></a>}</span></code></pre></div>
+<span id="cb17-31"><a href="#cb17-31"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/attr">attr</a></span>(results<span class="op">$</span>sim_list, <span class="st">"class"</span>)=<span class="st"> "cropr_simulation"</span></span>
+<span id="cb17-32"><a href="#cb17-32"></a></span>
+<span id="cb17-33"><a href="#cb17-33"></a>  param_values &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class="kw"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span>(<span class="op">!!!</span>param_values)  <span class="co"># convert param_values in a tibble</span></span>
+<span id="cb17-34"><a href="#cb17-34"></a>  </span>
+<span id="cb17-35"><a href="#cb17-35"></a>  <span class="cf">for</span> (sit <span class="cf">in</span> sit_names) {</span>
+<span id="cb17-36"><a href="#cb17-36"></a>    </span>
+<span id="cb17-37"><a href="#cb17-37"></a>    <span class="co"># Retrieve year, emergence and crop_duration from situation name</span></span>
+<span id="cb17-38"><a href="#cb17-38"></a>    tmp &lt;-<span class="st"> </span>stringr<span class="op">::</span><span class="kw"><a href="https://stringr.tidyverse.org/reference/str_split.html">str_split</a></span>(sit,<span class="st">"_"</span>)</span>
+<span id="cb17-39"><a href="#cb17-39"></a>    year &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/numeric">as.numeric</a></span>(tmp[[<span class="dv">1</span>]][[<span class="dv">1</span>]])</span>
+<span id="cb17-40"><a href="#cb17-40"></a></span>
+<span id="cb17-41"><a href="#cb17-41"></a>    <span class="co"># Check inputs</span></span>
+<span id="cb17-42"><a href="#cb17-42"></a>    <span class="cf">if</span> (year<span class="op">&lt;</span><span class="dv">1</span>) {</span>
+<span id="cb17-43"><a href="#cb17-43"></a>      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/warning">warning</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(<span class="st">"sit_name"</span>,sit,</span>
+<span id="cb17-44"><a href="#cb17-44"></a>                    <span class="st">"not well defined, first part is supposed to be a year!"</span>))</span>
+<span id="cb17-45"><a href="#cb17-45"></a>      results<span class="op">$</span>error=<span class="ot">TRUE</span></span>
+<span id="cb17-46"><a href="#cb17-46"></a>      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(results)</span>
+<span id="cb17-47"><a href="#cb17-47"></a>    }</span>
+<span id="cb17-48"><a href="#cb17-48"></a>    </span>
+<span id="cb17-49"><a href="#cb17-49"></a>    <span class="co"># extract the parameters values to apply for the given situation</span></span>
+<span id="cb17-50"><a href="#cb17-50"></a>    params &lt;-<span class="st"> </span><span class="ot">NULL</span></span>
+<span id="cb17-51"><a href="#cb17-51"></a>    <span class="cf">if</span> (<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/NULL">is.null</a></span>(param_values)) {</span>
+<span id="cb17-52"><a href="#cb17-52"></a>      <span class="cf">if</span> (<span class="op">!</span><span class="st"> "situation"</span> <span class="op">%in%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(param_values)) {</span>
+<span id="cb17-53"><a href="#cb17-53"></a>        params &lt;-<span class="st"> </span>param_values</span>
+<span id="cb17-54"><a href="#cb17-54"></a>      } <span class="cf">else</span> {</span>
+<span id="cb17-55"><a href="#cb17-55"></a>        params &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(param_values, situation<span class="op">==</span>sit) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb17-56"><a href="#cb17-56"></a><span class="st">          </span>dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="op">-</span>situation)</span>
+<span id="cb17-57"><a href="#cb17-57"></a>      }</span>
+<span id="cb17-58"><a href="#cb17-58"></a>    }</span>
+<span id="cb17-59"><a href="#cb17-59"></a>    <span class="cf">if</span> (<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/all">all</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(params) <span class="op">%in%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"max_lai"</span>, <span class="st">"inc_slope"</span>, <span class="st">"dec_slope"</span>, </span>
+<span id="cb17-60"><a href="#cb17-60"></a>                                  <span class="st">"julday_incslope"</span>, <span class="st">"julday_decslope"</span>))) {</span>
+<span id="cb17-61"><a href="#cb17-61"></a>      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/warning">warning</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(<span class="st">"Unknown parameters in param_values:"</span>,</span>
+<span id="cb17-62"><a href="#cb17-62"></a>                    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(param_values),<span class="dt">collapse =</span> <span class="st">","</span>)))</span>
+<span id="cb17-63"><a href="#cb17-63"></a>      results<span class="op">$</span>error=<span class="ot">TRUE</span></span>
+<span id="cb17-64"><a href="#cb17-64"></a>      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(results)</span>
+<span id="cb17-65"><a href="#cb17-65"></a>    }</span>
+<span id="cb17-66"><a href="#cb17-66"></a></span>
+<span id="cb17-67"><a href="#cb17-67"></a>    <span class="co"># Call the lai_toymodel with varying arguments depending on what is given in </span></span>
+<span id="cb17-68"><a href="#cb17-68"></a>    <span class="co"># param_values</span></span>
+<span id="cb17-69"><a href="#cb17-69"></a>    res_laitm &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/do.call">do.call</a></span>(<span class="st">'lai_toymodel'</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">as.list</a></span>(params), </span>
+<span id="cb17-70"><a href="#cb17-70"></a>                                           <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">year=</span>year)))</span>
+<span id="cb17-71"><a href="#cb17-71"></a>    </span>
+<span id="cb17-72"><a href="#cb17-72"></a>    <span class="co"># Fill the result variable</span></span>
+<span id="cb17-73"><a href="#cb17-73"></a>    results<span class="op">$</span>sim_list[[sit]] &lt;-<span class="st">  </span>dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/reexports.html">tibble</a></span>(<span class="dt">Date=</span>res_laitm<span class="op">$</span>dates, </span>
+<span id="cb17-74"><a href="#cb17-74"></a>                                              <span class="dt">lai=</span>res_laitm<span class="op">$</span>lai)</span>
+<span id="cb17-75"><a href="#cb17-75"></a>    </span>
+<span id="cb17-76"><a href="#cb17-76"></a>  }</span>
+<span id="cb17-77"><a href="#cb17-77"></a>  </span>
+<span id="cb17-78"><a href="#cb17-78"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(results)</span>
+<span id="cb17-79"><a href="#cb17-79"></a></span>
+<span id="cb17-80"><a href="#cb17-80"></a>}</span></code></pre></div>
 <p>The code below shows an example of a simultaneous estimation of specific (dec_slope here) and varietal (inc_slope) parameters using this wrapper:</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a>tmp &lt;-<span class="st"> </span><span class="kw">laitm_simple_wrapper_v2</span>(<span class="dt">sit_names=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"2005_a"</span>,<span class="st">"2006_b"</span>),</span>
 <span id="cb18-2"><a href="#cb18-2"></a>                            <span class="dt">param_values =</span> dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/reexports.html">tibble</a></span>(<span class="dt">situation=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"2005_a"</span>,<span class="st">"2006_b"</span>),</span>
