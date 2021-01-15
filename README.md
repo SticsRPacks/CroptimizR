@@ -55,6 +55,10 @@ provided in this
 request a feature
 [here](https://github.com/SticsRPacks/CroptimizR/issues) at any time.**
 
+If you want to be notified when a new release of this package is made,
+you can tick the Releases box in the “Watch / Unwatch =\> Custom” menu
+at the top right of this page.
+
 ## Planned features
 
 ### Parameter estimation / model calibration
