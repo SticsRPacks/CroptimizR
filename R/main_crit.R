@@ -23,11 +23,11 @@ main_crit <- function(param_values, crit_options) {
 
   on.exit({
     if (is.na(crit)) {
+      filename <- file.path(crit_options$path_results,paste0("debug_crit_NA.Rdata"))
       warning(paste("The optimized criterion has taken the NA value. \n  * Parameter values, obs_list and model results will be saved in",
                     filename,"for sake of debugging."))
       # just warns in this case. The optimization method may handle the problem which
       # may happend only for certain parameter values ...).
-      filename <- file.path(crit_options$path_results,paste0("debug_crit_NA.Rdata"))
       save(param_values, obs_list, model_results, file=filename)
     }
     })
