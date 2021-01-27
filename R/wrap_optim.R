@@ -92,51 +92,95 @@ wrap_optim <- function(param_names,optim_options,param_info,crit_options) {
   ind_min_crit=which.min(sapply(optim, function(x) {if (!is.null(x$value)) x$value}))
 
   # Graph and print the results
-  tmp<-rbind(bounds$lb,bounds$ub,do.call(rbind,lapply(optim,`[[`,"par")))
+  tmp<-rbind(bounds$lb,bounds$ub,do.call(rbind,lapply(optim,`[[`,"par")), init_values)
   tmp[is.infinite(tmp)]<-NA
   minvalue<-apply(tmp,2,min,na.rm=TRUE); maxvalue<-apply(tmp,2,max,na.rm=TRUE)
   minvalue<-minvalue-0.05*(maxvalue-minvalue); maxvalue<-maxvalue+0.05*(maxvalue-minvalue)
+  crit <- sapply(optim, function(x) x$value)
 
   tryCatch(
     {
       grDevices::pdf(file = file.path(path_results,"EstimatedVSinit.pdf") , width = 9, height = 9)
+    },
+    error=function(cond) {
+      filename=paste0("EstimatedVSinit_new.pdf")
+      warning("Error trying to create ",path_results,"/EstimatedVSinit.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
+      message(cond)
+      grDevices::pdf(file = file.path(path_results,filename) , width = 9, height = 9)
+    })
+
+
+  tryCatch(
+    {
       for (ipar in 1:nb_params) {
-        graphics::plot(init_values[,ipar], est_values[,ipar],
-                       main = "Estimated vs Initial values of the parameters for different repetitions",
-                       graphics::text(init_values[,ipar], est_values[,ipar], pos=1,col="black"),
-                       xlim = c(minvalue[ipar],maxvalue[ipar]),
-                       ylim = c(minvalue[ipar],maxvalue[ipar]),
-                       xlab = paste("Initial value for", param_names[ipar]),
-                       ylab = paste("Estimated value for", param_names[ipar]))
-        graphics::text(init_values[ind_min_crit,ipar], est_values[ind_min_crit,ipar],
-                       labels = ind_min_crit, pos=1,col="red")
+
+        df <- data.frame(init_values=init_values[,ipar],est_values=est_values[,ipar],crit=crit)
+        row.names(df) = paste0(seq(1:nb_rep))
+
+        p <- ggplot(df, aes(x=init_values, y=est_values, size = crit)) +
+          geom_point(alpha=0.5, color="red") +
+          labs(title=paste0("Estimated vs Initial values of ",param_names[ipar] ," for different repetitions"),
+               y = paste("Estimated value for", param_names[ipar]),
+               x = paste("Initial value for", param_names[ipar]),
+               fill = "Criterion") +
+          geom_text(
+            label=rownames(df),
+            nudge_x = 0, nudge_y = 0,
+            check_overlap = T,
+            show.legend = F,
+            size = 4) +
+          geom_text(data=df[ind_min_crit,],
+                    label=rownames(df[ind_min_crit,]),
+                    nudge_x = 0, nudge_y = 0,
+                    check_overlap = T,
+                    show.legend = F,
+                    size = 4, color="white") +
+          xlim(minvalue[ipar],maxvalue[ipar]) + ylim(minvalue[ipar],maxvalue[ipar])
+
+        if (length(unique(crit))>1) {
+          p <- p +  scale_size_binned(range = c(2, 20), name="Final Value of \n minimized criteria")
+        } else {
+          p <- p +  scale_size(name="Final Value of \n minimized criteria")
+        }
+
+        print(p)
+
       }
       grDevices::dev.off()
     },
     error=function(cond) {
-      filename=paste0("EstimatedVSinit_new.pdf")
-      warning("Error trying to create ",path_results,"/EstimatedVSinit.pdf file.",
-              "It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
+
+      warning("Error trying to create EstimatedVSinit bubble graph file. \n
+              Maybe linked with the values of the criterion to plot (size of the bubbles):",
+              paste0(crit,collapse = ","),"\n Trying without the bubbles ...")
       message(cond)
-      utils::flush.console()
-      grDevices::pdf(file = file.path(path_results,filename) , width = 9, height = 9)
+
       for (ipar in 1:nb_params) {
-        graphics::plot(init_values[,ipar], est_values[,ipar],
-                       main = "Estimated vs Initial values of the parameters for different repetitions",
-                       graphics::text(init_values[,ipar], est_values[,ipar], pos=1,col="black"),
-                       xlim = c(minvalue[ipar],maxvalue[ipar]),
-                       ylim = c(minvalue[ipar],maxvalue[ipar]),
-                       xlab = paste("Initial value for", param_names[ipar]),
-                       ylab = paste("Estimated value for", param_names[ipar]))
-        graphics::text(init_values[ind_min_crit,ipar], est_values[ind_min_crit,ipar],
-                       labels = ind_min_crit, pos=1,col="red")
+
+        df <- data.frame(init_values=init_values[,ipar],est_values=est_values[,ipar],crit=crit)
+        row.names(df) = paste0(seq(1:nb_rep))
+
+        print(ggplot(df, aes(x=init_values, y=est_values)) +
+                geom_point(alpha=0.5, color="red") +
+                labs(title=paste0("Estimated vs Initial values of ",param_names[ipar] ," for different repetitions"),
+                     y = paste("Estimated value for", param_names[ipar]),
+                     x = paste("Initial value for", param_names[ipar])) +
+                geom_text(
+                  label=rownames(df),
+                  nudge_x = 0, nudge_y = 0,
+                  check_overlap = T,
+                  show.legend = F,
+                  size = 4) +
+                geom_text(data=df[ind_min_crit,],
+                          label=rownames(df[ind_min_crit,]),
+                          nudge_x = 0, nudge_y = 0,
+                          check_overlap = T,
+                          show.legend = F,
+                          size = 4, color="white") +
+                xlim(minvalue[ipar],maxvalue[ipar]) + ylim(minvalue[ipar],maxvalue[ipar]) )
       }
       grDevices::dev.off()
     })
-
-
-  # Save the results of nloptr
-  save(optim, file = file.path(path_results,"optim_results.Rdata"))
 
   # Display of parameters for the repetition which has the smallest criterion
   for (ipar in 1:nb_params) {
@@ -153,6 +197,10 @@ wrap_optim <- function(param_names,optim_options,param_info,crit_options) {
               min_crit_value = optim[[ind_min_crit]]$value,
               ind_min_crit = ind_min_crit,
               optim = optim)
+
+  # Save the results
+  save(res, file = file.path(path_results,"optim_results.Rdata"))
+
   return(res)
 
 }
