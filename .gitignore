@@ -17,3 +17,6 @@ tmp
 doc
 Meta
 vignettes/*.html
+vignettes/EstimatedVSinit.pdf
+vignettes/optim_results.Rdata
+vignettes/sim_obs_plots.png
