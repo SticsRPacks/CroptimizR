@@ -215,7 +215,7 @@
 <p>Figure 1: plots of estimated vs initial values of parameters dlaimax and durvieF. Numbers represent the repetition number of the minimization. The number in red, 2 in this case, is the minimization that lead to the minimal value of the criterion among all repetitions. In this case, the minimizations converge towards 2 different values for the parameters, which indicates the presence of a local minimum. Values of durvieF are close to the bounds. In realistic calibration cases with many observed situations / variables / dates this may indicate the presence of biases in the observation values or in the model output values simulated (this simple case with only one situation does not allow to derive such conclusion).</p>
 <p>The <code>optim_options$path_results</code> folder also contains the optim_results.Rdata file that store the <code>nlo</code> variable, a list containing the results of the minimization for each repetition. If we print it for repetition 2 …</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="co">## load(file.path(optim_options$path_results,"optim_results.Rdata"))</span></span>
-<span id="cb10-2"><a href="#cb10-2"></a><span class="co">## res$nlo[[2]]</span></span></code></pre></div>
+<span id="cb10-2"><a href="#cb10-2"></a><span class="co">## nlo[[2]]</span></span></code></pre></div>
 <p>… this returns:</p>
 <pre><code>## 
 ## Call:
