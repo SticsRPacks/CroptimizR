@@ -1,19 +1,19 @@
 ---
 title: "Guidelines for implementing a crop model R wrapper for CroptimizR"
-output:
-    html_document:
-     toc: true
-     toc_float: true
 author:
-  - name: "Samuel Buis"
-    affiliation: "INRAE - EMMAH"
-  - name: "Patrice Lecharpentier"
-    affiliation: "INRAE - Agroclim"
+- affiliation: INRAE - EMMAH
+  name: Samuel Buis
+- affiliation: INRAE - Agroclim
+  name: Patrice Lecharpentier
 date: "`r Sys.Date()`"
-vignette: >
-  %\VignetteIndexEntry{Designing a model wrapper}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+vignette: |
+  %\VignetteIndexEntry{Designing a model wrapper} %\VignetteEngine{knitr::rmarkdown} %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}
@@ -342,7 +342,7 @@ It is advised to define them as optionnal arguments with default value equal to 
 
 ### Example of a basic wrapper for an LAI toy model 
 
-```{r eval=FALSE}
+```{r, eval=TRUE}
 
 lai_toymodel <- function(year, max_lai=8, julday_incslope=100, inc_slope=5, 
                          julday_decslope=200, dec_slope=2) {
@@ -445,7 +445,11 @@ laitm_simple_wrapper <- function(param_values=NULL, sit_names, model_options, ..
 
 The little code below shows an example of parameter estimation using this wrapper:
 
-```{r eval=FALSE}
+```{r eval=TRUE, message=FALSE, warning=FALSE}
+library(CroptimizR)
+library(dplyr)
+
+
 tmp <- laitm_simple_wrapper(sit_names="2005_a", param_values = c(inc_slope=25, dec_slope=10))
 
 # Create synthetic observations by selecting simulated results
@@ -460,14 +464,24 @@ res <- estim_param(obs_synth, crit_function = crit_ols,
             optim_options=optim_options,
             param_info = param_info)
 res$final_values
+
+# Plot the simulations obtained with the optimized values of the parameters VS the observed ones using the CroPlotR package.
+if(!require("CroPlotR")){
+    devtools::install_github("SticsRPacks/CroPlotR@*release")
+    library("CroPlotR")
+}
+tmp <- laitm_simple_wrapper(sit_names=c("2005_a","2006_b"),
+                            param_values = res$final_values)
+plot(tmp$sim_list,obs=obs_synth,type="scatter")
+
 ```
 
 
-### Another verions taking into account the different shapes param_values can take
+### Another version taking into account the different shapes param_values can take
  
 This one can be used to perform simultaneous estimation of specific and varietal parameters on a dataset including several cultivars.
 
-```{r eval=FALSE}
+```{r, eval=TRUE}
 laitm_simple_wrapper_v2 <- function(param_values=NULL, sit_names, model_options, ...) {
   
   # A basic wrapper for lai_toymodel  
@@ -554,7 +568,10 @@ laitm_simple_wrapper_v2 <- function(param_values=NULL, sit_names, model_options,
 The code below shows an example of a simultaneous estimation 
 of specific (dec_slope here) and varietal (inc_slope) parameters using this wrapper:
 
-```{r eval=FALSE}
+```{r eval=TRUE, message=FALSE, warning=FALSE}
+library(CroptimizR)
+library(dplyr)
+
 tmp <- laitm_simple_wrapper_v2(sit_names=c("2005_a","2006_b"),
                             param_values = dplyr::tibble(situation=c("2005_a","2006_b"),
                                                   inc_slope=c(25,50), dec_slope=c(10,10)))
@@ -577,6 +594,17 @@ res <- estim_param(obs_synth, crit_function = crit_ols,
             optim_options=optim_options,
             param_info = param_info)
 res$final_values
+
+# Plot the simulations obtained with the optimized values of the parameters VS the observed ones using the CroPlotR package.
+if(!require("CroPlotR")){
+    devtools::install_github("SticsRPacks/CroPlotR@*release")
+    library("CroPlotR")
+}
+tmp <- laitm_simple_wrapper_v2(sit_names=c("2005_a","2006_b"),
+                            param_values = dplyr::tibble(situation=c("2005_a","2006_b"),
+                                                  inc_slope=c(res$final_values[["inc_slope1"]],res$final_values[["inc_slope2"]]), dec_slope=res$final_values[["dec_slope"]]))
+plot(tmp$sim_list,obs=obs_synth,type="scatter")
+
 ```
 
 ### Other examples 
