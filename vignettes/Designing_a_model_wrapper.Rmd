@@ -150,7 +150,7 @@ model_wrapper <- function( param_values=NULL, sit_names, model_options, ...) {
   
   # Initializations
   param_names <- names(param_values)
-  results <- list(sim_list = setNames(vector("list",length(sit_names)), nm = sit_names)),
+  results <- list(sim_list = setNames(vector("list",length(sit_names)), nm = sit_names),
                  error=FALSE)
   attr(results$sim_list, "class")= "cropr_simulation"
   
