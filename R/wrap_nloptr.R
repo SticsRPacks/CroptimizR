@@ -68,6 +68,7 @@ wrap_nloptr <- function(param_names,optim_options,param_info,crit_options) {
 
   # Get the estimated values
   est_values=t(rbind(sapply(nlo,`[[`,"solution")))
+  names(est_values)=param_names
 
   # Which repetion has the smallest criterion
   ind_min_crit=which.min(sapply(nlo, function(x) x$objective))
