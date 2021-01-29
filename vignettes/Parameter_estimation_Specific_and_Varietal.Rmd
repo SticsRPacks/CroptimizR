@@ -68,7 +68,7 @@ gen_usms_xml2txt(javastics_path = javastics_path, workspace_path = javastics_wor
 
 ## Read and select the corresponding observations
 
-In this example, observed LAI are used for all USMs for which there is an observation file in `file.path(data_dir,"XmlFiles")` folder.
+In this example, observed LAI are used for all USMs for which there is an observation file in `javastics_workspace_path` folder.
 
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
@@ -124,31 +124,29 @@ optim_options$ranseed <- 1234 # random seed
 
 ## Run the optimization
 
-The Nelder-Mead simplex is the default method => no need to set the
-optim_method argument. For the moment it is the only method interfaced (others will come soon).
-Same for crit_function: a value is set by default (`crit_log_cwss`, see `? crit_log_cwss` for more details and list of available criteria). Others will be proposed in next versions of CroptimizR. The user can implement and give in argument its own criterion (see inputs and outputs required in the `crit_log_cwss` function).
+The optimization is performed here with the Nelder-Mead simplex method and `crit_log_cwss` criterion that are the default values in the `estim_param` function for the `optim_method` and `crit_function` arguments.
 
 
 ```{r eval=params$eval_auto_test, results='hide', message=FALSE, warning=FALSE}
-optim_results=estim_param(obs_list=obs_list,
+res=estim_param(obs_list=obs_list,
                             model_function=stics_wrapper,
                             model_options=model_options,
                             optim_options=optim_options,
                             param_info=param_info)
 ```
 
-
-The results printed in output on the R console are the following:
+The estimated values of the parameters are the following:
 
 ```{r eval=FALSE, echo=TRUE}
-## [1] "Estimated value for dlaimax :  0.00112078439658861"
-## [1] "Estimated value for durvieF1 :  400"
-## [1] "Estimated value for durvieF2 :  213.495265823847"
-## [1] "Minimum value of the criterion: -1.48441926984469"
+res$final_values
 ```
 
+```{r echo=FALSE, eval=params$eval_auto_vignette, warning=FALSE}
+load(file.path("ResultsSpecificVarietal","optim_results.Rdata"))
+res$final_values
+```
 
-Complementary graphs and data are stored in the `optim_options$path_results` folder. Among them, the EstimatedVSinit.pdf file contains the following figures: 
+The EstimatedVSinit.pdf file contains the following figures: 
 
 
 ```{r eval=params$eval_auto_vignette, echo=FALSE, out.width = '45%'}
@@ -163,13 +161,13 @@ Figure 1: plots of estimated vs initial values of parameters dlaimax and durvieF
 
 ## Compare simulations and observations before and after optimization
 
-A couple of plots to check if the calibration reduced the difference between simulations and observations.
+A piece of code to run the model with the values of the parameters before and after the optimization and to create a couple of plots using the [CroPlotR](https://github.com/SticsRPacks/CroPlotR) package to check if the calibration reduced the difference between simulations and observations:
 
 ```{r eval=params$eval_manual_vignette, message=FALSE, warning=FALSE}
 
 # Run the model without and with forcing the optimized values of the parameters
 sim_before_optim=stics_wrapper(model_options=model_options)
-sim_after_optim=stics_wrapper(param_values=optim_results$final_values,
+sim_after_optim=stics_wrapper(param_values=res$final_values,
                               model_options=model_options)
 
 stats <- summary(sim_before_optim$sim_list, obs= obs_list)
