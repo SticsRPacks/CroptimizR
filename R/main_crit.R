@@ -201,6 +201,8 @@ main_crit <- function(param_values, crit_options) {
   obs_sim_list$obs_list <- sapply(obs_sim_list$obs_list, function(x) {x[ , !(names(x) %in% "Plant"),drop=FALSE]},
                                   simplify = F)
 
+  # Check consistency of observations and simulations and make them consistent if possible
+  obs_sim_list <- CroptimizR:::make_obsSim_consistent(obs_sim_list$sim_list,  obs_sim_list$obs_list)
 
   # Compute criterion value
   crit=crit_function(obs_sim_list$sim_list, obs_sim_list$obs_list)

@@ -47,6 +47,12 @@ is.data <- function(data_list) {
     warning("Incorrect format: Date column in data.frame must contain values in Date or POSIXct format.")
     return(FALSE)
   }
+  # Check there are no replicated Dates
+  if (any(sapply(data_list, function(x) length(unique(x$Date))<length(x$Date)))) {
+    warning(paste("Incorrect format, Date column include replicated dates for situations",
+               paste(names(data_list)[sapply(data_list, function(x) length(unique(x$Date))<length(x$Date))],collapse = ",")))
+    return(FALSE)
+  }
 
   return(TRUE)
 
