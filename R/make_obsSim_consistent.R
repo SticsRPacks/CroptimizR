@@ -72,11 +72,13 @@ make_obsSim_consistent <- function(sim_list, obs_list) {
   for (situation in situations) {
     var_names <- intersect(names(obs_list[[situation]]),names(sim_list[[situation]]))
     var_names <- setdiff(var_names,c("Date","Plant"))
-    if (!all(sapply(var_names,function(x) class(obs_list[[situation]][[x]])[[1]]==class(sim_list[[situation]][[x]])[[1]]))) {
-      nonCoherent_sit <- c(nonCoherent_sit,situation)
-    }
-    if (!all(sapply(var_names,function(x) is.numeric(obs_list[[situation]][[x]])))) {
+    is_num_obs <- sapply(var_names,function(x) is.numeric(obs_list[[situation]][[x]]))
+    is_num_sim <- sapply(var_names,function(x) is.numeric(sim_list[[situation]][[x]]))
+    if (!all(is_num_obs) | !all(is_num_sim)) {
       nonNumeric_sit <- c(nonNumeric_sit,situation)
+    }
+    if (!all(is_num_obs==is_num_sim)) {
+      nonCoherent_sit <- c(nonCoherent_sit,situation)
     }
   }
   if (!is.null(nonCoherent_sit)) {
