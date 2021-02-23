@@ -113,40 +113,8 @@ wrap_optim <- function(param_names,optim_options,param_info,crit_options) {
 
   tryCatch(
     {
-      for (ipar in 1:nb_params) {
-
-        df <- data.frame(init_values=init_values[,ipar],est_values=est_values[,ipar],crit=crit)
-        row.names(df) = paste0(seq(1:nb_rep))
-
-        p <- ggplot(df, aes(x=init_values, y=est_values, size = crit)) +
-          geom_point(alpha=0.5, color="red") +
-          labs(title=paste0("Estimated vs Initial values of ",param_names[ipar] ," for different repetitions"),
-               y = paste("Estimated value for", param_names[ipar]),
-               x = paste("Initial value for", param_names[ipar]),
-               fill = "Criterion") +
-          geom_text(
-            label=rownames(df),
-            nudge_x = 0, nudge_y = 0,
-            check_overlap = T,
-            show.legend = F,
-            size = 4) +
-          geom_text(data=df[ind_min_crit,],
-                    label=rownames(df[ind_min_crit,]),
-                    nudge_x = 0, nudge_y = 0,
-                    check_overlap = T,
-                    show.legend = F,
-                    size = 4, color="white") +
-          xlim(minvalue[ipar],maxvalue[ipar]) + ylim(minvalue[ipar],maxvalue[ipar])
-
-        if (length(unique(crit))>1) {
-          p <- p +  scale_size_binned(range = c(2, 20), name="Final Value of \n minimized criteria")
-        } else {
-          p <- p +  scale_size(name="Final Value of \n minimized criteria")
-        }
-
-        print(p)
-
-      }
+      p <- plot_estimVSinit(init_values, est_values, crit, bounds$lb, bounds$ub)
+      print(p)
       grDevices::dev.off()
     },
     error=function(cond) {
@@ -156,30 +124,8 @@ wrap_optim <- function(param_names,optim_options,param_info,crit_options) {
               paste0(crit,collapse = ","),"\n Trying without the bubbles ...")
       message(cond)
 
-      for (ipar in 1:nb_params) {
-
-        df <- data.frame(init_values=init_values[,ipar],est_values=est_values[,ipar],crit=crit)
-        row.names(df) = paste0(seq(1:nb_rep))
-
-        print(ggplot(df, aes(x=init_values, y=est_values)) +
-                geom_point(alpha=0.5, color="red") +
-                labs(title=paste0("Estimated vs Initial values of ",param_names[ipar] ," for different repetitions"),
-                     y = paste("Estimated value for", param_names[ipar]),
-                     x = paste("Initial value for", param_names[ipar])) +
-                geom_text(
-                  label=rownames(df),
-                  nudge_x = 0, nudge_y = 0,
-                  check_overlap = T,
-                  show.legend = F,
-                  size = 4) +
-                geom_text(data=df[ind_min_crit,],
-                          label=rownames(df[ind_min_crit,]),
-                          nudge_x = 0, nudge_y = 0,
-                          check_overlap = T,
-                          show.legend = F,
-                          size = 4, color="white") +
-                xlim(minvalue[ipar],maxvalue[ipar]) + ylim(minvalue[ipar],maxvalue[ipar]) )
-      }
+      p <- plot_estimVSinit(init_values, est_values, crit, bounds$lb, bounds$ub, bubble=FALSE)
+      print(p)
       grDevices::dev.off()
     })
 
