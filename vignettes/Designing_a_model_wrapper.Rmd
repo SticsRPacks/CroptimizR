@@ -32,7 +32,7 @@ The first section presents the concepts for building a basic version of a model 
 
 We will detail here what is mandatory in terms of interface of the wrapper and expected behavior. Optional issues for more advanced users are detailed in the next section.
 
-**Please note that this basic version does not allow to perform simultaneous estimation of specific and varietal parameters on a dataset including several cultivars (i.e. as in the example detailed in (https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html)). Additional functionnalities are needed for that, as detailed in section "Optional issues".** 
+**Please note that this basic version does not allow to perform simultaneous estimation of specific and varietal parameters on a dataset including several cultivars (i.e. as in the example detailed in https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html). Additional functionnalities are needed for that, as detailed in section "Optional issues".** 
 
 ### Model wrapper interface
 
@@ -77,67 +77,67 @@ It is advisable to define `param_values` as an optional argument, so that the mo
 ### Minimum required functionalities
 
 * Run the model on a specified set of situations
-
-A situation corresponds to a simulation (for example a specific treatment on a given soil for a given period).
-
-To run your model from R, several technical solutions are possible depending on the language it is implemented with. 
-A simple solution (although not the most computationally efficient) is to run its executable using the R function `system2`.
-Otherwise, different languages can be directly interfaced in R: for example Python, using the R package `reticulate`, C and C++ (see e.g.  (https://www.r-bloggers.com/three-ways-to-call-cc-from-r/)), fortran (see e.g. (https://www.r-bloggers.com/fortran-and-r-speed-things-up/))...
-
+  
+  A situation corresponds to a simulation (for example a specific treatment on a given soil for a given period).
+  
+  To run your model from R, several technical solutions are possible depending on the language it is implemented with. 
+  A simple solution (although not the most computationally efficient) is to run its executable using the R function `system2`.
+  Otherwise, different languages can be directly interfaced in R: for example Python, using the R package `reticulate`, C and C++ (see e.g.  https://www.r-bloggers.com/three-ways-to-call-cc-from-r/), fortran (see e.g. https://www.r-bloggers.com/fortran-and-r-speed-things-up/)...
+  
 
 * Force the model with specified values of its parameters
 
-The values of the parameters are specified in the `param_values` vector. The names of the parameters can be retrieved using `names(param_values)`. 
+  The values of the parameters are specified in the `param_values` vector. The names of the parameters can be retrieved using `names(param_values)`. 
 
 * Return the simulated results for all simulated variables 
-
-The value returned by the model wrapper must be a list, noted `results` in the following. This list must contain an element named `sim_list`. `sim_list` must be a named list (names = situations names) of size the number of situations to simulate and having the attribute "cropr_simulation" (to use the [CroPlotR package](https://github.com/SticsRPacks/CroPlotR)). 
-You can initialize it like this: 
-
-`results$sim_list <- setNames(vector("list",length(sit_names)), nm = sit_names)`
-`attr(results$sim_list, "class")= "cropr_simulation"`
-
-Each element of the list should contains a data.frame (or a tibble) with the results obtained for all simulated variables and dates for the given situation.
-
-The data.frames must have one column called `Date` containing the simulations dates, in Date or POSIXct format (see R function `base::as.Date` or `base::as.POSIXct`). The other columns contains the values of the simulated variables, and their names must be put as column names.
-
-For example, if `sit_names` is `c("situation1","situation2","situation3"), sim_list should look like:
-
-```{r eval=FALSE}
-
-sim_list$situation1
-# A tibble: *** x ***
-   Date         var1    var2    var3  ...
-   <dttm>     <dbl>   <dbl>   <dbl> 
- 1 1994-10-17   0      2.53    4.80
- 2 1994-10-18   0      2.31    4.66
- 3 1994-10-19   0      4.55    4.44
-
-
-sim_list$situation2
-# A tibble: *** x ***
-   Date         var1    var2    var3  ...
-   <dttm>     <dbl>   <dbl>   <dbl> 
- 1 1995-10-17   0      2.60    4.80
- 2 1995-10-18   0      3.42    4.70
- 3 1995-10-19   0      5.25    4.45
-
-
-sim_list$situation3
-# A tibble: *** x ***
-   Date         var1    var2    var3  ...
-   <dttm>     <dbl>   <dbl>   <dbl> 
- 1 1996-10-17   0      2.41    4.81
- 2 1996-10-18   0      3.03    4.71
- 3 1996-10-19   0      5.10    4.47
-
-
-```
-
+  
+  The value returned by the model wrapper must be a list, noted `results` in the following. This list must contain an element named `sim_list`. `sim_list` must be a named list (names = situations names) of size the number of situations to simulate and having the attribute "cropr_simulation" (to use the [CroPlotR package](https://github.com/SticsRPacks/CroPlotR)). 
+  You can initialize it like this: 
+  
+  `results$sim_list <- setNames(vector("list",length(sit_names)), nm = sit_names)`
+  `attr(results$sim_list, "class")= "cropr_simulation"`
+  
+  Each element of the list should contains a data.frame (or a tibble) with the results obtained for all simulated variables and dates for the given situation.
+  
+  The data.frames must have one column called `Date` containing the simulations dates, in Date or POSIXct format (see R function `base::as.Date` or `base::as.POSIXct`). The other columns contains the values of the simulated variables, and their names must be put as column names.
+  
+  For example, if `sit_names` is `c("situation1","situation2","situation3"), sim_list should look like:
+  
+  ```{r eval=FALSE}
+  
+  sim_list$situation1
+  # A tibble: *** x ***
+     Date         var1    var2    var3  ...
+     <dttm>     <dbl>   <dbl>   <dbl> 
+   1 1994-10-17   0      2.53    4.80
+   2 1994-10-18   0      2.31    4.66
+   3 1994-10-19   0      4.55    4.44
+  
+  
+  sim_list$situation2
+  # A tibble: *** x ***
+     Date         var1    var2    var3  ...
+     <dttm>     <dbl>   <dbl>   <dbl> 
+   1 1995-10-17   0      2.60    4.80
+   2 1995-10-18   0      3.42    4.70
+   3 1995-10-19   0      5.25    4.45
+  
+  
+  sim_list$situation3
+  # A tibble: *** x ***
+     Date         var1    var2    var3  ...
+     <dttm>     <dbl>   <dbl>   <dbl> 
+   1 1996-10-17   0      2.41    4.81
+   2 1996-10-18   0      3.03    4.71
+   3 1996-10-19   0      5.10    4.47
+  
+  
+  ```
+  
 
 * Return an error code if any simulation failed
-
-If any simulation failed for any reason, use the R function `warning` to print any useful information about the error and set the variable `results$error` to `TRUE` (and to `FALSE` otherwise).
+  
+  If any simulation failed for any reason, use the R function `warning` to print any useful information about the error and set the variable `results$error` to `TRUE` (and to `FALSE` otherwise).
 
 
 ### Implementation
@@ -182,159 +182,169 @@ model_wrapper <- function( param_values=NULL, sit_names, model_options, ...) {
 
 ### Test your wrapper
 
-You can implement the following tests to check your wrapper is working as expected:
+* Check the results returned by the wrapper are identical to what is given by your model when used in a standard way (i.e. not through the wrapper)
 
-* run the wrapper with different values of parameters and check it gives different simulated values. 
+* Run the test_wrapper function
 
-You can do that using the following code:
-
-```{r eval=FALSE}
-
-param_names<-    # set the name of one or several model input parameters in a vector
-param_lb<-       # set the lower bounds of these parameters in a vector (no Inf or -Inf ...)
-param_ub<-       # set the upper bounds of these parameters in a vector (no Inf or -Inf ...)
-var_name<-       # give the name of an output variable sensitive to this (or these) parameter(s)
-situation_name<- # give the name of the situation to simulate 
-model_options<-  # give the model options
-wrapper<-        # give the name of your wrapper
-
+  `test_wrapper(model_function, model_options, param_values, sit_names, var_names=NULL)`
   
-param_values_min <- setNames(param_lb, param_names)
-param_values_max <- setNames(param_ub, param_names)
-sim_min       <- wrapper(param_values = param_values_min, model_options = model_options, 
-                         sit_names=situation_name)
-sim_max       <- wrapper(param_values = param_values_max, model_options = model_options, 
-                         sit_names=situation_name)
+  This function has been created to perfom several checks on user model wrappers.
+  
+  It takes in input:
+  
+    * model_function: the crop Model wrapper function to use.
+    * model_options: the list of options of the Crop Model wrapper.
+    * param_values: a named vector that contains values and names for AT LEAST TWO model parameters THAT ARE EXPECTED TO PLAY ON ITS RESULTS (e.g. param_values <- c(P1=10, P2=50))
+    * sit_names: a vector of situations names for which results must be tested.
+    * var_names (optional): a vector of variables names for which results must be tested (if taken into account by the wrapper)  
+  
+  
+  It runs the given model wrapper consecutively with different subsets of param_values. 
+  
+  It then checks:
+  
+    - the format of the returned results
+    - the results are different when different subsets of param_values are used,
+    - the results are identical when same subsets of param_values are used.  
+  
+  
+  If all tests succeed, it returns:
+  ```{r eval=TRUE, echo=FALSE}
+  cat(crayon::green("Test the wrapper returns outputs in expected format ...\n"))
+  cat(crayon::green("... OK\n"))
+  cat("\n")
+  cat(crayon::green("Test the wrapper gives identical results when running with same inputs ...\n"))
+  cat(crayon::green("... OK\n"))
+  cat("\n")
+  cat(crayon::green("Test the wrapper gives different results when running with different inputs ...\n"))
+  cat(crayon::green("... OK\n"))
+  ```
+  
+  If some test fails, information written in red should help you understanding the problem.
+  
+  Examples of use of this function are given in section **Examples** 
+  
 
-print(paste("Sum of differences, variable",var_name,", situation",situation_name," = ",
-             sum(abs(sim_max$sim_list[[situation_name]][,var_name] - 
-                     sim_min$sim_list[[situation_name]][,var_name]),na.rm=TRUE)))
-# Should give a value different from 0.
-   
-```
-
-* check the results returned by the wrapper are identical to what is given by your model when used in a standard way (i.e. not through the wrapper)
-
-* Try to play with the `estim_param` function on your wrapper for a simple case (e.g. a single situation, variable and parameter, see e.g. (https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html)).
+* Try to play with the `estim_param` function on your wrapper for a simple case (see e.g. examples in section **Examples** or https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html).
 
 
 ## Optional issues
 
 * Take into account different parameters values depending on the situation to simulate
 
-If you want your model wrapper to be used for simultaneous estimation of specific and varietal parameters on a dataset including several cultivars (e.g. as in the example detailed in (https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html)), the `param_values` argument must be able to receive a data.frame (or tibble) including a specific column named `situation`. In this case, the different lines of the data.frame will specify the values of the parameters to use in the model for the situation given in the column `situation`, as in the example below:
-```{r eval=FALSE}
-# A tibble: 4 x 4
-  situation  p1     p2     p3
-  <chr>     <dbl>  <dbl>  <dbl>
-1 sit1      50.14  1.14   340.43
-2 sit2      55.37  1.23   126.47
-3 sit3      43.22  2.12   234.56
-4 sit4      38.49  2.02   236.45
-```
-
-Depending on the application (simple case or simultaneous specific and varietal parameters estimation), the `estim_param` function will thus pass to the model wrapper either a named vector or a data.frame, including or not the `situation` column. Both shapes have thus to be handled in the model wrapper in this case. This may be done as in the following piece of code:
-
-```{r, eval=FALSE}
-
-# convert param_values in a tibble
-param_values <- tibble::tibble(!!!param_values) 
-
-# loop on the situations to simulate 
-for (sit in situation_list) {
+  If you want your model wrapper to be used for simultaneous estimation of specific and varietal parameters on a dataset including several cultivars (e.g. as in the example detailed in https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html), the `param_values` argument must be able to receive a data.frame (or tibble) including a specific column named `situation`. In this case, the different lines of the data.frame will specify the values of the parameters to use in the model for the situation given in the column `situation`, as in the example below:
+  ```{r eval=FALSE}
+  # A tibble: 4 x 4
+    situation  p1     p2     p3
+    <chr>     <dbl>  <dbl>  <dbl>
+  1 sit1      50.14  1.14   340.43
+  2 sit2      55.37  1.23   126.47
+  3 sit3      43.22  2.12   234.56
+  4 sit4      38.49  2.02   236.45
+  ```
   
-  # extract the parameters values to apply for the given situation
-  params <- NULL
-  if (!is.null(param_values)) {
-    if (! "situation" %in% names(param_values)) {
-      params <- param_values
-    } else {
-      params <- dplyr::filter(param_values, situation==sit) %>% 
-        dplyr::select(-situation)
-    }
-  }
+  Depending on the application (simple case or simultaneous specific and varietal parameters estimation), the `estim_param` function will thus pass to the model wrapper either a named vector or a data.frame, including or not the `situation` column. Both shapes have thus to be handled in the model wrapper in this case. This may be done as in the following piece of code:
   
-  # run the model with parameters values defined by params
+  ```{r, eval=FALSE}
+  
+  # convert param_values in a tibble
+  param_values <- tibble::tibble(!!!param_values) 
+  
+  # loop on the situations to simulate 
+  for (sit in situation_list) {
     
-}
-```
-
+    # extract the parameters values to apply for the given situation
+    params <- NULL
+    if (!is.null(param_values)) {
+      if (! "situation" %in% names(param_values)) {
+        params <- param_values
+      } else {
+        params <- dplyr::filter(param_values, situation==sit) %>% 
+          dplyr::select(-situation)
+      }
+    }
+    
+    # run the model with parameters values defined by params
+      
+  }
+  ```
+  
 
 * Check wrapper arguments:
 
-If possible implement any check you can concerning what is given to the wrapper. Print a message using the `warning` function and return TRUE in `results$error` if a problem is detected.
-It may be an unknown parameter name given in `param_values`, an unknown situation name given in `sit_name`, an incorrect model option (field of `model_option`) such as an incorrect model path for example ...
-
+  If possible implement any check you can concerning what is given to the wrapper. Print a message using the `warning` function and return TRUE in `results$error` if a problem is detected.
+  It may be an unknown parameter name given in `param_values`, an unknown situation name given in `sit_name`, an incorrect model option (field of `model_option`) such as an incorrect model path for example ...
+  
 * Perform parallel calculations:
 
-If possible with your model (pay attention to concurrency access to model input and output files), managing parallel simulations of the different situations to simulate may drastically reduce the execution time.
-
-The doParallel package can be used for that. There are specificities when coding a parallel loop: in particular, a list pre allocated outside of the loop is not shared between cores so return statements must be used inside. Here is an example for illustrating this issue:
-
-
-```{r warning=FALSE}
-# Code of an example of foreach loop algo
-library("doParallel")
-
-test_parallel <- function(cores_nb = 1,
-                          pa = FALSE,
-                          max_it = 5) {
-# pa: flag to switch from case with pre-allocated list to case with returned statement
+  If possible with your model (pay attention to concurrency access to model input and output files), managing parallel simulations of the different situations to simulate may drastically reduce the execution time.
   
+  The doParallel package can be used for that. There are specificities when coding a parallel loop: in particular, a list pre allocated outside of the loop is not shared between cores so return statements must be used inside. Here is an example for illustrating this issue:
+
   
-  # Launching the cluster
-  cl <- makeCluster(cores_nb)
-  registerDoParallel(cl)
+  ```{r warning=FALSE}
+  # Code of an example of foreach loop algo
+  library("doParallel")
   
-  # List preallocation
-  out_pa <- vector(mode = "list", max_it)
-  
-  # Parallel loop
-  out <- foreach(i = 1:max_it) %dopar% {
-    if (pa) {  
-      out_pa[[i]] <- i  # store results in a pre-allocted list
-    } else {
-      return(i)         # return the results
+  test_parallel <- function(cores_nb = 1,
+                            pa = FALSE,
+                            max_it = 5) {
+  # pa: flag to switch from case with pre-allocated list to case with returned statement
+    
+    
+    # Launching the cluster
+    cl <- makeCluster(cores_nb)
+    registerDoParallel(cl)
+    
+    # List preallocation
+    out_pa <- vector(mode = "list", max_it)
+    
+    # Parallel loop
+    out <- foreach(i = 1:max_it) %dopar% {
+      if (pa) {  
+        out_pa[[i]] <- i  # store results in a pre-allocted list
+      } else {
+        return(i)         # return the results
+      }
     }
+    
+    # Stopping the cluster
+    stopCluster(cl)
+    
+    if (pa) {
+      return(out_pa)
+    } else {
+      return(out)
+    }
+    
+    
   }
   
-  # Stopping the cluster
-  stopCluster(cl)
+  cores_nb=2
   
-  if (pa) {
-    return(out_pa)
-  } else {
-    return(out)
-  }
+  # Case with returned statement
+  out <- test_parallel(cores_nb)
   
+  # Case with pre-allocated list
+  out_pa <- test_parallel(cores_nb, TRUE)
   
-}
-
-cores_nb=2
-
-# Case with returned statement
-out <- test_parallel(cores_nb)
-
-# Case with pre-allocated list
-out_pa <- test_parallel(cores_nb, TRUE)
-
-out
-
-out_pa
-
-```
-
+  out
+  
+  out_pa
+  
+  ```
+  
 
 * Outputs selection
 
-Two additional arguments (`var_names` and `sit_var_dates_mask`) can be defined in the wrapper and are provided by the `estim_param` function when it calls the wrapper. 
-They can be used to select the results to return and are particularly useful if this selection allows saving computation time or memory (for example if model results are read in a databasis with specific request per variable and/or date, or if model results are read in different files depending on the variables ...).
-
-`var_names` is a vector of variables names for which results must be returned. 
-
-`sit_var_dates_mask` is a list of data.frame similar to `results$sim_list`. It indicates the list of variables and dates for each situation for which results must be returned: if `sit_var_dates_mask$situation1[j,"var1"]` does not contain NA, then the simulated value of variable "var1" at date `sit_var_dates_mask$situation1[j,"Date"]` must be returned in `results$sim_list[["situation1"]]`.
-
-It is advised to define them as optionnal arguments with default value equal to NULL. If not given or if they are NULL, the wrapper should return results for all simulated variables. If both arguments are handled in the model wrapper code (which is not mandatory: none of them or only one of them can be handled) and non-null values are given for both,  only `sit_var_dates_mask` should be taken into account since it is more detailed.
+  Two additional arguments (`var_names` and `sit_var_dates_mask`) can be defined in the wrapper and are provided by the `estim_param` function when it calls the wrapper. 
+  They can be used to select the results to return and are particularly useful if this selection allows saving computation time or memory (for example if model results are read in a databasis with specific request per variable and/or date, or if model results are read in different files depending on the variables ...).
+  
+  `var_names` is a vector of variables names for which results must be returned. 
+  
+  `sit_var_dates_mask` is a list of data.frame similar to `results$sim_list`. It indicates the list of variables and dates for each situation for which results must be returned: if `sit_var_dates_mask$situation1[j,"var1"]` does not contain NA, then the simulated value of variable "var1" at date `sit_var_dates_mask$situation1[j,"Date"]` must be returned in `results$sim_list[["situation1"]]`.
+  
+  It is advised to define them as optionnal arguments with default value equal to NULL. If not given or if they are NULL, the wrapper should return results for all simulated variables. If both arguments are handled in the model wrapper code (which is not mandatory: none of them or only one of them can be handled) and non-null values are given for both,  only `sit_var_dates_mask` should be taken into account since it is more detailed.
 
 
 ## Examples
@@ -443,7 +453,19 @@ laitm_simple_wrapper <- function(param_values=NULL, sit_names, model_options, ..
 }
 ```
 
-The little code below shows an example of parameter estimation using this wrapper:
+
+Testing this wrapper using the test_wrapper function: 
+
+```{r eval=TRUE, message=FALSE, warning=FALSE}
+library(CroptimizR)
+
+test_wrapper(model_function = laitm_simple_wrapper, model_options = NULL, 
+             param_values = c(inc_slope=25, dec_slope=10), sit_names = c("2005_a"))
+
+```
+
+
+The little piece of code below shows an example of parameter estimation using this wrapper:
 
 ```{r eval=TRUE, message=FALSE, warning=FALSE}
 library(CroptimizR)
@@ -565,6 +587,17 @@ laitm_simple_wrapper_v2 <- function(param_values=NULL, sit_names, model_options,
 ```
 
 
+Testing this wrapper using the test_wrapper function: 
+
+```{r eval=TRUE, message=FALSE, warning=FALSE}
+library(CroptimizR)
+
+test_wrapper(model_function = laitm_simple_wrapper_v2, model_options = NULL, 
+             param_values = c(inc_slope=25, dec_slope=10), sit_names = c("2005_a"))
+
+```
+
+
 The code below shows an example of a simultaneous estimation 
 of specific (dec_slope here) and varietal (inc_slope) parameters using this wrapper:
 
@@ -609,4 +642,4 @@ plot(tmp$sim_list,obs=obs_synth,type="scatter")
 
 ### Other examples 
 
-More complex examples of crop model wrappers for CroptimizR can be found in the SticsOnR package (https://github.com/SticsRPacks/SticsOnR/blob/master/R/stics_wrapper.R) for the Stics model and in the ApsimOnR package (https://github.com/hol430/ApsimOnR/blob/master/R/apsimx_wrapper.R) for ApsimX model.
+More complex examples of crop model wrappers for CroptimizR can be found in the SticsOnR package https://github.com/SticsRPacks/SticsOnR/blob/master/R/stics_wrapper.R for the Stics model and in the ApsimOnR package https://github.com/hol430/ApsimOnR/blob/master/R/apsimx_wrapper.R for ApsimX model.
