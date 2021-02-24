@@ -129,10 +129,10 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
     if (!all(sapply(param_info, function(x) is.element("sit_list",names(x))))) {
       stop("sit_list is defined for at least one parameter in argument param_info but not for all.")
     }
-    if (!all(unlist(sapply(param_info, function(x) setequal(unlist(x$sit_list),names(obs_list)),
-                           simplify = FALSE)))) {
-      stop("List of situations in argument param_info$***$sit_list are not identical to observed ones (names(obs_list)) for at least one parameter.")
-    }
+#    if (!all(unlist(sapply(param_info, function(x) setequal(unlist(x$sit_list),names(obs_list)),
+#                           simplify = FALSE)))) {
+#      stop("List of situations in argument param_info$***$sit_list are not identical to observed ones (names(obs_list)) for at least one parameter.")
+#    }
   }
   param_names=get_params_names(param_info)
 
