@@ -60,7 +60,8 @@ main_crit <- function(param_values, crit_options) {
 
   # Handle the case of group of parameters (i.e. different values depending on the situations)
   if  ("sit_list" %in% names(param_info[[1]])) {
-    param_values_df <- sapply(situation_names,
+    sit_names_param_info <- unique(unlist(lapply(param_info,function(x) {unlist(x$sit_list)})))
+    param_values_df <- sapply(sit_names_param_info,
                               function(x) CroptimizR:::get_params_per_sit(param_info,x,param_values),
                               simplify=FALSE)
     param_values <- dplyr::bind_rows(param_values_df, .id="situation")
