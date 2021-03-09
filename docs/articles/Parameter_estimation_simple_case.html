@@ -131,7 +131,7 @@
 <span id="cb2-2"><a href="#cb2-2"></a>javastics_path=path_to_JavaStics</span>
 <span id="cb2-3"><a href="#cb2-3"></a></span>
 <span id="cb2-4"><a href="#cb2-4"></a><span class="co"># Download the example USMs and define the path to the JavaStics workspace (JavaStics XML input files):</span></span>
-<span id="cb2-5"><a href="#cb2-5"></a>data_dir=<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/file.path">file.path</a></span>(SticsRFiles<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/SticsRFiles/topics/download_data">download_data</a></span>(),<span class="st">"study_case_1"</span>,<span class="st">"V9.0"</span>)</span>
+<span id="cb2-5"><a href="#cb2-5"></a>data_dir=<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/file.path">file.path</a></span>(SticsRFiles<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/SticsRFiles/topics/download_data">download_data</a></span>(example_dirs=<span class="st">"study_case_1"</span>, version_name = <span class="st">"V9.0"</span>))</span>
 <span id="cb2-6"><a href="#cb2-6"></a>javastics_workspace_path=<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/file.path">file.path</a></span>(data_dir,<span class="st">"XmlFiles"</span>)</span></code></pre></div>
 </div>
 <div id="generate-stics-input-files-from-javastics-input-files" class="section level2">
