@@ -4,8 +4,13 @@
 \alias{test_wrapper}
 \title{Test model wrappers}
 \usage{
-test_wrapper(model_function, model_options, param_values, sit_names,
-  var_names = NULL)
+test_wrapper(
+  model_function,
+  model_options,
+  param_values,
+  sit_names,
+  var_names = NULL
+)
 }
 \arguments{
 \item{model_function}{Crop Model wrapper function to use.}
@@ -17,7 +22,7 @@ the Crop Model wrapper function used).}
 
 \item{sit_names}{Vector of situations names for which results must be tested.}
 
-\item{var_names}{(optional) Vector of variables names for which results must be tested. If not provided}
+\item{var_names}{(optional) Vector of variables names for which results must be tested.}
 }
 \value{
 A list containing:
