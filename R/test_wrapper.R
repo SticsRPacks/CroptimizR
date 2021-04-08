@@ -12,7 +12,7 @@
 #'
 #' @param sit_names Vector of situations names for which results must be tested.
 #'
-#' @param var_names (optional) Vector of variables names for which results must be tested. If not provided
+#' @param var_names (optional) Vector of variables names for which results must be tested.
 #'
 #' @details This function runs the wrapper consecutively with different subsets of param_values.
 #' It then checks:
