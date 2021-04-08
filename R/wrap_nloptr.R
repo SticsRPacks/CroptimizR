@@ -30,11 +30,9 @@ wrap_nloptr <- function(param_names,optim_options,param_info,crit_options) {
   user_init_values=get_params_init_values(param_info)
 
   # Sample initial values and include user provided ones
-  init_values=sample_params(param_info,nb_rep,ranseed)
-  for (param in param_names) {
-    idx=which(!is.na(user_init_values[,param]))
-    init_values[idx,param]=user_init_values[idx,param]
-  }
+  init_values <- complete_init_values(user_init_values, nb_rep, lb = bounds$lb,
+                                      ub = bounds$ub, ranseed,
+                                      satisfy_par_const=crit_options$satisfy_par_const)
 
   # Run nloptr for each repetition
   nlo <- vector("list",nb_rep)
@@ -73,8 +71,8 @@ wrap_nloptr <- function(param_names,optim_options,param_info,crit_options) {
   ind_min_crit=which.min(sapply(nlo, function(x) x$objective))
 
   # Graph and print the results
-  tmp<-rbind(bounds$lb,bounds$ub,do.call(rbind,lapply(nlo,`[[`,"solution")), init_values)
-  tmp[is.infinite(tmp)]<-NA
+  tmp<-rbind(bounds$lb,bounds$ub,est_values, init_values)
+  tmp[apply(tmp,2,is.infinite)]<-NA
   minvalue<-apply(tmp,2,min,na.rm=TRUE); maxvalue<-apply(tmp,2,max,na.rm=TRUE)
   minvalue<-minvalue-0.05*(maxvalue-minvalue); maxvalue<-maxvalue+0.05*(maxvalue-minvalue)
   crit <- sapply(nlo, function(x) x$objective)

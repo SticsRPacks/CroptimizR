@@ -32,11 +32,9 @@ wrap_optim <- function(param_names,optim_options,param_info,crit_options) {
   user_init_values=get_params_init_values(param_info)
 
   # Sample initial values and include user provided ones
-  init_values=sample_params(param_info,nb_rep,ranseed)
-  for (param in param_names) {
-    idx=which(!is.na(user_init_values[,param]))
-    init_values[idx,param]=user_init_values[idx,param]
-  }
+  init_values <- complete_init_values(user_init_values, nb_rep, lb = bounds$lb,
+                                      ub = bounds$ub, ranseed,
+                                      satisfy_par_const=crit_options$satisfy_par_const)
 
   # Optim package switches the method to L-BFGS if bounds are provided since
   # they are not handled with other methods ...
@@ -93,8 +91,8 @@ wrap_optim <- function(param_names,optim_options,param_info,crit_options) {
   ind_min_crit=which.min(sapply(optim, function(x) {if (!is.null(x$value)) x$value}))
 
   # Graph and print the results
-  tmp<-rbind(bounds$lb,bounds$ub,do.call(rbind,lapply(optim,`[[`,"par")), init_values)
-  tmp[is.infinite(tmp)]<-NA
+  tmp<-rbind(bounds$lb,bounds$ub,est_values, init_values)
+  tmp[apply(tmp,2,is.infinite)]<-NA
   minvalue<-apply(tmp,2,min,na.rm=TRUE); maxvalue<-apply(tmp,2,max,na.rm=TRUE)
   minvalue<-minvalue-0.05*(maxvalue-minvalue); maxvalue<-maxvalue+0.05*(maxvalue-minvalue)
   crit <- sapply(optim, function(x) x$value)
