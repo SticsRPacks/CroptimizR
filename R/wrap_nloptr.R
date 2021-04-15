@@ -18,7 +18,7 @@
 #'
 
 wrap_nloptr <- function(param_names,optim_options,param_info,crit_options) {
-  if (is.null((nb_rep=optim_options$nb_rep))) { nb_rep=1 }
+  if (is.null((nb_rep=optim_options$nb_rep))) { nb_rep=5 }
   if (is.null((xtol_rel=optim_options$xtol_rel))) { xtol_rel=1e-4 }
   if (is.null((ftol_rel=optim_options$ftol_rel))) { ftol_rel=1e-10 }
   if (is.null((maxeval=optim_options$maxeval))) { maxeval=500 }

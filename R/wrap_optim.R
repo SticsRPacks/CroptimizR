@@ -19,7 +19,7 @@
 
 wrap_optim <- function(param_names,optim_options,param_info,crit_options) {
 
-  if (is.null((nb_rep=optim_options$nb_rep))) { nb_rep=1 }
+  if (is.null((nb_rep=optim_options$nb_rep))) { nb_rep=5 }
   if (is.null((ranseed=optim_options$ranseed))) { ranseed=NULL }
   if (is.null((hessian=optim_options$hessian))) { hessian=FALSE }
   if (is.null((method=optim_options$method))) { method="Nelder-Mead" }
