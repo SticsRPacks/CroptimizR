@@ -16,6 +16,19 @@ wrap_BayesianTools <- function(param_names,optim_options,param_info,crit_options
   if (is.null((ranseed=optim_options$ranseed))) { ranseed=NULL }
   if (is.null((path_results=optim_options$path_results))) { path_results=getwd() }
 
+  if (!is.numeric(optim_options$startValue)) {
+    stop("startValue should be the number of markov chains. Please use param_info$init_values to prescribe initial values for the parameters.")
+  }
+
+  nb_params=length(param_names)
+  bounds=get_params_bounds(param_info)
+  user_init_values=get_params_init_values(param_info)
+
+  # Sample initial values and include user provided ones
+  optim_options$startValue <- as.matrix(complete_init_values(user_init_values, optim_options$startValue, lb = bounds$lb,
+                                      ub = bounds$ub, ranseed,
+                                      satisfy_par_const=crit_options$satisfy_par_const))
+
   if (is.null((optim_options$method))) {
     method <- "DREAMzs"
   } else {
@@ -44,7 +57,6 @@ wrap_BayesianTools <- function(param_names,optim_options,param_info,crit_options
   if (!is.null(optim_options$path_results)) optim_options_BT<-within(optim_options_BT,rm("path_results"))
 
   set.seed(ranseed)
-  nb_params=length(param_names)
 
   likelihood<-function(x) {return(main_crit(x,crit_options))}
 
@@ -52,7 +64,6 @@ wrap_BayesianTools <- function(param_names,optim_options,param_info,crit_options
   bayesianSetup=optim_options$PreviousResults
   if (is.null(bayesianSetup)) {
 
-    bounds=get_params_bounds(param_info)
     prior=createUniformPrior(lower=bounds$lb, upper=bounds$ub)
     bayesianSetup = createBayesianSetup(likelihood = likelihood, prior=prior,
                                         names=param_names)
