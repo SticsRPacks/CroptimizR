@@ -76,6 +76,22 @@ wrap_BayesianTools <- function(param_names,optim_options,param_info,crit_options
   out <- runMCMC(bayesianSetup = bayesianSetup, sampler = method,
                  settings = optim_options_BT)
 
+  # Denormalize parameters
+  # would be better to denormalize each component of nlo ...
+  if (crit_options$norm_param) {
+    out$setup$info$priorLower <- crit_options$param_info$lb
+    out$setup$info$priorUpper <- crit_options$param_info$ub
+    out$setup$info$priorBest <- (crit_options$param_info$ub-crit_options$param_info$lb) / 2 + crit_options$param_info$lb
+    out$setup$info$plotLower <- out$setup$info$priorLower
+    out$setup$info$plotUpper <- out$setup$info$priorUpper
+    out$setup$info$plotBest <- out$setup$info$priorBest
+    out$chain <- coda::as.mcmc.list(lapply(out$chain, function(x) {
+      coda::as.mcmc(cbind(denormalize_params(crit_options$param_info, x[,1:(ncol(x)-3)]), x[,(ncol(x)-2):ncol(x)]))}))
+
+    out$X <- denormalize_params(crit_options$param_info, out$X)
+    out$Z <- denormalize_params(crit_options$param_info, out$Z)
+  }
+
   # Get a sample of the posterior
   post_sample=getSample(out,coda=FALSE)
 

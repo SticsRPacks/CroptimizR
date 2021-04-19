@@ -86,8 +86,14 @@ wrap_optim <- function(param_names,optim_options,param_info,crit_options) {
   # Get the estimated values
   est_values=t(rbind(sapply(optim,`[[`,"par")))
   colnames(est_values)=param_names
+  # Denormalize parameters
+  # would be better to denormalize each component of optim ...
+  if (crit_options$norm_param) {
+    est_values <- denormalize_params(crit_options$param_info, est_values)
+    init_values <- denormalize_params(crit_options$param_info, init_values)
+  }
 
-  # Which repetion has the smallest criterion
+  # Which repetition has the smallest criterion
   ind_min_crit=which.min(sapply(optim, function(x) {if (!is.null(x$value)) x$value}))
 
   # Graph and print the results

@@ -44,6 +44,7 @@ main_crit <- function(param_values, crit_options) {
   satisfy_par_const <- crit_options$satisfy_par_const
   var_names <- crit_options$var_names
   forced_param_values <- crit_options$forced_param_values
+  normalize <- crit_options$normalize
 
   names(param_values) <- param_names
   situation_names <- names(obs_list)
@@ -53,7 +54,9 @@ main_crit <- function(param_values, crit_options) {
   crit <- NA
 
   # Denormalize parameters
-  # TO DO
+  if (norm_param) {
+    param_values <- denormalize_params(param_info, param_values)
+  }
 
   # Transform parameters
   # TO DO

@@ -4,14 +4,25 @@
 \alias{estim_param}
 \title{main function for parameter estimation}
 \usage{
-estim_param(obs_list, crit_function = crit_log_cwss, model_function,
-  model_options = NULL, optim_method = "nloptr.simplex", optim_options,
-  param_info, forced_param_values = NULL, transform_obs = NULL,
-  transform_sim = NULL, satisfy_par_const = NULL, var_names = NULL)
+estim_param(
+  obs_list,
+  crit_function = crit_log_cwss,
+  model_function,
+  model_options = NULL,
+  optim_method = "nloptr.simplex",
+  optim_options,
+  param_info,
+  forced_param_values = NULL,
+  transform_obs = NULL,
+  transform_sim = NULL,
+  satisfy_par_const = NULL,
+  var_names = NULL,
+  norm_param = FALSE
+)
 }
 \arguments{
 \item{obs_list}{List of observed values to use for parameter estimation
-A \code{named list} (names = situations names) of data.frame containing
+A \verb{named list} (names = situations names) of data.frame containing
 one column named Date with the dates (Date or POSIXct format) of the different observations
 and one column per observed variables with either the measured values or NA, if
 the variable is not observed at the given date.}
@@ -76,6 +87,8 @@ By default the wrapper is asked to simulate only the observed variables. However
 it may be useful to simulate also other variables, typically when transform_sim
 and/or transform_obs functions are used. Note however that it is active only if
 the model_function used handles this argument.}
+
+\item{norm_param}{Must parameters be normalized (TRUE) or not (FALSE).}
 }
 \value{
 prints, graphs and a list containing the results of the parameter estimation,

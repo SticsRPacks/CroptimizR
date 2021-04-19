@@ -53,6 +53,7 @@
 #' it may be useful to simulate also other variables, typically when transform_sim
 #' and/or transform_obs functions are used. Note however that it is active only if
 #' the model_function used handles this argument.
+#' @param norm_param Must parameters be normalized (TRUE) or not (FALSE).
 #'
 #' @details
 #'   The optional argument `transform_obs` must be a function with 4 arguments:
@@ -94,7 +95,7 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
                         model_options=NULL, optim_method="nloptr.simplex",
                         optim_options, param_info, forced_param_values=NULL,
                         transform_obs=NULL, transform_sim=NULL, satisfy_par_const=NULL,
-                        var_names=NULL) {
+                        var_names=NULL, norm_param=FALSE) {
 
   # Measured elapse time
   tictoc::tic.clearlog()
@@ -158,8 +159,12 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
                     satisfy_par_const=satisfy_par_const,
                     path_results=optim_options$path_results,
                     var_names=var_names,
-                    forced_param_values=forced_param_values)
+                    forced_param_values=forced_param_values,
+                    norm_param=norm_param)
 
+  if (norm_param) {
+    param_info <- normalize_params(param_info)
+  }
   result=optim_switch(param_names,optim_method,optim_options,param_info,crit_options)
 
 

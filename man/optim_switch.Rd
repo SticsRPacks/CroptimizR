@@ -4,8 +4,13 @@
 \alias{optim_switch}
 \title{Call the required parameter estimation method}
 \usage{
-optim_switch(param_names, optim_method, optim_options, param_info,
-  crit_options)
+optim_switch(
+  param_names,
+  optim_method,
+  optim_options,
+  param_info,
+  crit_options
+)
 }
 \arguments{
 \item{param_names}{Name(s) of parameters to estimate (a parameter name must
