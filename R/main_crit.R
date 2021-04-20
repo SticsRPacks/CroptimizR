@@ -44,7 +44,7 @@ main_crit <- function(param_values, crit_options) {
   satisfy_par_const <- crit_options$satisfy_par_const
   var_names <- crit_options$var_names
   forced_param_values <- crit_options$forced_param_values
-  normalize <- crit_options$normalize
+  norm_param <- crit_options$norm_param
 
   names(param_values) <- param_names
   situation_names <- names(obs_list)
