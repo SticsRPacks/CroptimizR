@@ -17,10 +17,10 @@ License: file LICENSE
 Encoding: UTF-8
 LazyData: true
 ByteCompile: true
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Imports:
     nloptr,
-    DiceDesign,
+    lhs,
     BayesianTools,
     coda,
     rstudioapi,
