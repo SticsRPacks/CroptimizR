@@ -20,7 +20,7 @@ ByteCompile: true
 RoxygenNote: 7.1.1
 Imports:
     nloptr,
-    DiceDesign,
+    lhs,
     BayesianTools,
     coda,
     rstudioapi,

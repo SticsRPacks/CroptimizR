@@ -25,8 +25,8 @@ sample values in given distribution
 }
 \details{
 For the moment only works with uniform distributions but will be
-hopefully soon extended to any distribution. Use randomized LHS (from
-DiceDesign package)
+hopefully soon extended to any distribution. Use genetic LHS (from
+lhs package)
 }
 \examples{
 bounds_list <- list(lb = c(0, 1, 2), ub = c(1, 2, 3))
