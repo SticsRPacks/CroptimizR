@@ -7,9 +7,9 @@
 plot_estimVSinit(init_values, est_values, crit, lb, ub, bubble = TRUE)
 }
 \arguments{
-\item{init_values}{Data.frame containing initial values of the parameters}
+\item{init_values}{Data.frame containing initial values of the parameters for each repetition}
 
-\item{est_values}{Data.frame containing estimated values of the parameters}
+\item{est_values}{Data.frame containing estimated values of the parameters for each repetition}
 
 \item{crit}{Vector containing the minimum value of the criterion for each repetition of the minimization}
 
