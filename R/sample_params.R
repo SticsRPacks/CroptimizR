@@ -9,8 +9,8 @@
 #' @param seed The seed of the random generator (optional, default value=NULL)
 #'
 #' @details For the moment only works with uniform distributions but will be
-#' hopefully soon extended to any distribution. Use randomized LHS (from
-#' DiceDesign package)
+#' hopefully soon extended to any distribution. Use genetic LHS (from
+#' lhs package)
 #'
 #' @return A vector or data.frame containing the sampled values (nrow=n)
 #'
@@ -24,7 +24,8 @@ sample_params <- function(bounds_list, n, seed = NULL) {
 
   nb_params <- length(bounds$lb)
 
-  out <- DiceDesign::lhsDesign(n, dimension = nb_params, seed = seed)$design
+  if (!is.null(seed)) set.seed(seed)
+  out <- lhs::geneticLHS(n = n, k = nb_params)
   res <- sapply(
     1:nb_params,
     function(x) bounds$lb[x] + out[, x] * (bounds$ub[x] - bounds$lb[x])

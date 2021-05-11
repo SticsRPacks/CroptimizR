@@ -6,10 +6,11 @@
 [![Project Status: WIP – Initial development is in progress, but there
 has not yet been a stable, usable release suitable for the
 public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
-[![Travis build
-status](https://travis-ci.org/SticsRPacks/CroptimizR.svg?branch=master)](https://travis-ci.org/SticsRPacks/CroptimizR)
+[![R build
+status](https://github.com/SticsRPacks/SticsOptimizR/workflows/R-CMD-check/badge.svg)](https://github.com/SticsRPacks/SticsOptimizR/actions)
 [![Codecov test
 coverage](https://codecov.io/gh/SticsRPacks/CroptimizR/branch/master/graph/badge.svg)](https://codecov.io/gh/SticsRPacks/CroptimizR?branch=master)
+[![DOI](https://zenodo.org/badge/187874725.svg)](https://zenodo.org/badge/latestdoi/187874725)
 
 ## Overview
 
@@ -50,11 +51,14 @@ following sections. The list of functions accessible to the users is
 provided in this
 [webpage](https://sticsrpacks.github.io/CroptimizR/reference/index.html).
 
-**The package is under intensive development and is still in a beta
-version.**
+**The package is under intensive development, you can fill an issue or
+request a feature
+[here](https://github.com/SticsRPacks/CroptimizR/issues) at any time.**
 
-You can fill an issue or request a feature
-[here](https://github.com/SticsRPacks/CroptimizR/issues) at any time.
+If you want to be notified when a new release of this package is made,
+you can tick the Releases box in the “Watch / Unwatch =\> Custom” menu
+at the top right of [this
+page](https://github.com/SticsRPacks/CroptimizR).
 
 ## Planned features
 
@@ -207,10 +211,10 @@ installation procedure in this
 [vignette](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html)).
 
 The package is tested routinely to pass all
-[CRAN](https://CRAN.R-project.org) tests using Travis-CI, but it is not
-yet released to the CRAN servers: CroptimizR is still under development
-and users are not yet widespread enough to bother CRAN people and use
-their free server time.
+[CRAN](https://CRAN.R-project.org) tests using GitHub-actions, but it is
+not yet released to the CRAN servers: CroptimizR is still under
+development and users are not yet widespread enough to bother CRAN
+people and use their free server time.
 
 ## Examples
 

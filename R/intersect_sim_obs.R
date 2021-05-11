@@ -12,10 +12,10 @@ intersect_sim_obs <- function(sim_list, obs_list) {
   # Intersect situations
   situations <- intersect(names(sim_list), names(obs_list))
   if (length(situations) < length(names(sim_list))) {
-    sim_list[[setdiff(names(sim_list), situations)]] <- NULL
+    sim_list[setdiff(names(sim_list), situations)] <- NULL
   }
   if (length(situations) < length(names(obs_list))) {
-    obs_list[[setdiff(names(obs_list), situations)]] <- NULL
+    obs_list[setdiff(names(obs_list), situations)] <- NULL
   }
 
   # Intersect variables
@@ -65,6 +65,27 @@ intersect_sim_obs <- function(sim_list, obs_list) {
     function(x) obs_list[[x]][is.element(obs_list[[x]]$Date, list_dates[[x]]), ],
     simplify = F
   )
+
+
+  # Remove rows (i.e. Dates) for which all obs variables are NA
+  sapply(names(obs_list), function(y) {
+    ind<-apply(obs_list[[y]][-1], 1, function(x) any(!is.na(x)))
+    obs_list[[y]]<<-obs_list[[y]][ind,]
+    sim_list[[y]]<<-sim_list[[y]][ind,]
+  })
+
+
+  # Remove cols (i.e. Variables) for which all obs values are NA
+  sapply(names(obs_list), function(y) {
+    ind<-apply(obs_list[[y]], 2, function(x) all(is.na(x)))
+    var_2_remove<-names(obs_list[[y]])[ind]
+    obs_list[[y]][var_2_remove]<<-NULL
+    sim_list[[y]][var_2_remove]<<-NULL
+    if (length(obs_list[[y]])==0) {
+      obs_list[[y]]<<-NULL
+      sim_list[[y]]<<-NULL
+    }
+  })
 
   return(list(sim_list = sim_list, obs_list = obs_list))
 }

@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CroptimizR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0.9003</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9000</span>
       </span>
     </div>
 
@@ -102,7 +102,7 @@
       <h1>Parameter estimation with the Stics crop Model: a case with specific and varietal parameters</h1>
                         <h4 class="author">Samuel Buis</h4>
                         
-            <h4 class="date">2020-04-14</h4>
+            <h4 class="date">2020-10-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/master/vignettes/Parameter_estimation_Specific_and_Varietal.Rmd"><code>vignettes/Parameter_estimation_Specific_and_Varietal.Rmd</code></a></small>
       <div class="hidden name"><code>Parameter_estimation_Specific_and_Varietal.Rmd</code></div>
@@ -146,8 +146,7 @@
 <div id="set-options-for-the-model" class="section level2">
 <h2 class="hasAnchor">
 <a href="#set-options-for-the-model" class="anchor"></a>Set options for the model</h2>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>model_options=<span class="kw">stics_wrapper_options</span>(stics_path,stics_inputs_path,</span>
-<span id="cb3-2"><a href="#cb3-2"></a>                                    <span class="dt">parallel=</span><span class="ot">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>model_options=<span class="st"> </span><span class="kw">stics_wrapper_options</span>(javastics_path, <span class="dt">data_dir =</span> stics_inputs_path, <span class="dt">parallel=</span><span class="ot">TRUE</span>)</span></code></pre></div>
 </div>
 <div id="set-options-for-the-parameter-estimation-method" class="section level2">
 <h2 class="hasAnchor">
@@ -214,8 +213,8 @@
 <span id="cb7-25"><a href="#cb7-25"></a>                              <span class="dt">model_options=</span>model_options)</span>
 <span id="cb7-26"><a href="#cb7-26"></a>  </span>
 <span id="cb7-27"><a href="#cb7-27"></a><span class="co"># transform into data.frame and intersect for using ggplot2</span></span>
-<span id="cb7-28"><a href="#cb7-28"></a>sim_before_df =<span class="st"> </span><span class="kw">bind_rows</span>(sim_before_optim<span class="op">$</span>sim_list[[<span class="dv">1</span>]],<span class="dt">.id =</span> <span class="st">'Situation'</span>)</span>
-<span id="cb7-29"><a href="#cb7-29"></a>sim_after_df =<span class="st"> </span><span class="kw">bind_rows</span>(sim_after_optim<span class="op">$</span>sim_list[[<span class="dv">1</span>]],<span class="dt">.id =</span> <span class="st">'Situation'</span>)</span>
+<span id="cb7-28"><a href="#cb7-28"></a>sim_before_df =<span class="st"> </span><span class="kw">bind_rows</span>(sim_before_optim<span class="op">$</span>sim_list,<span class="dt">.id =</span> <span class="st">'Situation'</span>)</span>
+<span id="cb7-29"><a href="#cb7-29"></a>sim_after_df =<span class="st"> </span><span class="kw">bind_rows</span>(sim_after_optim<span class="op">$</span>sim_list,<span class="dt">.id =</span> <span class="st">'Situation'</span>)</span>
 <span id="cb7-30"><a href="#cb7-30"></a>obs_df =<span class="st"> </span><span class="kw">bind_rows</span>(obs_list,<span class="dt">.id =</span> <span class="st">'Situation'</span>)</span>
 <span id="cb7-31"><a href="#cb7-31"></a>sim_before_df =<span class="st"> </span><span class="kw">rename</span>(sim_before_df,<span class="dt">LAI_sim=</span>lai_n)</span>
 <span id="cb7-32"><a href="#cb7-32"></a>sim_after_df =<span class="st"> </span><span class="kw">rename</span>(sim_after_df,<span class="dt">LAI_sim=</span>lai_n)</span>

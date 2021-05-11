@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Likelihood — Likelihood • CroptimizR</title>
+<title>A wrapper for optim function — wrap_optim • CroptimizR</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -37,9 +37,9 @@
 
 
 
-<meta property="og:title" content="Likelihood — Likelihood" />
+<meta property="og:title" content="A wrapper for optim function — wrap_optim" />
 
-<meta property="og:description" content="Provide several likelihood to estimate parameters using bayesian methods." />
+<meta property="og:description" content="A wrapper for optim function" />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CroptimizR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9000</span>
       </span>
     </div>
 
@@ -98,7 +98,13 @@
       <a href="../articles/ApsimX_parameter_estimation_simple_case.html">Parameter estimation with the ApsimX crop Model: a simple case</a>
     </li>
     <li>
-      <a href="../articles/Designing_a_model_wrapper.html">Elements for implementing a crop model R wrapper</a>
+      <a href="../articles/Available_parameter_estimation_algorithms.html">Available parameter estimation algorithms in CroptimizR</a>
+    </li>
+    <li>
+      <a href="../articles/Designing_a_model_wrapper.html">Guidelines for implementing a crop model R wrapper for CroptimizR</a>
+    </li>
+    <li>
+      <a href="../articles/Parameter_estimation_DREAM.html">Parameter estimation with the DREAM-zs algorithm</a>
     </li>
     <li>
       <a href="../articles/Parameter_estimation_simple_case.html">Parameter estimation with the Stics crop Model: a simple case</a>
@@ -129,52 +135,75 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Likelihood</h1>
-    <small class="dont-index">Source: <a href='https://github.com/SticsRPacks/CroptimizR/blob/master/R/likelihood.R'><code>R/likelihood.R</code></a></small>
-    <div class="hidden name"><code>Likelihood.Rd</code></div>
+    <h1>A wrapper for optim function</h1>
+    <small class="dont-index">Source: <a href='https://github.com/SticsRPacks/CroptimizR/blob/master/R/wrap_optim.R'><code>R/wrap_optim.R</code></a></small>
+    <div class="hidden name"><code>wrap_optim.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Provide several likelihood to estimate parameters using bayesian methods.</p>
+    <p>A wrapper for optim function</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>likelihood_ciidn</span>(<span class='no'>sim_list</span>, <span class='no'>obs_list</span>)
-
-<span class='fu'>likelihood_log_ciidn</span>(<span class='no'>sim_list</span>, <span class='no'>obs_list</span>)
-
-<span class='fu'>likelihood_ciidn_corr</span>(<span class='no'>sim_list</span>, <span class='no'>obs_list</span>)</pre>
+    <pre class="usage"><span class='fu'>wrap_optim</span>(<span class='no'>param_names</span>, <span class='no'>optim_options</span>, <span class='no'>param_info</span>, <span class='no'>crit_options</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>sim_list</th>
-      <td><p>List of simulated variables</p></td>
+      <th>param_names</th>
+      <td><p>Name(s) of parameters to estimate (a parameter name must
+be replicated if several groups of situations for this parameter)</p></td>
     </tr>
     <tr>
-      <th>obs_list</th>
-      <td><p>List of observed variables</p></td>
+      <th>optim_options</th>
+      <td><p>List of options of the parameter estimation method.
+<code>path_results</code> The path where to store the results (optional, default=getwd())
+Click on the links to see the specific options for the <a href='https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html'>simplex</a>
+and <a href='https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html'>DreamZS</a> methods.</p></td>
+    </tr>
+    <tr>
+      <th>param_info</th>
+      <td><p>Information on the parameters to estimate.
+Either
+a list containing:</p><ul>
+<li><p>(named) vectors of upper and lower bounds (<code>ub</code> and <code>lb</code>) (-Inf and Inf can be used),</p></li>
+<li><p><code>init_values</code>, A data.frame containing initial
+values to test for the parameters (optional, if not provided, or if less values
+than number of repetitions of the minimization are provided), the, or part
+of the, initial values will be randomly generated using LHS sampling within
+parameter bounds).</p></li>
+</ul>
+
+<p>or
+a named list containing for each parameter the list of situations per group
+(<code>sit_list</code>), the vector of upper and lower bounds (one value per group)
+(<code>ub</code> and <code>lb</code>) and the list of initial values per group
+<code>init_values</code> (data.frame, one column per group, optional).
+(see <a href='https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html'>here</a>
+for an example)</p></td>
+    </tr>
+    <tr>
+      <th>crit_options</th>
+      <td><p>List containing several arguments given to <code>estim_param</code> function:
+<code>param_names</code>, <code>obs_list</code>, <code>crit_function</code>, <code>model_function</code>, <code>model_options</code>,
+<code>param_info</code>, <code>transform_obs</code>, <code>transform_sim</code>
+that must be passed to main_crit function by the methods wrappers.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>The value of the likelihood given the observed and simulated values of the variables.</p>
-    
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>The following likelihood are proposed (<a href='https://sticsrpacks.github.io/CroptimizR/reference/likelihood.html'>see html version</a> for a better rendering of equations):</p><ul>
-<li><p><code>likelihood_ciidn</code>: concentrated version of iid normal likelihood
-$$ \prod_{j} {\sum_{i,k} [Y_{ijk}-f_{jk}(X_i;\theta)]^2 )}^{-(n_j/2+2)} $$
-where \( Y_{ijk} \) is the observed value for the \(k^{th}\) time point of the \(j^{th}\) variable in the \(i^{th}\)
-situation,
-\( f_{jk}(X_i;\theta) \) the corresponding model prediction, and \(n_j\) the number of measurements of variable \(j\). <br />
-More details about this criterion are given in Wallach et al. (2011), equation 5.</p></li>
-<li><p><code>likelihood_log_ciidn</code>: log transformation of concentrated version of iid normal likelihood <br /></p></li>
-</ul><p><code>sim_list</code> and <code>obs_list</code> must have the same structure (i.e. same number of variables, dates, situations, ... use internal function
-intersect_sim_obs before calling the criterion functions).</p>
+    <p>prints, graphs and a list containing:
+<code>final_values</code>, the vector of estimated values for optimized parameters
+for the repetition that lead to the lowest value of the criterion
+<code>init_values</code>, the vector of initial values for optimized parameters
+<code>est_values</code>, the vector of estimated values for optimized parameters
+for all repetitions
+<code>ind_min_crit</code>, the index of the repetition that lead to the lowest value
+of the criterion
+<code>optim</code>, the data structure returned by nloptr</p>
     
 
   </div>
@@ -184,8 +213,6 @@ intersect_sim_obs before calling the criterion functions).</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-
-      <li><a href="#details">Details</a></li>
           </ul>
 
   </div>

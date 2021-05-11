@@ -47,6 +47,12 @@ is.data <- function(data_list) {
     warning("Incorrect format: Date column in data.frame must contain values in Date or POSIXct format.")
     return(FALSE)
   }
+  # Check there are no replicated Dates
+  if (any(sapply(data_list, function(x) length(unique(x$Date))<length(x$Date)))) {
+    warning(paste("Incorrect format, Date column include replicated dates for situations",
+               paste(names(data_list)[sapply(data_list, function(x) length(unique(x$Date))<length(x$Date))],collapse = ",")))
+    return(FALSE)
+  }
 
   return(TRUE)
 
@@ -61,31 +67,20 @@ is.data <- function(data_list) {
 #'
 #' @examples
 #'
-#' sim_list <- vector("list",2)
-#' sim_list[[1]] <- list(sit1=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-10")),
-#'                                       var1=c(1.1,1.5),var2=c(NA,2.1)),
-#'                  sit2=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-5")),
-#'                                  var1=c(1.3,2)))
-#' sim_list[[2]] <- list(sit1=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-10")),
+#' sim_list <- list(sit1=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-10")),
 #'                                       var1=c(1.1,1.5),var2=c(NA,2.1)),
 #'                  sit2=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-5")),
 #'                                  var1=c(1.3,2)))
 #' CroptimizR:::is.sim(sim_list)
 #'
 #' # Missing Date column
-#' sim_list <- vector("list",2)
-#' sim_list[[1]] <- list(sit1=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-10")),
-#'                                       var1=c(1.1,1.5),var2=c(NA,2.1)),
-#'                  sit2=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-5")),
-#'                                  var1=c(1.3,2)))
-#' sim_list[[2]] <- list(sit1=data.frame(var1=c(1.1,1.5),var2=c(NA,2.1)),
+#' sim_list <- list(sit1=data.frame(var1=c(1.1,1.5),var2=c(NA,2.1)),
 #'                  sit2=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-5")),
 #'                                  var1=c(1.3,2)))
 #' CroptimizR:::is.sim(sim_list)
 #'
 #' # Bad Date format
-#' sim_list <- vector("list",1)
-#' sim_list[[1]] <- list(sit1=data.frame(Date=c("2009-11-30","2009-12-10"),
+#' sim_list <- list(sit1=data.frame(Date=c("2009-11-30","2009-12-10"),
 #'                                       var1=c(1.1,1.5),var2=c(NA,2.1)),
 #'                  sit2=data.frame(Date=c("2009-11-30","2009-12-5"),var1=c(1.3,2)))
 #' CroptimizR:::is.sim(sim_list)
@@ -94,7 +89,7 @@ is.data <- function(data_list) {
 #'
 is.sim <- function(sim_list) {
 
-  if (!all(sapply(sim_list, CroptimizR:::is.data))) {
+  if (!CroptimizR:::is.data(sim_list)) {
     warning("Variable storing simulated data has an incorrect format.")
     return(FALSE)
   }

@@ -28,7 +28,7 @@ knitr::opts_chunk$set(eval = params$eval_rmd)
 
 A simple parameter estimation with a single situation, a single observed variable and 2 estimated parameters, just to illustrate how to use the package with the ApsimX model.
 
-The parameter estimation is performed using the Nelder-Meade simplex method implemented in the `nloptr` package.
+The parameter estimation is performed using the Nelder-Mead simplex method implemented in the `nloptr` package.
 
 
 ## Initialisation step
@@ -41,6 +41,10 @@ if(!require("CroptimizR")){
   devtools::install_github("SticsRPacks/CroptimizR@*release")
   library("CroptimizR")
 }
+if(!require("CroPlotR")){
+  devtools::install_github("SticsRPacks/CroPlotR@*release")
+  library("CroPlotR")
+}
 if(!require("ApsimOnR")){
   devtools::install_github("hol430/ApsimOnR")
   library("ApsimOnR")
@@ -49,9 +53,17 @@ if(!require("dplyr")){
   install.packages("dplyr",repos="http://cran.irsn.fr")
   library("dplyr")
 }
+if(!require("ggplot2")){
+  install.packages("ggplot2",repos="http://cran.irsn.fr")
+  library("ggplot2")
+}
+if(!require("gridExtra")){
+  install.packages("gridExtra",repos="http://cran.irsn.fr")
+  library("gridExtra")
+}
 
 # DEFINE THE PATH TO THE LOCALLY INSTALLED VERSION OF APSIM (should be something like C:/path/to/apsimx/bin/Models.exe on windows, and /usr/local/bin/Models on linux)
-apsimx_path <- path_to_Apsim
+apsimx_path <- "D:\\Home\\sbuis\\Documents\\OUTILS\\APSIM2021.01.20.5937\\Bin\\Models.exe"
 ```
 
 
@@ -155,7 +167,7 @@ optim_options=list()
 optim_options$nb_rep <- 7 # Number of repetitions of the minimization 
                           # (each time starting with different initial
                           # values for the estimated parameters) 
-optim_options$maxeval <-  500 # Maximum number of evaluations of the 
+optim_options$maxeval <- 500 # Maximum number of evaluations of the 
                              # minimized criteria 
 optim_options$xtol_rel <- 1e-03 # Tolerance criterion between two iterations
                                 # (threshold for the relative difference of 
@@ -171,60 +183,43 @@ optim_options$ranseed <- 1234 # set random seed so that each execution give the 
 
 ## Run the optimization
 
-The Nelder-Meade simplex is the default method => no need to set the 
-optim_method argument. For the moment it is the only method interfaced (others will come soonly).
-Same for crit_function: a value is set by default (`crit_log_cwss`, see `? crit_log_cwss` for more details and list of available criteria). Others will be proposed in next versions of CroptimizR. The user can implement and give in argument its own criterion (see inputs and outputs required in the `crit_log_cwss` function).
+The Nelder-Mead simplex is the default method => no need to set the
+optim_method argument if you want to use it. The list of available methods is detailed [here](https://sticsrpacks.github.io/CroptimizR/articles/Available_parameter_estimation_algorithms.html).
+Same for crit_function: a value is set by default (`crit_log_cwss`, see `? crit_log_cwss` or [here](https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html) for more details and list of available criteria). Others will be proposed in next versions of CroptimizR. The user can implement and give in argument its own criterion (see inputs and outputs required in the `crit_log_cwss` function).
 
 
 ```{r message=FALSE, warning=FALSE}
 
-optim_results=estim_param(obs_list=obs_list,
+res=estim_param(obs_list=obs_list,
                             model_function=apsimx_wrapper,
                             model_options=model_options,
                             optim_options=optim_options,
                             param_info=param_info)
 ```
 
+The estimated values of the parameters are the following:
 
-The results printed in output on the R console are the following:
+```{r eval=FALSE, echo=TRUE}
+res$final_values
+```
 
-```{r echo=TRUE, eval=FALSE}
-## [1] "Estimated value for .Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue :  0.432140042063685"
-## [1] "Estimated value for .Simulations.Replacements.Wheat.Leaf.Photosynthesis.RUE.FixedValue :  1.6"
-## [1] "Minimum value of the criterion: -9.66022388221585"
+```{r echo=FALSE, eval=params$eval_auto_vignette, warning=FALSE}
+load(file.path("ResultsSimpleCaseApsim","optim_results.Rdata"))
+res$final_values
 ```
 
 
-Complementary graphs and data are stored in the results folder which path is given above. Among them, the `EstimatedVSinit.pdf` file contains the following figures: 
+Complementary graphs and data are stored in the folder which path is given in `optim_options$path_results`. Among them, the `EstimatedVSinit.pdf` file contains the following figures: 
 
 
-
-```{r eval=TRUE, echo=FALSE, out.width = '50%'}
+```{r eval=TRUE, echo=FALSE, out.width = '45%'}
 
 knitr::include_graphics("ResultsSimpleCaseApsim/estimInit_ExtinctionCoeff.png")
 
 knitr::include_graphics("ResultsSimpleCaseApsim/estimInit_RUE.png")
 ```
 
-
-Figure 1:  plots of estimated vs initial values of parameters *ExtinctionCoeff* and *RUE*. Numbers represent the repetition number of the minimization. The number in red, 2 in this case, is the minimization that lead to the minimal value of the criterion among all repetitions. In this case, minimizations converge towards different values for the parameters (3 for *ExtinctionCoeff* and 2 for *RUE*), which indicates the presence of local minima. Values of *RUE* are very close to the upper bound value. In realistic calibration cases this may indicate the presence of a large error in the observation values or in the simulated output values (this simple case with only one situation does not allow to derive such conclusion).
-
-
-The optim_options$path_results folder also contains the optim_results.Rdata file that store the nlo variable, a list containing the results of the minimization for each repetition. If we print it for repetition 2 ...
-
-```{r eval=FALSE, echo=TRUE}
-## load(file.path(optim_options$path_results,"optim_results.Rdata"))
-## nlo[[2]]
-```
-
-
-... this returns:
-
-```{r echo=FALSE, eval=TRUE}
-load(file.path("ResultsSimpleCaseApsim","optim_results.Rdata"))
-print(nlo[[2]])
-```
-
+Figure 1:  plots of estimated vs initial values of parameters *ExtinctionCoeff* and *RUE*. Numbers represent the repetition number of the minimization and the size of the bubbles the final value of the minimized criterion. The number in white, 2 in this case, is the minimization that lead to the minimal value of the criterion among all repetitions. In this case, minimizations converge towards different values for the parameters (3 for *ExtinctionCoeff* and 2 for *RUE*), which indicates the presence of local minima. Values of *RUE* are very close to the upper bound value. In realistic calibration cases this may indicate the presence of a large error in the observation values or in the simulated output values (this simple case with only one situation does not allow to derive such conclusion).
 
 
 ## Run the model after optimization
@@ -234,30 +229,27 @@ In this case, the `param_values` argument is set so that estimated values of the
 
 ```{r results='hide', message=FALSE, warning=FALSE}
 
-sim_after_optim=apsimx_wrapper(param_values=optim_results$final_values,
+sim_after_optim=apsimx_wrapper(param_values=res$final_values,
                                model_options=model_options)
 ```
 
 
 ## Plot the results
 
+Here we use the [CroPlotR](https://github.com/SticsRPacks/CroPlotR) package for comparing simulations and observations. As CroptimizR, CroPlotR can be used with any crop model.
 
 ```{r results='hide', message=FALSE, warning=FALSE}
-png(file.path(optim_options$path_results,"sim_obs_plots.png"),
-    width = 15, height = 10, units = "cm", res=1000)
-par(mfrow = c(1,2))
+p <- plot(sim_before_optim$sim_list, obs=obs_list, select_dyn = c("common"))
+p1 <- p[[sit_name]] + labs(title="Before Optimization")
 
-# Simulated and observed LAI before optimization
-Ymax=max(max(obs_list[[sit_name]][,var_name], na.rm=TRUE),
-         max(sim_before_optim$sim_list[[1]][[sit_name]][,var_name], na.rm=TRUE))
-plot(sim_before_optim$sim_list[[1]][[sit_name]][,c("Date",var_name)],type="l",
-     main="Before optimization",ylim=c(0,Ymax+Ymax*0.1))
-points(obs_list[[sit_name]]$Date,obs_list[[sit_name]][[var_name]],col="red")
-plot(sim_after_optim$sim_list[[1]][[sit_name]][,c("Date",var_name)],type="l",
-     main="After optimization",ylim=c(0,Ymax+Ymax*0.1))
-points(obs_list[[sit_name]]$Date,obs_list[[sit_name]][[var_name]],col="red")
+p <- plot(sim_after_optim$sim_list, obs=obs_list, select_dyn = c("common"))
+p2 <- p[[sit_name]] + labs(title="After Optimization") + 
+  ylim(NA,ggplot_build(p1)$layout$panel_params[[1]]$y.range[2])
 
-dev.off()
+p <- grid.arrange(grobs=list(p1,p2), nrow=1, ncol=2)
+# Save the graph
+ggsave(file.path(optim_options$path_results,
+                 paste0("sim_obs_plots",".png")), plot=p)
 ```
 
 
@@ -268,5 +260,12 @@ knitr::include_graphics("ResultsSimpleCaseApsim/sim_obs_plots.png")
 ```
 
 
+
+```{r move_results, include=FALSE}
+# Move the files produced since the temp. folder is removed after Rmd execution
+file.copy(file.path(optim_options$path_results,"EstimatedVSinit.pdf"),params$result_path, overwrite = TRUE)
+file.copy(file.path(optim_options$path_results,"optim_results.Rdata"),params$result_path, overwrite = TRUE)
+file.copy(file.path(optim_options$path_results,"sim_obs_plots.png"),params$result_path, overwrite = TRUE)
+```
 
 

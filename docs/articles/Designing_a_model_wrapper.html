@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CroptimizR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0.9003</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9000</span>
       </span>
     </div>
 
@@ -104,7 +104,7 @@
             <address class="author_afil">
       INRAE - EMMAH<br><h4 class="author">Patrice Lecharpentier</h4>
             <address class="author_afil">
-      INRAE - Agroclim<br><h4 class="date">2020-04-14</h4>
+      INRAE - Agroclim<br><h4 class="date">2021-01-15</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/master/vignettes/Designing_a_model_wrapper.Rmd"><code>vignettes/Designing_a_model_wrapper.Rmd</code></a></small>
       <div class="hidden name"><code>Designing_a_model_wrapper.Rmd</code></div>
@@ -118,210 +118,161 @@
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
-<p>R wrappers are necessary to couple crop models with CroptimizR. An R wrapper is basically an R function able to run model simulations for prescribed values of some of its input parameters and to return the values of its simulated outputs. It must have specific arguments, returned values and behavior, as detailed in the following.</p>
+<p>R wrappers are necessary to couple crop models with CroptimizR. Indeed, the <code>estim_param</code> function will need to run the model (for which parameters have to be estimated), on a set of observed situations and for values of estimated parameters proposed by the selected algorithm. It will then compute the selected (least-square or likelihood) criterion using the resulting simulated values and corresponding observations. An R wrapper is thus basically an R function able to run model simulations for prescribed values of some of its input parameters and to return the values of its simulated outputs. It must have specific arguments, returned values and behavior, as detailed in the following.</p>
+<p>The first section presents the concepts for building a basic version of a model wrapper. The second section section presents optional issues. The third one shows examples on a simple toy model.</p>
 </div>
 <div id="how-to-write-a-basic-version-of-a-model-wrapper-for-croptimizr" class="section level2">
 <h2 class="hasAnchor">
 <a href="#how-to-write-a-basic-version-of-a-model-wrapper-for-croptimizr" class="anchor"></a>How to write a basic version of a model wrapper for CroptimizR</h2>
-<p>We will detail here what is mandatory in terms of interface of the wrapper and expected behavior. Optional issues for more advanced users are detailed in the next section</p>
+<p>We will detail here what is mandatory in terms of interface of the wrapper and expected behavior. Optional issues for more advanced users are detailed in the next section.</p>
+<p><strong>Please note that this basic version does not allow to perform simultaneous estimation of specific and varietal parameters on a dataset including several cultivars (i.e. as in the example detailed in (<a href="https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html" class="uri">https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html</a>)). Additional functionnalities are needed for that, as detailed in section “Optional issues”.</strong></p>
 <div id="model-wrapper-interface" class="section level3">
 <h3 class="hasAnchor">
 <a href="#model-wrapper-interface" class="anchor"></a>Model wrapper interface</h3>
 <p>Here’s a header for a basic version of a model wrapper:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co">#' @title MyModel wrapper for CroptimizR</span></span>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co">#' @title My model wrapper for CroptimizR</span></span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="co">#'</span></span>
-<span id="cb1-3"><a href="#cb1-3"></a><span class="co">#' @description This function runs my crop model and force it with the values </span></span>
-<span id="cb1-4"><a href="#cb1-4"></a><span class="co">#' of the parameters defined in the param_values argument. It returns </span></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="co">#' @description This function runs my crop model on a set of situations (i.e. environments) </span></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="co">#' using the values of the parameters defined in the param_values argument. It returns </span></span>
 <span id="cb1-5"><a href="#cb1-5"></a><span class="co">#' the values of the simulated outputs.</span></span>
 <span id="cb1-6"><a href="#cb1-6"></a><span class="co">#'</span></span>
-<span id="cb1-7"><a href="#cb1-7"></a><span class="co">#' @param model_options List containing any information needed to run the model. </span></span>
-<span id="cb1-8"><a href="#cb1-8"></a><span class="co">#'</span></span>
-<span id="cb1-9"><a href="#cb1-9"></a><span class="co">#' @param param_values Named 3D array that contains the value(s) and names of the</span></span>
-<span id="cb1-10"><a href="#cb1-10"></a><span class="co">#' parameters to force for each situation to simulate. This array contains the different</span></span>
-<span id="cb1-11"><a href="#cb1-11"></a><span class="co">#' parameters values (first dimension) for the different parameters (second dimension)</span></span>
-<span id="cb1-12"><a href="#cb1-12"></a><span class="co">#' and for the different situations (third dimension).</span></span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="co">#' @param param_values (optional) a named vector that contains the value(s) and name(s) </span></span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="co">#' of the parameters to force for each situation to simulate. If not provided (or if is </span></span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="co">#' NULL), the simulations will be performed using default values of the parameters </span></span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="co">#' (e.g. as read in the model input files).</span></span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="co">#'</span></span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="co">#' @param sit_names Vector of situations names for which results must be returned. </span></span>
 <span id="cb1-13"><a href="#cb1-13"></a><span class="co">#'</span></span>
-<span id="cb1-14"><a href="#cb1-14"></a><span class="co">#' @return A list containing simulated values (`sim_list`: a vector of list (one</span></span>
-<span id="cb1-15"><a href="#cb1-15"></a><span class="co">#' element per values of parameters) containing data.frames of simulated output values </span></span>
-<span id="cb1-16"><a href="#cb1-16"></a><span class="co">#' for each simulated situation) and an error code (`error`) indicating if at least </span></span>
-<span id="cb1-17"><a href="#cb1-17"></a><span class="co">#' one simulation ended with an error.</span></span>
-<span id="cb1-18"><a href="#cb1-18"></a></span>
-<span id="cb1-19"><a href="#cb1-19"></a>model_wrapper &lt;-<span class="st"> </span><span class="cf">function</span>( model_options, param_values, ...) {</span>
-<span id="cb1-20"><a href="#cb1-20"></a></span>
-<span id="cb1-21"><a href="#cb1-21"></a>}</span></code></pre></div>
-<p>Each argument detailed here is mandatory for any CroptimizR model wrapper. You can use this header to develop yours. Be careful, “…” is mandatory at the end of the argument list since CroptimizR may give additional arguments for more advanced wrappers.</p>
-<p>The shape of the param_values argument is imposed by CroptimizR. This is not the case of the model_options argument (except the fact that is must be a list): its content must be defined by the developper of the model wrapper. Put in this list what you need to run the model (e.g. path to the executable, path the directory containing model input files for the simulated situations, …).</p>
+<span id="cb1-14"><a href="#cb1-14"></a><span class="co">#' @param model_options List containing any information needed to run the model </span></span>
+<span id="cb1-15"><a href="#cb1-15"></a><span class="co">#' (e.g. path to model input files and executable, ...) </span></span>
+<span id="cb1-16"><a href="#cb1-16"></a><span class="co">#'</span></span>
+<span id="cb1-17"><a href="#cb1-17"></a><span class="co">#' @return A list containing:</span></span>
+<span id="cb1-18"><a href="#cb1-18"></a><span class="co">#'     o `sim_list`: a `named list` (names = situations names) of data.frames (or tibbles) of </span></span>
+<span id="cb1-19"><a href="#cb1-19"></a><span class="co">#` simulated output values (one element of the list per simulated situation) </span></span>
+<span id="cb1-20"><a href="#cb1-20"></a><span class="co">#'     o `error`: an error code indicating if at least one simulation ended with an error.</span></span>
+<span id="cb1-21"><a href="#cb1-21"></a></span>
+<span id="cb1-22"><a href="#cb1-22"></a>model_wrapper &lt;-<span class="st"> </span><span class="cf">function</span>( <span class="dt">param_values=</span><span class="ot">NULL</span>, sit_names, model_options, ...) {</span>
+<span id="cb1-23"><a href="#cb1-23"></a></span>
+<span id="cb1-24"><a href="#cb1-24"></a>}</span></code></pre></div>
+<p><strong>Each argument detailed here must be defined for any CroptimizR model wrapper. You can use this header to develop yours. Be careful, “…” is mandatory at the end of the argument list since CroptimizR may give additional arguments for more advanced wrappers.</strong></p>
+<p>The shape of the <code>param_values</code> and <code>sit_names</code> arguments are imposed by CroptimizR. This is not the case of the <code>model_options</code> argument (except the fact that is must be a list): its content must be defined by the developper of the model wrapper. It is typically used to provide to the model wrapper what it needs to run the model (e.g. path to the model executable, path to the directory containing model input files for the situations to simulate, …). The user provides <code>model_options</code> to <code>estim_param</code> which gives it as is to the model wrapper.</p>
+<p>It is advisable to define <code>param_values</code> as an optional argument, so that the model wrapper can be used directly by the user (i.e. outside of <code>estim_param</code>) to run the model using default values for all of its parameters.</p>
 </div>
 <div id="minimum-required-functionalities" class="section level3">
 <h3 class="hasAnchor">
 <a href="#minimum-required-functionalities" class="anchor"></a>Minimum required functionalities</h3>
 <ul>
-<li>Run the model on a specified set of situations A situation corresponds to a simulation (for example a specific treatment on a given soil for a given period). The names of the situations are the names of dimension 3 of param_values. They will be given by the end user when calling CroptimizR functions. To retrieve them, use <code>dimnames(param_values)[[3]]</code>.</li>
+<li>Run the model on a specified set of situations</li>
 </ul>
+<p>A situation corresponds to a simulation (for example a specific treatment on a given soil for a given period).</p>
 <p>To run your model from R, several technical solutions are possible depending on the language it is implemented with. A simple solution (although not the most computationally efficient) is to run its executable using the R function <code>system2</code>. Otherwise, different languages can be directly interfaced in R: for example Python, using the R package <code>reticulate</code>, C and C++ (see e.g. (<a href="https://www.r-bloggers.com/three-ways-to-call-cc-from-r/" class="uri">https://www.r-bloggers.com/three-ways-to-call-cc-from-r/</a>)), fortran (see e.g. (<a href="https://www.r-bloggers.com/fortran-and-r-speed-things-up/" class="uri">https://www.r-bloggers.com/fortran-and-r-speed-things-up/</a>))…</p>
 <ul>
-<li>Force the model with specified values of its parameters The values of the parameters are specified in the param_values array. The names of the parameters are the names of dimension 2 of param_values. To retrieve them use <code>dimnames(param_values)[[2]]</code>. Different values can be defined for different situations and multiple values can be defined for a given situation. param_values can for example contain:</li>
+<li>Force the model with specified values of its parameters</li>
 </ul>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>param_values &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>( <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="fl">0.001</span>, <span class="fl">0.002</span>, <span class="dv">50</span>, <span class="dv">50</span>,</span>
-<span id="cb2-2"><a href="#cb2-2"></a>                         <span class="fl">0.001</span>, <span class="fl">0.002</span>, <span class="dv">60</span>, <span class="dv">60</span>,</span>
-<span id="cb2-3"><a href="#cb2-3"></a>                         <span class="fl">0.001</span>, <span class="fl">0.002</span>, <span class="dv">70</span>, <span class="dv">70</span>),</span>
-<span id="cb2-4"><a href="#cb2-4"></a>                       <span class="dt">dim=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">2</span>,<span class="dv">2</span>,<span class="dv">3</span>),</span>
-<span id="cb2-5"><a href="#cb2-5"></a>                       <span class="dt">dimnames=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="ot">NULL</span>,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"param1"</span>, <span class="st">"param2"</span>),<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"situation1"</span>, <span class="st">"situation2"</span>, <span class="st">"situation3"</span>)))</span>
-<span id="cb2-6"><a href="#cb2-6"></a></span>
-<span id="cb2-7"><a href="#cb2-7"></a>param_values</span></code></pre></div>
-<pre><code>## , , situation1
-## 
-##      param1 param2
-## [1,]  0.001     50
-## [2,]  0.002     50
-## 
-## , , situation2
-## 
-##      param1 param2
-## [1,]  0.001     60
-## [2,]  0.002     60
-## 
-## , , situation3
-## 
-##      param1 param2
-## [1,]  0.001     70
-## [2,]  0.002     70</code></pre>
-<p>In this case for example, values c(0.001, 50) and c(0.002, 50) of parameters param1 and param2 must be given in input of the model for situation1, c(0.001, 60) and c(0.002, 60) for situation2 and c(0.001, 70) and c(0.002, 70) for situation3.</p>
+<p>The values of the parameters are specified in the <code>param_values</code> vector. The names of the parameters can be retrieved using <code><a href="https://www.rdocumentation.org/packages/base/topics/names">names(param_values)</a></code>.</p>
 <ul>
-<li>Retrieve the simulated results for all simulated variables The results must be stored in <code>result$sim_list</code> variable. <code>sim_list</code> is a vector of list, of size the size of the first dimension of param_values. You can initialize it like this: <code>result$sim_list &lt;- vector("list",dim(param_values)[1])</code>. Each element of the list should contains a list of data.frame, one per situation, with the results obtained for all simulated variables and dates. The data.frame must have one column called <code>Date</code> containing the simulations dates in Date or POSIXct format (see R function<code><a href="https://www.rdocumentation.org/packages/base/topics/as.Date">base::as.Date</a></code> or <code><a href="https://www.rdocumentation.org/packages/base/topics/as.POSIXlt">base::as.POSIXct</a></code>). The other columns contains the values of the simulated variables and their names must be put as column names.</li>
+<li>Return the simulated results for all simulated variables</li>
 </ul>
-<p>For example, given the param_values array defined above, sim_list should look like:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="op">$</span>sim_list</span>
-<span id="cb4-2"><a href="#cb4-2"></a><span class="op">$</span>sim_list[[<span class="dv">1</span>]]</span>
-<span id="cb4-3"><a href="#cb4-3"></a><span class="op">$</span>sim_list[[<span class="dv">1</span>]]<span class="op">$</span>situation1</span>
-<span id="cb4-4"><a href="#cb4-4"></a><span class="co"># A tibble: *** x ***</span></span>
-<span id="cb4-5"><a href="#cb4-5"></a>   Date                  var1    var2    var3  ...</span>
-<span id="cb4-6"><a href="#cb4-6"></a><span class="co">#&gt;   &lt;dttm&gt;              &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; </span></span>
-<span id="cb4-7"><a href="#cb4-7"></a><span class="co">#&gt; 1 1994-10-17 00:00:00  0      2.53    4.80</span></span>
-<span id="cb4-8"><a href="#cb4-8"></a><span class="co">#&gt; 2 1994-10-18 00:00:00  0      2.31    4.66</span></span>
-<span id="cb4-9"><a href="#cb4-9"></a><span class="co">#&gt; 3 1994-10-19 00:00:00  0      4.55    4.44</span></span>
-<span id="cb4-10"><a href="#cb4-10"></a><span class="co">#</span></span>
-<span id="cb4-11"><a href="#cb4-11"></a></span>
-<span id="cb4-12"><a href="#cb4-12"></a><span class="op">$</span>sim_list[[<span class="dv">1</span>]]<span class="op">$</span>situation2</span>
-<span id="cb4-13"><a href="#cb4-13"></a><span class="co"># A tibble: *** x ***</span></span>
-<span id="cb4-14"><a href="#cb4-14"></a>   Date                  var1    var2    var3  ...</span>
-<span id="cb4-15"><a href="#cb4-15"></a><span class="co">#&gt;   &lt;dttm&gt;              &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; </span></span>
-<span id="cb4-16"><a href="#cb4-16"></a><span class="co">#&gt; 1 1995-10-17 00:00:00  0      2.60    4.80</span></span>
-<span id="cb4-17"><a href="#cb4-17"></a><span class="co">#&gt; 2 1995-10-18 00:00:00  0      3.42    4.70</span></span>
-<span id="cb4-18"><a href="#cb4-18"></a><span class="co">#&gt; 3 1995-10-19 00:00:00  0      5.25    4.45</span></span>
-<span id="cb4-19"><a href="#cb4-19"></a><span class="co">#</span></span>
-<span id="cb4-20"><a href="#cb4-20"></a></span>
-<span id="cb4-21"><a href="#cb4-21"></a><span class="op">$</span>sim_list[[<span class="dv">1</span>]]<span class="op">$</span>situation3</span>
-<span id="cb4-22"><a href="#cb4-22"></a><span class="co"># A tibble: *** x ***</span></span>
-<span id="cb4-23"><a href="#cb4-23"></a>   Date                  var1    var2    var3  ...</span>
-<span id="cb4-24"><a href="#cb4-24"></a><span class="co">#&gt;   &lt;dttm&gt;              &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; </span></span>
-<span id="cb4-25"><a href="#cb4-25"></a><span class="co">#&gt; 1 1996-10-17 00:00:00  0      2.41    4.81</span></span>
-<span id="cb4-26"><a href="#cb4-26"></a><span class="co">#&gt; 2 1996-10-18 00:00:00  0      3.03    4.71</span></span>
-<span id="cb4-27"><a href="#cb4-27"></a><span class="co">#&gt; 3 1996-10-19 00:00:00  0      5.10    4.47</span></span>
-<span id="cb4-28"><a href="#cb4-28"></a><span class="co">#</span></span>
-<span id="cb4-29"><a href="#cb4-29"></a></span>
-<span id="cb4-30"><a href="#cb4-30"></a></span>
-<span id="cb4-31"><a href="#cb4-31"></a><span class="op">$</span>sim_list[[<span class="dv">2</span>]]</span>
-<span id="cb4-32"><a href="#cb4-32"></a><span class="op">$</span>sim_list[[<span class="dv">2</span>]]<span class="op">$</span>situation1</span>
-<span id="cb4-33"><a href="#cb4-33"></a><span class="co"># A tibble: *** x ***</span></span>
-<span id="cb4-34"><a href="#cb4-34"></a>   Date                  var1    var2    var3  ...</span>
-<span id="cb4-35"><a href="#cb4-35"></a><span class="co">#&gt;   &lt;dttm&gt;              &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; </span></span>
-<span id="cb4-36"><a href="#cb4-36"></a><span class="co">#&gt; 1 1994-10-17 00:00:00  0.1    2.55    4.80</span></span>
-<span id="cb4-37"><a href="#cb4-37"></a><span class="co">#&gt; 2 1994-10-18 00:00:00  0.1    2.32    4.66</span></span>
-<span id="cb4-38"><a href="#cb4-38"></a><span class="co">#&gt; 3 1994-10-19 00:00:00  0.1    4.57    4.44</span></span>
-<span id="cb4-39"><a href="#cb4-39"></a><span class="co">#</span></span>
-<span id="cb4-40"><a href="#cb4-40"></a></span>
-<span id="cb4-41"><a href="#cb4-41"></a><span class="op">$</span>sim_list[[<span class="dv">2</span>]]<span class="op">$</span>situation2</span>
-<span id="cb4-42"><a href="#cb4-42"></a><span class="co"># A tibble: *** x ***</span></span>
-<span id="cb4-43"><a href="#cb4-43"></a>   Date                  var1    var2    var3  ...</span>
-<span id="cb4-44"><a href="#cb4-44"></a><span class="co">#&gt;   &lt;dttm&gt;              &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; </span></span>
-<span id="cb4-45"><a href="#cb4-45"></a><span class="co">#&gt; 1 1995-10-17 00:00:00  0.1    2.62    4.80</span></span>
-<span id="cb4-46"><a href="#cb4-46"></a><span class="co">#&gt; 2 1995-10-18 00:00:00  0.1    3.40    4.70</span></span>
-<span id="cb4-47"><a href="#cb4-47"></a><span class="co">#&gt; 3 1995-10-19 00:00:00  0.1    5.26    4.45</span></span>
-<span id="cb4-48"><a href="#cb4-48"></a><span class="co">#</span></span>
-<span id="cb4-49"><a href="#cb4-49"></a></span>
-<span id="cb4-50"><a href="#cb4-50"></a><span class="op">$</span>sim_list[[<span class="dv">2</span>]]<span class="op">$</span>situation3</span>
-<span id="cb4-51"><a href="#cb4-51"></a><span class="co"># A tibble: *** x ***</span></span>
-<span id="cb4-52"><a href="#cb4-52"></a>   Date                  var1    var2    var3  ...</span>
-<span id="cb4-53"><a href="#cb4-53"></a><span class="co">#&gt;   &lt;dttm&gt;              &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; </span></span>
-<span id="cb4-54"><a href="#cb4-54"></a><span class="co">#&gt; 1 1996-10-17 00:00:00  0.1    2.42    4.81</span></span>
-<span id="cb4-55"><a href="#cb4-55"></a><span class="co">#&gt; 2 1996-10-18 00:00:00  0.1    3.04    4.71</span></span>
-<span id="cb4-56"><a href="#cb4-56"></a><span class="co">#&gt; 3 1996-10-19 00:00:00  0.1    5.11    4.47</span></span>
-<span id="cb4-57"><a href="#cb4-57"></a><span class="co">#</span></span></code></pre></div>
+<p>The value returned by the model wrapper must be a list, noted <code>results</code> in the following. This list must contain an element named <code>sim_list</code>. <code>sim_list</code> must be a named list (names = situations names) of size the number of situations to simulate and having the attribute “cropr_simulation” (to use the <a href="https://github.com/SticsRPacks/CroPlotR">CroPlotR package</a>). You can initialize it like this:</p>
+<p><code>results$sim_list &lt;- setNames(vector("list",length(sit_names)), nm = sit_names)</code> <code>attr(results$sim_list, "class")= "cropr_simulation"</code></p>
+<p>Each element of the list should contains a data.frame (or a tibble) with the results obtained for all simulated variables and dates for the given situation.</p>
+<p>The data.frames must have one column called <code>Date</code> containing the simulations dates, in Date or POSIXct format (see R function <code><a href="https://www.rdocumentation.org/packages/base/topics/as.Date">base::as.Date</a></code> or <code><a href="https://www.rdocumentation.org/packages/base/topics/as.POSIXlt">base::as.POSIXct</a></code>). The other columns contains the values of the simulated variables, and their names must be put as column names.</p>
+<p>For example, if <code>sit_names</code> is `c(“situation1”,“situation2”,“situation3”), sim_list should look like:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>sim_list<span class="op">$</span>situation1</span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="co"># A tibble: *** x ***</span></span>
+<span id="cb2-3"><a href="#cb2-3"></a>   Date         var1    var2    var3  ...</span>
+<span id="cb2-4"><a href="#cb2-4"></a>   <span class="op">&lt;</span>dttm<span class="op">&gt;</span><span class="st">     </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">   </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">   </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st"> </span></span>
+<span id="cb2-5"><a href="#cb2-5"></a><span class="st"> </span><span class="dv">1</span> <span class="dv">1994-10-17</span>   <span class="dv">0</span>      <span class="fl">2.53</span>    <span class="fl">4.80</span></span>
+<span id="cb2-6"><a href="#cb2-6"></a> <span class="dv">2</span> <span class="dv">1994-10-18</span>   <span class="dv">0</span>      <span class="fl">2.31</span>    <span class="fl">4.66</span></span>
+<span id="cb2-7"><a href="#cb2-7"></a> <span class="dv">3</span> <span class="dv">1994-10-19</span>   <span class="dv">0</span>      <span class="fl">4.55</span>    <span class="fl">4.44</span></span>
+<span id="cb2-8"><a href="#cb2-8"></a></span>
+<span id="cb2-9"><a href="#cb2-9"></a></span>
+<span id="cb2-10"><a href="#cb2-10"></a>sim_list<span class="op">$</span>situation2</span>
+<span id="cb2-11"><a href="#cb2-11"></a><span class="co"># A tibble: *** x ***</span></span>
+<span id="cb2-12"><a href="#cb2-12"></a>   Date         var1    var2    var3  ...</span>
+<span id="cb2-13"><a href="#cb2-13"></a>   <span class="op">&lt;</span>dttm<span class="op">&gt;</span><span class="st">     </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">   </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">   </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st"> </span></span>
+<span id="cb2-14"><a href="#cb2-14"></a><span class="st"> </span><span class="dv">1</span> <span class="dv">1995-10-17</span>   <span class="dv">0</span>      <span class="fl">2.60</span>    <span class="fl">4.80</span></span>
+<span id="cb2-15"><a href="#cb2-15"></a> <span class="dv">2</span> <span class="dv">1995-10-18</span>   <span class="dv">0</span>      <span class="fl">3.42</span>    <span class="fl">4.70</span></span>
+<span id="cb2-16"><a href="#cb2-16"></a> <span class="dv">3</span> <span class="dv">1995-10-19</span>   <span class="dv">0</span>      <span class="fl">5.25</span>    <span class="fl">4.45</span></span>
+<span id="cb2-17"><a href="#cb2-17"></a></span>
+<span id="cb2-18"><a href="#cb2-18"></a></span>
+<span id="cb2-19"><a href="#cb2-19"></a>sim_list<span class="op">$</span>situation3</span>
+<span id="cb2-20"><a href="#cb2-20"></a><span class="co"># A tibble: *** x ***</span></span>
+<span id="cb2-21"><a href="#cb2-21"></a>   Date         var1    var2    var3  ...</span>
+<span id="cb2-22"><a href="#cb2-22"></a>   <span class="op">&lt;</span>dttm<span class="op">&gt;</span><span class="st">     </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">   </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">   </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st"> </span></span>
+<span id="cb2-23"><a href="#cb2-23"></a><span class="st"> </span><span class="dv">1</span> <span class="dv">1996-10-17</span>   <span class="dv">0</span>      <span class="fl">2.41</span>    <span class="fl">4.81</span></span>
+<span id="cb2-24"><a href="#cb2-24"></a> <span class="dv">2</span> <span class="dv">1996-10-18</span>   <span class="dv">0</span>      <span class="fl">3.03</span>    <span class="fl">4.71</span></span>
+<span id="cb2-25"><a href="#cb2-25"></a> <span class="dv">3</span> <span class="dv">1996-10-19</span>   <span class="dv">0</span>      <span class="fl">5.10</span>    <span class="fl">4.47</span></span></code></pre></div>
 <ul>
-<li>Return an error code if any simulation failed If any simulation failed for any reason, use the R function <code>warning</code> to print any useful information about the error and set the variable <code>result$error</code> to <code>TRUE</code> (and to <code>FALSE</code> otherwise).</li>
+<li>Return an error code if any simulation failed</li>
 </ul>
+<p>If any simulation failed for any reason, use the R function <code>warning</code> to print any useful information about the error and set the variable <code>results$error</code> to <code>TRUE</code> (and to <code>FALSE</code> otherwise).</p>
 </div>
 <div id="implementation" class="section level3">
 <h3 class="hasAnchor">
 <a href="#implementation" class="anchor"></a>Implementation</h3>
-<p>A typical pseudo-code implementation of the wrapper function is thus:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>model_wrapper &lt;-<span class="st"> </span><span class="cf">function</span>( model_options, param_values, ...) {</span>
-<span id="cb5-2"><a href="#cb5-2"></a>  </span>
-<span id="cb5-3"><a href="#cb5-3"></a>  <span class="co"># Initializations</span></span>
-<span id="cb5-4"><a href="#cb5-4"></a>  nb_paramValues &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dim">dim</a></span>(param_values)[<span class="dv">1</span>]</span>
-<span id="cb5-5"><a href="#cb5-5"></a>  param_names &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dimnames">dimnames</a></span>(param_values)[[<span class="dv">2</span>]]</span>
-<span id="cb5-6"><a href="#cb5-6"></a>  situation_names &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dimnames">dimnames</a></span>(param_values)[[<span class="dv">3</span>]]</span>
-<span id="cb5-7"><a href="#cb5-7"></a>  result<span class="op">$</span>sim_list &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/vector">vector</a></span>(<span class="st">"list"</span>,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/dim">dim</a></span>(param_values)[<span class="dv">1</span>])</span>
-<span id="cb5-8"><a href="#cb5-8"></a>  results<span class="op">$</span>error=<span class="ot">FALSE</span></span>
-<span id="cb5-9"><a href="#cb5-9"></a>  </span>
-<span id="cb5-10"><a href="#cb5-10"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>nb_paramValues) {</span>
-<span id="cb5-11"><a href="#cb5-11"></a>    </span>
-<span id="cb5-12"><a href="#cb5-12"></a>    <span class="cf">for</span> (situation <span class="cf">in</span> situation_names) {</span>
-<span id="cb5-13"><a href="#cb5-13"></a>      </span>
-<span id="cb5-14"><a href="#cb5-14"></a>      <span class="co"># overwrite model input parameters of names contained in param_names with values retrieved in param_values[i,,situation]</span></span>
-<span id="cb5-15"><a href="#cb5-15"></a>      </span>
-<span id="cb5-16"><a href="#cb5-16"></a>      <span class="co"># run the model for the given situation </span></span>
-<span id="cb5-17"><a href="#cb5-17"></a>      </span>
-<span id="cb5-18"><a href="#cb5-18"></a>      <span class="co"># read the results and store the data.frame in result$sim_list[[i]][[situation]]</span></span>
-<span id="cb5-19"><a href="#cb5-19"></a>      </span>
-<span id="cb5-20"><a href="#cb5-20"></a>      <span class="cf">if</span> (any_error_returned_by_the model_or_detected_in_its_results) {</span>
-<span id="cb5-21"><a href="#cb5-21"></a>        <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/warning">warning</a></span>(<span class="st">"any_useful_information_to_describe_the_error"</span>)</span>
-<span id="cb5-22"><a href="#cb5-22"></a>        results<span class="op">$</span>error=<span class="ot">TRUE</span></span>
-<span id="cb5-23"><a href="#cb5-23"></a>      }</span>
-<span id="cb5-24"><a href="#cb5-24"></a>      </span>
-<span id="cb5-25"><a href="#cb5-25"></a>    }</span>
-<span id="cb5-26"><a href="#cb5-26"></a>    </span>
-<span id="cb5-27"><a href="#cb5-27"></a>  }</span>
-<span id="cb5-28"><a href="#cb5-28"></a>  </span>
-<span id="cb5-29"><a href="#cb5-29"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(results)</span>
-<span id="cb5-30"><a href="#cb5-30"></a>  </span>
-<span id="cb5-31"><a href="#cb5-31"></a>}</span></code></pre></div>
+<p>A typical pseudo-code implementation of a basic wrapper function is thus:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>model_wrapper &lt;-<span class="st"> </span><span class="cf">function</span>( <span class="dt">param_values=</span><span class="ot">NULL</span>, sit_names, model_options, ...) {</span>
+<span id="cb3-2"><a href="#cb3-2"></a>  </span>
+<span id="cb3-3"><a href="#cb3-3"></a>  <span class="co"># Initializations</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a>  param_names &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(param_values)</span>
+<span id="cb3-5"><a href="#cb3-5"></a>  results &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">sim_list =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/setNames">setNames</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/vector">vector</a></span>(<span class="st">"list"</span>,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(sit_names)), <span class="dt">nm =</span> sit_names),</span>
+<span id="cb3-6"><a href="#cb3-6"></a>                 error=<span class="ot">FALSE</span><span class="er">)</span></span>
+<span id="cb3-7"><a href="#cb3-7"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/attr">attr</a></span>(results<span class="op">$</span>sim_list, <span class="st">"class"</span>)=<span class="st"> "cropr_simulation"</span></span>
+<span id="cb3-8"><a href="#cb3-8"></a>  </span>
+<span id="cb3-9"><a href="#cb3-9"></a>  <span class="cf">for</span> (situation <span class="cf">in</span> sit_names) {</span>
+<span id="cb3-10"><a href="#cb3-10"></a>      </span>
+<span id="cb3-11"><a href="#cb3-11"></a>      <span class="co"># overwrite model input parameters of names contained in param_names with values </span></span>
+<span id="cb3-12"><a href="#cb3-12"></a>      <span class="co"># retrieved in param_values</span></span>
+<span id="cb3-13"><a href="#cb3-13"></a>      </span>
+<span id="cb3-14"><a href="#cb3-14"></a>      <span class="co"># run the model for the given situation </span></span>
+<span id="cb3-15"><a href="#cb3-15"></a>      </span>
+<span id="cb3-16"><a href="#cb3-16"></a>      <span class="co"># read the results and store the data.frame in result$sim_list[[situation]]</span></span>
+<span id="cb3-17"><a href="#cb3-17"></a>      </span>
+<span id="cb3-18"><a href="#cb3-18"></a>      <span class="cf">if</span> (any_error_returned_by_the model_or_detected_in_its_results) {</span>
+<span id="cb3-19"><a href="#cb3-19"></a>        <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/warning">warning</a></span>(<span class="st">"any_useful_information_to_describe_the_error"</span>)</span>
+<span id="cb3-20"><a href="#cb3-20"></a>        results<span class="op">$</span>error=<span class="ot">TRUE</span></span>
+<span id="cb3-21"><a href="#cb3-21"></a>      }</span>
+<span id="cb3-22"><a href="#cb3-22"></a>      </span>
+<span id="cb3-23"><a href="#cb3-23"></a>    }</span>
+<span id="cb3-24"><a href="#cb3-24"></a>    </span>
+<span id="cb3-25"><a href="#cb3-25"></a>  }</span>
+<span id="cb3-26"><a href="#cb3-26"></a>  </span>
+<span id="cb3-27"><a href="#cb3-27"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(results)</span>
+<span id="cb3-28"><a href="#cb3-28"></a>  </span>
+<span id="cb3-29"><a href="#cb3-29"></a><span class="er">}</span></span></code></pre></div>
 </div>
 <div id="test-your-wrapper" class="section level3">
 <h3 class="hasAnchor">
 <a href="#test-your-wrapper" class="anchor"></a>Test your wrapper</h3>
 <p>You can implement the following tests to check your wrapper is working as expected:</p>
 <ul>
-<li><p>check the results returned by the wrapper (<code>sim_max$sim_list</code>) are identical to what is given by your model when used in a standard way (i.e. not through the wrapper)</p></li>
-<li><p>run the wrapper with different values of parameters and check it gives different simulated values. You can do that using the following :</p></li>
+<li>run the wrapper with different values of parameters and check it gives different simulated values.</li>
 </ul>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>param_names=<span class="st">    </span><span class="co"># set the name of one or several model input parameters in a vector</span></span>
-<span id="cb6-2"><a href="#cb6-2"></a>param_lb=<span class="st">       </span><span class="co"># set the lower bounds of these parameters in a vector (no Inf or -Inf ...)</span></span>
-<span id="cb6-3"><a href="#cb6-3"></a>param_ub=<span class="st">       </span><span class="co"># set the upper bounds of these parameters in a vector (no Inf or -Inf ...)</span></span>
-<span id="cb6-4"><a href="#cb6-4"></a>var_name=<span class="st">       </span><span class="co"># give the name of an output variable sensitive to this (or these) parameter(s)</span></span>
-<span id="cb6-5"><a href="#cb6-5"></a>situation_name=<span class="st"> </span><span class="co"># give the name of the situation to simulate </span></span>
-<span id="cb6-6"><a href="#cb6-6"></a>model_options=<span class="st">  </span><span class="co"># give the model options</span></span>
-<span id="cb6-7"><a href="#cb6-7"></a>wrapper=<span class="st">        </span><span class="co"># give the name of tyour wrapper</span></span>
-<span id="cb6-8"><a href="#cb6-8"></a></span>
-<span id="cb6-9"><a href="#cb6-9"></a><span class="st">  </span></span>
-<span id="cb6-10"><a href="#cb6-10"></a>param_values_min &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>( param_lb,</span>
-<span id="cb6-11"><a href="#cb6-11"></a>                       <span class="dt">dim=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span>,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(param_lb),<span class="dv">1</span>),</span>
-<span id="cb6-12"><a href="#cb6-12"></a>                       <span class="dt">dimnames=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="ot">NULL</span>,param_names,situation_name))</span>
-<span id="cb6-13"><a href="#cb6-13"></a></span>
-<span id="cb6-14"><a href="#cb6-14"></a>param_values_max &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/array">array</a></span>( param_ub,</span>
-<span id="cb6-15"><a href="#cb6-15"></a>                       <span class="dt">dim=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span>,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(param_ub),<span class="dv">1</span>),</span>
-<span id="cb6-16"><a href="#cb6-16"></a>                       <span class="dt">dimnames=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="ot">NULL</span>,param_names,situation_name))</span>
-<span id="cb6-17"><a href="#cb6-17"></a></span>
-<span id="cb6-18"><a href="#cb6-18"></a>sim_max       &lt;-<span class="st"> </span><span class="kw">wrapper</span>(<span class="dt">param_values =</span> param_values_min, <span class="dt">model_options =</span> model_options)</span>
-<span id="cb6-19"><a href="#cb6-19"></a></span>
-<span id="cb6-20"><a href="#cb6-20"></a>sim_min       &lt;-<span class="st"> </span><span class="kw">wrapper</span>(<span class="dt">param_values =</span> param_values_max, <span class="dt">model_options =</span> model_options)</span>
-<span id="cb6-21"><a href="#cb6-21"></a></span>
-<span id="cb6-22"><a href="#cb6-22"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(<span class="st">"Sum of differences, variable"</span>,var_name,<span class="st">", situation"</span>,situation_name,<span class="st">" = "</span>,</span>
-<span id="cb6-23"><a href="#cb6-23"></a>             <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sum">sum</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/MathFun">abs</a></span>(sim_max<span class="op">$</span>sim_list[[<span class="dv">1</span>]][[situation_name]][,var_name]<span class="op">-</span>sim_min<span class="op">$</span>sim_list[[<span class="dv">1</span>]][[situation_name]][,var_name]),<span class="dt">na.rm=</span><span class="ot">TRUE</span>)))</span>
-<span id="cb6-24"><a href="#cb6-24"></a><span class="co"># Should give a value different from 0.</span></span></code></pre></div>
+<p>You can do that using the following code:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>param_names&lt;-<span class="st">    </span><span class="co"># set the name of one or several model input parameters in a vector</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a>param_lb&lt;-<span class="st">       </span><span class="co"># set the lower bounds of these parameters in a vector (no Inf or -Inf ...)</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a>param_ub&lt;-<span class="st">       </span><span class="co"># set the upper bounds of these parameters in a vector (no Inf or -Inf ...)</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a>var_name&lt;-<span class="st">       </span><span class="co"># give the name of an output variable sensitive to this (or these) parameter(s)</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a>situation_name&lt;-<span class="st"> </span><span class="co"># give the name of the situation to simulate </span></span>
+<span id="cb4-6"><a href="#cb4-6"></a>model_options&lt;-<span class="st">  </span><span class="co"># give the model options</span></span>
+<span id="cb4-7"><a href="#cb4-7"></a>wrapper&lt;-<span class="st">        </span><span class="co"># give the name of your wrapper</span></span>
+<span id="cb4-8"><a href="#cb4-8"></a></span>
+<span id="cb4-9"><a href="#cb4-9"></a><span class="st">  </span></span>
+<span id="cb4-10"><a href="#cb4-10"></a>param_values_min &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/setNames">setNames</a></span>(param_lb, param_names)</span>
+<span id="cb4-11"><a href="#cb4-11"></a>param_values_max &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/setNames">setNames</a></span>(param_ub, param_names)</span>
+<span id="cb4-12"><a href="#cb4-12"></a>sim_min       &lt;-<span class="st"> </span><span class="kw">wrapper</span>(<span class="dt">param_values =</span> param_values_min, <span class="dt">model_options =</span> model_options, </span>
+<span id="cb4-13"><a href="#cb4-13"></a>                         <span class="dt">sit_names=</span>situation_name)</span>
+<span id="cb4-14"><a href="#cb4-14"></a>sim_max       &lt;-<span class="st"> </span><span class="kw">wrapper</span>(<span class="dt">param_values =</span> param_values_max, <span class="dt">model_options =</span> model_options, </span>
+<span id="cb4-15"><a href="#cb4-15"></a>                         <span class="dt">sit_names=</span>situation_name)</span>
+<span id="cb4-16"><a href="#cb4-16"></a></span>
+<span id="cb4-17"><a href="#cb4-17"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(<span class="st">"Sum of differences, variable"</span>,var_name,<span class="st">", situation"</span>,situation_name,<span class="st">" = "</span>,</span>
+<span id="cb4-18"><a href="#cb4-18"></a>             <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sum">sum</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/MathFun">abs</a></span>(sim_max<span class="op">$</span>sim_list[[situation_name]][,var_name] <span class="op">-</span><span class="st"> </span></span>
+<span id="cb4-19"><a href="#cb4-19"></a><span class="st">                     </span>sim_min<span class="op">$</span>sim_list[[situation_name]][,var_name]),<span class="dt">na.rm=</span><span class="ot">TRUE</span>)))</span>
+<span id="cb4-20"><a href="#cb4-20"></a><span class="co"># Should give a value different from 0.</span></span></code></pre></div>
 <ul>
-<li>Try to play with estim_param on your wrapper for a simple case (e.g. a single situation, variable and parameter, see e.g. (<a href="https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html" class="uri">https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html</a>)).</li>
+<li><p>check the results returned by the wrapper are identical to what is given by your model when used in a standard way (i.e. not through the wrapper)</p></li>
+<li><p>Try to play with the <code>estim_param</code> function on your wrapper for a simple case (e.g. a single situation, variable and parameter, see e.g. (<a href="https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html" class="uri">https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html</a>)).</p></li>
 </ul>
 </div>
 </div>
@@ -329,13 +280,45 @@
 <h2 class="hasAnchor">
 <a href="#optional-issues" class="anchor"></a>Optional issues</h2>
 <ul>
+<li>Take into account different parameters values depending on the situation to simulate</li>
+</ul>
+<p>If you want your model wrapper to be used for simultaneous estimation of specific and varietal parameters on a dataset including several cultivars (e.g. as in the example detailed in (<a href="https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html" class="uri">https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html</a>)), the <code>param_values</code> argument must be able to receive a data.frame (or tibble) including a specific column named <code>situation</code>. In this case, the different lines of the data.frame will specify the values of the parameters to use in the model for the situation given in the column <code>situation</code>, as in the example below:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># A tibble: 4 x 4</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a>  situation  p1     p2     p3</span>
+<span id="cb5-3"><a href="#cb5-3"></a>  <span class="op">&lt;</span>chr<span class="op">&gt;</span><span class="st">     </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">  </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">  </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="dv">1</span> sit1      <span class="fl">50.14</span>  <span class="fl">1.14</span>   <span class="fl">340.43</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a><span class="dv">2</span> sit2      <span class="fl">55.37</span>  <span class="fl">1.23</span>   <span class="fl">126.47</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a><span class="dv">3</span> sit3      <span class="fl">43.22</span>  <span class="fl">2.12</span>   <span class="fl">234.56</span></span>
+<span id="cb5-7"><a href="#cb5-7"></a><span class="dv">4</span> sit4      <span class="fl">38.49</span>  <span class="fl">2.02</span>   <span class="fl">236.45</span></span></code></pre></div>
+<p>Depending on the application (simple case or simultaneous specific and varietal parameters estimation), the <code>estim_param</code> function will thus pass to the model wrapper either a named vector or a data.frame, including or not the <code>situation</code> column. Both shapes have thus to be handled in the model wrapper in this case. This may be done as in the following piece of code:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># convert param_values in a tibble</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a>param_values &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class="kw"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span>(<span class="op">!!!</span>param_values) </span>
+<span id="cb6-3"><a href="#cb6-3"></a></span>
+<span id="cb6-4"><a href="#cb6-4"></a><span class="co"># loop on the situations to simulate </span></span>
+<span id="cb6-5"><a href="#cb6-5"></a><span class="cf">for</span> (sit <span class="cf">in</span> situation_list) {</span>
+<span id="cb6-6"><a href="#cb6-6"></a>  </span>
+<span id="cb6-7"><a href="#cb6-7"></a>  <span class="co"># extract the parameters values to apply for the given situation</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a>  params &lt;-<span class="st"> </span><span class="ot">NULL</span></span>
+<span id="cb6-9"><a href="#cb6-9"></a>  <span class="cf">if</span> (<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/NULL">is.null</a></span>(param_values)) {</span>
+<span id="cb6-10"><a href="#cb6-10"></a>    <span class="cf">if</span> (<span class="op">!</span><span class="st"> "situation"</span> <span class="op">%in%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(param_values)) {</span>
+<span id="cb6-11"><a href="#cb6-11"></a>      params &lt;-<span class="st"> </span>param_values</span>
+<span id="cb6-12"><a href="#cb6-12"></a>    } <span class="cf">else</span> {</span>
+<span id="cb6-13"><a href="#cb6-13"></a>      params &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(param_values, situation<span class="op">==</span>sit) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb6-14"><a href="#cb6-14"></a><span class="st">        </span>dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="op">-</span>situation)</span>
+<span id="cb6-15"><a href="#cb6-15"></a>    }</span>
+<span id="cb6-16"><a href="#cb6-16"></a>  }</span>
+<span id="cb6-17"><a href="#cb6-17"></a>  </span>
+<span id="cb6-18"><a href="#cb6-18"></a>  <span class="co"># run the model with parameters values defined by params</span></span>
+<span id="cb6-19"><a href="#cb6-19"></a>    </span>
+<span id="cb6-20"><a href="#cb6-20"></a>}</span></code></pre></div>
+<ul>
 <li>Check wrapper arguments:</li>
 </ul>
-<p>If possible implement any check you can concerning what is given to the wrapper. Print a message using the <code>warning</code> function and return TRUE in <code>results$error</code> if a problem is detected. It may be an unknown model input parameter (<code>dimnames(param_values)[[2]]</code>), situation name (<code>dimnames(param_values)[[3]]</code>), variable name (in <code>sit_var_dates_mask</code>) or an incorrect model option (field of <code>model_option</code>) such as an incorrect model path for example.</p>
+<p>If possible implement any check you can concerning what is given to the wrapper. Print a message using the <code>warning</code> function and return TRUE in <code>results$error</code> if a problem is detected. It may be an unknown parameter name given in <code>param_values</code>, an unknown situation name given in <code>sit_name</code>, an incorrect model option (field of <code>model_option</code>) such as an incorrect model path for example …</p>
 <ul>
 <li>Perform parallel calculations:</li>
 </ul>
-<p>If possible with your model (pay attention to concurrency access to model input and output files), managing parallel simulations of the different situations (dimension 3 of param_values) or for the different parameters values (dimension 1 of param_values) may drastically reduce the execution time.</p>
+<p>If possible with your model (pay attention to concurrency access to model input and output files), managing parallel simulations of the different situations to simulate may drastically reduce the execution time.</p>
 <p>The doParallel package can be used for that. There are specificities when coding a parallel loop: in particular, a list pre allocated outside of the loop is not shared between cores so return statements must be used inside. Here is an example for illustrating this issue:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># Code of an example of foreach loop algo</span></span>
 <span id="cb7-2"><a href="#cb7-2"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"doParallel"</span>)</span></code></pre></div>
@@ -417,14 +400,296 @@
 <ul>
 <li>Outputs selection</li>
 </ul>
-<p>An additional argument called <code>sit_var_dates_mask</code> can be defined in the wrapper. It can be used to return a selection of variables and dates per simulated situations. This may save execution time for some models (for example if model results are read in a databasis with specific request per variable).</p>
-<p><code>sit_var_dates_mask</code> is a list of data.frame similar to <code>result$sim_list[[i]]</code>. It indicates the list of variables and dates for each situation for which results must be returned: if <code>sit_var_dates_mask$situation1[j,"var1"]</code> does not contain NA, then the simulated value of variable “var1” at date <code>sit_var_dates_mask$situation1[j,"Date"]</code> must be returned in <code>results$sim_list[[i]][["situation1"]]</code>.</p>
+<p>Two additional arguments (<code>var_names</code> and <code>sit_var_dates_mask</code>) can be defined in the wrapper and are provided by the <code>estim_param</code> function when it calls the wrapper. They can be used to select the results to return and are particularly useful if this selection allows saving computation time or memory (for example if model results are read in a databasis with specific request per variable and/or date, or if model results are read in different files depending on the variables …).</p>
+<p><code>var_names</code> is a vector of variables names for which results must be returned.</p>
+<p><code>sit_var_dates_mask</code> is a list of data.frame similar to <code>results$sim_list</code>. It indicates the list of variables and dates for each situation for which results must be returned: if <code>sit_var_dates_mask$situation1[j,"var1"]</code> does not contain NA, then the simulated value of variable “var1” at date <code>sit_var_dates_mask$situation1[j,"Date"]</code> must be returned in <code>results$sim_list[["situation1"]]</code>.</p>
+<p>It is advised to define them as optionnal arguments with default value equal to NULL. If not given or if they are NULL, the wrapper should return results for all simulated variables. If both arguments are handled in the model wrapper code (which is not mandatory: none of them or only one of them can be handled) and non-null values are given for both, only <code>sit_var_dates_mask</code> should be taken into account since it is more detailed.</p>
 </div>
 <div id="examples" class="section level2">
 <h2 class="hasAnchor">
 <a href="#examples" class="anchor"></a>Examples</h2>
-<p>Examples of crop model wrappers for CroptimizR can be found in the SticsOnR package (<a href="https://github.com/SticsRPacks/SticsOnR/blob/master/R/stics_wrapper.R" class="uri">https://github.com/SticsRPacks/SticsOnR/blob/master/R/stics_wrapper.R</a>) for the Stics model and in the ApsimOnR package (<a href="https://github.com/hol430/ApsimOnR/blob/master/R/apsimx_wrapper.R" class="uri">https://github.com/hol430/ApsimOnR/blob/master/R/apsimx_wrapper.R</a>) for ApsimX model.</p>
-<p>Note however that the Stics wrapper is a bit complex since it aims not only to be used in CroptimizR but also directly by the user to launch Stics simulations from R. Different datatypes are thus possible for <code>param_values</code> and <code>sit_var_dates_mask</code> to that end.</p>
+<div id="example-of-a-basic-wrapper-for-an-lai-toy-model" class="section level3">
+<h3 class="hasAnchor">
+<a href="#example-of-a-basic-wrapper-for-an-lai-toy-model" class="anchor"></a>Example of a basic wrapper for an LAI toy model</h3>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>lai_toymodel &lt;-<span class="st"> </span><span class="cf">function</span>(year, <span class="dt">max_lai=</span><span class="dv">8</span>, <span class="dt">julday_incslope=</span><span class="dv">100</span>, <span class="dt">inc_slope=</span><span class="dv">5</span>, </span>
+<span id="cb15-2"><a href="#cb15-2"></a>                         <span class="dt">julday_decslope=</span><span class="dv">200</span>, <span class="dt">dec_slope=</span><span class="dv">2</span>) {</span>
+<span id="cb15-3"><a href="#cb15-3"></a>  <span class="co"># Simulate lai for a single crop over 2 years (from 01/01/year to 31/12/(year+1) </span></span>
+<span id="cb15-4"><a href="#cb15-4"></a>  <span class="co"># with a simple double-logistic function </span></span>
+<span id="cb15-5"><a href="#cb15-5"></a>  <span class="co">#</span></span>
+<span id="cb15-6"><a href="#cb15-6"></a>  <span class="co"># Arguments</span></span>
+<span id="cb15-7"><a href="#cb15-7"></a>  <span class="co">#   - year: first year of simulation </span></span>
+<span id="cb15-8"><a href="#cb15-8"></a>  <span class="co">#   - max_lai: max value for lai</span></span>
+<span id="cb15-9"><a href="#cb15-9"></a>  <span class="co">#   - inc_slope and dec_slope: increasing and decreasing slope</span></span>
+<span id="cb15-10"><a href="#cb15-10"></a>  <span class="co">#   - julday_incslope and julday_decslope: julian days of maximal increasing and </span></span>
+<span id="cb15-11"><a href="#cb15-11"></a>  <span class="co">#     decreasing slopes</span></span>
+<span id="cb15-12"><a href="#cb15-12"></a>  <span class="co"># </span></span>
+<span id="cb15-13"><a href="#cb15-13"></a>  <span class="co"># Value</span></span>
+<span id="cb15-14"><a href="#cb15-14"></a>  <span class="co">#   - lai: vector of simulated lai</span></span>
+<span id="cb15-15"><a href="#cb15-15"></a>  <span class="co">#   - dates: vector of dates (POSIXct) for which lai is computed</span></span>
+<span id="cb15-16"><a href="#cb15-16"></a>  </span>
+<span id="cb15-17"><a href="#cb15-17"></a>  end_day &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/format">format</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/as.Date">as.Date</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(year<span class="op">+</span><span class="dv">1</span>,<span class="st">"-12-31"</span>), <span class="dt">format =</span> <span class="st">"%Y-%m-%d"</span>, <span class="dt">origin=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(year,<span class="st">"-01-01"</span>)), <span class="st">"%j"</span>)</span>
+<span id="cb15-18"><a href="#cb15-18"></a>  jul_days &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/numeric">as.numeric</a></span>(end_day)</span>
+<span id="cb15-19"><a href="#cb15-19"></a>  </span>
+<span id="cb15-20"><a href="#cb15-20"></a>  lai &lt;-<span class="st"> </span>max_lai <span class="op">*</span><span class="st"> </span>( <span class="dv">1</span><span class="op">/</span>(<span class="dv">1</span><span class="op">+</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>((julday_incslope<span class="op">-</span>jul_days)<span class="op">/</span>inc_slope)) <span class="op">-</span><span class="st"> </span></span>
+<span id="cb15-21"><a href="#cb15-21"></a><span class="st">                     </span><span class="dv">1</span><span class="op">/</span>(<span class="dv">1</span><span class="op">+</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>((julday_decslope<span class="op">-</span>jul_days)<span class="op">/</span>dec_slope)) ) </span>
+<span id="cb15-22"><a href="#cb15-22"></a>  lai[lai<span class="op">&lt;</span><span class="dv">0</span>] &lt;-<span class="st"> </span><span class="dv">0</span></span>
+<span id="cb15-23"><a href="#cb15-23"></a>  </span>
+<span id="cb15-24"><a href="#cb15-24"></a>  dates &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/as.POSIXlt">as.POSIXct</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/character">as.character</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/as.Date">as.Date</a></span>(jul_days,</span>
+<span id="cb15-25"><a href="#cb15-25"></a>                                           <span class="dt">origin=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(year,<span class="st">"-01-01"</span>))),</span>
+<span id="cb15-26"><a href="#cb15-26"></a>                      <span class="dt">format =</span> <span class="st">"%Y-%m-%d"</span>,<span class="dt">tz=</span><span class="st">"UTC"</span>)</span>
+<span id="cb15-27"><a href="#cb15-27"></a>  </span>
+<span id="cb15-28"><a href="#cb15-28"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">dates=</span>dates, <span class="dt">lai=</span>lai))</span>
+<span id="cb15-29"><a href="#cb15-29"></a>  </span>
+<span id="cb15-30"><a href="#cb15-30"></a>}</span>
+<span id="cb15-31"><a href="#cb15-31"></a></span>
+<span id="cb15-32"><a href="#cb15-32"></a></span>
+<span id="cb15-33"><a href="#cb15-33"></a>laitm_simple_wrapper &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">param_values=</span><span class="ot">NULL</span>, sit_names, model_options, ...) {</span>
+<span id="cb15-34"><a href="#cb15-34"></a>  </span>
+<span id="cb15-35"><a href="#cb15-35"></a>  <span class="co"># A basic wrapper for lai_toymodel  </span></span>
+<span id="cb15-36"><a href="#cb15-36"></a>  <span class="co">#</span></span>
+<span id="cb15-37"><a href="#cb15-37"></a>  <span class="co"># Arguments</span></span>
+<span id="cb15-38"><a href="#cb15-38"></a>  <span class="co">#   - param_values: (optional) named vector containing the values of the lay_toymodel </span></span>
+<span id="cb15-39"><a href="#cb15-39"></a>  <span class="co">#     parameters to force among max_lai, inc_slope, dec_slope, julday_incslope and </span></span>
+<span id="cb15-40"><a href="#cb15-40"></a>  <span class="co">#     julday_decslope </span></span>
+<span id="cb15-41"><a href="#cb15-41"></a>  <span class="co">#   - sit_names: Vector of situations names for which results must be returned.</span></span>
+<span id="cb15-42"><a href="#cb15-42"></a>  <span class="co">#     In this case, the names of the situations are coded as "year_suffix" </span></span>
+<span id="cb15-43"><a href="#cb15-43"></a>  <span class="co">#   - model_options: not used in this case</span></span>
+<span id="cb15-44"><a href="#cb15-44"></a>  <span class="co">#   - ...: mandatory since CroptimizR will give additional arguments not used here</span></span>
+<span id="cb15-45"><a href="#cb15-45"></a>  <span class="co">#</span></span>
+<span id="cb15-46"><a href="#cb15-46"></a>  <span class="co"># Value:</span></span>
+<span id="cb15-47"><a href="#cb15-47"></a>  <span class="co">#   A named list of tibble per situation. </span></span>
+<span id="cb15-48"><a href="#cb15-48"></a>  <span class="co">#   Each tibble contains columns:</span></span>
+<span id="cb15-49"><a href="#cb15-49"></a>  <span class="co">#      - Date (POSIXct dates of simulated results), </span></span>
+<span id="cb15-50"><a href="#cb15-50"></a>  <span class="co">#      - One column per simulated variable (lai in this case)</span></span>
+<span id="cb15-51"><a href="#cb15-51"></a>  <span class="co"># </span></span>
+<span id="cb15-52"><a href="#cb15-52"></a>  <span class="co"># Details:</span></span>
+<span id="cb15-53"><a href="#cb15-53"></a>  <span class="co">#  - Runs the lai_toymodel for a set of situations defined in sit_names </span></span>
+<span id="cb15-54"><a href="#cb15-54"></a>  <span class="co">#  - Forces the parameters of lai_toymodel with the values given in param_values </span></span>
+<span id="cb15-55"><a href="#cb15-55"></a>  <span class="co">#    argument   </span></span>
+<span id="cb15-56"><a href="#cb15-56"></a>  <span class="co">#  - Returns the required simulated values</span></span>
+<span id="cb15-57"><a href="#cb15-57"></a>  <span class="co">#</span></span>
+<span id="cb15-58"><a href="#cb15-58"></a>  </span>
+<span id="cb15-59"><a href="#cb15-59"></a>  results &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">sim_list =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/setNames">setNames</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/vector">vector</a></span>(<span class="st">"list"</span>,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(sit_names)), <span class="dt">nm =</span> sit_names),</span>
+<span id="cb15-60"><a href="#cb15-60"></a>                 <span class="dt">error=</span><span class="ot">FALSE</span>)</span>
+<span id="cb15-61"><a href="#cb15-61"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/attr">attr</a></span>(results<span class="op">$</span>sim_list, <span class="st">"class"</span>)=<span class="st"> "cropr_simulation"</span></span>
+<span id="cb15-62"><a href="#cb15-62"></a></span>
+<span id="cb15-63"><a href="#cb15-63"></a>  <span class="cf">for</span> (sit <span class="cf">in</span> sit_names) {</span>
+<span id="cb15-64"><a href="#cb15-64"></a>    </span>
+<span id="cb15-65"><a href="#cb15-65"></a>    <span class="co"># Retrieve year, emergence and crop_duration from situation name</span></span>
+<span id="cb15-66"><a href="#cb15-66"></a>    tmp &lt;-<span class="st"> </span>stringr<span class="op">::</span><span class="kw"><a href="https://stringr.tidyverse.org/reference/str_split.html">str_split</a></span>(sit,<span class="st">"_"</span>)</span>
+<span id="cb15-67"><a href="#cb15-67"></a>    year &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/numeric">as.numeric</a></span>(tmp[[<span class="dv">1</span>]][[<span class="dv">1</span>]])</span>
+<span id="cb15-68"><a href="#cb15-68"></a></span>
+<span id="cb15-69"><a href="#cb15-69"></a>    <span class="co"># Check inputs</span></span>
+<span id="cb15-70"><a href="#cb15-70"></a>    <span class="cf">if</span> (year<span class="op">&lt;</span><span class="dv">1</span>) {</span>
+<span id="cb15-71"><a href="#cb15-71"></a>      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/warning">warning</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(<span class="st">"sit_name"</span>,sit,</span>
+<span id="cb15-72"><a href="#cb15-72"></a>                    <span class="st">"not well defined, first part is supposed to be a year!"</span>))</span>
+<span id="cb15-73"><a href="#cb15-73"></a>      results<span class="op">$</span>error=<span class="ot">TRUE</span></span>
+<span id="cb15-74"><a href="#cb15-74"></a>      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(results)</span>
+<span id="cb15-75"><a href="#cb15-75"></a>    }</span>
+<span id="cb15-76"><a href="#cb15-76"></a>    <span class="cf">if</span> (<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/all">all</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(param_values) <span class="op">%in%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"max_lai"</span>, <span class="st">"inc_slope"</span>, <span class="st">"dec_slope"</span>, </span>
+<span id="cb15-77"><a href="#cb15-77"></a>                                        <span class="st">"julday_incslope"</span>, <span class="st">"julday_decslope"</span>))) {</span>
+<span id="cb15-78"><a href="#cb15-78"></a>      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/warning">warning</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(<span class="st">"Unknown parameters in param_values:"</span>,</span>
+<span id="cb15-79"><a href="#cb15-79"></a>                    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(param_values),<span class="dt">collapse =</span> <span class="st">","</span>)))</span>
+<span id="cb15-80"><a href="#cb15-80"></a>      results<span class="op">$</span>error=<span class="ot">TRUE</span></span>
+<span id="cb15-81"><a href="#cb15-81"></a>      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(results)</span>
+<span id="cb15-82"><a href="#cb15-82"></a>    }</span>
+<span id="cb15-83"><a href="#cb15-83"></a>    </span>
+<span id="cb15-84"><a href="#cb15-84"></a>    <span class="co"># Call the lai_toymodel with varying arguments depending on what is given in </span></span>
+<span id="cb15-85"><a href="#cb15-85"></a>    <span class="co"># param_values</span></span>
+<span id="cb15-86"><a href="#cb15-86"></a>    res_laitm &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/do.call">do.call</a></span>(<span class="st">'lai_toymodel'</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">as.list</a></span>(param_values), </span>
+<span id="cb15-87"><a href="#cb15-87"></a>                                           <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">year=</span>year)))</span>
+<span id="cb15-88"><a href="#cb15-88"></a>    </span>
+<span id="cb15-89"><a href="#cb15-89"></a>    <span class="co"># Fill the result variable</span></span>
+<span id="cb15-90"><a href="#cb15-90"></a>    results<span class="op">$</span>sim_list[[sit]] &lt;-<span class="st">  </span>dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/reexports.html">tibble</a></span>(<span class="dt">Date=</span>res_laitm<span class="op">$</span>dates, </span>
+<span id="cb15-91"><a href="#cb15-91"></a>                                              <span class="dt">lai=</span>res_laitm<span class="op">$</span>lai)</span>
+<span id="cb15-92"><a href="#cb15-92"></a>    </span>
+<span id="cb15-93"><a href="#cb15-93"></a>  }</span>
+<span id="cb15-94"><a href="#cb15-94"></a>  </span>
+<span id="cb15-95"><a href="#cb15-95"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(results)</span>
+<span id="cb15-96"><a href="#cb15-96"></a></span>
+<span id="cb15-97"><a href="#cb15-97"></a>}</span></code></pre></div>
+<p>The little code below shows an example of parameter estimation using this wrapper:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(CroptimizR)</span>
+<span id="cb16-2"><a href="#cb16-2"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(dplyr)</span>
+<span id="cb16-3"><a href="#cb16-3"></a></span>
+<span id="cb16-4"><a href="#cb16-4"></a></span>
+<span id="cb16-5"><a href="#cb16-5"></a>tmp &lt;-<span class="st"> </span><span class="kw">laitm_simple_wrapper</span>(<span class="dt">sit_names=</span><span class="st">"2005_a"</span>, <span class="dt">param_values =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dt">inc_slope=</span><span class="dv">25</span>, <span class="dt">dec_slope=</span><span class="dv">10</span>))</span>
+<span id="cb16-6"><a href="#cb16-6"></a></span>
+<span id="cb16-7"><a href="#cb16-7"></a><span class="co"># Create synthetic observations by selecting simulated results</span></span>
+<span id="cb16-8"><a href="#cb16-8"></a>ind &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sort">sort</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sample">sample</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow</a></span>(tmp<span class="op">$</span>sim_list<span class="op">$</span><span class="st">`</span><span class="dt">2005_a</span><span class="st">`</span>),<span class="dv">50</span>))</span>
+<span id="cb16-9"><a href="#cb16-9"></a>obs_synth &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="st">`</span><span class="dt">2005_a</span><span class="st">`</span>=tmp<span class="op">$</span>sim_list<span class="op">$</span><span class="st">`</span><span class="dt">2005_a</span><span class="st">`</span>[ind,])</span>
+<span id="cb16-10"><a href="#cb16-10"></a></span>
+<span id="cb16-11"><a href="#cb16-11"></a><span class="co"># Try to retrieve inc_slope and dec_slope values</span></span>
+<span id="cb16-12"><a href="#cb16-12"></a>param_info &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">lb=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dt">inc_slope=</span><span class="dv">1</span>,<span class="dt">dec_slope=</span><span class="dv">1</span>), <span class="dt">ub=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dt">inc_slope=</span><span class="dv">100</span>,<span class="dt">dec_slope=</span><span class="dv">100</span>))</span>
+<span id="cb16-13"><a href="#cb16-13"></a>optim_options &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">nb_rep=</span><span class="dv">5</span>, <span class="dt">maxeval=</span><span class="dv">100</span>, <span class="dt">xtol_rel=</span><span class="fl">1e-2</span>)</span>
+<span id="cb16-14"><a href="#cb16-14"></a>res &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estim_param.html">estim_param</a></span>(obs_synth, <span class="dt">crit_function =</span> crit_ols,</span>
+<span id="cb16-15"><a href="#cb16-15"></a>            <span class="dt">model_function =</span> laitm_simple_wrapper,</span>
+<span id="cb16-16"><a href="#cb16-16"></a>            <span class="dt">optim_options=</span>optim_options,</span>
+<span id="cb16-17"><a href="#cb16-17"></a>            <span class="dt">param_info =</span> param_info)</span></code></pre></div>
+<pre><code>## [1] "Working: 20.00%. ETA: 2.22"
+## [1] "Working: 40.00%. ETA: 1.85"
+## [1] "Working: 60.00%. ETA: 1.35"
+## [1] "Working: 80.00%. ETA: 0.69"
+## [1] "Working: 100.00%. ETA: 0.00"</code></pre>
+<pre><code>## [1] "Estimated value for inc_slope :  25.0026692254046"
+## [1] "Estimated value for dec_slope :  10.0325780207203"
+## [1] "Minimum value of the criterion: 0.000186671843605429"
+## [1] "Complementary graphs and results can be found in  D:/Home/sbuis/Documents/GitHub/CroptimizR/vignettes"
+## Total time for parameter estimation: 5.28 sec elapsed</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a>res<span class="op">$</span>final_values</span></code></pre></div>
+<pre><code>## inc_slope dec_slope 
+##  25.00267  10.03258</code></pre>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a><span class="co"># Plot the simulations obtained with the optimized values of the parameters VS the observed ones using the CroPlotR package.</span></span>
+<span id="cb21-2"><a href="#cb21-2"></a><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">require</a></span>(<span class="st">"CroPlotR"</span>)){</span>
+<span id="cb21-3"><a href="#cb21-3"></a>    devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/devtools/topics/remote-reexports">install_github</a></span>(<span class="st">"SticsRPacks/CroPlotR@*release"</span>)</span>
+<span id="cb21-4"><a href="#cb21-4"></a>    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"CroPlotR"</span>)</span>
+<span id="cb21-5"><a href="#cb21-5"></a>}</span>
+<span id="cb21-6"><a href="#cb21-6"></a>tmp &lt;-<span class="st"> </span><span class="kw">laitm_simple_wrapper</span>(<span class="dt">sit_names=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"2005_a"</span>,<span class="st">"2006_b"</span>),</span>
+<span id="cb21-7"><a href="#cb21-7"></a>                            <span class="dt">param_values =</span> res<span class="op">$</span>final_values)</span>
+<span id="cb21-8"><a href="#cb21-8"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(tmp<span class="op">$</span>sim_list,<span class="dt">obs=</span>obs_synth,<span class="dt">type=</span><span class="st">"scatter"</span>)</span></code></pre></div>
+<pre><code>## $all_situations</code></pre>
+<p><img src="Designing_a_model_wrapper_files/figure-html/unnamed-chunk-9-1.png" width="700"></p>
+</div>
+<div id="another-version-taking-into-account-the-different-shapes-param_values-can-take" class="section level3">
+<h3 class="hasAnchor">
+<a href="#another-version-taking-into-account-the-different-shapes-param_values-can-take" class="anchor"></a>Another version taking into account the different shapes param_values can take</h3>
+<p>This one can be used to perform simultaneous estimation of specific and varietal parameters on a dataset including several cultivars.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a>laitm_simple_wrapper_v2 &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">param_values=</span><span class="ot">NULL</span>, sit_names, model_options, ...) {</span>
+<span id="cb23-2"><a href="#cb23-2"></a>  </span>
+<span id="cb23-3"><a href="#cb23-3"></a>  <span class="co"># A basic wrapper for lai_toymodel  </span></span>
+<span id="cb23-4"><a href="#cb23-4"></a>  <span class="co">#</span></span>
+<span id="cb23-5"><a href="#cb23-5"></a>  <span class="co"># Arguments</span></span>
+<span id="cb23-6"><a href="#cb23-6"></a>  <span class="co">#   - param_values: (optional) a named vector or a tibble containing the values of the </span></span>
+<span id="cb23-7"><a href="#cb23-7"></a>  <span class="co">#     lay_toymodel parameters to force among max_lai, inc_slope, dec_slope, </span></span>
+<span id="cb23-8"><a href="#cb23-8"></a>  <span class="co">#     julday_incslope and julday_decslope. An optional column named Situation containing   </span></span>
+<span id="cb23-9"><a href="#cb23-9"></a>  <span class="co">#     the name of the situations allows to define different values of the parameters</span></span>
+<span id="cb23-10"><a href="#cb23-10"></a>  <span class="co">#     for different situations. </span></span>
+<span id="cb23-11"><a href="#cb23-11"></a>  <span class="co">#   - sit_names: Vector of situations names for which results must be returned.</span></span>
+<span id="cb23-12"><a href="#cb23-12"></a>  <span class="co">#     In this case, the names of the situations are coded as "year_suffix" </span></span>
+<span id="cb23-13"><a href="#cb23-13"></a>  <span class="co">#   - model_options: not used in this case</span></span>
+<span id="cb23-14"><a href="#cb23-14"></a>  <span class="co">#   - ...: mandatory since CroptimizR will give additional arguments not used here</span></span>
+<span id="cb23-15"><a href="#cb23-15"></a>  <span class="co">#</span></span>
+<span id="cb23-16"><a href="#cb23-16"></a>  <span class="co"># Value:</span></span>
+<span id="cb23-17"><a href="#cb23-17"></a>  <span class="co">#   A named list of tibble per situation. </span></span>
+<span id="cb23-18"><a href="#cb23-18"></a>  <span class="co">#   Each tibble contains columns:</span></span>
+<span id="cb23-19"><a href="#cb23-19"></a>  <span class="co">#      - Date (POSIXct dates of simulated results), </span></span>
+<span id="cb23-20"><a href="#cb23-20"></a>  <span class="co">#      - One column per simulated variable (lai in this case)</span></span>
+<span id="cb23-21"><a href="#cb23-21"></a>  <span class="co"># </span></span>
+<span id="cb23-22"><a href="#cb23-22"></a>  <span class="co"># Details:</span></span>
+<span id="cb23-23"><a href="#cb23-23"></a>  <span class="co">#  - Runs the lai_toymodel for a set of situations defined in sit_names </span></span>
+<span id="cb23-24"><a href="#cb23-24"></a>  <span class="co">#  - Forces the parameters of lai_toymodel with the values given in param_values </span></span>
+<span id="cb23-25"><a href="#cb23-25"></a>  <span class="co">#   argument   </span></span>
+<span id="cb23-26"><a href="#cb23-26"></a>  <span class="co">#  - Returns the required simulated values</span></span>
+<span id="cb23-27"><a href="#cb23-27"></a>  <span class="co">#</span></span>
+<span id="cb23-28"><a href="#cb23-28"></a>  </span>
+<span id="cb23-29"><a href="#cb23-29"></a>  results &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">sim_list =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/setNames">setNames</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/vector">vector</a></span>(<span class="st">"list"</span>,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(sit_names)), </span>
+<span id="cb23-30"><a href="#cb23-30"></a>                                      <span class="dt">nm =</span> sit_names), <span class="dt">error=</span><span class="ot">FALSE</span>)</span>
+<span id="cb23-31"><a href="#cb23-31"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/attr">attr</a></span>(results<span class="op">$</span>sim_list, <span class="st">"class"</span>)=<span class="st"> "cropr_simulation"</span></span>
+<span id="cb23-32"><a href="#cb23-32"></a></span>
+<span id="cb23-33"><a href="#cb23-33"></a>  param_values &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class="kw"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span>(<span class="op">!!!</span>param_values)  <span class="co"># convert param_values in a tibble</span></span>
+<span id="cb23-34"><a href="#cb23-34"></a>  </span>
+<span id="cb23-35"><a href="#cb23-35"></a>  <span class="cf">for</span> (sit <span class="cf">in</span> sit_names) {</span>
+<span id="cb23-36"><a href="#cb23-36"></a>    </span>
+<span id="cb23-37"><a href="#cb23-37"></a>    <span class="co"># Retrieve year, emergence and crop_duration from situation name</span></span>
+<span id="cb23-38"><a href="#cb23-38"></a>    tmp &lt;-<span class="st"> </span>stringr<span class="op">::</span><span class="kw"><a href="https://stringr.tidyverse.org/reference/str_split.html">str_split</a></span>(sit,<span class="st">"_"</span>)</span>
+<span id="cb23-39"><a href="#cb23-39"></a>    year &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/numeric">as.numeric</a></span>(tmp[[<span class="dv">1</span>]][[<span class="dv">1</span>]])</span>
+<span id="cb23-40"><a href="#cb23-40"></a></span>
+<span id="cb23-41"><a href="#cb23-41"></a>    <span class="co"># Check inputs</span></span>
+<span id="cb23-42"><a href="#cb23-42"></a>    <span class="cf">if</span> (year<span class="op">&lt;</span><span class="dv">1</span>) {</span>
+<span id="cb23-43"><a href="#cb23-43"></a>      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/warning">warning</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(<span class="st">"sit_name"</span>,sit,</span>
+<span id="cb23-44"><a href="#cb23-44"></a>                    <span class="st">"not well defined, first part is supposed to be a year!"</span>))</span>
+<span id="cb23-45"><a href="#cb23-45"></a>      results<span class="op">$</span>error=<span class="ot">TRUE</span></span>
+<span id="cb23-46"><a href="#cb23-46"></a>      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(results)</span>
+<span id="cb23-47"><a href="#cb23-47"></a>    }</span>
+<span id="cb23-48"><a href="#cb23-48"></a>    </span>
+<span id="cb23-49"><a href="#cb23-49"></a>    <span class="co"># extract the parameters values to apply for the given situation</span></span>
+<span id="cb23-50"><a href="#cb23-50"></a>    params &lt;-<span class="st"> </span><span class="ot">NULL</span></span>
+<span id="cb23-51"><a href="#cb23-51"></a>    <span class="cf">if</span> (<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/NULL">is.null</a></span>(param_values)) {</span>
+<span id="cb23-52"><a href="#cb23-52"></a>      <span class="cf">if</span> (<span class="op">!</span><span class="st"> "situation"</span> <span class="op">%in%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(param_values)) {</span>
+<span id="cb23-53"><a href="#cb23-53"></a>        params &lt;-<span class="st"> </span>param_values</span>
+<span id="cb23-54"><a href="#cb23-54"></a>      } <span class="cf">else</span> {</span>
+<span id="cb23-55"><a href="#cb23-55"></a>        params &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(param_values, situation<span class="op">==</span>sit) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb23-56"><a href="#cb23-56"></a><span class="st">          </span>dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="op">-</span>situation)</span>
+<span id="cb23-57"><a href="#cb23-57"></a>      }</span>
+<span id="cb23-58"><a href="#cb23-58"></a>    }</span>
+<span id="cb23-59"><a href="#cb23-59"></a>    <span class="cf">if</span> (<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/all">all</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(params) <span class="op">%in%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"max_lai"</span>, <span class="st">"inc_slope"</span>, <span class="st">"dec_slope"</span>, </span>
+<span id="cb23-60"><a href="#cb23-60"></a>                                  <span class="st">"julday_incslope"</span>, <span class="st">"julday_decslope"</span>))) {</span>
+<span id="cb23-61"><a href="#cb23-61"></a>      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/warning">warning</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(<span class="st">"Unknown parameters in param_values:"</span>,</span>
+<span id="cb23-62"><a href="#cb23-62"></a>                    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(param_values),<span class="dt">collapse =</span> <span class="st">","</span>)))</span>
+<span id="cb23-63"><a href="#cb23-63"></a>      results<span class="op">$</span>error=<span class="ot">TRUE</span></span>
+<span id="cb23-64"><a href="#cb23-64"></a>      <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(results)</span>
+<span id="cb23-65"><a href="#cb23-65"></a>    }</span>
+<span id="cb23-66"><a href="#cb23-66"></a></span>
+<span id="cb23-67"><a href="#cb23-67"></a>    <span class="co"># Call the lai_toymodel with varying arguments depending on what is given in </span></span>
+<span id="cb23-68"><a href="#cb23-68"></a>    <span class="co"># param_values</span></span>
+<span id="cb23-69"><a href="#cb23-69"></a>    res_laitm &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/do.call">do.call</a></span>(<span class="st">'lai_toymodel'</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">as.list</a></span>(params), </span>
+<span id="cb23-70"><a href="#cb23-70"></a>                                           <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">year=</span>year)))</span>
+<span id="cb23-71"><a href="#cb23-71"></a>    </span>
+<span id="cb23-72"><a href="#cb23-72"></a>    <span class="co"># Fill the result variable</span></span>
+<span id="cb23-73"><a href="#cb23-73"></a>    results<span class="op">$</span>sim_list[[sit]] &lt;-<span class="st">  </span>dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/reexports.html">tibble</a></span>(<span class="dt">Date=</span>res_laitm<span class="op">$</span>dates, </span>
+<span id="cb23-74"><a href="#cb23-74"></a>                                              <span class="dt">lai=</span>res_laitm<span class="op">$</span>lai)</span>
+<span id="cb23-75"><a href="#cb23-75"></a>    </span>
+<span id="cb23-76"><a href="#cb23-76"></a>  }</span>
+<span id="cb23-77"><a href="#cb23-77"></a>  </span>
+<span id="cb23-78"><a href="#cb23-78"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/function">return</a></span>(results)</span>
+<span id="cb23-79"><a href="#cb23-79"></a></span>
+<span id="cb23-80"><a href="#cb23-80"></a>}</span></code></pre></div>
+<p>The code below shows an example of a simultaneous estimation of specific (dec_slope here) and varietal (inc_slope) parameters using this wrapper:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(CroptimizR)</span>
+<span id="cb24-2"><a href="#cb24-2"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(dplyr)</span>
+<span id="cb24-3"><a href="#cb24-3"></a></span>
+<span id="cb24-4"><a href="#cb24-4"></a>tmp &lt;-<span class="st"> </span><span class="kw">laitm_simple_wrapper_v2</span>(<span class="dt">sit_names=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"2005_a"</span>,<span class="st">"2006_b"</span>),</span>
+<span id="cb24-5"><a href="#cb24-5"></a>                            <span class="dt">param_values =</span> dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/reexports.html">tibble</a></span>(<span class="dt">situation=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"2005_a"</span>,<span class="st">"2006_b"</span>),</span>
+<span id="cb24-6"><a href="#cb24-6"></a>                                                  <span class="dt">inc_slope=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">25</span>,<span class="dv">50</span>), <span class="dt">dec_slope=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">10</span>,<span class="dv">10</span>)))</span>
+<span id="cb24-7"><a href="#cb24-7"></a></span>
+<span id="cb24-8"><a href="#cb24-8"></a><span class="co"># Create synthetic observations by selecting simulated results</span></span>
+<span id="cb24-9"><a href="#cb24-9"></a>length_<span class="dv">2005</span>_a &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow</a></span>(tmp<span class="op">$</span>sim_list<span class="op">$</span><span class="st">`</span><span class="dt">2005_a</span><span class="st">`</span>)</span>
+<span id="cb24-10"><a href="#cb24-10"></a>length_<span class="dv">2006</span>_b &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow</a></span>(tmp<span class="op">$</span>sim_list<span class="op">$</span><span class="st">`</span><span class="dt">2006_b</span><span class="st">`</span>)</span>
+<span id="cb24-11"><a href="#cb24-11"></a>obs_synth &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="st">`</span><span class="dt">2005_a</span><span class="st">`</span>=tmp<span class="op">$</span>sim_list<span class="op">$</span><span class="st">`</span><span class="dt">2005_a</span><span class="st">`</span>[<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dt">from=</span><span class="dv">1</span>, <span class="dt">to=</span>length_<span class="dv">2005</span>_a, <span class="dt">by=</span><span class="dv">3</span>),],</span>
+<span id="cb24-12"><a href="#cb24-12"></a>                  <span class="st">`</span><span class="dt">2006_b</span><span class="st">`</span>=tmp<span class="op">$</span>sim_list<span class="op">$</span><span class="st">`</span><span class="dt">2006_b</span><span class="st">`</span>[<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/seq">seq</a></span>(<span class="dt">from=</span><span class="dv">1</span>, <span class="dt">to=</span>length_<span class="dv">2006</span>_b, <span class="dt">by=</span><span class="dv">3</span>),])</span>
+<span id="cb24-13"><a href="#cb24-13"></a></span>
+<span id="cb24-14"><a href="#cb24-14"></a><span class="co"># Try to retrieve inc_slope and dec_slope values on both situations</span></span>
+<span id="cb24-15"><a href="#cb24-15"></a>param_info=<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">inc_slope=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">sit_list=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="st">"2005_a"</span>,<span class="st">"2006_b"</span>),</span>
+<span id="cb24-16"><a href="#cb24-16"></a>                          <span class="dt">lb=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span>,<span class="dv">1</span>),<span class="dt">ub=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">100</span>,<span class="dv">100</span>)),</span>
+<span id="cb24-17"><a href="#cb24-17"></a>                <span class="dt">dec_slope=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">sit_list=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"2005_a"</span>,<span class="st">"2006_b"</span>)),</span>
+<span id="cb24-18"><a href="#cb24-18"></a>                          <span class="dt">lb=</span><span class="dv">1</span>,<span class="dt">ub=</span><span class="dv">100</span>))</span>
+<span id="cb24-19"><a href="#cb24-19"></a></span>
+<span id="cb24-20"><a href="#cb24-20"></a>optim_options &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dt">nb_rep=</span><span class="dv">5</span>, <span class="dt">maxeval=</span><span class="dv">100</span>, <span class="dt">xtol_rel=</span><span class="fl">1e-2</span>)</span>
+<span id="cb24-21"><a href="#cb24-21"></a>res &lt;-<span class="st"> </span><span class="kw"><a href="../reference/estim_param.html">estim_param</a></span>(obs_synth, <span class="dt">crit_function =</span> crit_ols,</span>
+<span id="cb24-22"><a href="#cb24-22"></a>            <span class="dt">model_function =</span> laitm_simple_wrapper_v2,</span>
+<span id="cb24-23"><a href="#cb24-23"></a>            <span class="dt">optim_options=</span>optim_options,</span>
+<span id="cb24-24"><a href="#cb24-24"></a>            <span class="dt">param_info =</span> param_info)</span></code></pre></div>
+<pre><code>## [1] "Working: 20.00%. ETA: 18.03"
+## [1] "Working: 40.00%. ETA: 10.47"
+## [1] "Working: 60.00%. ETA: 6.22"
+## [1] "Working: 80.00%. ETA: 3.11"
+## [1] "Working: 100.00%. ETA: 0.00"</code></pre>
+<pre><code>## [1] "Estimated value for inc_slope1 :  25.0136868343543"
+## [1] "Estimated value for inc_slope2 :  49.8659887771331"
+## [1] "Estimated value for dec_slope :  9.98174732784232"
+## [1] "Minimum value of the criterion: 0.00155001138452905"
+## [1] "Complementary graphs and results can be found in  D:/Home/sbuis/Documents/GitHub/CroptimizR/vignettes"
+## Total time for parameter estimation: 15.97 sec elapsed</code></pre>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a>res<span class="op">$</span>final_values</span></code></pre></div>
+<pre><code>## inc_slope1 inc_slope2  dec_slope 
+##  25.013687  49.865989   9.981747</code></pre>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a><span class="co"># Plot the simulations obtained with the optimized values of the parameters VS the observed ones using the CroPlotR package.</span></span>
+<span id="cb29-2"><a href="#cb29-2"></a><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">require</a></span>(<span class="st">"CroPlotR"</span>)){</span>
+<span id="cb29-3"><a href="#cb29-3"></a>    devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/devtools/topics/remote-reexports">install_github</a></span>(<span class="st">"SticsRPacks/CroPlotR@*release"</span>)</span>
+<span id="cb29-4"><a href="#cb29-4"></a>    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"CroPlotR"</span>)</span>
+<span id="cb29-5"><a href="#cb29-5"></a>}</span>
+<span id="cb29-6"><a href="#cb29-6"></a>tmp &lt;-<span class="st"> </span><span class="kw">laitm_simple_wrapper_v2</span>(<span class="dt">sit_names=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"2005_a"</span>,<span class="st">"2006_b"</span>),</span>
+<span id="cb29-7"><a href="#cb29-7"></a>                            <span class="dt">param_values =</span> dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/reexports.html">tibble</a></span>(<span class="dt">situation=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"2005_a"</span>,<span class="st">"2006_b"</span>),</span>
+<span id="cb29-8"><a href="#cb29-8"></a>                                                  <span class="dt">inc_slope=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(res<span class="op">$</span>final_values[[<span class="st">"inc_slope1"</span>]],res<span class="op">$</span>final_values[[<span class="st">"inc_slope2"</span>]]), <span class="dt">dec_slope=</span>res<span class="op">$</span>final_values[[<span class="st">"dec_slope"</span>]]))</span>
+<span id="cb29-9"><a href="#cb29-9"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(tmp<span class="op">$</span>sim_list,<span class="dt">obs=</span>obs_synth,<span class="dt">type=</span><span class="st">"scatter"</span>)</span></code></pre></div>
+<pre><code>## $all_situations</code></pre>
+<p><img src="Designing_a_model_wrapper_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>
+</div>
+<div id="other-examples" class="section level3">
+<h3 class="hasAnchor">
+<a href="#other-examples" class="anchor"></a>Other examples</h3>
+<p>More complex examples of crop model wrappers for CroptimizR can be found in the SticsOnR package (<a href="https://github.com/SticsRPacks/SticsOnR/blob/master/R/stics_wrapper.R" class="uri">https://github.com/SticsRPacks/SticsOnR/blob/master/R/stics_wrapper.R</a>) for the Stics model and in the ApsimOnR package (<a href="https://github.com/hol430/ApsimOnR/blob/master/R/apsimx_wrapper.R" class="uri">https://github.com/hol430/ApsimOnR/blob/master/R/apsimx_wrapper.R</a>) for ApsimX model.</p>
+</div>
 </div>
   </div>
 

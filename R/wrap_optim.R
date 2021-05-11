@@ -19,7 +19,7 @@
 
 wrap_optim <- function(param_names,optim_options,param_info,crit_options) {
 
-  if (is.null((nb_rep=optim_options$nb_rep))) { nb_rep=1 }
+  if (is.null((nb_rep=optim_options$nb_rep))) { nb_rep=5 }
   if (is.null((ranseed=optim_options$ranseed))) { ranseed=NULL }
   if (is.null((hessian=optim_options$hessian))) { hessian=FALSE }
   if (is.null((method=optim_options$method))) { method="Nelder-Mead" }
@@ -32,11 +32,9 @@ wrap_optim <- function(param_names,optim_options,param_info,crit_options) {
   user_init_values=get_params_init_values(param_info)
 
   # Sample initial values and include user provided ones
-  init_values=sample_params(param_info,nb_rep,ranseed)
-  for (param in param_names) {
-    idx=which(!is.na(user_init_values[,param]))
-    init_values[idx,param]=user_init_values[idx,param]
-  }
+  init_values <- complete_init_values(user_init_values, nb_rep, lb = bounds$lb,
+                                      ub = bounds$ub, ranseed,
+                                      satisfy_par_const=crit_options$satisfy_par_const)
 
   # Optim package switches the method to L-BFGS if bounds are provided since
   # they are not handled with other methods ...
@@ -86,57 +84,48 @@ wrap_optim <- function(param_names,optim_options,param_info,crit_options) {
 
 
   # Get the estimated values
-  est_values=t(sapply(optim,function(x) x$par))
+  est_values=t(rbind(sapply(optim,`[[`,"par")))
+  colnames(est_values)=param_names
 
   # Which repetion has the smallest criterion
   ind_min_crit=which.min(sapply(optim, function(x) {if (!is.null(x$value)) x$value}))
 
   # Graph and print the results
-  tmp<-rbind(bounds$lb,bounds$ub,do.call(rbind,lapply(optim,`[[`,"par")))
-  tmp[is.infinite(tmp)]<-NA
+  tmp<-rbind(bounds$lb,bounds$ub,est_values, init_values)
+  tmp[apply(tmp,2,is.infinite)]<-NA
   minvalue<-apply(tmp,2,min,na.rm=TRUE); maxvalue<-apply(tmp,2,max,na.rm=TRUE)
   minvalue<-minvalue-0.05*(maxvalue-minvalue); maxvalue<-maxvalue+0.05*(maxvalue-minvalue)
+  crit <- sapply(optim, function(x) x$value)
 
   tryCatch(
     {
       grDevices::pdf(file = file.path(path_results,"EstimatedVSinit.pdf") , width = 9, height = 9)
-      for (ipar in 1:nb_params) {
-        graphics::plot(init_values[,ipar], est_values[,ipar],
-                       main = "Estimated vs Initial values of the parameters for different repetitions",
-                       graphics::text(init_values[,ipar], est_values[,ipar], pos=1,col="black"),
-                       xlim = c(minvalue[ipar],maxvalue[ipar]),
-                       ylim = c(minvalue[ipar],maxvalue[ipar]),
-                       xlab = paste("Initial value for", param_names[ipar]),
-                       ylab = paste("Estimated value for", param_names[ipar]))
-        graphics::text(init_values[ind_min_crit,ipar], est_values[ind_min_crit,ipar],
-                       labels = ind_min_crit, pos=1,col="red")
-      }
-      grDevices::dev.off()
     },
     error=function(cond) {
       filename=paste0("EstimatedVSinit_new.pdf")
-      warning("Error trying to create ",path_results,"/EstimatedVSinit.pdf file.",
-              "It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
+      warning("Error trying to create ",path_results,"/EstimatedVSinit.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
       message(cond)
-      utils::flush.console()
       grDevices::pdf(file = file.path(path_results,filename) , width = 9, height = 9)
-      for (ipar in 1:nb_params) {
-        graphics::plot(init_values[,ipar], est_values[,ipar],
-                       main = "Estimated vs Initial values of the parameters for different repetitions",
-                       graphics::text(init_values[,ipar], est_values[,ipar], pos=1,col="black"),
-                       xlim = c(minvalue[ipar],maxvalue[ipar]),
-                       ylim = c(minvalue[ipar],maxvalue[ipar]),
-                       xlab = paste("Initial value for", param_names[ipar]),
-                       ylab = paste("Estimated value for", param_names[ipar]))
-        graphics::text(init_values[ind_min_crit,ipar], est_values[ind_min_crit,ipar],
-                       labels = ind_min_crit, pos=1,col="red")
-      }
-      grDevices::dev.off()
     })
 
 
-  # Save the results of nloptr
-  save(optim, file = file.path(path_results,"optim_results.Rdata"))
+  tryCatch(
+    {
+      p <- plot_estimVSinit(init_values, est_values, crit, bounds$lb, bounds$ub)
+      print(p)
+      grDevices::dev.off()
+    },
+    error=function(cond) {
+
+      warning("Error trying to create EstimatedVSinit bubble graph file. \n
+              Maybe linked with the values of the criterion to plot (size of the bubbles):",
+              paste0(crit,collapse = ","),"\n Trying without the bubbles ...")
+      message(cond)
+
+      p <- plot_estimVSinit(init_values, est_values, crit, bounds$lb, bounds$ub, bubble=FALSE)
+      print(p)
+      grDevices::dev.off()
+    })
 
   # Display of parameters for the repetition which has the smallest criterion
   for (ipar in 1:nb_params) {
@@ -153,6 +142,10 @@ wrap_optim <- function(param_names,optim_options,param_info,crit_options) {
               min_crit_value = optim[[ind_min_crit]]$value,
               ind_min_crit = ind_min_crit,
               optim = optim)
+
+  # Save the results
+  save(res, file = file.path(path_results,"optim_results.Rdata"))
+
   return(res)
 
 }

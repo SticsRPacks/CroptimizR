@@ -52,6 +52,9 @@ NULL
 #' @export
 #' @rdname ls_criteria
 crit_ols <- function(sim_list, obs_list) {
+
+  if(!nargs()) return("ls")  # return criterion type (ls, log-ls, likelihood, log-likelihood) if no argument given
+
   var_list <- unique(unlist(lapply(obs_list, function(x) colnames(x))))
   var_list <- setdiff(var_list, "Date")
 
@@ -75,6 +78,9 @@ crit_ols <- function(sim_list, obs_list) {
 #' @export
 #' @rdname ls_criteria
 crit_log_cwss <- function(sim_list, obs_list) {
+
+  if(!nargs()) return("log-ls")  # return criterion type (ls, log-ls, likelihood, log-likelihood) if no argument given
+
   var_list <- unique(unlist(lapply(obs_list, function(x) colnames(x))))
   var_list <- setdiff(var_list, "Date")
 
@@ -97,6 +103,9 @@ crit_log_cwss <- function(sim_list, obs_list) {
 #' @export
 #' @rdname ls_criteria
 crit_log_cwss_corr <- function(sim_list,obs_list) {
+
+  if(!nargs()) return("log-ls")  # return criterion type (ls, log-ls, likelihood, log-likelihood) if no argument given
+
   var_list=unique(unlist(lapply(obs_list,function (x) colnames(x))))
   var_list=setdiff(var_list,"Date")
   result<-0

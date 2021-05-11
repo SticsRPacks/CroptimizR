@@ -29,11 +29,12 @@ will be considered in the same order as in \code{sit_group}
 \examples{
 sg <- list(
   p1 = list(sit_list = list(c("sit1", "sit2", "sit3"), c("sit4", "sit5", "sit6"))),
-  p2 = list(sit_list = list(c("sit1", "sit2", "sit3", "sit4", "sit5", "sit6")))
+  p2 = list(sit_list = list(c("sit1", "sit2", "sit3", "sit4", "sit5", "sit6"))),
+  p3 = list(sit_list = list(c("sit1", "sit2", "sit3"), c("sit4", "sit5", "sit6")))
 )
-vec <- c(1, 2, 3)
+vec <- c(1, 2, 3, 4, 5)
 names(vec) <- CroptimizR:::get_params_names(sg)
-CroptimizR:::get_params_per_sit(sg, "sit2", vec) # should give c(p1=1,p2=3)
-CroptimizR:::get_params_per_sit(sg, "sit4", vec) # should give c(p1=2,p2=3)
+CroptimizR:::get_params_per_sit(sg, "sit2", vec) # should give c(p1=1,p2=3,p3=4)
+CroptimizR:::get_params_per_sit(sg, "sit4", vec) # should give c(p1=2,p2=3,p3=5)
 }
 \keyword{internal}

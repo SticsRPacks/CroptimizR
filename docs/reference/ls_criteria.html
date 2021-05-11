@@ -73,7 +73,7 @@ difference between observed and simulated values of model output variables." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CroptimizR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0.9003</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0.9000</span>
       </span>
     </div>
 
@@ -148,7 +148,9 @@ difference between observed and simulated values of model output variables.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>crit_log_cwss</span>(<span class='no'>sim_list</span>, <span class='no'>obs_list</span>)
+    <pre class="usage"><span class='fu'>crit_ols</span>(<span class='no'>sim_list</span>, <span class='no'>obs_list</span>)
+
+<span class='fu'>crit_log_cwss</span>(<span class='no'>sim_list</span>, <span class='no'>obs_list</span>)
 
 <span class='fu'>crit_log_cwss_corr</span>(<span class='no'>sim_list</span>, <span class='no'>obs_list</span>)</pre>
     
@@ -172,6 +174,13 @@ difference between observed and simulated values of model output variables.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The following criteria are proposed (<a href='https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html'>see html version</a> for a better rendering of equations):</p><ul>
+<li><p><code>crit_ols</code>: ordinary least squares <br />
+The sum of squared residues for each variable: <br />
+$$ \sum_{i,j,k} [Y_{ijk}-f_{jk}(X_i;\theta)]^2 $$
+where \( Y_{ijk} \) is the observed value for the \(k^{th}\) time point of the \(j^{th}\) variable in the \(i^{th}\)
+situation,
+\( f_{jk}(X_i;\theta) \) the corresponding model prediction, and \(n_j\) the number of measurements of variable \(j\). <br />
+In this criterion, one assume that all errors (model and observations errors for all variables, dates and situations) are independent, and that the error variance is constant over time and equal for the different variables \(j\).</p></li>
 <li><p><code>crit_log_cwss</code>: log transformation of concentrated version of weighted sum of squares <br />
 The concentrated version of weighted sum of squares is: <br />
 $$ \prod_{j} {(\frac{1}{n_j} \sum_{i,k} [Y_{ijk}-f_{jk}(X_i;\theta)]^2 )} ^{n_j/2} $$

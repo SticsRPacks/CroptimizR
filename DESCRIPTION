@@ -1,47 +1,54 @@
 Package: CroptimizR
 Type: Package
-Title: A Package for Parameter Estimation, Uncertainty and Sensitivity Analysis for the Stics Model  https://github.com/SticsRPacks/CroptimizR
+Title: A Package for Parameter Estimation, Uncertainty and Sensitivity Analysis for Crop Models  https://github.com/SticsRPacks/CroptimizR
 Date: 2019-06-24
-Version: 0.1.0.9003
+Version: 0.2.0.9000
 Authors@R: c(person("Samuel", "Buis",, "samuel.buis@inra.fr", c("aut", "cre")),
  person("Michel", "Giner",, "michel.giner@cirad.fr", c("aut")),
  person("Patrice", "Lecharpentier",, "patrice.lecharpentier@inra.fr", c("aut")),
  person("Julie", "Constantin",, "julie.constantin@inra.fr", c("rev")),
  person("Benjamin", "Dumont",, "benjamin.dumont@uliege.be", c("rev")),
  person("SticsRpacks",role=c("aut","cph")))
-Description: CroptimizR allow users to perform parameter estimation, uncertainty and sensitivity analysis for the Stics model. Learn more ar https://SticsRPacks.github.io/CroptimizR/.
-URL: https://github.com/SticsRPacks/CroptimizR
+Description: CroptimizR allows users to perform parameter estimation, uncertainty and sensitivity analysis for crop models. Learn more at https://SticsRPacks.github.io/CroptimizR/.
+URL: https://github.com/SticsRPacks/CroptimizR, 
+ https://doi.org/10.5281/zenodo.4066451
 BugReports: https://github.com/SticsRPacks/CroptimizR/issues
 License: file LICENSE
 Encoding: UTF-8
 LazyData: true
 ByteCompile: true
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Imports:
     nloptr,
-    DiceDesign,
+    lhs,
     BayesianTools,
     coda,
     rstudioapi,
     crayon,
     dplyr,
     lubridate,
-	  rlang,
-	  tictoc
+	rlang,
+	tictoc,
+	stringr,
+	tibble,
+	ggplot2
 Suggests:
     testthat (>= 2.1.0),
     covr,
     knitr,
     rmarkdown,
-	SticsRPacks,
+	SticsRFiles,
+	SticsOnR,
 	ApsimOnR,
-	ggplot2,
 	gridExtra,
 	hydroGOF,
 	doParallel,
-	devtools
+	devtools,
+	CroPlotR
 Remotes:
-    github::SticsRPacks/SticsRPacks,
+    github::SticsRPacks/SticsRFiles@*release,
+    github::SticsRPacks/SticsOnR@*release,
+    github::SticsRPacks/CroPlotR@*release,
 	github::hol430/ApsimOnR
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)

@@ -4,13 +4,8 @@
 \alias{optim_switch}
 \title{Call the required parameter estimation method}
 \usage{
-optim_switch(
-  param_names,
-  optim_method,
-  optim_options,
-  param_info,
-  crit_options
-)
+optim_switch(param_names, optim_method, optim_options, param_info,
+  crit_options)
 }
 \arguments{
 \item{param_names}{Name(s) of parameters to estimate (a parameter name must
@@ -43,7 +38,8 @@ a named list containing for each parameter the list of situations per group
 (\code{sit_list}), the vector of upper and lower bounds (one value per group)
 (\code{ub} and \code{lb}) and the list of initial values per group
 \code{init_values} (data.frame, one column per group, optional).
-(see \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html}{here} for an example)}
+(see \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html}{here}
+for an example)}
 
 \item{crit_options}{List containing several arguments given to \code{estim_param} function:
 \code{param_names}, \code{obs_list}, \code{crit_function}, \code{model_function}, \code{model_options},

@@ -32,8 +32,6 @@ This document presents an example of use of the DREAM-zs algorithm with the Stic
 
 The study case is the same as the specific and varietal parameters estimation presented in this [vignette](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html).
 
-**WARNING: The interface of the DREAM method in CroptimizR is still under development. Results should be taken with care.** 
-
 ## Initialisation step
 
 
@@ -54,7 +52,7 @@ library(CroptimizR)
 javastics_path= path_to_JavaStics
 
 # Download the example USMs and define the path to the JavaStics workspace (JavaStics XML input files):
-data_dir= file.path(SticsRFiles::download_data(),"study_case_1","V9.0")
+data_dir= file.path(SticsRFiles::download_data(example_dirs="study_case_1", version_name = "V9.0"))
 javastics_workspace_path=file.path(data_dir,"XmlFiles")
 stics_inputs_path=file.path(data_dir,"TxtFiles")
 
@@ -178,6 +176,7 @@ MAP means Maximum A Posteriori. It is the values of the parameters among the pos
 DIC is the Deviance information criterion. It is a commonly applied method to summarize the fit of an MCMC chain. More details about it can be found in the [vignette of the BayesianTools package](https://cran.r-project.org/web/packages/BayesianTools/vignettes/BayesianTools.html).
 
 The output value of `estim_param` contains:
+
 * `statistics`, `quantiles` and `MAP`: statistics on the posterior sample,
 * `post_sample`, a sample of the posterior distribution (excluding the burnin phase),
 * `out`: the list returned by the package BayesianTools.

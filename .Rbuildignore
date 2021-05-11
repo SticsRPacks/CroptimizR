@@ -1,6 +1,5 @@
 ^CroptimizR\.Rproj$
 ^\.Rproj\.user$
-^\.travis\.yml$
 ^appveyor\.yml$
 ^codecov\.yml$
 ^_pkgdown\.yml$
@@ -21,3 +20,4 @@ vignettes/Parameter_estimation_simple_case_files
 vignettes/README.txt
 ^doc$
 ^Meta$
+^\.github$
