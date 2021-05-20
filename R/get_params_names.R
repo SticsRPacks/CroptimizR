@@ -47,6 +47,7 @@ get_params_names <- function(param_info, short_list = FALSE) {
       res <- names(param_info)
     } else {
       nb_groups <- sapply(param_info, function(x) length(x$sit_list))
+      nb_groups[nb_groups==0]=1
       nb_params_sl <- length(nb_groups)
       # build suffix
       suffix <- rep("", sum(nb_groups))
