@@ -16,9 +16,9 @@
 #' see default value in the function signature). For the moment, can be "simplex"
 #' or "dreamzs". See [here](https://sticsrpacks.github.io/CroptimizR/articles/Available_parameter_estimation_algorithms.html)
 #' for a brief description and references on the available methods.
-#' @param optim_options List of options of the parameter estimation method.
-#' `path_results` The path where to store the results (optional, default=getwd())
-#' Click on the links to see the specific options for the [simplex](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html)
+#' @param optim_options List of options of the parameter estimation method, containing:
+#'   - `path_results` The path where to store the results (optional, default=getwd())
+#'   - specific options depending on the method used. Click on the links to see examples with the [simplex](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html)
 #' and [DreamZS](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html) methods.
 #' @param param_info Information on the parameters to estimate.
 #' Either
@@ -38,7 +38,7 @@
 #' (see [here](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html)
 #' for an example)
 #' @param forced_param_values Named vector, must contain the values for the model parameters
-#' to force (optional, NULL by default). These values will be transfered to the
+#' to force (optional, NULL by default). These values will be transferred to the
 #' model wrapper through its param_values argument so that the given parameters
 #' always take the same values for each model simulation. Should not include values
 #' for estimated parameters (i.e. parameters defined in `param_info` argument).
@@ -81,8 +81,7 @@
 #'   (freely defined by the user in the function body) or not.
 #'
 #' @return prints, graphs and a list containing the results of the parameter estimation,
-#' which content depends on the method used, all that saved in the defined in
-#' `optim_options.path_results`
+#' which content depends on the method used. All results are saved in the folder `optim_options.path_results`.
 #'
 #' @seealso For more detail and examples, see the different vignettes in
 #' [CroptimizR website](https://sticsrpacks.github.io/CroptimizR/)

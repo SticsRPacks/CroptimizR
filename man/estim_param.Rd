@@ -4,14 +4,24 @@
 \alias{estim_param}
 \title{main function for parameter estimation}
 \usage{
-estim_param(obs_list, crit_function = crit_log_cwss, model_function,
-  model_options = NULL, optim_method = "nloptr.simplex", optim_options,
-  param_info, forced_param_values = NULL, transform_obs = NULL,
-  transform_sim = NULL, satisfy_par_const = NULL, var_names = NULL)
+estim_param(
+  obs_list,
+  crit_function = crit_log_cwss,
+  model_function,
+  model_options = NULL,
+  optim_method = "nloptr.simplex",
+  optim_options,
+  param_info,
+  forced_param_values = NULL,
+  transform_obs = NULL,
+  transform_sim = NULL,
+  satisfy_par_const = NULL,
+  var_names = NULL
+)
 }
 \arguments{
 \item{obs_list}{List of observed values to use for parameter estimation
-A \code{named list} (names = situations names) of data.frame containing
+A \verb{named list} (names = situations names) of data.frame containing
 one column named Date with the dates (Date or POSIXct format) of the different observations
 and one column per observed variables with either the measured values or NA, if
 the variable is not observed at the given date.}
@@ -31,10 +41,12 @@ see default value in the function signature). For the moment, can be "simplex"
 or "dreamzs". See \href{https://sticsrpacks.github.io/CroptimizR/articles/Available_parameter_estimation_algorithms.html}{here}
 for a brief description and references on the available methods.}
 
-\item{optim_options}{List of options of the parameter estimation method.
-\code{path_results} The path where to store the results (optional, default=getwd())
-Click on the links to see the specific options for the \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html}{simplex}
-and \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html}{DreamZS} methods.}
+\item{optim_options}{List of options of the parameter estimation method, containing:
+\itemize{
+\item \code{path_results} The path where to store the results (optional, default=getwd())
+\item specific options depending on the method used. Click on the links to see examples with the \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html}{simplex}
+and \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html}{DreamZS} methods.
+}}
 
 \item{param_info}{Information on the parameters to estimate.
 Either
@@ -57,7 +69,7 @@ a named list containing for each parameter the list of situations per group
 for an example)}
 
 \item{forced_param_values}{Named vector, must contain the values for the model parameters
-to force (optional, NULL by default). These values will be transfered to the
+to force (optional, NULL by default). These values will be transferred to the
 model wrapper through its param_values argument so that the given parameters
 always take the same values for each model simulation. Should not include values
 for estimated parameters (i.e. parameters defined in \code{param_info} argument).}
@@ -79,8 +91,7 @@ the model_function used handles this argument.}
 }
 \value{
 prints, graphs and a list containing the results of the parameter estimation,
-which content depends on the method used, all that saved in the defined in
-\code{optim_options.path_results}
+which content depends on the method used. All results are saved in the folder \code{optim_options.path_results}.
 }
 \description{
 main function for parameter estimation
