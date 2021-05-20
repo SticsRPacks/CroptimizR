@@ -26,12 +26,14 @@ the Crop Model wrapper function used).}
 }
 \value{
 A list containing:
-- test_results: a vector of boolean indicating which test succeeded (TRUE) or failed (FALSE)
-- param_values_1: first subset of param_values
-- param_values_2: second subset of param_values
-- sim_1: results obtained with param_values_1
-- sim_2: results obtained with param_values_2
-- sim_3: results obtained for second run with param_values_1
+\itemize{
+\item test_results: a vector of boolean indicating which test succeeded (TRUE) or failed (FALSE)
+\item param_values_1: first subset of param_values
+\item param_values_2: second subset of param_values
+\item sim_1: results obtained with param_values_1
+\item sim_2: results obtained with param_values_2
+\item sim_3: results obtained for second run with param_values_1
+}
 }
 \description{
 This function perform some tests of CroptimizR model wrappers.

@@ -20,13 +20,14 @@
 #'    - the results are different when different subsets of param_values are used,
 #'    - the results are identical when same subsets of param_values are used.
 #'
-#' @return A list containing:
-#'     - test_results: a vector of boolean indicating which test succeeded (TRUE) or failed (FALSE)
-#'     - param_values_1: first subset of param_values
-#'     - param_values_2: second subset of param_values
-#'     - sim_1: results obtained with param_values_1
-#'     - sim_2: results obtained with param_values_2
-#'     - sim_3: results obtained for second run with param_values_1
+#' @return
+#' A list containing:
+#'    - test_results: a vector of boolean indicating which test succeeded (TRUE) or failed (FALSE)
+#'    - param_values_1: first subset of param_values
+#'    - param_values_2: second subset of param_values
+#'    - sim_1: results obtained with param_values_1
+#'    - sim_2: results obtained with param_values_2
+#'    - sim_3: results obtained for second run with param_values_1
 #'
 #' @export
 #'
