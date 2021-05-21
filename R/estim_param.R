@@ -26,7 +26,7 @@
 #'    - (named) vectors of upper and lower bounds (`ub` and `lb`) (-Inf and Inf can be used),
 #'    - `init_values`, A data.frame containing initial
 #' values to test for the parameters (optional, if not provided, or if less values
-#' than number of repetitions of the minimization are provided), the, or part
+#' than number of repetitions of the minimization are provided, the, or part
 #' of the, initial values will be randomly generated using LHS sampling within
 #' parameter bounds).
 #'
