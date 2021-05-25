@@ -4,14 +4,14 @@
 #' of the parameters defined in the param_values argument. It returns
 #' the values of the simulated outputs.
 #'
-#' @param model_options List containing any information needed to run the model.There
-#' are 3 elements : path for finding the file, the beginning day, the end and the parameters
-#' by defaut which are given before estimation.
+#' @param sit_names vector of situations names for which results must be returned (name as sitenameyear.csv ie Sit2013 fir sitename=Sit and year=2013)
 #'
-#' @param param_values Named 3D array that contains the value(s) and names of the
+#' @param model_options List containing any information needed to run the model.There
+#' are 3 elements : path for finding the file, the beginning day, the end.
+#'
+#' @param param_values Named array that contains the value(s) and names of the
 #' parameters to force for each situation to simulate. This array contains the different
-#' parameters values (first dimension) for the different parameters (second dimension)
-#' and for the different situations (third dimension).
+#' parameters values for the different parameters .
 #'
 #' @return A list containing simulated values (`sim_list`: a vector of list (one
 #' element per values of parameters) containing data.frames of simulated output values
@@ -24,67 +24,35 @@
 
 
 
-bonsai_bio_wrapper <- function( model_options, param_values,...) {
+bonsai_bio_wrapper <- function( model_options, sit_names, param_values,...) {
 
   # Update the values of parameters, if we have any new parameter values in the model_options,
   # they will be ajusted into the param_values_t (the parameter values by the time)
 
-  defaut=model_options$param_values_default
-  defaut_new=array( dim=c(dim(param_values)[1],length(defaut),dim(param_values)[3]),
-                    dimnames=list(NULL,names(model_options$param_values_default)
-                                  ,names(param_values[1,1,])))
-  for (i in 1:dim(param_values)[3]){
-    defaut_new[,,i]=defaut
-  }
   # Initializations
   results <- list()
   path <- model_options$path
-  begin_end<-(model_options$begin_end)
-  temper <- read.csv2(path)
+  t1 <- model_options$begin
+  tfin <- model_options$end
+  situation_names <- sit_names
 
-  if (!is.null(model_options$param_values_default)) {
-    tmp=defaut_new
-    tmp[,dimnames(param_values)[[2]],]=param_values
-  }
-  param_values_t <- tmp
-
-  # param_values_t is the updated parameters to be used in this wrapper
-
-
-  NUM_POSTE = as.numeric(as.vector(temper[,"NUM_POSTE"]))
-  AN        = as.numeric(as.vector(temper[,"AN"]))
-  MOIS      = as.numeric(as.vector(temper[,"MOIS"]))
-  JOUR      = as.numeric(as.vector(temper[,"JOUR"]))
-  TM        = as.numeric(as.vector(temper[,"TM"]))
-
-  PAR       = as.numeric(as.vector(temper[,"PAR"]))
-  table<-matrix(c(NUM_POSTE,AN,MOIS,JOUR,TM,PAR),ncol=6)
-  colnames(table)<-c("NUM_POSTE","AN","MOIS","JOUR","TM","PAR")
-  table<-as.data.frame(table)
-
-  Poste_An<-(unique(data.frame(NUM_POSTE,AN)))
-
-  situation_names=paste(Poste_An$NUM_POSTE,Poste_An$AN,sep="_")
-  situation_names=paste(situation_names,begin_end,sep="_")
-  situation_names<-intersect(situation_names,dimnames(param_values_t)[[3]])
-
-  nb_paramValues <- dim(param_values_t)[1]
-  param_names <- dimnames(param_values_t)[[2]]
-
-  results$sim_list <-  vector("list",nb_paramValues)
   results$error=FALSE
 
+  for (situation in situation_names) {
+       St <- strsplit(situation,"_")
+       AN <- St[[1]][1]
+       Sit <- St[[1]][2]
+       tzero <- as.numeric(St[[1]][3])
 
-  for (i in 1:nb_paramValues) {
-
-    for (situation in situation_names) {
-
-      # overwrite model input parameters of names contained
-      #in param_names with values retrieved in param_values[i,,situation]
-
+       temper <- read.csv2(system.file(path,paste0(Sit,AN,".csv"),package="CroptimizR"))
+       NUM_POSTE = as.numeric(as.vector(temper[,"NUM_POSTE"]))
+       #AN        = as.numeric(as.vector(temper[,"AN"]))
+       MOIS      = as.numeric(as.vector(temper[,"MOIS"]))
+       JOUR      = as.numeric(as.vector(temper[,"JOUR"]))
+       TM        = as.numeric(as.vector(temper[,"TM"]))
+       PAR       = as.numeric(as.vector(temper[,"PAR"]))
       # run the model for the given situation
-      t1  =as.numeric(substr(situation,15,17))
-      tfin=as.numeric(substr(situation,18,20))
+
       if ( t1>tfin )
         {
           warning("problem_in_the_time_interval")
@@ -92,18 +60,9 @@ bonsai_bio_wrapper <- function( model_options, param_values,...) {
       }else{
 
         # Calculating the LAI and biomass is based on Bonsai bio model
-
-        tab<-table[which(table$NUM_POSTE==as.numeric(substr(situation,1,8)) &
-                           table$AN==as.numeric(substr(situation,10,13))),]
-        LAI =CroptimizR:::bonsai_bio(t1,tfin,param_values_t[i,,situation],tab$TM,tab$PAR,0)[,"LAI"]
-        biom=CroptimizR:::bonsai_bio(t1,tfin,param_values_t[i,,situation],tab$TM,tab$PAR,0)[,"biom"]
-
+    		results$sim_list[[situation]]=bonsai_bio(t1,tfin,tzero,param_values["Ti"],param_values["deltaTs"],param_values["B"],param_values["LAImax"],param_values["C"],param_values["Eb"],param_values["Eimax"],param_values["K"],TM,PAR,0)#[,"LAI"]
         # Completing the list with exact times in the UTC standard form
-
-        results$sim_list[[i]][[situation]]=dplyr::tibble(Date=as.POSIXct(as.character(as.Date(t1:tfin
-                                           ,origin=paste0(as.numeric(substr(situation,10,13)),"-01-01")))
-                                           ,format="%Y-%m-%d",tz="UTC"),LAI=LAI,biom=biom)
-      }
+        results$sim_list[[situation]]=dplyr::tibble(Date=as.POSIXct(as.character(as.Date(t1:tfin,origin=paste0(as.numeric(AN)-1,"-12-31"))),format="%Y-%m-%d",tz="UTC"),LAI=results$sim_list[[situation]][,"LAI"],biomas=results$sim_list[[situation]][,'biomas'])
 
       }
 
