@@ -1,7 +1,7 @@
 
 library(testthat)
 context("test_wrap")
-#File patath for the examples datas
+#File path for the examples datas
 temp_data_path <- file.path("extdata", "Bonsai_bio")
 #Option for running the model
 model_options<-list()

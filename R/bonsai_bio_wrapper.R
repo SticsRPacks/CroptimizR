@@ -30,6 +30,7 @@ bonsai_bio_wrapper <- function( model_options, sit_names, param_values,...) {
   # they will be ajusted into the param_values_t (the parameter values by the time)
 
   # Initializations
+  library(dplyr)
   results <- list()
   path <- model_options$path
   t1 <- model_options$begin
@@ -63,10 +64,12 @@ bonsai_bio_wrapper <- function( model_options, sit_names, param_values,...) {
     		results$sim_list[[situation]]=bonsai_bio(t1,tfin,tzero,param_values["Ti"],param_values["deltaTs"],param_values["B"],param_values["LAImax"],param_values["C"],param_values["Eb"],param_values["Eimax"],param_values["K"],TM,PAR,0)#[,"LAI"]
         # Completing the list with exact times in the UTC standard form
         results$sim_list[[situation]]=dplyr::tibble(Date=as.POSIXct(as.character(as.Date(t1:tfin,origin=paste0(as.numeric(AN)-1,"-12-31"))),format="%Y-%m-%d",tz="UTC"),LAI=results$sim_list[[situation]][,"LAI"],biomas=results$sim_list[[situation]][,'biomas'])
-
+        Pheno=results$sim_list[[situation]] %>% slice(which.max(LAI))
+        print(paste0("Max LAI occurs on julian day ",as.integer(Pheno$Date-results$sim_list[[situation]]$Date[1]+t1)))
       }
 
       # read the results and store the data.frame in result$sim_list[[i]][[situation]]
   }
   return(results)
 }
+
