@@ -12,8 +12,10 @@ output:
     toc_float: yes
   pdf_document:
     toc: yes
-vignette: |
-  %\VignetteIndexEntry{Designing a model wrapper} %\VignetteEngine{knitr::rmarkdown} %\VignetteEncoding{UTF-8}
+vignette: >
+  %\VignetteIndexEntry{Designing a model wrapper} 
+  %\VignetteEngine{knitr::rmarkdown} 
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}
