@@ -23,46 +23,6 @@ main_crit <- function(param_values, crit_options) {
 
   on.exit({
 
-
-    # Store information in CroptimizR environment
-    ##### CONSIDER PRE-ALLOCATING FOR IMPROVING SPEED !!!!!!!! COULD BE VERY SLOW FOR LARGE NUMBER OF EVALUATIONS
-
-    .croptEnv$model_results <- c(.croptEnv$model_results,model_results)
-    .croptEnv$obs_sim_list <- c(.croptEnv$obs_sim_list,obs_sim_list)
-
-    if (is.null(.croptEnv$params_and_crit) || (crit_options$irep > tail(.croptEnv$params_and_crit$rep,n=1)) ) {
-      .croptEnv$params_and_crit <- dplyr::bind_rows(.croptEnv$params_and_crit,dplyr::bind_cols(tibble(rep=crit_options$irep,eval=1,iter=1,crit=crit),tibble::tibble(!!!param_values)))
-    } else {
-
-      eval <- tail(.croptEnv$params_and_crit$eval,n=1)+1
-
-      last_iter <- tail(.croptEnv$params_and_crit$iter[!is.na(.croptEnv$params_and_crit$iter)],n=1)
-      last_crit <- min(dplyr::filter(.croptEnv$params_and_crit, rep==crit_options$irep)$crit,na.rm = TRUE)
-
-      if (!is.na(last_crit) && !is.na(crit) && crit < last_crit) {
-        iter <- last_iter+1
-      } else {
-        iter <- NA
-      }
-
-      .croptEnv$params_and_crit <- dplyr::bind_rows(.croptEnv$params_and_crit,
-                                                    dplyr::bind_cols(tibble(rep=crit_options$irep,
-                                                                            eval=eval,
-                                                                            iter=iter,
-                                                                            crit=crit),
-                                                                     tibble::tibble(!!!param_values)))
-    }
-
-    #
-    # ATTENTION, il n'y aura pas toujours de rep ... (cf. DREAM) => comment faire ???
-    #
-    # + tester si cela fonctionne en cas de plantage de la r?p?tition ...
-    #
-    # Voir pour graphes bubble ou point des params en fonction des évals / iter et idem pour le critère
-    # Voir pour graphe crit en fonction des params (1D, 2D, ...)
-    #
-
-
     if (is.na(crit)) {
       filename <- file.path(crit_options$path_results,paste0("debug_crit_NA.Rdata"))
       warning(paste("The optimized criterion has taken the NA value. \n  * Parameter values, obs_list and model results will be saved in",
@@ -71,7 +31,8 @@ main_crit <- function(param_values, crit_options) {
       # may happend only for certain parameter values ...).
       save(param_values, obs_list, model_results, file=filename)
     }
-    })
+
+  })
 
   # Initializations
   param_names <- crit_options$param_names
