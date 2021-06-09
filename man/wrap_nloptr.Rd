@@ -10,10 +10,12 @@ wrap_nloptr(param_names, optim_options, param_info, crit_options)
 \item{param_names}{Name(s) of parameters to estimate (a parameter name must
 be replicated if several groups of situations for this parameter)}
 
-\item{optim_options}{List of options of the parameter estimation method.
-\code{path_results} The path where to store the results (optional, default=getwd())
-Click on the links to see the specific options for the \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html}{simplex}
-and \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html}{DreamZS} methods.}
+\item{optim_options}{List of options of the parameter estimation method, containing:
+\itemize{
+\item \code{path_results} The path where to store the results (optional, default=getwd())
+\item specific options depending on the method used. Click on the links to see examples with the \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html}{simplex}
+and \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html}{DreamZS} methods.
+}}
 
 \item{param_info}{Information on the parameters to estimate.
 Either
@@ -22,7 +24,7 @@ a list containing:
 \item (named) vectors of upper and lower bounds (\code{ub} and \code{lb}) (-Inf and Inf can be used),
 \item \code{init_values}, A data.frame containing initial
 values to test for the parameters (optional, if not provided, or if less values
-than number of repetitions of the minimization are provided), the, or part
+than number of repetitions of the minimization are provided, the, or part
 of the, initial values will be randomly generated using LHS sampling within
 parameter bounds).
 }
