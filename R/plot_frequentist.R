@@ -15,6 +15,7 @@
 #' (if bubble is false) while the other ones are written in black.
 #'
 #' @import ggplot2
+#' @importFrom dplyr filter
 #'
 #' @keywords internal
 #'
@@ -103,6 +104,7 @@ plot_estimVSinit <- function(init_values, est_values, crit, lb, ub, bubble=TRUE)
 #' iteration number increases while it is not the case when evaluation number increases.
 #'
 #' @import ggplot2
+#' @importFrom dplyr select filter %>%
 #'
 #' @keywords internal
 #'
@@ -113,7 +115,7 @@ plot_values_per_it <- function(df, param_info, iter_or_eval=c("iter", "eval"), c
 
   lab= "evaluations"
   if (iter_or_eval[1]=="iter") {
-    df <- dplyr::filter(df, !is.na(iter))
+    df <- filter(df, !is.na(.data$iter))
     lab <- "iterations"
   }
   trans <- "identity"
@@ -148,9 +150,9 @@ plot_values_per_it <- function(df, param_info, iter_or_eval=c("iter", "eval"), c
 
     for (irep in unique(df$rep)) {
       p[[param_name]] <- p[[param_name]] +
-        geom_line(data=dplyr::filter(df,rep==irep)) +
-        geom_label(aes(label=rep), data=dplyr::filter(df,rep==irep) %>% dplyr::filter(eval==min(.$eval)), size=3) +
-        geom_label(aes(label=rep), data=dplyr::filter(df,rep==irep) %>% dplyr::filter(eval==max(.$eval)), size=3)
+        geom_line(data=filter(df,rep==irep)) +
+        geom_label(aes(label=rep), data=filter(df,rep==irep) %>% filter(eval==min(.data$eval)), size=3) +
+        geom_label(aes(label=rep), data=filter(df,rep==irep) %>% filter(eval==max(.data$eval)), size=3)
     }
     ylim(minvalue[param_name],maxvalue[param_name])
 
@@ -167,9 +169,9 @@ plot_values_per_it <- function(df, param_info, iter_or_eval=c("iter", "eval"), c
 
   for (irep in unique(df$rep)) {
     p[["criterion"]] <- p[["criterion"]] +
-      geom_line(data=dplyr::filter(df,rep==irep)) +
-      geom_label(aes(label=rep), data=dplyr::filter(df,rep==irep) %>% dplyr::filter(eval==min(.$eval)), size=3) +
-      geom_label(aes(label=rep), data=dplyr::filter(df,rep==irep) %>% dplyr::filter(eval==max(.$eval)))
+      geom_line(data=filter(df,rep==irep)) +
+      geom_label(aes(label=rep), data=filter(df,rep==irep) %>% filter(eval==min(.data$eval)), size=3) +
+      geom_label(aes(label=rep), data=filter(df,rep==irep) %>% filter(eval==max(.data$eval)))
   }
 
   if (crit_log) {
@@ -202,6 +204,7 @@ plot_values_per_it <- function(df, param_info, iter_or_eval=c("iter", "eval"), c
 #' iteration number increases while it is not the case when evaluation number increases.
 #'
 #' @import ggplot2
+#' @importFrom dplyr select filter %>%
 #'
 #' @keywords internal
 #'
@@ -211,7 +214,7 @@ plot_values_per_it_2D <- function(df, param_info, iter_or_eval=c("iter","eval"),
   bounds=get_params_bounds(param_info)
 
   if (iter_or_eval[1]=="iter") {
-    df <- dplyr::filter(df, !is.na(iter))
+    df <- filter(df, !is.na(.data$iter))
   }
   df$rep <- as.factor(df$rep)
   trans <- "identity"
@@ -223,14 +226,14 @@ plot_values_per_it_2D <- function(df, param_info, iter_or_eval=c("iter","eval"),
     warning("The criterion takes negative values, log transformation will not be done.")
   }
 
-  tmp<-rbind(bounds$lb,bounds$ub,dplyr::select(df,-rep,-crit, -eval, -iter))
+  tmp<-rbind(bounds$lb,bounds$ub,select(df,-rep,-.data$crit, -eval, -.data$iter))  # -.data$ avoid NOTES on check ...
   tmp[tmp==Inf | tmp==-Inf]<-NA
   minvalue<-apply(tmp,2,min,na.rm=TRUE); maxvalue<-apply(tmp,2,max,na.rm=TRUE)
   minvalue<-minvalue-0.05*(maxvalue-minvalue); maxvalue<-maxvalue+0.05*(maxvalue-minvalue)
 
   p <- list()
 
-  df_pairs <- combn(param_names,2)
+  df_pairs <- utils::combn(param_names,2)
 
   for (ipair in seq_len(ncol(df_pairs))) {
 
@@ -251,9 +254,9 @@ plot_values_per_it_2D <- function(df, param_info, iter_or_eval=c("iter","eval"),
     if (lines) {
       for (irep in unique(df$rep)) {
         p[[ipair]] <- p[[ipair]] +
-          geom_path(data=dplyr::filter(df,rep==irep)) +
-          geom_label(aes(label=rep), data=dplyr::filter(df,rep==irep) %>% dplyr::filter(eval==min(.$eval)), size=3) +
-          geom_label(aes(label=rep), data=dplyr::filter(df,rep==irep) %>% dplyr::filter(eval==max(.$eval)), size=3)
+          geom_path(data=filter(df,rep==irep)) +
+          geom_label(aes(label=rep), data=filter(df,rep==irep) %>% filter(eval==min(.data$eval)), size=3) +
+          geom_label(aes(label=rep), data=filter(df,rep==irep) %>% filter(eval==max(.data$eval)), size=3)
       }
     }
     xlim(minvalue[df_pairs[1,ipair]],maxvalue[df_pairs[1,ipair]])
