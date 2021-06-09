@@ -19,8 +19,8 @@ wrapper_fail_test1 <- function(param_values, ...){
   results$sim_list <- param_values
   return(results)
 }
-res <- test_wrapper(model_function = wrapper_fail_test1,
-                    model_options = NULL,param_values=c(P1=1,P2=2),sit_names=NULL)
+res <- suppressWarnings(test_wrapper(model_function = wrapper_fail_test1,
+                    model_options = NULL,param_values=c(P1=1,P2=2),sit_names=NULL))
 test_that("Wrapper OK", {
   expect_false(res$test_results["test1"])
   expect_true(res$test_results["test2"])
@@ -34,8 +34,8 @@ wrapper_fail_test2 <- function(param_values, ...){
                                            Date=as.POSIXct(c("2009-11-30"))))
   return(results)
 }
-res <- test_wrapper(model_function = wrapper_fail_test2,
-                    model_options = NULL,param_values=c(P1=1,P2=2),sit_names=NULL)
+res <- suppressWarnings(test_wrapper(model_function = wrapper_fail_test2,
+                    model_options = NULL,param_values=c(P1=1,P2=2),sit_names=NULL))
 test_that("Wrapper fails test 2", {
   expect_true(res$test_results["test1"])
   expect_false(res$test_results["test2"])
@@ -49,8 +49,8 @@ wrapper_fail_test3 <- function(param_values, ...){
                                            Date=as.POSIXct(c("2009-11-30"))))
   return(results)
 }
-res <- test_wrapper(model_function = wrapper_fail_test3,
-                    model_options = NULL,param_values=c(P1=1,P2=2),sit_names=NULL)
+res <- suppressWarnings(test_wrapper(model_function = wrapper_fail_test3,
+                    model_options = NULL,param_values=c(P1=1,P2=2),sit_names=NULL))
 test_that("Wrapper fails test 3", {
   expect_true(res$test_results["test1"])
   expect_true(res$test_results["test2"])

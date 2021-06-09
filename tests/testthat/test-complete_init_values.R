@@ -10,13 +10,13 @@ satisfy_par_const = function(param_values, ...) {
   return(TRUE)
 }
 test_that("Initial values and constraints", {
-  res1 <- CroptimizR:::complete_init_values(init_values=NULL, nb_values=5, lb=lb, ub=ub,
-                                    ranseed=1234)
-  res2 <- CroptimizR:::complete_init_values(init_values=init_values, nb_values=5, lb=lb, ub=ub,
-                                           ranseed=1234)
-  res3 <- CroptimizR:::complete_init_values(init_values=init_values, nb_values=100, lb=lb, ub=ub,
+  res1 <- eval(parse(text = "CroptimizR:::complete_init_values(init_values=NULL, nb_values=5, lb=lb, ub=ub,
+                                    ranseed=1234)"))
+  res2 <- eval(parse(text = "CroptimizR:::complete_init_values(init_values=init_values, nb_values=5, lb=lb, ub=ub,
+                                           ranseed=1234)"))
+  res3 <- eval(parse(text = "CroptimizR:::complete_init_values(init_values=init_values, nb_values=100, lb=lb, ub=ub,
                                           satisfy_par_const=satisfy_par_const,
-                                           ranseed=1234)
+                                           ranseed=1234)"))
   expect_false(isTRUE(all.equal(res1,res2)))
   expect_equal(res2$dlaimax[1],init_values$dlaimax[1])
   expect_equal(res2$durvieF[1:2],init_values$durvieF[1:2])
