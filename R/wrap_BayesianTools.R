@@ -171,7 +171,7 @@ wrap_BayesianTools <- function(param_names,optim_options,param_info,crit_options
           message(cond)
           utils::flush.console()
           grDevices::pdf(file = file.path(path_results,filename) , width = 9, height = 9)
-          gelmanDiagnostics(out, thin=optim_options_BT$thin, plot = T)
+          gelmanDiagnostics(out, thin=optim_options_BT$thin, log="y", plot = T)
           grDevices::dev.off()
         })
 
