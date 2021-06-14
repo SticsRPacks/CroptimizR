@@ -42,8 +42,8 @@ get_params_bounds <- function(param_info) {
     lb <- param_info$lb
     ub <- param_info$ub
   } else {
-    lb <- unlist(sapply(param_info, function(x) x$lb))
-    ub <- unlist(sapply(param_info, function(x) x$ub))
+    lb <- unlist(sapply(param_info, function(x) x$lb, simplify = FALSE))
+    ub <- unlist(sapply(param_info, function(x) x$ub, simplify = FALSE))
   }
 
   return(list(lb = lb, ub = ub))
