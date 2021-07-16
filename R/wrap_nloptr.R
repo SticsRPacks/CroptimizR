@@ -25,6 +25,7 @@ wrap_nloptr <- function(param_names,optim_options,param_info,crit_options) {
   if (is.null((ranseed=optim_options$ranseed))) { ranseed=NULL }
   if (is.null((path_results=optim_options$path_results))) { path_results=getwd() }
 
+  crit_options$tot_max_eval <- nb_rep*maxeval
   nb_params=length(param_names)
   bounds=get_params_bounds(param_info)
   user_init_values=get_params_init_values(param_info)

@@ -16,7 +16,8 @@ estim_param(
   transform_obs = NULL,
   transform_sim = NULL,
   satisfy_par_const = NULL,
-  var_names = NULL
+  var_names = NULL,
+  info_level = 1
 )
 }
 \arguments{
@@ -86,12 +87,27 @@ parameters (optional), see details section for more information}
 \item{var_names}{(optional) List of variables for which the wrapper must return results.
 By default the wrapper is asked to simulate only the observed variables. However,
 it may be useful to simulate also other variables, typically when transform_sim
-and/or transform_obs functions are used. Note however that it is active only if
+and/or transform_obs functions are used. Note however that it is
+active only if
 the model_function used handles this argument.}
+
+\item{info_level}{(optional) Integer that controls the level of information returned and stored
+by estim_param (in addition to the results automatically provided that depends on the method used).
+Higher code give more details.
+\code{0} to add nothing,
+\code{1} to add criterion and parameters values, and constraint if satisfy_par_const is provided, for each evaluation
+(element params_and_crit in the returned list),
+\code{2} to add model results, after transformation if transform_sim is provided, and after intersection with observations,
+i.e. as used to compute the criterion for each evaluation (element sim_intersect in the returned list),
+\code{3} to add observations, after transformation if transform_obs is provided, and after intersection with simulations,
+i.e. as used to compute the criterion for each evaluation (element obs_intersect in the returned list),
+\code{4} to add all model wrapper results for each evaluation, and all transformations if transform_sim is provided.
+(elements sim and sim_transformed in the returned list),}
 }
 \value{
 prints, graphs and a list containing the results of the parameter estimation,
-which content depends on the method used. All results are saved in the folder \code{optim_options.path_results}.
+which content depends on the method used and on the values of the \code{info_level} argument.
+All results are saved in the folder \code{optim_options.path_results}.
 }
 \description{
 main function for parameter estimation
@@ -123,6 +139,6 @@ It must return a logical indicating if the parameters values satisfies the const
 (freely defined by the user in the function body) or not.
 }
 \seealso{
-For more detail and examples, see the different vignettes in
+For more details and examples, see the different vignettes in
 \href{https://sticsrpacks.github.io/CroptimizR/}{CroptimizR website}
 }

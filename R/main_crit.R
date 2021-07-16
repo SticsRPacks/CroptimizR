@@ -23,6 +23,86 @@ main_crit <- function(param_values, crit_options) {
 
   on.exit({
 
+    if (crit_options$info_level>=1) {
+
+      satisfy_const <- TRUE
+      if (exists("flag_const")) satisfy_const <- flag_const
+
+      if (is.null(.croptEnv$params_and_crit)) {
+        .croptEnv$params_and_crit <- vector("list", crit_options$tot_max_eval)
+        .croptEnv$eval_count <- 1
+      } else {
+        .croptEnv$eval_count <- .croptEnv$eval_count + 1
+      }
+
+      .croptEnv$params_and_crit[[.croptEnv$eval_count]] <- dplyr::bind_cols(crit=crit,
+                                                                            tibble::tibble(!!!param_values),
+                                                                            satisfy_const=satisfy_const)
+
+      if (!is.null(crit_options$irep)) { ## this condition is there to detect frequentist methods ... should be changed for more robust test later ...
+
+        if ((.croptEnv$eval_count == 1) || (crit_options$irep > .croptEnv$params_and_crit[[.croptEnv$eval_count-1]]$rep) ) {
+
+          eval <- 1
+          iter <- NA
+          .croptEnv$last_iter <- 0
+          .croptEnv$last_crit <- crit
+          if (!is.na(crit)) {
+            iter <- 1
+            .croptEnv$last_iter <- iter
+          }
+
+        } else {
+
+          eval <- .croptEnv$params_and_crit[[.croptEnv$eval_count-1]]$eval+1
+          iter <- NA
+          if (!is.na(crit) && (is.na(.croptEnv$last_crit) || crit < .croptEnv$last_crit)) {
+            ## in the if above, is.na(.croptEnv$last_crit) is there in case crit==NA at the first evaluation
+            iter <- .croptEnv$last_iter+1
+            .croptEnv$last_iter <- iter
+            .croptEnv$last_crit <- crit
+          }
+
+        }
+
+        .croptEnv$params_and_crit[[.croptEnv$eval_count]] <-
+          dplyr::bind_cols(tibble::tibble(rep=crit_options$irep,
+                                  eval=eval,
+                                  iter=iter),
+                           .croptEnv$params_and_crit[[.croptEnv$eval_count]])
+
+      }
+
+    }
+
+    if (crit_options$info_level>=2) {
+      if (is.null(.croptEnv$sim_intersect)) {
+        .croptEnv$sim_intersect <- vector("list", crit_options$tot_max_eval)
+      }
+      .croptEnv$sim_intersect[[.croptEnv$eval_count]] <- obs_sim_list$sim_list
+    }
+
+    if (crit_options$info_level>=3) {
+      if (is.null(.croptEnv$obs_intersect)) {
+        .croptEnv$obs_intersect <- vector("list", crit_options$tot_max_eval)
+      }
+      .croptEnv$obs_intersect[[.croptEnv$eval_count]] <- obs_sim_list$obs_list
+    }
+
+    if (crit_options$info_level>=4) {
+      if (is.null(.croptEnv$sim)) {
+        .croptEnv$sim <- vector("list", crit_options$tot_max_eval)
+      }
+      .croptEnv$sim[[.croptEnv$eval_count]] <- sim
+
+      if (!is.null(crit_options$transform_sim)) {
+        if (is.null(.croptEnv$sim_transformed)) {
+          .croptEnv$sim_transformed <- vector("list", crit_options$tot_max_eval)
+        }
+        .croptEnv$sim_transformed[[.croptEnv$eval_count]] <- sim_transformed
+      }
+    }
+
     if (is.na(crit)) {
       filename <- file.path(crit_options$path_results,paste0("debug_crit_NA.Rdata"))
       warning(paste("The optimized criterion has taken the NA value. \n  * Parameter values, obs_list and model results will be saved in",
@@ -117,12 +197,13 @@ main_crit <- function(param_values, crit_options) {
 
   # Call model function
   model_results <- NULL
+  sim <- NULL
   try(model_results <- model_function(model_options = model_options,
                                   param_values = param_values,
                                   sit_names = sit_names,
                                   var_names = var_names,
                                   sit_var_dates_mask = sit_var_dates_mask))
-
+  sim <- model_results
 
 
   # Check results, return NA if incorrect
@@ -142,6 +223,7 @@ main_crit <- function(param_values, crit_options) {
 
   # Transform simulations
   if (!is.null(transform_sim)) {
+    sim_transformed <- NULL
     model_results <- tryCatch(
       transform_sim(model_results=model_results, obs_list=obs_list, param_values=param_values,
                     model_options=model_options),
@@ -152,6 +234,7 @@ main_crit <- function(param_values, crit_options) {
         print(cond)
         stop()
       })
+    sim_transformed <- model_results
   }
   # Check results, return NA if incorrect
   if (is.null(model_results) || (!is.null(model_results$error) && model_results$error)) {

@@ -15,11 +15,15 @@ wrap_BayesianTools <- function(param_names,optim_options,param_info,crit_options
 
   if (is.null((ranseed=optim_options$ranseed))) { ranseed=NULL }
   if (is.null((path_results=optim_options$path_results))) { path_results=getwd() }
-
+  if (is.null(optim_options$iterations)) {
+    stop("The total number of iterations of the Bayesian method used is missing: please provide it in optim_options$iterations.")
+  }
   if (!is.numeric(optim_options$startValue)) {
     stop("startValue should be the number of markov chains. Please use param_info$init_values to prescribe initial values for the parameters.")
   }
 
+  crit_options$tot_max_eval <- optim_options$iterations + optim_options$startValue -
+    optim_options$iterations %% optim_options$startValue
   nb_params=length(param_names)
   bounds=get_params_bounds(param_info)
   user_init_values=get_params_init_values(param_info)

@@ -51,8 +51,21 @@
 #' @param var_names (optional) List of variables for which the wrapper must return results.
 #' By default the wrapper is asked to simulate only the observed variables. However,
 #' it may be useful to simulate also other variables, typically when transform_sim
-#' and/or transform_obs functions are used. Note however that it is active only if
+#' and/or transform_obs functions are used. Note however that it is
+#' active only if
 #' the model_function used handles this argument.
+#' @param info_level (optional) Integer that controls the level of information returned and stored
+#' by estim_param (in addition to the results automatically provided that depends on the method used).
+#' Higher code give more details.
+#' `0` to add nothing,
+#' `1` to add criterion and parameters values, and constraint if satisfy_par_const is provided, for each evaluation
+#' (element params_and_crit in the returned list),
+#' `2` to add model results, after transformation if transform_sim is provided, and after intersection with observations,
+#' i.e. as used to compute the criterion for each evaluation (element sim_intersect in the returned list),
+#' `3` to add observations, after transformation if transform_obs is provided, and after intersection with simulations,
+#' i.e. as used to compute the criterion for each evaluation (element obs_intersect in the returned list),
+#' `4` to add all model wrapper results for each evaluation, and all transformations if transform_sim is provided.
+#' (elements sim and sim_transformed in the returned list),
 #'
 #' @details
 #'   The optional argument `transform_obs` must be a function with 4 arguments:
@@ -81,9 +94,10 @@
 #'   (freely defined by the user in the function body) or not.
 #'
 #' @return prints, graphs and a list containing the results of the parameter estimation,
-#' which content depends on the method used. All results are saved in the folder `optim_options.path_results`.
+#' which content depends on the method used and on the values of the `info_level` argument.
+#' All results are saved in the folder `optim_options.path_results`.
 #'
-#' @seealso For more detail and examples, see the different vignettes in
+#' @seealso For more details and examples, see the different vignettes in
 #' [CroptimizR website](https://sticsrpacks.github.io/CroptimizR/)
 #'
 #' @export
@@ -93,7 +107,33 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
                         model_options=NULL, optim_method="nloptr.simplex",
                         optim_options, param_info, forced_param_values=NULL,
                         transform_obs=NULL, transform_sim=NULL, satisfy_par_const=NULL,
-                        var_names=NULL) {
+                        var_names=NULL, info_level=1) {
+
+  # Remove CroptimizR environement before exiting
+  on.exit({
+    if (exists(".croptEnv")) {
+      if (info_level>=1) {
+        result$params_and_crit <- dplyr::bind_rows(.croptEnv$params_and_crit)
+      }
+      if (info_level>=2) {
+        result$sim_intersect <- .croptEnv$sim_intersect
+      }
+      if (info_level>=3) {
+        result$obs_intersect <- .croptEnv$obs_intersect
+      }
+      if (info_level>=4) {
+        result$sim <- .croptEnv$sim
+        result$sim_transformed <- .croptEnv$sim_transformed
+      }
+      rm(".croptEnv")
+    }
+
+    return(result)
+
+  })
+
+  # Initialize result
+  result <- list()
 
   # Measured elapse time
   tictoc::tic.clearlog()
@@ -133,6 +173,11 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
       if(length(x$sit_list) > length(x$ub) & length(x$ub)==1) x$ub <- rep(x$ub,length(x$sit_list) )
       return(x)
       })
+    param_info <- lapply(param_info, function(x) {
+      if(length(x$sit_list) > length(x$lb) & length(x$lb)==1) x$lb <- rep(x$lb,length(x$sit_list) )
+      if(length(x$sit_list) > length(x$ub) & length(x$ub)==1) x$ub <- rep(x$ub,length(x$sit_list) )
+      return(x)
+      })
 #    if (!all(unlist(sapply(param_info, function(x) setequal(unlist(x$sit_list),names(obs_list)),
 #                           simplify = FALSE)))) {
 #      stop("List of situations in argument param_info$***$sit_list are not identical to observed ones (names(obs_list)) for at least one parameter.")
@@ -153,6 +198,14 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
     }
   }
 
+  ## Create an environment accessible by all functions for storing information during the estimation process
+  parent = eval(parse(text = ".GlobalEnv"))
+  .croptEnv <- new.env(parent)
+  assign(
+    x = ".croptEnv",
+    value = .croptEnv,
+    pos = parent
+  )
 
   # Run the estimation
   crit_options=list(param_names=param_names, obs_list=obs_list,
@@ -162,7 +215,8 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
                     satisfy_par_const=satisfy_par_const,
                     path_results=optim_options$path_results,
                     var_names=var_names,
-                    forced_param_values=forced_param_values)
+                    forced_param_values=forced_param_values,
+                    info_level=info_level)
 
   result=optim_switch(param_names,optim_method,optim_options,param_info,crit_options)
 
@@ -171,7 +225,5 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
   tictoc::toc(log=TRUE)
   result$total_time=unlist(tictoc::tic.log(format = TRUE))
   tictoc::tic.clearlog()
-
-  return(result)
 
 }
