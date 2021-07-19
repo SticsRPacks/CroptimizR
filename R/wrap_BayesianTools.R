@@ -106,7 +106,6 @@ wrap_BayesianTools <- function(param_names,optim_options,param_info,crit_options
               MAP = MAP(out)$parametersMAP,
               post_sample=post_sample,
               out = out)
-  save(res, file = file.path(path_results,"optim_results.Rdata"))
 
   ## Graphs the results
   tryCatch(

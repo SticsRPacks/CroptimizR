@@ -95,7 +95,7 @@
 #'
 #' @return prints, graphs and a list containing the results of the parameter estimation,
 #' which content depends on the method used and on the values of the `info_level` argument.
-#' All results are saved in the folder `optim_options.path_results`.
+#' All results are saved in the folder `optim_options$path_results`.
 #'
 #' @seealso For more details and examples, see the different vignettes in
 #' [CroptimizR website](https://sticsrpacks.github.io/CroptimizR/)
@@ -113,27 +113,29 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
   on.exit({
     if (exists(".croptEnv")) {
       if (info_level>=1) {
-        result$params_and_crit <- dplyr::bind_rows(.croptEnv$params_and_crit)
+        res$params_and_crit <- dplyr::bind_rows(.croptEnv$params_and_crit)
       }
       if (info_level>=2) {
-        result$sim_intersect <- .croptEnv$sim_intersect
+        res$sim_intersect <- .croptEnv$sim_intersect
       }
       if (info_level>=3) {
-        result$obs_intersect <- .croptEnv$obs_intersect
+        res$obs_intersect <- .croptEnv$obs_intersect
       }
       if (info_level>=4) {
-        result$sim <- .croptEnv$sim
-        result$sim_transformed <- .croptEnv$sim_transformed
+        res$sim <- .croptEnv$sim
+        res$sim_transformed <- .croptEnv$sim_transformed
       }
       rm(".croptEnv")
     }
 
-    return(result)
+    save(res, file = file.path(optim_options$path_results,"optim_results.Rdata"))
+
+    return(res)
 
   })
 
-  # Initialize result
-  result <- list()
+  # Initialize res
+  res <- list()
 
   # Measured elapse time
   tictoc::tic.clearlog()
@@ -218,12 +220,12 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
                     forced_param_values=forced_param_values,
                     info_level=info_level)
 
-  result=optim_switch(param_names,optim_method,optim_options,param_info,crit_options)
+  res=optim_switch(param_names,optim_method,optim_options,param_info,crit_options)
 
 
   # Measure elapse time
   tictoc::toc(log=TRUE)
-  result$total_time=unlist(tictoc::tic.log(format = TRUE))
+  res$total_time=unlist(tictoc::tic.log(format = TRUE))
   tictoc::tic.clearlog()
 
 }

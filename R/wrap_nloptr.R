@@ -125,9 +125,6 @@ wrap_nloptr <- function(param_names,optim_options,param_info,crit_options) {
               crit_values=crit,
               nlo = nlo)
 
-  # Save the results of nloptr
-  save(res, file = file.path(path_results,"optim_results.Rdata"))
-
   return(res)
 
 }

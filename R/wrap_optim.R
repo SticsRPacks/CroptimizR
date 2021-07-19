@@ -149,9 +149,6 @@ wrap_optim <- function(param_names,optim_options,param_info,crit_options) {
               ind_min_crit = ind_min_crit,
               optim = optim)
 
-  # Save the results
-  save(res, file = file.path(path_results,"optim_results.Rdata"))
-
   return(res)
 
 }
