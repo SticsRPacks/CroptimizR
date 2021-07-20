@@ -23,7 +23,6 @@ wrap_optim <- function(param_names,optim_options,param_info,crit_options) {
   if (is.null((ranseed=optim_options$ranseed))) { ranseed=NULL }
   if (is.null((hessian=optim_options$hessian))) { hessian=FALSE }
   if (is.null((method=optim_options$method))) { method="Nelder-Mead" }
-  if (is.null((path_results=optim_options$path_results))) { path_results=getwd() }
   if (is.null((maxit=optim_options$control$maxit))) {
     if (method=="Nelder-Mead") maxit<-500
     else if (method=="SANN") maxit<-10000

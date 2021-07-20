@@ -143,6 +143,9 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
 
   # Check inputs
 
+  ## optim_options
+  if (is.null(optim_options$path_results)) { optim_options$path_results=getwd() }
+
   ## obs_list
   if (!CroptimizR:::is.obs(obs_list)) {
     stop("Incorrect format for argument obs_list.")

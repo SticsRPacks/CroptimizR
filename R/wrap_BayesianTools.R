@@ -14,7 +14,6 @@
 wrap_BayesianTools <- function(param_names,optim_options,param_info,crit_options) {
 
   if (is.null((ranseed=optim_options$ranseed))) { ranseed=NULL }
-  if (is.null((path_results=optim_options$path_results))) { path_results=getwd() }
   if (is.null(optim_options$iterations)) {
     stop("The total number of iterations of the Bayesian method used is missing: please provide it in optim_options$iterations.")
   }

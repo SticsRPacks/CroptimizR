@@ -107,7 +107,7 @@ i.e. as used to compute the criterion for each evaluation (element obs_intersect
 \value{
 prints, graphs and a list containing the results of the parameter estimation,
 which content depends on the method used and on the values of the \code{info_level} argument.
-All results are saved in the folder \code{optim_options.path_results}.
+All results are saved in the folder \code{optim_options$path_results}.
 }
 \description{
 main function for parameter estimation
