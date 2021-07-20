@@ -7,7 +7,7 @@ author:
 affiliation: "INRAE - EMMAH"
 date: "`r Sys.Date()`"
 vignette: >
-  %\VignetteIndexEntry{Parameter estimation with DREAM-zs}
+  %\VignetteIndexEntry{Parameter estimation with the DREAM-zs algorithm}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 params:

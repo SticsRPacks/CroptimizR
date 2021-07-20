@@ -9,7 +9,7 @@ author:
 - name: "Drew Holzworth"
 date: "`r Sys.Date()`"
 vignette: >
-  %\VignetteIndexEntry{Parameter estimation with ApsimX}
+  %\VignetteIndexEntry{Parameter estimation with the ApsimX crop Model: a simple case}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 params:

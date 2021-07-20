@@ -6,7 +6,7 @@ author:
 affiliation: "INRA - EMMAH"
 date: "`r Sys.Date()`"
 vignette: >
-  %\VignetteIndexEntry{Parameter estimation with Stics}
+  %\VignetteIndexEntry{Parameter estimation with the Stics crop Model: a case with specific and varietal parameters}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 params:
