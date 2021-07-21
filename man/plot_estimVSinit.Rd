@@ -31,4 +31,3 @@ The number of the repetition that leads to the minimal value of the
 criterion over all repetitions is written in white (if bubble is TRUE) or in red
 (if bubble is false) while the other ones are written in black.
 }
-\keyword{internal}
