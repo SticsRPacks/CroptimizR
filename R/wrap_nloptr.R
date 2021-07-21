@@ -72,10 +72,6 @@ wrap_nloptr <- function(param_names,optim_options,param_info,crit_options) {
   ind_min_crit=which.min(sapply(nlo, function(x) x$objective))
 
   # Graph and print the results
-  tmp<-rbind(bounds$lb,bounds$ub,est_values, init_values)
-  tmp[apply(tmp,2,is.infinite)]<-NA
-  minvalue<-apply(tmp,2,min,na.rm=TRUE); maxvalue<-apply(tmp,2,max,na.rm=TRUE)
-  minvalue<-minvalue-0.05*(maxvalue-minvalue); maxvalue<-maxvalue+0.05*(maxvalue-minvalue)
   crit <- sapply(nlo, function(x) x$objective)
 
   tryCatch(
