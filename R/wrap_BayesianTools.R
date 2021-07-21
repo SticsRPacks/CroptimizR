@@ -20,6 +20,7 @@ wrap_BayesianTools <- function(param_names,optim_options,param_info,crit_options
   if (!is.numeric(optim_options$startValue)) {
     stop("startValue should be the number of markov chains. Please use param_info$init_values to prescribe initial values for the parameters.")
   }
+  if (is.null((path_results=optim_options$path_results))) { path_results=getwd() }
 
   crit_options$tot_max_eval <- optim_options$iterations + optim_options$startValue -
     optim_options$iterations %% optim_options$startValue

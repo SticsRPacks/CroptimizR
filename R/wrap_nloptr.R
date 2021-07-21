@@ -23,6 +23,7 @@ wrap_nloptr <- function(param_names,optim_options,param_info,crit_options) {
   if (is.null((ftol_rel=optim_options$ftol_rel))) { ftol_rel=1e-10 }
   if (is.null((maxeval=optim_options$maxeval))) { maxeval=500 }
   if (is.null((ranseed=optim_options$ranseed))) { ranseed=NULL }
+  if (is.null((path_results=optim_options$path_results))) { path_results=getwd() }
 
   crit_options$tot_max_eval <- nb_rep*maxeval
   nb_params=length(param_names)

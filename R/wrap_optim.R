@@ -28,6 +28,7 @@ wrap_optim <- function(param_names,optim_options,param_info,crit_options) {
     else if (method=="SANN") maxit<-10000
     else maxit=100
   }
+  if (is.null((path_results=optim_options$path_results))) { path_results=getwd() }
 
   crit_options$tot_max_eval <- nb_rep*maxit
   nb_params=length(param_names)
