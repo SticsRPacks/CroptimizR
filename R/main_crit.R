@@ -36,7 +36,7 @@ main_crit <- function(param_values, crit_options) {
       }
 
       .croptEnv$params_and_crit[[.croptEnv$eval_count]] <- dplyr::bind_cols(crit=crit,
-                                                                            tibble::tibble(!!!param_values),
+                                                                            tibble::tibble(!!!param_values_ori),
                                                                             satisfy_const=satisfy_const)
 
       if (!is.null(crit_options$irep)) { ## this condition is there to detect frequentist methods ... should be changed for more robust test later ...
@@ -143,6 +143,7 @@ main_crit <- function(param_values, crit_options) {
   # TO DO
 
   # Handle the case of group of parameters (i.e. different values depending on the situations)
+  param_values_ori <- param_values
   if  ("sit_list" %in% names(param_info[[1]])) {
     sit_names_param_info <- unique(unlist(lapply(param_info,function(x) {unlist(x$sit_list)})))
     param_values_df <- sapply(sit_names_param_info,
