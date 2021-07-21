@@ -17,7 +17,7 @@
 #' @import ggplot2
 #' @importFrom dplyr filter
 #'
-#' @keywords internal
+#' @export
 #'
 plot_estimVSinit <- function(init_values, est_values, crit, lb, ub, bubble=TRUE) {
 
@@ -94,6 +94,8 @@ plot_estimVSinit <- function(init_values, est_values, crit, lb, ub, bubble=TRUE)
 #' (similar to params_and_crit). See Details section for comments about the difference between evaluations and iterations.
 #' @param iter_or_eval Values of the x axis: "iter" for iteration number, "eval" for evaluation number
 #' @param crit_log If TRUE, consider criterion values in log scale
+#' @param rep_label Indicate if labels for the repetition number must be plotted at both beginning and end of lines ("begin_end"),
+#' only at the beginning ("begin") or only at the end ("end")
 #'
 #' @return A named list containing one plot per parameter and a plot for the criterion.
 #'
@@ -106,9 +108,10 @@ plot_estimVSinit <- function(init_values, est_values, crit, lb, ub, bubble=TRUE)
 #' @import ggplot2
 #' @importFrom dplyr select filter %>%
 #'
-#' @keywords internal
+#' @export
 #'
-plot_values_per_it <- function(df, param_info, iter_or_eval=c("iter", "eval"), crit_log=FALSE) {
+plot_valuesVSit <- function(df, param_info, iter_or_eval=c("iter", "eval"),
+                            crit_log=FALSE, rep_label=c("begin_end","begin","end")) {
 
   param_names <- get_params_names(param_info)
   bounds=get_params_bounds(param_info)
@@ -150,9 +153,15 @@ plot_values_per_it <- function(df, param_info, iter_or_eval=c("iter", "eval"), c
 
     for (irep in unique(df$rep)) {
       p[[param_name]] <- p[[param_name]] +
-        geom_line(data=filter(df,rep==irep)) +
-        geom_label(aes(label=rep), data=filter(df,rep==irep) %>% filter(eval==min(.data$eval)), size=3) +
-        geom_label(aes(label=rep), data=filter(df,rep==irep) %>% filter(eval==max(.data$eval)), size=3)
+        geom_line(data=filter(df,rep==irep))
+      if (rep_label=="begin_end" || rep_label=="begin") {
+        p[[param_name]] <- p[[param_name]] +
+          geom_label(aes(label=rep), data=filter(df,rep==irep) %>% filter(eval==min(.data$eval)), size=3)
+      }
+      if (rep_label=="begin_end" || rep_label=="end") {
+        p[[param_name]] <- p[[param_name]] +
+          geom_label(aes(label=rep), data=filter(df,rep==irep) %>% filter(eval==max(.data$eval)), size=3)
+      }
     }
     ylim(minvalue[param_name],maxvalue[param_name])
 
@@ -193,7 +202,9 @@ plot_values_per_it <- function(df, param_info, iter_or_eval=c("iter", "eval"), c
 #' @param fill If "crit", colours the points and lines in function of the minimized criterion value, if "rep"
 #' colours in function of the repetition number.
 #' @param crit_log If TRUE, consider criterion values in log scale
-#' @param lines If TRUE add lines between points of a same repetition (+ repetition label)
+#' @param lines If TRUE add lines between points of a same repetition
+#' @param rep_label Indicate if labels for the repetition number must be plotted at both beginning and end of lines ("begin_end"),
+#' only at the beginning ("begin") or only at the end ("end")
 #'
 #' @return A list containing one plot per parameter pair.
 #'
@@ -206,15 +217,19 @@ plot_values_per_it <- function(df, param_info, iter_or_eval=c("iter", "eval"), c
 #' @import ggplot2
 #' @importFrom dplyr select filter %>%
 #'
-#' @keywords internal
+#' @export
 #'
-plot_values_per_it_2D <- function(df, param_info, iter_or_eval=c("iter","eval"), fill=c("crit","rep"), crit_log=FALSE, lines=TRUE) {
+plot_valuesVSit_2D <- function(df, param_info, iter_or_eval=c("iter","eval"),
+                               fill=c("crit","rep"), crit_log=FALSE, lines=TRUE,
+                               rep_label=c("begin_end","begin","end")) {
 
   param_names <- get_params_names(param_info)
   bounds=get_params_bounds(param_info)
 
+  lab= "evaluations"
   if (iter_or_eval[1]=="iter") {
     df <- filter(df, !is.na(.data$iter))
+    lab <- "iterations"
   }
   df$rep <- as.factor(df$rep)
   trans <- "identity"
@@ -238,7 +253,7 @@ plot_values_per_it_2D <- function(df, param_info, iter_or_eval=c("iter","eval"),
   for (ipair in seq_len(ncol(df_pairs))) {
 
     p[[ipair]] <- ggplot(df, aes_string(x=df_pairs[1,ipair], y=df_pairs[2,ipair], color = fill[1])) +
-      labs(title=paste0("Evolution of ",df_pairs[1,ipair]," and ",df_pairs[2,ipair]," \n in function of the minimization iterations"),
+      labs(title=paste0("Evolution of ",df_pairs[1,ipair]," and ",df_pairs[2,ipair]," \n in function of the minimization ",lab),
            y = paste("Estimated value for", df_pairs[2,ipair]),
            x = paste("Estimated value for", df_pairs[1,ipair]),
            fill = "Criterion") +
@@ -254,9 +269,15 @@ plot_values_per_it_2D <- function(df, param_info, iter_or_eval=c("iter","eval"),
     if (lines) {
       for (irep in unique(df$rep)) {
         p[[ipair]] <- p[[ipair]] +
-          geom_path(data=filter(df,rep==irep)) +
-          geom_label(aes(label=rep), data=filter(df,rep==irep) %>% filter(eval==min(.data$eval)), size=3) +
-          geom_label(aes(label=rep), data=filter(df,rep==irep) %>% filter(eval==max(.data$eval)), size=3)
+          geom_path(data=filter(df,rep==irep))
+        if (rep_label=="begin_end" || rep_label=="begin") {
+          p[[ipair]] <- p[[ipair]] +
+            geom_label(aes(label=rep), data=filter(df,rep==irep) %>% filter(eval==min(.data$eval)), size=3)
+        }
+        if (rep_label=="begin_end" || rep_label=="end") {
+          p[[ipair]] <- p[[ipair]] +
+            geom_label(aes(label=rep), data=filter(df,rep==irep) %>% filter(eval==max(.data$eval)), size=3)
+        }
       }
     }
     xlim(minvalue[df_pairs[1,ipair]],maxvalue[df_pairs[1,ipair]])
