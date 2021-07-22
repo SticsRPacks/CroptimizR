@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Filter observation list to exclude situations, variables or dates — filter_obs • CroptimizR</title>
+<title>Create 2D plots of parameters values evolution per iteration or evaluation number — plot_valuesVSit_2D • CroptimizR</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="Filter observation list to exclude situations, variables or dates — filter_obs" />
-<meta property="og:description" content="Filter observation list to exclude situations, variables or dates" />
+<meta property="og:title" content="Create 2D plots of parameters values evolution per iteration or evaluation number — plot_valuesVSit_2D" />
+<meta property="og:description" content="Create 2D plots of parameters values evolution per iteration or evaluation number" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -146,91 +146,90 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Filter observation list to exclude situations, variables or dates</h1>
-    <small class="dont-index">Source: <a href='https://github.com/SticsRPacks/CroptimizR/blob/master/R/filter_obs.R'><code>R/filter_obs.R</code></a></small>
-    <div class="hidden name"><code>filter_obs.Rd</code></div>
+    <h1>Create 2D plots of parameters values evolution per iteration or evaluation number</h1>
+    <small class="dont-index">Source: <a href='https://github.com/SticsRPacks/CroptimizR/blob/master/R/plot_frequentist.R'><code>R/plot_frequentist.R</code></a></small>
+    <div class="hidden name"><code>plot_valuesVSit_2D.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Filter observation list to exclude situations, variables or dates</p>
+    <p>Create 2D plots of parameters values evolution per iteration or evaluation number</p>
     </div>
 
-    <pre class="usage"><span class='fu'>filter_obs</span><span class='op'>(</span>
-  <span class='va'>obs_list</span>,
-  var_names <span class='op'>=</span> <span class='cn'>NULL</span>,
-  sit_names <span class='op'>=</span> <span class='cn'>NULL</span>,
-  dates <span class='op'>=</span> <span class='cn'>NULL</span>,
-  include <span class='op'>=</span> <span class='cn'>FALSE</span>
+    <pre class="usage"><span class='fu'>plot_valuesVSit_2D</span><span class='op'>(</span>
+  <span class='va'>df</span>,
+  <span class='va'>param_info</span>,
+  iter_or_eval <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"iter"</span>, <span class='st'>"eval"</span><span class='op'>)</span>,
+  fill <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"crit"</span>, <span class='st'>"rep"</span><span class='op'>)</span>,
+  crit_log <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  lines <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  rep_label <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"begin_end"</span>, <span class='st'>"begin"</span>, <span class='st'>"end"</span><span class='op'>)</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>obs_list</th>
-      <td><p>List of observed values to use for parameter estimation
-A <code>named list</code> (names = situations names) of data.frame containing
-one column named Date with the dates (Date or POSIXct format) of the different observations
-and one column per observed variables with either the measured values or NA, if
-the variable is not observed at the given date.</p></td>
+      <th>df</th>
+      <td><p>Data.frame containing values of parameters (one column per estimated parameter),
+criterion (crit column), repetition number (rep), iteration number (iter) and evaluation number (eval)
+(similar to params_and_crit). See Details section for comments about the difference between evaluations and iterations.</p></td>
     </tr>
     <tr>
-      <th>var_names</th>
-      <td><p>(optional, if not given all variables will be kept) Vector containing the names of the variables to include or exclude</p></td>
+      <th>param_info</th>
+      <td><p>Information on the parameters to estimate.
+Either
+a list containing:</p><ul>
+<li><p>(named) vectors of upper and lower bounds (<code>ub</code> and <code>lb</code>) (-Inf and Inf can be used),</p></li>
+<li><p><code>init_values</code>, A data.frame containing initial
+values to test for the parameters (optional, if not provided, or if less values
+than number of repetitions of the minimization are provided, the, or part
+of the, initial values will be randomly generated using LHS sampling within
+parameter bounds).</p></li>
+</ul>
+
+<p>or
+a named list containing for each parameter the list of situations per group
+(<code>sit_list</code>), the vector of upper and lower bounds (one value per group)
+(<code>ub</code> and <code>lb</code>) and the list of initial values per group
+<code>init_values</code> (data.frame, one column per group, optional).
+(see <a href='https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html'>here</a>
+for an example)</p></td>
     </tr>
     <tr>
-      <th>sit_names</th>
-      <td><p>(optional, if not given all situations will be kept) Vector containing the names of the situations to include or exclude</p></td>
+      <th>iter_or_eval</th>
+      <td><p>"iter" for plotting the values for each iteration, "eval" for plotting the values for each evaluation</p></td>
     </tr>
     <tr>
-      <th>dates</th>
-      <td><p>(optional, if not given all dates will be kept) Vector containing the dates (POSIXct format) to include or exclude</p></td>
+      <th>fill</th>
+      <td><p>If "crit", colours the points and lines in function of the minimized criterion value, if "rep"
+colours in function of the repetition number.</p></td>
     </tr>
     <tr>
-      <th>include</th>
-      <td><p>(optional, FALSE by default) Flag indicating if the variables / situations / dates listed in inputs must be included (TRUE) or not (FALSE) in the resulting list</p></td>
+      <th>crit_log</th>
+      <td><p>If TRUE, consider criterion values in log scale</p></td>
+    </tr>
+    <tr>
+      <th>lines</th>
+      <td><p>If TRUE add lines between points of a same repetition</p></td>
+    </tr>
+    <tr>
+      <th>rep_label</th>
+      <td><p>Indicate if labels for the repetition number must be plotted at both beginning and end of lines ("begin_end"),
+only at the beginning ("begin") or only at the end ("end")</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>obs_list List of filtered observed values (same format as <code>obs_list</code> input argument)</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+    <p>A list containing one plot per parameter pair.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <div class='dont-index'><p>For more detail and examples, see the different vignettes in
-<a href='https://sticsrpacks.github.io/CroptimizR/'>CroptimizR website</a></p></div>
+    <p>Evaluation means evaluation of the criterion from proposed values of the parameters
+by the parameter estimation algorithm.
+An iteration is reached when an evaluation lead to a better value of the criterion than the previously obtained values.
+There are thus more evaluations than iterations. The criterion decreases when
+iteration number increases while it is not the case when evaluation number increases.</p>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='va'>obs_list</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>sit1<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>Date<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXct</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"2009-11-30"</span>,<span class='st'>"2009-12-10"</span><span class='op'>)</span><span class='op'>)</span>,
-                                 var1<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1.1</span>,<span class='fl'>1.5</span><span class='op'>)</span>,var2<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>NA</span>,<span class='fl'>2.1</span><span class='op'>)</span><span class='op'>)</span>,
-                 sit2<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>Date<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXct</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"2009-11-30"</span>,<span class='st'>"2009-12-5"</span><span class='op'>)</span><span class='op'>)</span>,
-                                 var1<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1.3</span>,<span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='co'># Keep only var1</span>
-<span class='fu'>filter_obs</span><span class='op'>(</span><span class='va'>obs_list</span>,var_names<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"var1"</span><span class='op'>)</span>,include<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; $sit1
-#&gt;         Date var1
-#&gt; 1 2009-11-30  1.1
-#&gt; 2 2009-12-10  1.5
-#&gt; 
-#&gt; $sit2
-#&gt;         Date var1
-#&gt; 3 2009-11-30  1.3
-#&gt; 4 2009-12-05  2.0
-#&gt; </div><div class='input'>
-<span class='co'># Exclude observations at date "2009-11-30"</span>
-<span class='fu'>filter_obs</span><span class='op'>(</span><span class='va'>obs_list</span>,dates<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXct</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"2009-11-30"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; $sit1
-#&gt;         Date var1 var2
-#&gt; 1 2009-12-10  1.5  2.1
-#&gt; 
-#&gt; $sit2
-#&gt;         Date var1 var2
-#&gt; 2 2009-12-05    2   NA
-#&gt; </div><div class='input'>
-
-</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

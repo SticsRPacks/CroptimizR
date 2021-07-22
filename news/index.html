@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CroptimizR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
@@ -149,12 +149,25 @@
       <small>Source: <a href='https://github.com/SticsRPacks/CroptimizR/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="croptimizr-040-2021-07-22" class="section level1">
+<h1 class="page-header" data-toc-text="0.4.0">
+<a href="#croptimizr-040-2021-07-22" class="anchor"></a>CroptimizR 0.4.0 (2021-07-22)</h1>
+<div id="main-changes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#main-changes" class="anchor"></a>Main changes</h2>
+<ul>
+<li>Additional information provided in output of estim_param function: parameters’ values proposed by the estimation method and associated criterion values, model results … The level of information returned is controlled by a new argument (info_level)</li>
+<li>Exported new functions to plot the evolution of parameters and criterion values in function of iterations/evaluations (see vignette [<a href="https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html" class="uri">https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html</a>])</li>
+<li>Fix: management of param_info$sit_list for only one parameter did not work</li>
+</ul>
+</div>
+</div>
     <div id="croptimizr-030-2021-06-09" class="section level1">
 <h1 class="page-header" data-toc-text="0.3.0">
 <a href="#croptimizr-030-2021-06-09" class="anchor"></a>CroptimizR 0.3.0 (2021-06-09)</h1>
-<div id="general-changes" class="section level2">
+<div id="main-changes-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#general-changes" class="anchor"></a>General changes</h2>
+<a href="#main-changes-1" class="anchor"></a>Main changes</h2>
 <ul>
 <li>Added a new argument in estim_param to force (non-estimated) parameters values during estimation</li>
 <li>Changed estim_init graph for a bubble graph</li>
@@ -165,6 +178,34 @@
 <li>Improved doc for buildng model wrappers</li>
 <li>A few bugs fixed</li>
 <li>Moved from Travis to GitHub actions for continuous integration tests</li>
+</ul>
+</div>
+</div>
+    <div id="croptimizr-010-2020-10-06" class="section level1">
+<h1 class="page-header" data-toc-text="0.1.0">
+<a href="#croptimizr-010-2020-10-06" class="anchor"></a>CroptimizR 0.1.0 (2020-10-06)</h1>
+<div id="main-changes-2" class="section level2">
+<h2 class="hasAnchor">
+<a href="#main-changes-2" class="anchor"></a>Main changes</h2>
+<ul>
+<li>Simplified the required interface for model wrappers (i.e. shape of input and output arguments, see the Guidelines for implementing a crop model R wrapper for CroptimizR)</li>
+<li>Added a new argument var_names to estim_param function for requiring the model wrappers to simulate non-observed variables (may be useful if transform_sim / transform_obs arguments are used)</li>
+</ul>
+</div>
+</div>
+    <div id="croptimizr-010-2020-10-06-1" class="section level1">
+<h1 class="page-header" data-toc-text="0.1.0">
+<a href="#croptimizr-010-2020-10-06-1" class="anchor"></a>CroptimizR 0.1.0 (2020-10-06)</h1>
+<div id="main-changes-3" class="section level2">
+<h2 class="hasAnchor">
+<a href="#main-changes-3" class="anchor"></a>Main changes</h2>
+<ul>
+<li>new available criterion: Ordinary Least Square</li>
+<li>new arguments transform_obs and transform_sim in estim_param function for dynamic transformation of observations and/or simulations</li>
+<li>new argument satisfy_par_const in estim_param function for defining contraints on the parameters to estimate (e.g. inequality constraints between parameters)</li>
+<li>estim_param now displays total elapse time</li>
+<li>some bugs fixed</li>
+<li>license changed to CeCILL-C</li>
 </ul>
 </div>
 </div>

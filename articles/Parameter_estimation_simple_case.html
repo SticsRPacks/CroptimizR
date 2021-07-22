@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CroptimizR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
@@ -107,7 +107,7 @@
       <h1 data-toc-skip>Parameter estimation with the Stics crop Model: a simple case</h1>
                         <h4 class="author">Samuel Buis</h4>
                         
-            <h4 class="date">2021-06-29</h4>
+            <h4 class="date">2021-07-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/master/vignettes/Parameter_estimation_simple_case.Rmd"><code>vignettes/Parameter_estimation_simple_case.Rmd</code></a></small>
       <div class="hidden name"><code>Parameter_estimation_simple_case.Rmd</code></div>
@@ -227,46 +227,46 @@
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">res</span><span class="op">$</span><span class="va">final_values</span></code></pre></div>
 <pre><code>##      dlaimax      durvieF 
-##  0.001696149 53.969127691</code></pre>
+##  0.001614435 50.000000000</code></pre>
 <ul>
 <li>the initial and final values of the estimated parameters for each repetition of the minimization:</li>
 </ul>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">res</span><span class="op">$</span><span class="va">init_values</span></code></pre></div>
-<pre><code>##           dlaimax   durvieF
-## [1,] 0.0013246562 188.37247
-## [2,] 0.0020364859  66.69581
-## [3,] 0.0008973501 324.28744
-## [4,] 0.0017504630 265.32044
-## [5,] 0.0005397385 372.75126
-## [6,] 0.0023170541 135.86332
-## [7,] 0.0016401441 203.82833</code></pre>
+<pre><code>##        dlaimax   durvieF
+## 1 0.0010614022 101.05543
+## 2 0.0016225903 228.02236
+## 3 0.0019301103 343.82293
+## 4 0.0011393688 365.02290
+## 5 0.0007499945 278.11596
+## 6 0.0023386301 156.76596
+## 7 0.0018972162  95.83214</code></pre>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">res</span><span class="op">$</span><span class="va">est_values</span></code></pre></div>
-<pre><code>##          dlaimax   durvieF
-## [1,] 0.001224070 394.93364
-## [2,] 0.001696149  53.96913
-## [3,] 0.001223888 356.99643
-## [4,] 0.001224096 393.68285
-## [5,] 0.001223364 400.00000
-## [6,] 0.001614213  50.00000
-## [7,] 0.001223648 374.36629</code></pre>
+<pre><code>##          dlaimax  durvieF
+## [1,] 0.001604844 130.9555
+## [2,] 0.001223672 382.3685
+## [3,] 0.001224056 399.1707
+## [4,] 0.001223849 362.6018
+## [5,] 0.001223128 391.8069
+## [6,] 0.001614435  50.0000
+## [7,] 0.001223580 338.6791</code></pre>
 <ul>
 <li>the minimum value of the criterion among all repetitions and for all repetitions:</li>
 </ul>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">res</span><span class="op">$</span><span class="va">min_crit_value</span></code></pre></div>
-<pre><code>## [1] 4.723223</code></pre>
+<pre><code>## [1] 4.915215</code></pre>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">res</span><span class="op">$</span><span class="va">crit_values</span></code></pre></div>
-<pre><code>## [1] 5.096751 4.723223 5.096751 5.096751 5.096783 4.915215 5.096751</code></pre>
+<pre><code>## [1] 5.146571 5.096751 5.096751 5.096751 5.096783 4.915215 5.096751</code></pre>
 <ul>
 <li>the <code>nlo</code> variable, a list returned by the nloptr function that contains detailed information on the results of the minimization for each repetition.</li>
 </ul>
 <p><code>nlo</code> is a list of size the number of repetitions. Each element stores many information about the corresponding minimization, including the number of iterations performed (field <code>iterations</code>) and a message indicating why the minimization stopped (field <code>message</code>).</p>
-<p>Let’s print it for repetition 2:</p>
+<p>Let’s print it for the repetition that leads to the minimum value of the criterion over all repetitions:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">res</span><span class="op">$</span><span class="va">nlo</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></code></pre></div>
+<code class="sourceCode R"><span class="va">res</span><span class="op">$</span><span class="va">nlo</span><span class="op">[[</span><span class="va">res</span><span class="op">$</span><span class="va">ind_min_crit</span><span class="op">]</span><span class="op">]</span></code></pre></div>
 <pre><code>## 
 ## Call:
 ## nloptr::nloptr(x0 = as.numeric(init_values[irep, ]), eval_f = main_crit, 
@@ -280,21 +280,33 @@
 ## NLopt solver status: 4 ( NLOPT_XTOL_REACHED: Optimization stopped because 
 ## xtol_rel or xtol_abs (above) was reached. )
 ## 
-## Number of Iterations....: 44 
+## Number of Iterations....: 55 
 ## Termination conditions:  xtol_rel: 0.001 maxeval: 500 
 ## Number of inequality constraints:  0 
 ## Number of equality constraints:    0 
-## Optimal value of objective function:  4.72322279544591 
-## Optimal value of controls: 0.001696149 53.96913</code></pre>
+## Optimal value of objective function:  4.91521542817615 
+## Optimal value of controls: 0.001614435 50</code></pre>
 <p>Complementary graphs and data are stored in the <code>optim_options$path_results</code> folder. Among them, the EstimatedVSinit.pdf file containing the following figures:</p>
 <p><img src="ResultsSimpleCase/estimInit_dlaimax.PNG" width="45%"><img src="ResultsSimpleCase/estimInit_durvieF.PNG" width="45%"></p>
-<p>Figure 1: plots of estimated vs initial values of parameters dlaimax and durvieF. Numbers represent the repetition number of the minimization and the size of the bubbles the final value of the minimized criterion. The number in white, 2 in this case, is the minimization that lead to the minimal value of the criterion among all repetitions. In this case, the minimizations converge towards 2 different values for the parameters, which indicates the presence of a local minimum. Values of durvieF are close to the bounds. In realistic calibration cases with many observed situations / variables / dates this may indicate the presence of biases in the observation values or in the model output values simulated (this simple case with only one situation does not allow to derive such conclusion).</p>
+<p>Figure 1: plots of estimated vs initial values of parameters dlaimax and durvieF. Numbers represent the repetition number of the minimization and the size of the bubbles the final value of the minimized criterion. The number in white, 6 in this case, is the minimization that leads to the minimal value of the criterion among all repetitions. In this case, the minimizations converge towards different values for the parameters, which indicates the presence of local minima. Values of durvieF are close to the bounds. In realistic calibration cases with many observed situations / variables / dates this may indicate the presence of biases in the observation values or in the model output values simulated (this simple case with only one situation does not allow to derive such conclusion).</p>
+<p>Additional plots for inspecting the variations of parameters and criterion values over the iterations or evaluations can be obtained using the <code>plot_valuesVSit</code> and <code>plot_valuesVSit_2D</code> functions.</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/plot_valuesVSit.html">plot_valuesVSit</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">params_and_crit</span>, <span class="va">param_info</span><span class="op">)</span></code></pre></div>
+<p><img src="ResultsSimpleCase/critVSit.PNG" width="45%"><img src="ResultsSimpleCase/dlaimaxVSit.PNG" width="45%"><img src="ResultsSimpleCase/durvieFVSit.PNG" width="45%"></p>
+<p>Figure 2: The top left figure displays the evolution of the minimized criterion value in function of the iterations of the minimization. Colors and labels represent the repetition number. The top right figure displays the evolution of the value of the dlaimax parameter in function of the iterations of the minimization. Labels represent the repetition number and colors the value of the minimized criterion. The figure at the bottom is the same but for the durvieF parameter.</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/plot_valuesVSit_2D.html">plot_valuesVSit_2D</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">params_and_crit</span>, <span class="va">param_info</span>, iter_or_eval<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"eval"</span><span class="op">)</span>, lines<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+<div class="figure">
+<img src="ResultsSimpleCase/dlaimaxVSdurvieF.PNG" alt="Figure 3: This figure displays all the values proposed by the minimizer for the durvieF (Y axis) and dlaimax (X-axis) parameters and the associated values of the minimized criterion (dot colors)." width="60%"><p class="caption">
+Figure 3: This figure displays all the values proposed by the minimizer for the durvieF (Y axis) and dlaimax (X-axis) parameters and the associated values of the minimized criterion (dot colors).
+</p>
+</div>
 </div>
 <div id="run-the-model-after-optimization" class="section level2">
 <h2 class="hasAnchor">
 <a href="#run-the-model-after-optimization" class="anchor"></a>Run the model after optimization</h2>
 <p>We run here the Stics model using the estimated values of the parameters. In this case, the <code>param_values</code> argument of the stics_wrapper function is thus set so that estimated values of the parameters overwrite the values defined in the model input files.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sim_after_optim</span><span class="op">=</span><span class="fu">stics_wrapper</span><span class="op">(</span>param_values<span class="op">=</span><span class="va">res</span><span class="op">$</span><span class="va">final_values</span>,
                               model_options<span class="op">=</span><span class="va">model_options</span><span class="op">)</span></code></pre></div>
 </div>
@@ -302,7 +314,7 @@
 <h2 class="hasAnchor">
 <a href="#plot-the-results" class="anchor"></a>Plot the results</h2>
 <p>Here we use the <a href="https://github.com/SticsRPacks/CroPlotR">CroPlotR</a> package for comparing simulations and observations. As CroptimizR, CroPlotR can be used with any crop model.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">sim_before_optim</span><span class="op">$</span><span class="va">sim_list</span>, obs<span class="op">=</span><span class="va">obs_list</span>, select_dyn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"common"</span><span class="op">)</span><span class="op">)</span>
 <span class="va">p1</span> <span class="op">&lt;-</span> <span class="va">p</span><span class="op">[[</span><span class="va">sit_name</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"Before Optimization"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">9</span>, hjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span>
@@ -318,8 +330,8 @@
                  <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"sim_obs_plots"</span>,<span class="st">".png"</span><span class="op">)</span><span class="op">)</span>, plot<span class="op">=</span><span class="va">p</span><span class="op">)</span></code></pre></div>
 <p>This gives:</p>
 <div class="figure">
-<img src="ResultsSimpleCase/sim_obs_plots.png" alt="Figure 2: plots of simulated and observed target variable before and after optimization. The gap between simulated and observed values has been drastically reduced: the minimizer has done its job!" width="80%"><p class="caption">
-Figure 2: plots of simulated and observed target variable before and after optimization. The gap between simulated and observed values has been drastically reduced: the minimizer has done its job!
+<img src="ResultsSimpleCase/sim_obs_plots.png" alt="Figure 4: plots of simulated and observed target variable before and after optimization. The gap between simulated and observed values has been drastically reduced: the minimizer has done its job!" width="60%"><p class="caption">
+Figure 4: plots of simulated and observed target variable before and after optimization. The gap between simulated and observed values has been drastically reduced: the minimizer has done its job!
 </p>
 </div>
 </div>
