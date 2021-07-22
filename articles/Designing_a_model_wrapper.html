@@ -561,23 +561,23 @@
             optim_options<span class="op">=</span><span class="va">optim_options</span>,
             param_info <span class="op">=</span> <span class="va">param_info</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] "Working: 20.00%. ETA: 1.61"
-## [1] "Working: 40.00%. ETA: 1.51"
-## [1] "Working: 60.00%. ETA: 0.89"
-## [1] "Working: 80.00%. ETA: 0.43"
+## [1] "Working: 40.00%. ETA: 1.10"
+## [1] "Working: 60.00%. ETA: 0.77"
+## [1] "Working: 80.00%. ETA: 0.38"
 ## [1] "Working: 100.00%. ETA: 0.00"
 ## $inc_slope</code></pre>
 <pre><code>## 
 ## $dec_slope</code></pre>
 <pre><code>## 
-## [1] "Estimated value for inc_slope :  25.033959642658"
-## [1] "Estimated value for dec_slope :  10.0120399350104"
-## [1] "Minimum value of the criterion: 9.20276636138451e-05"
+## [1] "Estimated value for inc_slope :  24.9863167650791"
+## [1] "Estimated value for dec_slope :  9.96813295321121"
+## [1] "Minimum value of the criterion: 0.000182548150477414"
 ## [1] "Complementary graphs and results can be found in  /Users/runner/work/CroptimizR/CroptimizR/vignettes"
-## Total time for parameter estimation: 2.72 sec elapsed</code></pre>
+## Total time for parameter estimation: 2.394 sec elapsed</code></pre>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">res</span><span class="op">$</span><span class="va">final_values</span></code></pre></div>
 <pre><code>## inc_slope dec_slope 
-##  25.03396  10.01204</code></pre>
+## 24.986317  9.968133</code></pre>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Plot the simulations obtained with the optimized values of the parameters VS the observed ones using the CroPlotR package.</span>
 <span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/SticsRPacks/CroPlotR">"CroPlotR"</a></span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
@@ -715,10 +715,10 @@
             model_function <span class="op">=</span> <span class="va">laitm_simple_wrapper_v2</span>,
             optim_options<span class="op">=</span><span class="va">optim_options</span>,
             param_info <span class="op">=</span> <span class="va">param_info</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] "Working: 20.00%. ETA: 9.91"
-## [1] "Working: 40.00%. ETA: 5.97"
-## [1] "Working: 60.00%. ETA: 4.23"
-## [1] "Working: 80.00%. ETA: 2.25"
+<pre><code>## [1] "Working: 20.00%. ETA: 7.17"
+## [1] "Working: 40.00%. ETA: 5.42"
+## [1] "Working: 60.00%. ETA: 3.81"
+## [1] "Working: 80.00%. ETA: 2.03"
 ## [1] "Working: 100.00%. ETA: 0.00"
 ## $inc_slope1</code></pre>
 <pre><code>## 
@@ -726,16 +726,16 @@
 <pre><code>## 
 ## $dec_slope</code></pre>
 <pre><code>## 
-## [1] "Estimated value for inc_slope1 :  25.0489238512227"
-## [1] "Estimated value for inc_slope2 :  49.9852278555636"
-## [1] "Estimated value for dec_slope :  9.96632018458831"
-## [1] "Minimum value of the criterion: 0.00126958727244396"
+## [1] "Estimated value for inc_slope1 :  25.0347034291651"
+## [1] "Estimated value for inc_slope2 :  49.9455492141385"
+## [1] "Estimated value for dec_slope :  9.95712483751609"
+## [1] "Minimum value of the criterion: 0.00195900739600454"
 ## [1] "Complementary graphs and results can be found in  /Users/runner/work/CroptimizR/CroptimizR/vignettes"
-## Total time for parameter estimation: 11.446 sec elapsed</code></pre>
+## Total time for parameter estimation: 11.033 sec elapsed</code></pre>
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">res</span><span class="op">$</span><span class="va">final_values</span></code></pre></div>
 <pre><code>## inc_slope1 inc_slope2  dec_slope 
-##   25.04892   49.98523    9.96632</code></pre>
+##  25.034703  49.945549   9.957125</code></pre>
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Plot the simulations obtained with the optimized values of the parameters VS the observed ones using the CroPlotR package.</span>
 <span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/SticsRPacks/CroPlotR">"CroPlotR"</a></span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
