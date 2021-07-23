@@ -109,7 +109,7 @@
             <address class="author_afil">
       INRAE - EMMAH<br><h4 class="author">Patrice Lecharpentier</h4>
             <address class="author_afil">
-      INRAE - Agroclim<br><h4 class="date">2021-07-22</h4>
+      INRAE - Agroclim<br><h4 class="date">2021-07-23</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/master/vignettes/Designing_a_model_wrapper.Rmd"><code>vignettes/Designing_a_model_wrapper.Rmd</code></a></small>
       <div class="hidden name"><code>Designing_a_model_wrapper.Rmd</code></div>
@@ -560,24 +560,24 @@
             model_function <span class="op">=</span> <span class="va">laitm_simple_wrapper</span>,
             optim_options<span class="op">=</span><span class="va">optim_options</span>,
             param_info <span class="op">=</span> <span class="va">param_info</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] "Working: 20.00%. ETA: 1.61"
-## [1] "Working: 40.00%. ETA: 1.10"
-## [1] "Working: 60.00%. ETA: 0.77"
-## [1] "Working: 80.00%. ETA: 0.38"
+<pre><code>## [1] "Working: 20.00%. ETA: 1.37"
+## [1] "Working: 40.00%. ETA: 1.03"
+## [1] "Working: 60.00%. ETA: 0.57"
+## [1] "Working: 80.00%. ETA: 0.30"
 ## [1] "Working: 100.00%. ETA: 0.00"
 ## $inc_slope</code></pre>
 <pre><code>## 
 ## $dec_slope</code></pre>
 <pre><code>## 
-## [1] "Estimated value for inc_slope :  24.9863167650791"
-## [1] "Estimated value for dec_slope :  9.96813295321121"
-## [1] "Minimum value of the criterion: 0.000182548150477414"
+## [1] "Estimated value for inc_slope :  24.9515879958868"
+## [1] "Estimated value for dec_slope :  10.003362815098"
+## [1] "Minimum value of the criterion: 0.000141528385988216"
 ## [1] "Complementary graphs and results can be found in  /Users/runner/work/CroptimizR/CroptimizR/vignettes"
-## Total time for parameter estimation: 2.394 sec elapsed</code></pre>
+## Total time for parameter estimation: 2.116 sec elapsed</code></pre>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">res</span><span class="op">$</span><span class="va">final_values</span></code></pre></div>
 <pre><code>## inc_slope dec_slope 
-## 24.986317  9.968133</code></pre>
+##  24.95159  10.00336</code></pre>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Plot the simulations obtained with the optimized values of the parameters VS the observed ones using the CroPlotR package.</span>
 <span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/SticsRPacks/CroPlotR">"CroPlotR"</a></span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
@@ -715,10 +715,10 @@
             model_function <span class="op">=</span> <span class="va">laitm_simple_wrapper_v2</span>,
             optim_options<span class="op">=</span><span class="va">optim_options</span>,
             param_info <span class="op">=</span> <span class="va">param_info</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] "Working: 20.00%. ETA: 7.17"
-## [1] "Working: 40.00%. ETA: 5.42"
-## [1] "Working: 60.00%. ETA: 3.81"
-## [1] "Working: 80.00%. ETA: 2.03"
+<pre><code>## [1] "Working: 20.00%. ETA: 8.06"
+## [1] "Working: 40.00%. ETA: 5.48"
+## [1] "Working: 60.00%. ETA: 3.71"
+## [1] "Working: 80.00%. ETA: 1.81"
 ## [1] "Working: 100.00%. ETA: 0.00"
 ## $inc_slope1</code></pre>
 <pre><code>## 
@@ -726,16 +726,16 @@
 <pre><code>## 
 ## $dec_slope</code></pre>
 <pre><code>## 
-## [1] "Estimated value for inc_slope1 :  25.0347034291651"
-## [1] "Estimated value for inc_slope2 :  49.9455492141385"
-## [1] "Estimated value for dec_slope :  9.95712483751609"
-## [1] "Minimum value of the criterion: 0.00195900739600454"
+## [1] "Estimated value for inc_slope1 :  25.0381222563807"
+## [1] "Estimated value for inc_slope2 :  49.8723825521157"
+## [1] "Estimated value for dec_slope :  9.97705311913416"
+## [1] "Minimum value of the criterion: 0.00180138223738737"
 ## [1] "Complementary graphs and results can be found in  /Users/runner/work/CroptimizR/CroptimizR/vignettes"
-## Total time for parameter estimation: 11.033 sec elapsed</code></pre>
+## Total time for parameter estimation: 9.244 sec elapsed</code></pre>
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">res</span><span class="op">$</span><span class="va">final_values</span></code></pre></div>
 <pre><code>## inc_slope1 inc_slope2  dec_slope 
-##  25.034703  49.945549   9.957125</code></pre>
+##  25.038122  49.872383   9.977053</code></pre>
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Plot the simulations obtained with the optimized values of the parameters VS the observed ones using the CroPlotR package.</span>
 <span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/SticsRPacks/CroPlotR">"CroPlotR"</a></span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
