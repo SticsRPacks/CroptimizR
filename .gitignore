@@ -14,7 +14,7 @@ Preliminary work/Data/TestCase1c/*/*.log
 Preliminary work/Data/TestCase1c/*.pdf
 vignettes/JavaSTICS-1.41-stics-9.0
 tmp
-doc
+docs/
 Meta
 vignettes/*.html
 vignettes/EstimatedVSinit.pdf
@@ -23,3 +23,4 @@ vignettes/sim_obs_plots.png
 vignettes/debug_crit_NA.Rdata
 vignettes/sim_obs.png
 vignettes/*.R
+
