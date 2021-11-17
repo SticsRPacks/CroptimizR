@@ -139,6 +139,9 @@ main_crit <- function(param_values, crit_options) {
   crit <- NA
   model_results <- NA
   obs_sim_list <- NA
+  sim_transformed <- NULL
+  model_results <- NULL
+  sim <- NULL
 
   # Denormalize parameters
   # TO DO
@@ -201,8 +204,6 @@ main_crit <- function(param_values, crit_options) {
   }
 
   # Call model function
-  model_results <- NULL
-  sim <- NULL
   try(model_results <- model_function(model_options = model_options,
                                   param_values = param_values,
                                   sit_names = sit_names,
@@ -228,7 +229,7 @@ main_crit <- function(param_values, crit_options) {
 
   # Transform simulations
   if (!is.null(transform_sim)) {
-    sim_transformed <- NULL
+
     model_results <- tryCatch(
       transform_sim(model_results=model_results, obs_list=obs_list, param_values=param_values,
                     model_options=model_options),
