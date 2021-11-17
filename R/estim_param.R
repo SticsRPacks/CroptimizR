@@ -110,7 +110,7 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
                         transform_obs=NULL, transform_sim=NULL, satisfy_par_const=NULL,
                         var_names=NULL, info_level=1) {
 
-  # Remove CroptimizR environement before exiting
+  # Remove CroptimizR environment before exiting
   on.exit({
     if (exists(".croptEnv")) {
       if (info_level>=1) {
