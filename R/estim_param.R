@@ -23,18 +23,17 @@
 #' @param param_info Information on the parameters to estimate.
 #' Either
 #' a list containing:
-#'    - (named) vectors of upper and lower bounds (`ub` and `lb`) (-Inf and Inf can be used),
-#'    - `init_values`, A data.frame containing initial
+#'    - `ub` and `lb`, named vectors of upper and lower bounds (-Inf and Inf can be used if init_values is provided),
+#'    - `init_values`, a data.frame containing initial
 #' values to test for the parameters (optional, if not provided, or if less values
 #' than number of repetitions of the minimization are provided, the, or part
 #' of the, initial values will be randomly generated using LHS sampling within
 #' parameter bounds).
 #'
-#' or
-#' a named list containing for each parameter the list of situations per group
-#' (`sit_list`), the vector of upper and lower bounds (one value per group)
-#' (`ub` and `lb`) and the list of initial values per group
-#' `init_values` (data.frame, one column per group, optional).
+#' or a named list containing for each parameter:
+#'   - `sit_list`, the list of situations per group,
+#'   - `ub` and `lb`, vectors of upper and lower bounds (one value per group),
+#'   - `init_values`, the list of initial values per group  (data.frame, one column per group, optional).
 #' (see [here](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html)
 #' for an example)
 #' @param forced_param_values Named vector, must contain the values for the model parameters
@@ -57,39 +56,39 @@
 #' @param info_level (optional) Integer that controls the level of information returned and stored
 #' by estim_param (in addition to the results automatically provided that depends on the method used).
 #' Higher code give more details.
-#' `0` to add nothing,
-#' `1` to add criterion and parameters values, and constraint if satisfy_par_const is provided, for each evaluation
+#'   - `0` to add nothing,
+#'   - `1` to add criterion and parameters values, and constraint if satisfy_par_const is provided, for each evaluation
 #' (element params_and_crit in the returned list),
-#' `2` to add model results, after transformation if transform_sim is provided, and after intersection with observations,
+#'   - `2` to add model results, after transformation if transform_sim is provided, and after intersection with observations,
 #' i.e. as used to compute the criterion for each evaluation (element sim_intersect in the returned list),
-#' `3` to add observations, after transformation if transform_obs is provided, and after intersection with simulations,
+#'   - `3` to add observations, after transformation if transform_obs is provided, and after intersection with simulations,
 #' i.e. as used to compute the criterion for each evaluation (element obs_intersect in the returned list),
-#' `4` to add all model wrapper results for each evaluation, and all transformations if transform_sim is provided.
+#'   - `4` to add all model wrapper results for each evaluation, and all transformations if transform_sim is provided.
 #' (elements sim and sim_transformed in the returned list),
 #'
 #' @details
 #'   The optional argument `transform_obs` must be a function with 4 arguments:
-#'      o model_results: the list of simulated results returned by the mode_wrapper used
-#'      o obs_list: the list of observations as given to estim_param function
-#'      o param_values: a named vector containing the current parameters values proposed
+#'   - model_results: the list of simulated results returned by the mode_wrapper used
+#'   - obs_list: the list of observations as given to estim_param function
+#'   - param_values: a named vector containing the current parameters values proposed
 #'      by the estimation algorithm
-#'      o model_options: the list of model options as given to estim_param function
+#'   - model_options: the list of model options as given to estim_param function
 #'   It must return a list of observations (same format as `obs_list` argument) that
 #'   will be used to compute the criterion to optimize.
 #'
 #'   The optional argument `transform_sim` must be a function with 4 arguments:
-#'      o model_results: the list of simulated results returned by the mode_wrapper used
-#'      o obs_list: the list of observations as given to estim_param function
-#'      o param_values: a named vector containing the current parameters values proposed
+#'   - model_results: the list of simulated results returned by the mode_wrapper used
+#'   - obs_list: the list of observations as given to estim_param function
+#'   - param_values: a named vector containing the current parameters values proposed
 #'      by the estimation algorithm
-#'      o model_options: the list of model options as given to estim_param function
+#'   - model_options: the list of model options as given to estim_param function
 #'   It must return a list of simulated results (same format as this returned by the model wrapper used)
 #'   that will be used to compute the criterion to optimize.
 #'
 #'   The optional argument `satisfy_par_const` must be a function with 2 arguments:
-#'      o param_values: a named vector containing the current parameters values proposed
+#'   - param_values: a named vector containing the current parameters values proposed
 #'      by the estimation algorithm
-#'      o model_options: the list of model options as given to estim_param function
+#'   - model_options: the list of model options as given to estim_param function
 #'   It must return a logical indicating if the parameters values satisfies the constraints
 #'   (freely defined by the user in the function body) or not.
 #'

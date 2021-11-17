@@ -53,21 +53,22 @@ and \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation
 Either
 a list containing:
 \itemize{
-\item (named) vectors of upper and lower bounds (\code{ub} and \code{lb}) (-Inf and Inf can be used),
-\item \code{init_values}, A data.frame containing initial
+\item \code{ub} and \code{lb}, named vectors of upper and lower bounds (-Inf and Inf can be used if init_values is provided),
+\item \code{init_values}, a data.frame containing initial
 values to test for the parameters (optional, if not provided, or if less values
 than number of repetitions of the minimization are provided, the, or part
 of the, initial values will be randomly generated using LHS sampling within
 parameter bounds).
 }
 
-or
-a named list containing for each parameter the list of situations per group
-(\code{sit_list}), the vector of upper and lower bounds (one value per group)
-(\code{ub} and \code{lb}) and the list of initial values per group
-\code{init_values} (data.frame, one column per group, optional).
+or a named list containing for each parameter:
+\itemize{
+\item \code{sit_list}, the list of situations per group,
+\item \code{ub} and \code{lb}, vectors of upper and lower bounds (one value per group),
+\item \code{init_values}, the list of initial values per group  (data.frame, one column per group, optional).
 (see \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html}{here}
-for an example)}
+for an example)
+}}
 
 \item{forced_param_values}{Named vector, must contain the values for the model parameters
 to force (optional, NULL by default). These values will be transferred to the
@@ -94,15 +95,17 @@ the model_function used handles this argument.}
 \item{info_level}{(optional) Integer that controls the level of information returned and stored
 by estim_param (in addition to the results automatically provided that depends on the method used).
 Higher code give more details.
-\code{0} to add nothing,
-\code{1} to add criterion and parameters values, and constraint if satisfy_par_const is provided, for each evaluation
+\itemize{
+\item \code{0} to add nothing,
+\item \code{1} to add criterion and parameters values, and constraint if satisfy_par_const is provided, for each evaluation
 (element params_and_crit in the returned list),
-\code{2} to add model results, after transformation if transform_sim is provided, and after intersection with observations,
+\item \code{2} to add model results, after transformation if transform_sim is provided, and after intersection with observations,
 i.e. as used to compute the criterion for each evaluation (element sim_intersect in the returned list),
-\code{3} to add observations, after transformation if transform_obs is provided, and after intersection with simulations,
+\item \code{3} to add observations, after transformation if transform_obs is provided, and after intersection with simulations,
 i.e. as used to compute the criterion for each evaluation (element obs_intersect in the returned list),
-\code{4} to add all model wrapper results for each evaluation, and all transformations if transform_sim is provided.
-(elements sim and sim_transformed in the returned list),}
+\item \code{4} to add all model wrapper results for each evaluation, and all transformations if transform_sim is provided.
+(elements sim and sim_transformed in the returned list),
+}}
 }
 \value{
 prints, graphs and a list containing the results of the parameter estimation,
@@ -116,29 +119,35 @@ main function for parameter estimation
 }
 \details{
 The optional argument \code{transform_obs} must be a function with 4 arguments:
-o model_results: the list of simulated results returned by the mode_wrapper used
-o obs_list: the list of observations as given to estim_param function
-o param_values: a named vector containing the current parameters values proposed
+\itemize{
+\item model_results: the list of simulated results returned by the mode_wrapper used
+\item obs_list: the list of observations as given to estim_param function
+\item param_values: a named vector containing the current parameters values proposed
 by the estimation algorithm
-o model_options: the list of model options as given to estim_param function
+\item model_options: the list of model options as given to estim_param function
 It must return a list of observations (same format as \code{obs_list} argument) that
 will be used to compute the criterion to optimize.
+}
 
 The optional argument \code{transform_sim} must be a function with 4 arguments:
-o model_results: the list of simulated results returned by the mode_wrapper used
-o obs_list: the list of observations as given to estim_param function
-o param_values: a named vector containing the current parameters values proposed
+\itemize{
+\item model_results: the list of simulated results returned by the mode_wrapper used
+\item obs_list: the list of observations as given to estim_param function
+\item param_values: a named vector containing the current parameters values proposed
 by the estimation algorithm
-o model_options: the list of model options as given to estim_param function
+\item model_options: the list of model options as given to estim_param function
 It must return a list of simulated results (same format as this returned by the model wrapper used)
 that will be used to compute the criterion to optimize.
+}
 
 The optional argument \code{satisfy_par_const} must be a function with 2 arguments:
-o param_values: a named vector containing the current parameters values proposed
+\itemize{
+\item param_values: a named vector containing the current parameters values proposed
 by the estimation algorithm
-o model_options: the list of model options as given to estim_param function
+\item model_options: the list of model options as given to estim_param function
 It must return a logical indicating if the parameters values satisfies the constraints
 (freely defined by the user in the function body) or not.
+}
 }
 \seealso{
 For more details and examples, see the different vignettes in

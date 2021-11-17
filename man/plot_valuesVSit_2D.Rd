@@ -23,21 +23,22 @@ criterion (crit column), repetition number (rep), iteration number (iter) and ev
 Either
 a list containing:
 \itemize{
-\item (named) vectors of upper and lower bounds (\code{ub} and \code{lb}) (-Inf and Inf can be used),
-\item \code{init_values}, A data.frame containing initial
+\item \code{ub} and \code{lb}, named vectors of upper and lower bounds (-Inf and Inf can be used if init_values is provided),
+\item \code{init_values}, a data.frame containing initial
 values to test for the parameters (optional, if not provided, or if less values
 than number of repetitions of the minimization are provided, the, or part
 of the, initial values will be randomly generated using LHS sampling within
 parameter bounds).
 }
 
-or
-a named list containing for each parameter the list of situations per group
-(\code{sit_list}), the vector of upper and lower bounds (one value per group)
-(\code{ub} and \code{lb}) and the list of initial values per group
-\code{init_values} (data.frame, one column per group, optional).
+or a named list containing for each parameter:
+\itemize{
+\item \code{sit_list}, the list of situations per group,
+\item \code{ub} and \code{lb}, vectors of upper and lower bounds (one value per group),
+\item \code{init_values}, the list of initial values per group  (data.frame, one column per group, optional).
 (see \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html}{here}
-for an example)}
+for an example)
+}}
 
 \item{iter_or_eval}{"iter" for plotting the values for each iteration, "eval" for plotting the values for each evaluation}
 
