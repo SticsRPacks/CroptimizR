@@ -79,14 +79,18 @@ main_crit <- function(param_values, crit_options) {
       if (is.null(.croptEnv$sim_intersect)) {
         .croptEnv$sim_intersect <- vector("list", crit_options$tot_max_eval)
       }
-      .croptEnv$sim_intersect[[.croptEnv$eval_count]] <- obs_sim_list$sim_list
+      if (!is.na(obs_sim_list)) {
+        .croptEnv$sim_intersect[[.croptEnv$eval_count]] <- obs_sim_list$sim_list
+      }
     }
 
     if (crit_options$info_level>=3) {
       if (is.null(.croptEnv$obs_intersect)) {
         .croptEnv$obs_intersect <- vector("list", crit_options$tot_max_eval)
       }
-      .croptEnv$obs_intersect[[.croptEnv$eval_count]] <- obs_sim_list$obs_list
+      if (!is.na(obs_sim_list)) {
+        .croptEnv$obs_intersect[[.croptEnv$eval_count]] <- obs_sim_list$obs_list
+      }
     }
 
     if (crit_options$info_level>=4) {
