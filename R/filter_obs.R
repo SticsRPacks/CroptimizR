@@ -105,19 +105,48 @@ filter_obs <- function(obs_list, var_names=NULL, sit_names=NULL, dates=NULL, inc
     }
   }
 
-  # Remove columns / lines with only NA, and warns the user
-  ind_NA_row=sapply(1:nrow(df),function(x) all(is.na(df[x,3:ncol(df)])))
-  df=df[!ind_NA_row,]
-  ind_NA_col=sapply(1:ncol(df),function(x) all(is.na(df[,x])))
-  df=df[,!ind_NA_col]
-  if (any(ind_NA_col)) {
-    warnings("No more observations of variables ",colnames(df)[ind_NA_col])
+  if("Plant" %in% colnames(df)){
+    skeepcols = 3
+  }else{
+    skeepcols = 2
+  }
+
+  # Remove rows with only NAs:
+  df = df[rowSums(is.na(df[,(skeepcols+1):ncol(df), drop = FALSE])) != (ncol(df) - skeepcols), ]
+
+  if(!all(names(obs_list) %in% unique(df$id))){
+    warning(
+      "No observations found in USM(s) ",
+      paste(names(obs_list)[!(names(obs_list) %in% unique(df$id))], collapse = ", ")
+    )
   }
 
   # Re-transform the df into a list
   obs_list=split(df, df$id)
-  obs_list=lapply(obs_list,function(x) x[-1]) # remove id column
 
+  # Remove column "id" and remove columns with only NAs:
+  obs_list = lapply(
+    obs_list,
+    function(x){
+      select(x, !.data$id &  where(~!all(is.na(.x))))
+    }
+  )
+
+  # Add warning when variable is remove from a situation:
+  mapply(
+    function(x,y){
+      var_not_in_sit = var_names[!var_names %in% colnames(x)]
+      if(length(var_not_in_sit) > 0){
+        warning(
+          "No observations found for variable(s) ",
+          var_not_in_sit,
+          " in USM ",
+          y
+        )
+      }
+      return()
+    },
+    obs_list, names(obs_list))
   return(obs_list)
 
 }
