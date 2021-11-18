@@ -70,7 +70,8 @@ filter_obs <- function(obs_list, var_names=NULL, sit_names=NULL, dates=NULL, inc
     tmp=intersect(var_names,names(df))
     if (is.null(tmp) || !setequal(tmp,var_names)) {
       warning("Argument var_names contains variables that are not included in obs_list. \n obs_list contains: ",paste(colnames(df),collapse=" "))
-      var_names=tmp
+      if(length(tmp) == 0) return(list()) # If variable does not exist at all, return empty df
+      var_names = tmp
     }
     ## Filter
     if (include) {
