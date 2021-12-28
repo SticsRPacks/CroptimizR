@@ -70,7 +70,7 @@ jobs:
           install.packages('xslt')
           install.packages('stringi')
           # Install dev version of SticsRFiles to be in sync for tests (packages are developed synchronously):
-          remotes::install_github("SticsRPacks/SticsRFiles@master")
+          remotes::install_github("SticsRPacks/SticsRFiles")
         shell: Rscript {0}
 
       - name: Check
