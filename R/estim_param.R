@@ -17,7 +17,8 @@
 #' or "dreamzs". See [here](https://sticsrpacks.github.io/CroptimizR/articles/Available_parameter_estimation_algorithms.html)
 #' for a brief description and references on the available methods.
 #' @param optim_options List of options of the parameter estimation method, containing:
-#'   - `path_results` The path where to store the results (optional, default=getwd())
+#'   - `out_dir` Directory path where to write the optimization results (optional, default to `getwd()`)
+#'   - `path_results` `r lifecycle::badge("deprecated")` `path_results` is no longer supported, use `out_dir` instead.
 #'   - specific options depending on the method used. Click on the links to see examples with the [simplex](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html)
 #' and [DreamZS](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html) methods.
 #' @param param_info Information on the parameters to estimate.
@@ -94,7 +95,7 @@
 #'
 #' @return prints, graphs and a list containing the results of the parameter estimation,
 #' which content depends on the method used and on the values of the `info_level` argument.
-#' All results are saved in the folder `optim_options$path_results`.
+#' All results are saved in the folder `optim_options$out_dir`.
 #' See also the functions \code{\link{plot_valuesVSit}} and \code{\link{plot_valuesVSit_2D}}
 #' for performing additional plots on results of frequentist methods.
 #'
@@ -109,6 +110,14 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
                         optim_options, param_info, forced_param_values=NULL,
                         transform_obs=NULL, transform_sim=NULL, satisfy_par_const=NULL,
                         var_names=NULL, info_level=1) {
+
+  # Managing parameter names changes between versions:
+  if (rlang::has_name(optim_options, "path_results")) {
+    lifecycle::deprecate_warn("0.5.0", "estim_param(optim_options = 'use `out_dir` instead of `path_results`')")
+  } else if(rlang::has_name(optim_options, "out_dir")){
+    # Note: we add a test here again because it is potentially never given
+    optim_options$path_results <- optim_options$out_dir # to remove when we update inside the function
+  }
 
   # Remove CroptimizR environment before exiting
   on.exit({
