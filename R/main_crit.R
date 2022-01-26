@@ -79,14 +79,18 @@ main_crit <- function(param_values, crit_options) {
       if (is.null(.croptEnv$sim_intersect)) {
         .croptEnv$sim_intersect <- vector("list", crit_options$tot_max_eval)
       }
-      .croptEnv$sim_intersect[[.croptEnv$eval_count]] <- obs_sim_list$sim_list
+      if (!is.na(obs_sim_list)) {
+        .croptEnv$sim_intersect[[.croptEnv$eval_count]] <- obs_sim_list$sim_list
+      }
     }
 
     if (crit_options$info_level>=3) {
       if (is.null(.croptEnv$obs_intersect)) {
         .croptEnv$obs_intersect <- vector("list", crit_options$tot_max_eval)
       }
-      .croptEnv$obs_intersect[[.croptEnv$eval_count]] <- obs_sim_list$obs_list
+      if (!is.na(obs_sim_list)) {
+        .croptEnv$obs_intersect[[.croptEnv$eval_count]] <- obs_sim_list$obs_list
+      }
     }
 
     if (crit_options$info_level>=4) {
@@ -135,6 +139,9 @@ main_crit <- function(param_values, crit_options) {
   crit <- NA
   model_results <- NA
   obs_sim_list <- NA
+  sim_transformed <- NULL
+  model_results <- NULL
+  sim <- NULL
 
   # Denormalize parameters
   # TO DO
@@ -197,8 +204,6 @@ main_crit <- function(param_values, crit_options) {
   }
 
   # Call model function
-  model_results <- NULL
-  sim <- NULL
   try(model_results <- model_function(model_options = model_options,
                                   param_values = param_values,
                                   sit_names = sit_names,
@@ -224,7 +229,7 @@ main_crit <- function(param_values, crit_options) {
 
   # Transform simulations
   if (!is.null(transform_sim)) {
-    sim_transformed <- NULL
+
     model_results <- tryCatch(
       transform_sim(model_results=model_results, obs_list=obs_list, param_values=param_values,
                     model_options=model_options),

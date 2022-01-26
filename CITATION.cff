@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Buis"
+  given-names: "Samuel"
+  orcid: "https://orcid.org/0000-0002-8676-5447"
+- family-names: "Lecharpentier"
+  given-names: "Patrice"
+  orcid: "https://orcid.org/0000-0002-4044-4322"
+- family-names: "Vezy"
+  given-names: "Rémi"
+  orcid: "https://orcid.org/0000-0002-0808-1461"
+title: "CroptimizR: A Package for Parameter Estimation, Uncertainty and Sensitivity Analysis for Crop Models"
+version: 0.4.0
+doi: 10.5281/zenodo.4066451
+date-released: 2021-07-22
+url: "https://github.com/SticsRPacks/CroptimizR"
