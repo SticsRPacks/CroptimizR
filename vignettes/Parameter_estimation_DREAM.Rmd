@@ -11,7 +11,7 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 params:
-  eval_auto_vignette: TRUE     # automatic execution of the vignette 
+  eval_auto_vignette: TRUE     # automatic execution of the vignette
   eval_manual_vignette: FALSE  # manual execution of the vignette (e.g. to create results graphs included in it)
   eval_auto_test: FALSE  # automatic test execution of the vignette, SET IT TO TRUE IF manual_vignette IS SET TO TRUE
   path_to_JavaStics: "D:/Home/sbuis/Documents/GitHub/CroptimizR/vignettes/JavaSTICS-1.41-stics-9.0"
@@ -35,7 +35,7 @@ The study case is the same as the specific and varietal parameters estimation pr
 ## Initialisation step
 
 
-This part is not shown here, it is the same as this of the [introductory example](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html). 
+This part is not shown here, it is the same as this of the [introductory example](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html).
 
 ```{r setup_install_per_package, eval=params$eval_auto_test,  echo=FALSE}
 # Install and load the needed libraries
@@ -52,7 +52,7 @@ library(CroptimizR)
 javastics_path= path_to_JavaStics
 
 # Download the example USMs and define the path to the JavaStics workspace (JavaStics XML input files):
-data_dir= file.path(SticsRFiles::download_data(example_dirs="study_case_1", version_name = "V9.0"))
+data_dir= file.path(SticsRFiles::download_data(example_dirs="study_case_1", stics_version = "V9.0"))
 javastics_workspace_path=file.path(data_dir,"XmlFiles")
 stics_inputs_path=file.path(data_dir,"TxtFiles")
 
@@ -99,12 +99,12 @@ model_options= stics_wrapper_options(javastics_path, data_dir = stics_inputs_pat
 The main basic options are set here. The reader can refer to `? DREAMzs` (see doc for input argument `settings`) for documentation on more advanced ones. Note that `startValue` can also be used to provide initial values for the Markov Chains (in that case, it must be a matrix having as many lines as desired number of Markov Chains and a number of columns equivalent to the number of estimated parameters, ordered in the same way as `param_info$lb` and `param_info$ub`).
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
-optim_options=list() 
-optim_options$iterations <- 10000 # Total number of iterations 
-                                  # (=> optim_options$iterations/optim_options$startValue 
+optim_options=list()
+optim_options$iterations <- 10000 # Total number of iterations
+                                  # (=> optim_options$iterations/optim_options$startValue
                                   # iterations per chain)
 optim_options$startValue <- 3 # Number of markov chains
-optim_options$path_results <- data_dir # path where to store the results (graph and Rdata)
+optim_options$out_dir <- data_dir # path where to store the results (graph and Rdata)
 optim_options$ranseed <- 1234 # seed for random numbers
 ```
 
@@ -118,7 +118,7 @@ The list of available criteria for Bayesian methods is given by `? likelihoods`
 
 The `param_info` argument has the same content as in the [specific and varietal parameters estimation vignette](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html).
 
-**For the moment, only uniform distributions of bounds `param_info$lb` and `param_info$ub` can be used. Other type of distributions will be provided in next versions.** 
+**For the moment, only uniform distributions of bounds `param_info$lb` and `param_info$ub` can be used. Other type of distributions will be provided in next versions.**
 
 
 ```{r eval=params$eval_auto_test, results='hide', message=FALSE, warning=FALSE}
@@ -171,7 +171,7 @@ The rejection rate is the rate of rejection of proposed values. According to (Vr
 Effective sample size should be here the number of different values per chain for the parameter vector in the posterior sample.
 
 Under section "parameters" are given statistics on the posterior sample.
-MAP means Maximum A Posteriori. It is the values of the parameters among the posterior sample that lead to the maximal value of the posterior density. 
+MAP means Maximum A Posteriori. It is the values of the parameters among the posterior sample that lead to the maximal value of the posterior density.
 
 DIC is the Deviance information criterion. It is a commonly applied method to summarize the fit of an MCMC chain. More details about it can be found in the [vignette of the BayesianTools package](https://cran.r-project.org/web/packages/BayesianTools/vignettes/BayesianTools.html).
 
@@ -181,7 +181,7 @@ The output value of `estim_param` contains:
 * `post_sample`, a sample of the posterior distribution (excluding the burnin phase),
 * `out`: the list returned by the package BayesianTools.
 
-It is stored with complementary graphs in the `optim_options$path_results` folder. 
+It is stored with complementary graphs in the `optim_options$out_dir` folder.
 
 Among these graphs, gelmanDiagPlots.pdf plots the evolution of the Gelman diagnostic. According to (Vrugt, 2016) the algorithm is considered to have converged to the posterior distribution when all the values of this diagnostic are inferior to 1.2. In theory the sample of the posterior distribution should thus be taken only after this (WARNING: it is not the case here, neither in BayesianTools, this should be improved).
 
@@ -218,7 +218,7 @@ knitr::include_graphics("ResultsSpecificVarietalDREAM/N10000/correlation_plot.PN
 Figure 3: Correlation plot.
 
 
-## Launch a new estimation starting from previous results 
+## Launch a new estimation starting from previous results
 
 In case one wants to increase the number of iterations, because the algorithm has not yet converged or the posterior sample is considered to small, there is a possibility to re-launch the method from the point is has stopped using the `PreviousResults` option:
 
@@ -238,10 +238,9 @@ optim_results=estim_param(obs_list=obs_list,
 
 ```{r move_results, eval=params$eval_manual_vignette, include=FALSE}
 # Move the files produced since the temp. folder is removed after Rmd execution
-file.copy(file.path(optim_options$path_results,"correlationPlots.pdf"),params$result_path)
-file.copy(file.path(optim_options$path_results,"gelmanDiagPlots.pdf"),params$result_path)
-file.copy(file.path(optim_options$path_results,"iterAndDensityPlots.pdf"),params$result_path)
-file.copy(file.path(optim_options$path_results,"marginalPlots.pdf"),params$result_path)
-file.copy(file.path(optim_options$path_results,"optim_results.Rdata"),params$result_path)
+file.copy(file.path(optim_options$out_dir,"correlationPlots.pdf"),params$result_path)
+file.copy(file.path(optim_options$out_dir,"gelmanDiagPlots.pdf"),params$result_path)
+file.copy(file.path(optim_options$out_dir,"iterAndDensityPlots.pdf"),params$result_path)
+file.copy(file.path(optim_options$out_dir,"marginalPlots.pdf"),params$result_path)
+file.copy(file.path(optim_options$out_dir,"optim_results.Rdata"),params$result_path)
 ```
-

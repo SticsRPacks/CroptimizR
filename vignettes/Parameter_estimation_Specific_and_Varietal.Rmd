@@ -10,7 +10,7 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 params:
-  eval_auto_vignette: TRUE     # automatic execution of the vignette 
+  eval_auto_vignette: TRUE     # automatic execution of the vignette
   eval_manual_vignette: FALSE  # manual execution of the vignette (e.g. to create results graphs included in it)
   eval_auto_test: FALSE  # automatic test execution of the vignette, SET IT TO TRUE IF manual_vignette IS SET TO TRUE
   path_to_JavaStics: "D:/Home/sbuis/Documents/OUTILS-INFORMATIQUE/STICS/JavaSTICS-1.41-stics-9.0"
@@ -35,7 +35,7 @@ The parameter estimation is performed using the Nelder-Mead simplex method imple
 
 ## Initialisation step
 
-This part is not shown here, it is the same as this of the [introductory example](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html). 
+This part is not shown here, it is the same as this of the [introductory example](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html).
 
 ```{r setup_install_per_package, eval=params$eval_auto_test,  echo=FALSE}
 # Install and load the needed libraries
@@ -55,7 +55,7 @@ library(gridExtra)
 javastics_path=path_to_JavaStics
 
 # Download the example USMs and define the path to the JavaStics workspace (JavaStics XML input files):
-data_dir= file.path(SticsRFiles::download_data(example_dirs="study_case_1", version_name = "V9.0"))
+data_dir= file.path(SticsRFiles::download_data(example_dirs="study_case_1", stics_version = "V9.0"))
 javastics_workspace_path=file.path(data_dir,"XmlFiles")
 stics_inputs_path=file.path(data_dir,"TxtFiles")
 
@@ -117,7 +117,7 @@ optim_options$xtol_rel <- 1e-04 # Tolerance criterion between two iterations
                                 # (threshold for the relative difference of
                                 # parameter values between the 2 previous
                                 # iterations)
-optim_options$path_results <- data_dir # path where to store the results (graph and Rdata)
+optim_options$out_dir <- data_dir # path where to store the results (graph and Rdata)
 optim_options$ranseed <- 1234 # random seed
 ```
 
@@ -146,7 +146,7 @@ load(file.path("ResultsSpecificVarietal","optim_results.Rdata"))
 res$final_values
 ```
 
-The EstimatedVSinit.pdf file contains the following figures: 
+The EstimatedVSinit.pdf file contains the following figures:
 
 
 ```{r eval=params$eval_auto_vignette, echo=FALSE, out.width = '45%'}
@@ -176,13 +176,13 @@ p1 <- p[[1]] + labs(title=paste("Before Optimization, \n RMSE=",round(stats$RMSE
   theme(plot.title = element_text(size = 9, hjust = 0.5))
 
 stats <- summary(sim_after_optim$sim_list, obs= obs_list)
-p <- plot(sim_after_optim$sim_list, obs= obs_list, type = "scatter", all_situations = TRUE) 
+p <- plot(sim_after_optim$sim_list, obs= obs_list, type = "scatter", all_situations = TRUE)
 p2 <- p[[1]] + labs(title=paste("After Optimization, \n RMSE=",round(stats$RMSE,digits=2))) +
   theme(plot.title = element_text(size = 9, hjust = 0.5))
 
 p=grid.arrange(grobs=list(p1,p2), nrow=1, ncol=2)
 # Save the graph
-ggsave(file.path(optim_options$path_results,
+ggsave(file.path(optim_options$out_dir,
                  paste0("sim_obs",".png")), plot=p)
 
 ```
@@ -197,7 +197,7 @@ knitr::include_graphics("ResultsSpecificVarietal/sim_obs.png")
 
 ```{r move_results, eval=params$eval_manual_vignette, include=FALSE}
 # Move the files produced since the temp. folder is removed after Rmd execution
-file.copy(file.path(optim_options$path_results,"EstimatedVSinit.pdf"),params$result_path, overwrite = TRUE)
-file.copy(file.path(optim_options$path_results,"optim_results.Rdata"),params$result_path, overwrite = TRUE)
-file.copy(file.path(optim_options$path_results,"sim_obs.png"),params$result_path, overwrite = TRUE)
+file.copy(file.path(optim_options$out_dir,"EstimatedVSinit.pdf"),params$result_path, overwrite = TRUE)
+file.copy(file.path(optim_options$out_dir,"optim_results.Rdata"),params$result_path, overwrite = TRUE)
+file.copy(file.path(optim_options$out_dir,"sim_obs.png"),params$result_path, overwrite = TRUE)
 ```

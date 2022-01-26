@@ -1,7 +1,7 @@
 ---
 title: "Parameter estimation with the ApsimX crop Model: a simple case"
 output: rmarkdown::html_vignette
-author: 
+author:
 - name: "Patrice Lecharpentier"
   affiliation: "INRAE - Agroclim"
 - name: "Samuel Buis"
@@ -16,7 +16,7 @@ params:
   eval_rmd: FALSE
 ---
 
-  
+
 
 ```{r setup, eval=TRUE, include=FALSE}
 # Global options
@@ -98,7 +98,7 @@ met_files_path <- files_path
 # Setting observed data files path
 obs_files_path <- files_path
 
-# Setting sqlite db tables names 
+# Setting sqlite db tables names
 predicted_table_name <- "DailyReport"
 observed_table_name <- "Observed"
 
@@ -108,7 +108,7 @@ model_options=apsimx_wrapper_options(apsimx_path = apsimx_path,
                                      predicted_table_name = predicted_table_name,
                                      met_files_path = met_files_path,
                                      observed_table_name = observed_table_name,
-                                     obs_files_path = obs_files_path) 
+                                     obs_files_path = obs_files_path)
 
 # Run the model (on all situations found in the apsimx_file)
 sim_before_optim=apsimx_wrapper(model_options=model_options)
@@ -122,7 +122,7 @@ We only keep observations for situation `sit_name` and variable `var_name` (`obs
 
 ```{r message=FALSE, warning=FALSE}
 # At the moment, observed data are read from the db file after the first simulation ran before optimization.
-#But they may be loaded using the original xlsx data file (from the files_path)  
+#But they may be loaded using the original xlsx data file (from the files_path)
 
 obs_list <- read_apsimx_output(sim_before_optim$db_file_name,
                                model_options$observed_table_name,
@@ -143,7 +143,7 @@ Initial values for the minimization can also be provided in `param_info` (see `?
 
 ```{r message=FALSE, warning=FALSE}
 # 2 parameters here: ExtinctionCoeff and RUE, of bounds [0.4,0.6] and [1.4,1.6]
-param_info <- 
+param_info <-
   list(lb=c(.Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue=0.4,
             .Simulations.Replacements.Wheat.Leaf.Photosynthesis.RUE.FixedValue=1.4),
        ub=c(.Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue=0.6,
@@ -158,23 +158,23 @@ Here we defined a few options for the simplex method of the `nloptr` package (de
 The full set of options for the simplex method can be found in the [vignette of nloptr package](https://cran.r-project.org/web/packages/nloptr/vignettes/nloptr.pdf).
 
 The number of repetitions `nb_rep` is advised to be set at least to 5, while 10 is a reasonable maximum value.
-`maxeval` should be used to stop the minimization only if results have to be produced within a given duration, otherwise set it to a high value so that the minimization stops when the criterion based on the relative tolerance `xtol_rel` is satisfied. 
+`maxeval` should be used to stop the minimization only if results have to be produced within a given duration, otherwise set it to a high value so that the minimization stops when the criterion based on the relative tolerance `xtol_rel` is satisfied.
 
 
 ```{r message=FALSE, warning=FALSE}
 
-optim_options=list() 
-optim_options$nb_rep <- 2 # Number of repetitions of the minimization 
+optim_options=list()
+optim_options$nb_rep <- 7 # Number of repetitions of the minimization
                           # (each time starting with different initial
-                          # values for the estimated parameters) 
-optim_options$maxeval <- 50 # Maximum number of evaluations of the 
-                             # minimized criteria 
+                          # values for the estimated parameters)
+optim_options$maxeval <- 500 # Maximum number of evaluations of the
+                             # minimized criteria
 optim_options$xtol_rel <- 1e-03 # Tolerance criterion between two iterations
-                                # (threshold for the relative difference of 
-                                # parameter values between the 2 previous 
+                                # (threshold for the relative difference of
+                                # parameter values between the 2 previous
                                 # iterations)
 
-optim_options$path_results <- getwd() # path where to store the results (graph and Rdata)
+optim_options$out_dir <- getwd() # path where to store the results (graph and Rdata)
 
 optim_options$ranseed <- 1234 # set random seed so that each execution give the same results
                               # If you want randomization, don't set it.
@@ -209,7 +209,7 @@ res$final_values
 ```
 
 
-Complementary graphs and data are stored in the folder which path is given in `optim_options$path_results`. Among them, the `EstimatedVSinit.pdf` file contains the following figures: 
+Complementary graphs and data are stored in the folder which path is given in `optim_options$out_dir`. Among them, the `EstimatedVSinit.pdf` file contains the following figures:
 
 
 ```{r eval=TRUE, echo=FALSE, out.width = '45%'}
@@ -243,17 +243,17 @@ p <- plot(sim_before_optim$sim_list, obs=obs_list, select_dyn = c("common"))
 p1 <- p[[sit_name]] + labs(title="Before Optimization")
 
 p <- plot(sim_after_optim$sim_list, obs=obs_list, select_dyn = c("common"))
-p2 <- p[[sit_name]] + labs(title="After Optimization") + 
+p2 <- p[[sit_name]] + labs(title="After Optimization") +
   ylim(NA,ggplot_build(p1)$layout$panel_params[[1]]$y.range[2])
 
 p <- grid.arrange(grobs=list(p1,p2), nrow=1, ncol=2)
 # Save the graph
-ggsave(file.path(optim_options$path_results,
+ggsave(file.path(optim_options$out_dir,
                  paste0("sim_obs_plots",".png")), plot=p)
 ```
 
 
-this gives: 
+this gives:
 
 ```{r eval=TRUE, echo=FALSE, message=FALSE, out.width = '80%', fig.cap="Figure 2: plots of simulated and observed target variable before and after optimization. The gap between simulated and observed values has been drastically reduced: the minimizer has done its job!"}
 knitr::include_graphics("ResultsSimpleCaseApsim/sim_obs_plots.png")
@@ -263,9 +263,7 @@ knitr::include_graphics("ResultsSimpleCaseApsim/sim_obs_plots.png")
 
 ```{r move_results, include=FALSE}
 # Move the files produced since the temp. folder is removed after Rmd execution
-file.copy(file.path(optim_options$path_results,"EstimatedVSinit.pdf"),params$result_path, overwrite = TRUE)
-file.copy(file.path(optim_options$path_results,"optim_results.Rdata"),params$result_path, overwrite = TRUE)
-file.copy(file.path(optim_options$path_results,"sim_obs_plots.png"),params$result_path, overwrite = TRUE)
+file.copy(file.path(optim_options$out_dir,"EstimatedVSinit.pdf"),params$result_path, overwrite = TRUE)
+file.copy(file.path(optim_options$out_dir,"optim_results.Rdata"),params$result_path, overwrite = TRUE)
+file.copy(file.path(optim_options$out_dir,"sim_obs_plots.png"),params$result_path, overwrite = TRUE)
 ```
-
-
