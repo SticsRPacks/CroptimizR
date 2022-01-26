@@ -32,7 +32,7 @@ test_that("get_params_bounds", {
 
 
 
-# Test get_params_init_values
+# Test get_init_values
 prior_1=list(init_values=c(dlaimax=0.001, durvieF=200),
              lb=c(dlaimax=0.0001, durvieF=50),
              ub=c(dlaimax=0.01, durvieF=400))
@@ -46,12 +46,12 @@ prior_3$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1",
 prior_3$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
                                              c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),
                                init_values=data.frame(c(200,300),c(250,350)),lb=50,ub=400)
-test_that("get_params_init_values", {
-  expect_equal(eval(parse(text = "CroptimizR:::get_params_init_values(prior_1)")),
+test_that("get_init_values", {
+  expect_equal(eval(parse(text = "CroptimizR:::get_init_values(prior_1)")),
                data.frame(dlaimax=1e-03, durvieF=2e+02))
-  expect_equal(eval(parse(text = "CroptimizR:::get_params_init_values(prior_2)")),
+  expect_equal(eval(parse(text = "CroptimizR:::get_init_values(prior_2)")),
                data.frame(dlaimax=c(0.001,0.002), durvieF=c(50,200)))
-  expect_equal(eval(parse(text = "CroptimizR:::get_params_init_values(prior_3)")),
+  expect_equal(eval(parse(text = "CroptimizR:::get_init_values(prior_3)")),
                data.frame(dlaimax=c(0.001, 0.002), durvieF1=c(200, 300), durvieF2=c(250, 350)))
 })
 

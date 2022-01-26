@@ -23,7 +23,7 @@ main_crit <- function(param_values, crit_options) {
 
   on.exit({
 
-    if (crit_options$info_level>=1) {
+    if (crit_options$info_level>=1 && !is.null(crit_options$tot_max_eval)) {
 
       satisfy_const <- TRUE
       if (exists("flag_const")) satisfy_const <- flag_const
@@ -75,7 +75,7 @@ main_crit <- function(param_values, crit_options) {
 
     }
 
-    if (crit_options$info_level>=2) {
+    if (crit_options$info_level>=2 && !is.null(crit_options$tot_max_eval)) {
       if (is.null(.croptEnv$sim_intersect)) {
         .croptEnv$sim_intersect <- vector("list", crit_options$tot_max_eval)
       }
@@ -84,7 +84,7 @@ main_crit <- function(param_values, crit_options) {
       }
     }
 
-    if (crit_options$info_level>=3) {
+    if (crit_options$info_level>=3 && !is.null(crit_options$tot_max_eval)) {
       if (is.null(.croptEnv$obs_intersect)) {
         .croptEnv$obs_intersect <- vector("list", crit_options$tot_max_eval)
       }
@@ -93,7 +93,7 @@ main_crit <- function(param_values, crit_options) {
       }
     }
 
-    if (crit_options$info_level>=4) {
+    if (crit_options$info_level>=4 && !is.null(crit_options$tot_max_eval)) {
       if (is.null(.croptEnv$sim)) {
         .croptEnv$sim <- vector("list", crit_options$tot_max_eval)
       }
@@ -116,10 +116,16 @@ main_crit <- function(param_values, crit_options) {
       save(param_values, obs_list, model_results, file=filename)
     }
 
+    if (!is.null(crit_options$return_obs_sim) && crit_options$return_obs_sim) {
+      return(res <- list(crit=crit, obs_list=obs_list, sim=sim,
+                         sim_transformed=sim_transformed,
+                         sim_intersect=obs_sim_list$sim_list,
+                         obs_intersect=obs_sim_list$obs_list))
+    }
+
   })
 
   # Initializations
-  param_names <- crit_options$param_names
   obs_list <- crit_options$obs_list
   crit_function <- crit_options$crit_function
   model_function <- crit_options$model_function
@@ -131,6 +137,7 @@ main_crit <- function(param_values, crit_options) {
   var_names <- crit_options$var_names
   forced_param_values <- crit_options$forced_param_values
 
+  param_names=get_params_names(param_info)
   names(param_values) <- param_names
   situation_names <- names(obs_list)
   nb_situations=length(situation_names)
@@ -228,8 +235,8 @@ main_crit <- function(param_values, crit_options) {
 
 
   # Transform simulations
+  sim_transformed <- NULL
   if (!is.null(transform_sim)) {
-
     model_results <- tryCatch(
       transform_sim(model_results=model_results, obs_list=obs_list, param_values=param_values,
                     model_options=model_options),

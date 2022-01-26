@@ -1,8 +1,6 @@
 #' @title A wrapper for optim function
 #'
 #' @inheritParams optim_switch
-#' @param param_names Name(s) of parameters to estimate (a parameter name must
-#' be replicated if several groups of situations for this parameter)
 #'
 #' @return prints, graphs and a list containing:
 #' `final_values`, the vector of estimated values for optimized parameters
@@ -17,30 +15,36 @@
 #' @keywords internal
 #'
 
-wrap_optim <- function(param_names,optim_options,param_info,crit_options) {
+wrap_optim <- function(optim_options,param_info,crit_options) {
 
-  if (is.null((nb_rep=optim_options$nb_rep))) { nb_rep=5 }
-  if (is.null((ranseed=optim_options$ranseed))) { ranseed=NULL }
-  if (is.null((hessian=optim_options$hessian))) { hessian=FALSE }
-  if (is.null((method=optim_options$method))) { method="Nelder-Mead" }
+  if (is.null((nb_rep=optim_options$nb_rep))) { nb_rep <- 5 }
+  if (is.null((ranseed=optim_options$ranseed))) { ranseed <- NULL }
+  if (is.null((hessian=optim_options$hessian))) { hessian <- FALSE }
+  if (is.null((method=optim_options$method))) { method <- "Nelder-Mead" }
+  else if (toupper(method)=="SANN") {
+    warning("SANN algorithm is not yet interfaced in CroptimizR for package optim. Nelder-Mead will be used.")
+    method <- "Nelder-Mead"
+  }
   if (is.null((maxit=optim_options$control$maxit))) {
     if (method=="Nelder-Mead") maxit<-500
-    else if (method=="SANN") maxit<-10000
     else maxit=100
   }
-  if (is.null((path_results=optim_options$path_results))) { path_results=getwd() }
+  if (is.null((path_results=optim_options$path_results))) { path_results <- getwd() }
+
+  # return requested information if only optim_options is given in argument
+  if (nargs()==1 & methods::hasArg(optim_options)) {
+    return(list(package="optim", family="Frequentist",
+                method=method, init_values_nb=optim_options$nb_rep))
+  }
+
 
   crit_options$tot_max_eval <- nb_rep*maxit
+  param_names <- get_params_names(param_info)
   nb_params=length(param_names)
   set.seed(ranseed)
 
   bounds=get_params_bounds(param_info)
-  user_init_values=get_params_init_values(param_info)
-
-  # Sample initial values and include user provided ones
-  init_values <- complete_init_values(user_init_values, nb_rep, lb = bounds$lb,
-                                      ub = bounds$ub, ranseed,
-                                      satisfy_par_const=crit_options$satisfy_par_const)
+  init_values <- get_init_values(param_info)
 
   # Optim package switches the method to L-BFGS if bounds are provided since
   # they are not handled with other methods ...
@@ -93,48 +97,11 @@ wrap_optim <- function(param_names,optim_options,param_info,crit_options) {
   est_values=t(rbind(sapply(optim,`[[`,"par")))
   colnames(est_values)=param_names
 
-  # Which repetion has the smallest criterion
+  # Which repetition has the smallest criterion
   ind_min_crit=which.min(sapply(optim, function(x) {if (!is.null(x$value)) x$value}))
 
-  # Graph and print the results
+  # Store all criterion values
   crit <- sapply(optim, function(x) x$value)
-
-  tryCatch(
-    {
-      grDevices::pdf(file = file.path(path_results,"EstimatedVSinit.pdf") , width = 9, height = 9)
-    },
-    error=function(cond) {
-      filename=paste0("EstimatedVSinit_new.pdf")
-      warning("Error trying to create ",path_results,"/EstimatedVSinit.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
-      message(cond)
-      grDevices::pdf(file = file.path(path_results,filename) , width = 9, height = 9)
-    })
-
-
-  tryCatch(
-    {
-      p <- plot_estimVSinit(init_values, est_values, crit, bounds$lb, bounds$ub)
-      print(p)
-      grDevices::dev.off()
-    },
-    error=function(cond) {
-
-      warning("Error trying to create EstimatedVSinit bubble graph file. \n
-              Maybe linked with the values of the criterion to plot (size of the bubbles):",
-              paste0(crit,collapse = ","),"\n Trying without the bubbles ...")
-      message(cond)
-
-      p <- plot_estimVSinit(init_values, est_values, crit, bounds$lb, bounds$ub, bubble=FALSE)
-      print(p)
-      grDevices::dev.off()
-    })
-
-  # Display of parameters for the repetition which has the smallest criterion
-  for (ipar in 1:nb_params) {
-    print(paste("Estimated value for", param_names[ipar], ": ", est_values[ind_min_crit,ipar]))
-  }
-  print(paste("Minimum value of the criterion:", optim[[ind_min_crit]]$value))
-  print(paste("Complementary graphs and results can be found in ", path_results))
 
   final_values <- est_values[ind_min_crit,]
   names(final_values) <- param_names
@@ -143,6 +110,7 @@ wrap_optim <- function(param_names,optim_options,param_info,crit_options) {
               est_values = est_values,
               min_crit_value = optim[[ind_min_crit]]$value,
               ind_min_crit = ind_min_crit,
+              crit_values=crit,
               optim = optim)
 
   return(res)

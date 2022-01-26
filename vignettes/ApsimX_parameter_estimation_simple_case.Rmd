@@ -63,7 +63,7 @@ if(!require("gridExtra")){
 }
 
 # DEFINE THE PATH TO THE LOCALLY INSTALLED VERSION OF APSIM (should be something like C:/path/to/apsimx/bin/Models.exe on windows, and /usr/local/bin/Models on linux)
-apsimx_path <- "D:\\Home\\sbuis\\Documents\\OUTILS\\APSIM2021.01.20.5937\\Bin\\Models.exe"
+apsimx_path <- "D:\\Home\\sbuis\\Documents\\OUTILS-INFORMATIQUE\\APSIM2021.01.20.5937\\Bin\\Models.exe"
 ```
 
 
@@ -164,10 +164,10 @@ The number of repetitions `nb_rep` is advised to be set at least to 5, while 10 
 ```{r message=FALSE, warning=FALSE}
 
 optim_options=list() 
-optim_options$nb_rep <- 7 # Number of repetitions of the minimization 
+optim_options$nb_rep <- 2 # Number of repetitions of the minimization 
                           # (each time starting with different initial
                           # values for the estimated parameters) 
-optim_options$maxeval <- 500 # Maximum number of evaluations of the 
+optim_options$maxeval <- 50 # Maximum number of evaluations of the 
                              # minimized criteria 
 optim_options$xtol_rel <- 1e-03 # Tolerance criterion between two iterations
                                 # (threshold for the relative difference of 

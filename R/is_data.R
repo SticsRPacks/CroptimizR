@@ -9,6 +9,7 @@
 #'
 #' @examples
 #'
+#'\donttest{
 #' data_list <- list(sit1=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-10")),
 #'                                   var1=c(1.1,1.5),var2=c(NA,2.1)),
 #'                  sit2=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-5")),
@@ -26,6 +27,7 @@
 #'                                   var1=c(1.1,1.5),var2=c(NA,2.1)),
 #'                  sit2=data.frame(Date=c("2009-11-30","2009-12-5"),var1=c(1.3,2)))
 #' CroptimizR:::is.data(data_list)
+#'}
 #'
 #' @keywords internal
 #'
@@ -67,6 +69,7 @@ is.data <- function(data_list) {
 #'
 #' @examples
 #'
+#'\donttest{
 #' sim_list <- list(sit1=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-10")),
 #'                                       var1=c(1.1,1.5),var2=c(NA,2.1)),
 #'                  sit2=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-5")),
@@ -84,6 +87,7 @@ is.data <- function(data_list) {
 #'                                       var1=c(1.1,1.5),var2=c(NA,2.1)),
 #'                  sit2=data.frame(Date=c("2009-11-30","2009-12-5"),var1=c(1.3,2)))
 #' CroptimizR:::is.sim(sim_list)
+#'}
 #'
 #' @keywords internal
 #'
@@ -107,6 +111,7 @@ is.sim <- function(sim_list) {
 #'
 #' @examples
 #'
+#'\donttest{
 #' obs_list <- list(sit1=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-10")),
 #'                                  var1=c(1.1,1.5),var2=c(NA,2.1)),
 #'                  sit2=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-5")),
@@ -124,6 +129,7 @@ is.sim <- function(sim_list) {
 #'                                  var2=c(NA,2.1)),
 #'                  sit2=data.frame(Date=c("2009-11-30","2009-12-5"),var1=c(1.3,2)))
 #' CroptimizR:::is.obs(obs_list)
+#'}
 #'
 #' @keywords internal
 #'

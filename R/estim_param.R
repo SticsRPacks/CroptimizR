@@ -8,7 +8,7 @@
 #' @param crit_function Function implementing the criterion to optimize
 #' (optional, see default value in the function signature). See
 #' [here](https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html)
-#' for more details about the list of proposed criterion.
+#' for more details about the list of proposed criteria.
 #' @param model_function Crop Model wrapper function to use.
 #' @param model_options List of options for the Crop Model wrapper (see help of
 #' the Crop Model wrapper function used).
@@ -41,6 +41,8 @@
 #' model wrapper through its param_values argument so that the given parameters
 #' always take the same values for each model simulation. Should not include values
 #' for estimated parameters (i.e. parameters defined in `param_info` argument).
+#' @param candidate_param Names of the parameters, among those defined in the argument param_info,
+#' that must only be considered as candidate for parameter estimation (see details section).
 #' @param transform_obs User function for transforming observations before each criterion
 #' evaluation (optional), see details section for more information
 #' @param transform_sim User function for transforming simulations before each criterion
@@ -65,8 +67,25 @@
 #' i.e. as used to compute the criterion for each evaluation (element obs_intersect in the returned list),
 #'   - `4` to add all model wrapper results for each evaluation, and all transformations if transform_sim is provided.
 #' (elements sim and sim_transformed in the returned list),
+#' @param info_crit_func Function (or list of functions) to compute information criteria.
+#' (optional, see default value in the function signature and [here](https://sticsrpacks.github.io/CroptimizR/reference/information_criteria.html)
+#' for more details about the list of proposed information criteria.).
+#' Values of the information criteria will be stored in the returned list.
+#' In case parameter selection is activated (i.e. if the argument candidate_param
+#' is defined (see details section)), the first information criterion given will be used.
+#' ONLY AVAILABLE FOR THE MOMENT FOR crit_function==crit_ols.
 #'
 #' @details
+#'   If the candidate_param argument is given, a parameter selection procedure following
+#'   the AgMIP calibration phaseIII protocol will be performed:
+#'   The candidate parameters are added one by one (in the given order) to the parameters
+#'   that MUST be estimated (i.e. the one defined in param_info but not in candidate_param).
+#'   Each time a new candidate is added:
+#'    - the parameter estimation is performed and an information criterion is computed (see argument info_crit_func)
+#'    - if the information criterion is inferior to all the ones obtained before,
+#'      then the current candidate parameter is added to the list of parameters to estimate
+#'   The result includes a summary of all the steps (data.frame param_selection_steps).
+#'
 #'   The optional argument `transform_obs` must be a function with 4 arguments:
 #'   - model_results: the list of simulated results returned by the mode_wrapper used
 #'   - obs_list: the list of observations as given to estim_param function
@@ -107,32 +126,18 @@
 estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
                         model_options=NULL, optim_method="nloptr.simplex",
                         optim_options, param_info, forced_param_values=NULL,
-                        transform_obs=NULL, transform_sim=NULL, satisfy_par_const=NULL,
-                        var_names=NULL, info_level=1) {
+                        candidate_param=NULL, transform_obs=NULL,
+                        transform_sim=NULL, satisfy_par_const=NULL,
+                        var_names=NULL, info_level=1,
+                        info_crit_func=list(CroptimizR::AICc, CroptimizR::AIC,
+                                            CroptimizR::BIC)) {
 
   # Remove CroptimizR environment before exiting
   on.exit({
     if (exists(".croptEnv")) {
-      if (info_level>=1) {
-        res$params_and_crit <- dplyr::bind_rows(.croptEnv$params_and_crit)
-      }
-      if (info_level>=2) {
-        res$sim_intersect <- .croptEnv$sim_intersect
-      }
-      if (info_level>=3) {
-        res$obs_intersect <- .croptEnv$obs_intersect
-      }
-      if (info_level>=4) {
-        res$sim <- .croptEnv$sim
-        res$sim_transformed <- .croptEnv$sim_transformed
-      }
       rm(".croptEnv")
     }
-
-    save(res, file = file.path(optim_options$path_results,"optim_results.Rdata"))
-
-    return(res)
-
+    save(res, file = file.path(path_results_ORI,"optim_results.Rdata"))
   })
 
   # Initialize res
@@ -146,6 +151,9 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
 
   ## optim_options
   if (is.null(optim_options$path_results)) { optim_options$path_results=getwd() }
+  if (!dir.exists(optim_options$path_results)) dir.create(optim_options$path_results,
+                                                          recursive = TRUE)
+  path_results_ORI <- optim_options$path_results
 
   ## obs_list
   if (!CroptimizR:::is.obs(obs_list)) {
@@ -184,12 +192,8 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
       if(length(x$sit_list) > length(x$ub) & length(x$ub)==1) x$ub <- rep(x$ub,length(x$sit_list) )
       return(x)
       })
-#    if (!all(unlist(sapply(param_info, function(x) setequal(unlist(x$sit_list),names(obs_list)),
-#                           simplify = FALSE)))) {
-#      stop("List of situations in argument param_info$***$sit_list are not identical to observed ones (names(obs_list)) for at least one parameter.")
-#    }
   }
-  param_names=get_params_names(param_info)
+  param_names=get_params_names(param_info, short_list=TRUE)
 
   ## forced_param_values
   if (!is.null(forced_param_values)) {
@@ -204,7 +208,37 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
     }
   }
 
-  ## Create an environment accessible by all functions for storing information during the estimation process
+  ## candidate_param
+  ## for the moment candidate_param can only be used with simplex and ols crit ...
+  if (!is.null(candidate_param)) {
+    if (!identical(crit_function, crit_ols)) {
+        stop(paste("For the moment the argument candidate_param can only be used with ols criterion.",
+                 "\n Either set candidate_param=NULL or set optim_method=\"simplex\" and crit_function=crit_ols."))
+    }
+  }
+  if (!all(candidate_param %in% param_names)) {
+    stop("Parameters included in argument candidate_param must be defined in param_info argument.")
+  }
+
+  ## Information criterion
+  if (is.function(info_crit_func)) {
+    info_crit_list <- list(info_crit_func)
+  } else if (is.list(info_crit_func)) {
+    info_crit_list <- info_crit_func
+  } else {
+    stop("info_crit_func should be a function or a list of functions")
+  }
+  sapply(info_crit_list, function(x) {
+    if ( (!is.function(x)) || (tolower(x()$species) != "information criterion") ||
+         (is.null(x()$name))) {
+      stop(paste("info_crit_func argument may be badly defined:\n",
+                 "The information functions should return a named list including an element called name containing the name of the function",
+                 "and an element called species containing \"Information criterion\", when called without arguments."))
+    }
+  })
+
+
+  # Create an environment accessible by all functions for storing information during the estimation process
   parent = eval(parse(text = ".GlobalEnv"))
   .croptEnv <- new.env(parent)
   assign(
@@ -213,23 +247,106 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
     pos = parent
   )
 
-  # Run the estimation
-  crit_options=list(param_names=param_names, obs_list=obs_list,
-                    crit_function=crit_function, model_function=model_function,
-                    model_options=model_options, param_info=param_info,
-                    transform_obs=transform_obs, transform_sim=transform_sim,
-                    satisfy_par_const=satisfy_par_const,
-                    path_results=optim_options$path_results,
-                    var_names=var_names,
-                    forced_param_values=forced_param_values,
-                    info_level=info_level)
+  # Initializations before parameter selection loop
+  oblig_param_list <- setdiff(param_names, candidate_param)
+  crt_candidates <- oblig_param_list
+  if (length(crt_candidates)==0) crt_candidates <- candidate_param[[1]] # in case there are only candidates ...
+  count <- 1
+  param_selection_steps<-NULL
 
-  res=optim_switch(param_names,optim_method,optim_options,param_info,crit_options)
+  # Parameter selection loop
+  while(!is.null(crt_candidates)) {
 
+    print("---------------------")
+    print(paste("Estimated parameters:",paste(crt_candidates,collapse=" ")))
+    print("---------------------")
+
+    ## Initialize parameters
+    tmp <- optim_switch(optim_method=optim_method,optim_options=optim_options)
+    init_values_nb <- tmp$init_values_nb
+    param_info <- complete_init_values(param_info, nb_values=init_values_nb)
+    ### Initialize already estimated parameters with the values leading to the best criterion obtained so far
+    if (!is.null(param_selection_steps)) {
+      ind_min_infocrit <- which.min(param_selection_steps[[info_crit_list[[1]]$name]])
+      best_final_values <- param_selection_steps[ind_min_infocrit,"Final values", drop=FALSE]
+      names(best_final_values) <- param_selection_steps[ind_min_infocrit,"Estimated parameters", drop=FALSE]
+      init_values <- get_init_values(param_info)
+      init_values[,names(best_final_values), drop=FALSE] <- best_final_values
+      param_info <- set_init_values(param_info, init_values)
+    }
+
+    ## nb_rep may be different for the different parameter selection steps
+    ## ... quite ugly ... should be improved ...
+    if (!is.null(optim_options$nb_rep))
+      optim_options$nb_rep <- init_values_nb[min(length(init_values_nb),count)]
+
+    ## Filter information about the parameters to estimate
+    param_info_tmp <- filter_param_info(param_info, crt_candidates)
+    bounds=get_params_bounds(param_info_tmp)
+    forced_param_values_tmp <- forced_param_values
+    inter_forc_cand <- names(forced_param_values_tmp) %in% crt_candidates
+    if (any(inter_forc_cand)) {
+      forced_param_values_tmp <- forced_param_values[-which(inter_forc_cand)]
+    }
+
+    ## Redefine path_result in case of several steps (results are stored in step_* sub-directories of optim_options$path_results)
+    if (!is.null(candidate_param)) {
+      path_results <- file.path(path_results_ORI,"results_all_steps",
+                                paste0("step_",count))
+      if (!dir.exists(path_results)) dir.create(path_results, recursive = TRUE)
+      optim_options$path_results <- path_results
+    }
+
+    crit_options <- list(param_names=crt_candidates, obs_list=obs_list,
+                      crit_function=crit_function, model_function=model_function,
+                      model_options=model_options, param_info=param_info_tmp,
+                      transform_obs=transform_obs, transform_sim=transform_sim,
+                      satisfy_par_const=satisfy_par_const,
+                      path_results=optim_options$path_results,
+                      var_names=var_names,
+                      forced_param_values=forced_param_values_tmp,
+                      info_level=info_level,
+                      info_crit_list=info_crit_list)
+
+    ## Run the estimation
+    res_tmp=optim_switch(optim_method=optim_method,optim_options=optim_options,
+                         param_info=param_info_tmp, crit_options=crit_options)
+
+    ## The following is done only if parameter selection is activated
+    if (!is.null(candidate_param)) {
+
+      ### Update results in param_selection_steps
+      param_selection_steps <- post_treat_FwdRegAgMIP(res_tmp, crit_options,
+                                                      crt_candidates, param_selection_steps)
+
+      ### Select the next list of candidate parameters
+      res_select_param <- select_param_FwdRegAgMIP(oblig_param_list, candidate_param,
+                                      crt_candidates,
+                                      param_selection_steps[[info_crit_list[[1]]$name]])
+      crt_candidates <- res_select_param$next_candidates
+      if (res_select_param$selected) {
+        res <- res_tmp
+      }
+      count <- count+1
+
+    } else {
+      crt_candidates <- NULL
+      res <- res_tmp
+    }
+
+  }
+
+  # Store results of parameter estimation steps if parameter selection was activated
+  if (!is.null(candidate_param)) {
+    summary_FwdRegAgMIP(param_selection_steps, info_crit_list, path_results_ORI)
+    save_results_FwdRegAgMIP(param_selection_steps, path_results_ORI)
+  }
 
   # Measure elapse time
   tictoc::toc(log=TRUE)
   res$total_time=unlist(tictoc::tic.log(format = TRUE))
   tictoc::tic.clearlog()
+
+  return(res)
 
 }

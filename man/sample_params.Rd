@@ -29,7 +29,10 @@ hopefully soon extended to any distribution. Use genetic LHS (from
 lhs package)
 }
 \examples{
+\donttest{
 bounds_list <- list(lb = c(0, 1, 2), ub = c(1, 2, 3))
 CroptimizR:::sample_params(bounds_list, 5)
+}
+
 }
 \keyword{internal}

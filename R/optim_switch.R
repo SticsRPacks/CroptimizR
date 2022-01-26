@@ -1,8 +1,8 @@
 #' @title Call the required parameter estimation method
 #'
-#' @inheritParams estim_param
-#' @param param_names Name(s) of parameters to estimate (a parameter name must
-#' be replicated if several groups of situations for this parameter)
+#' @param optim_method see description in estim_param
+#' @param optim_options see description in estim_param
+#' @param param_info see description in estim_param
 #' @param crit_options List containing several arguments given to `estim_param` function:
 #' `param_names`, `obs_list`, `crit_function`, `model_function`, `model_options`,
 #' `param_info`, `transform_obs`, `transform_sim`
@@ -15,25 +15,95 @@
 #' @keywords internal
 #'
 
-optim_switch <- function(param_names,optim_method,optim_options,param_info,crit_options) {
+optim_switch <- function(...) {
 
-  if (optim_method=="nloptr.simplex" || optim_method=="simplex") {
+  # Store and save results at the end of the current optimization step
+  if (nargs()>2) {
 
-    res=wrap_nloptr(param_names=param_names,optim_options=optim_options,param_info=param_info, crit_options)
+    # Initialize res
+    res <- list()
+    flag_error <- FALSE
 
-  } else if (optim_method=="BayesianTools.dreamzs" || optim_method=="dreamzs") {
+    on.exit({
+      if (exists(".croptEnv")) {
+        if (arguments$crit_options$info_level>=1) {
+          res$params_and_crit <- dplyr::bind_rows(.croptEnv$params_and_crit)
+          rm("params_and_crit", envir=.croptEnv)
+        }
+        if (arguments$crit_options$info_level>=2) {
+          res$sim_intersect <- .croptEnv$sim_intersect
+          rm("sim_intersect", envir=.croptEnv)
+        }
+        if (arguments$crit_options$info_level>=3) {
+          res$obs_intersect <- .croptEnv$obs_intersect
+          rm("obs_intersect", envir=.croptEnv)
+        }
+        if (arguments$crit_options$info_level>=4) {
+          res$sim <- .croptEnv$sim
+          res$sim_transformed <- .croptEnv$sim_transformed
+          rm("sim_transformed", envir=.croptEnv)
+        }
 
-    res=wrap_BayesianTools(param_names=param_names,optim_options=optim_options,param_info=param_info, crit_options)
+      }
 
-  } else if (optim_method=="optim") {
+      if (!is.null(optim_options$path_results))
+        save(res, file = file.path(optim_options$path_results,"optim_results.Rdata"))
 
-    res=wrap_optim(param_names=param_names,optim_options=optim_options,param_info=param_info, crit_options)
+      if (!flag_error) return(res)
 
-  } else {
-
-    stop(paste0("Unknown method ",optim_method,", please choose between nloptr.simplex, BayesianTools.dreamzs and optim."))
+    })
 
   }
+
+  arguments <- list(...)
+  optim_method <- arguments$optim_method
+  optim_options <- arguments$optim_options
+  wrap_args <- within(arguments,rm("optim_method"))
+  if (nargs()>2) {
+    param_info <- arguments$param_info
+    crit_options <- arguments$crit_options
+  }
+
+  tryCatch(
+    if (optim_method=="nloptr.simplex" || optim_method=="simplex") {
+
+      res=do.call(wrap_nloptr, wrap_args)
+      if (nargs()>2) {
+        res <- post_treat_frequentist(optim_options=optim_options, param_info=param_info,
+                                      optim_results=res, crit_options=crit_options)
+        res$plots <- plot_frequentist(optim_options=optim_options, param_info=param_info,
+                                      optim_results=res)
+        summary_frequentist(optim_options=optim_options, param_info=param_info,
+                            optim_results=res)
+        }
+
+    } else if (optim_method=="BayesianTools.dreamzs" || optim_method=="dreamzs") {
+
+      res=do.call(wrap_BayesianTools, wrap_args)
+      if (nargs()>2) {
+        res$plots <- plot_bayesian(optim_options=optim_options, param_info=param_info, optim_results=res)
+        summary_bayesian(optim_options=optim_options, param_info=param_info, optim_results=res)
+      }
+
+    } else if (optim_method=="optim") {
+
+      res=do.call(wrap_optim, wrap_args)
+      if (nargs()>2) {
+        res <- post_treat_frequentist(optim_options=optim_options, param_info=param_info,
+                                      optim_results=res, crit_options=crit_options)
+        res$plots <- plot_frequentist(optim_options=optim_options, param_info=param_info, optim_results=res)
+        summary_frequentist(optim_options=optim_options, param_info=param_info, optim_results=res)
+      }
+
+    } else {
+
+      stop(paste0("Unknown method ",optim_method,", please choose between nloptr.simplex, BayesianTools.dreamzs and optim."))
+
+    },
+    error=function(cond) {
+      flag_error <<- TRUE
+      stop(cond)
+    })
 
   return(res)
 

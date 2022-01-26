@@ -1,3 +1,54 @@
+#' @title Generate plots for frequentist methods
+#'
+#' @inheritParams estim_param
+#'
+#' @param optim_results Results list returned by frequentist method wrappers
+#'
+#' @return Returns the list of plots + save them in pdf files.
+#'
+#' @keywords internal
+#'
+plot_frequentist <- function(optim_options, param_info, optim_results) {
+
+  bounds=get_params_bounds(param_info)
+  path_results <- optim_options$path_results
+  init_values <- optim_results$init_values
+  est_values <- optim_results$est_values
+  crit_values <- optim_results$crit_values
+
+  tryCatch(
+    {
+      grDevices::pdf(file = file.path(path_results,"EstimatedVSinit.pdf") , width = 9, height = 9)
+    },
+    error=function(cond) {
+      filename=paste0("EstimatedVSinit_new.pdf")
+      warning("Error trying to create ",path_results,"/EstimatedVSinit.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
+      message(cond)
+      grDevices::pdf(file = file.path(path_results,filename) , width = 9, height = 9)
+    })
+
+
+  tryCatch(
+    {
+      p <- plot_estimVSinit(init_values, est_values, crit_values, bounds$lb, bounds$ub)
+      print(p)
+      grDevices::dev.off()
+    },
+    error=function(cond) {
+
+      warning("Error trying to create EstimatedVSinit bubble graph file. \n
+              Maybe linked with the values of the criterion to plot (size of the bubbles):",
+              paste0(crit_values,collapse = ","),"\n Trying without the bubbles ...")
+      message(cond)
+
+      p <- plot_estimVSinit(init_values, est_values, crit_values, bounds$lb, bounds$ub, bubble=FALSE)
+      print(p)
+      grDevices::dev.off()
+    })
+
+  return(p)
+}
+
 #' @title Create plots of estimated versus initial values of the parameters
 #'
 #' @param init_values Data.frame containing initial values of the parameters for each repetition
