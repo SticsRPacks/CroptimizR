@@ -84,8 +84,8 @@ In this example, xml files are stored in `javastics_workspace_path` and the Stic
 stics_inputs_path=file.path(data_dir,"TxtFiles")
 dir.create(stics_inputs_path)
 
-gen_usms_xml2txt(javastics_path = javastics_path, workspace_path = javastics_workspace_path,
-  target_path = stics_inputs_path, verbose = TRUE)
+gen_usms_xml2txt(javastics = javastics_path, workspace = javastics_workspace_path,
+  out_dir = stics_inputs_path, verbose = TRUE)
 ```
 
 
@@ -120,7 +120,7 @@ In variables and parameters names, "(\*)" must be replaced by "_\*" to be handle
 
 sit_name="bo96iN+"  # can be a vector of situation names if you want to consider several, e.g. c("bo96iN+","bou00t1")
 var_name="lai_n"    # can be a vector of variable names if you want to consider several, e.g. c("lai_n","masec_n")
-obs_list= get_obs(javastics_workspace_path, usm_name = sit_name)
+obs_list= get_obs(javastics_workspace_path, usm = sit_name)
 obs_list= filter_obs(obs_list, var_names= var_name, include=TRUE)
 ```
 
