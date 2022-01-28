@@ -44,7 +44,8 @@ for a brief description and references on the available methods.}
 
 \item{optim_options}{List of options of the parameter estimation method, containing:
 \itemize{
-\item \code{path_results} The path where to store the results (optional, default=getwd())
+\item \code{out_dir} Directory path where to write the optimization results (optional, default to \code{getwd()})
+\item \code{path_results} \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} \code{path_results} is no longer supported, use \code{out_dir} instead.
 \item specific options depending on the method used. Click on the links to see examples with the \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html}{simplex}
 and \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html}{DreamZS} methods.
 }}
@@ -110,7 +111,7 @@ i.e. as used to compute the criterion for each evaluation (element obs_intersect
 \value{
 prints, graphs and a list containing the results of the parameter estimation,
 which content depends on the method used and on the values of the \code{info_level} argument.
-All results are saved in the folder \code{optim_options$path_results}.
+All results are saved in the folder \code{optim_options$out_dir}.
 See also the functions \code{\link{plot_valuesVSit}} and \code{\link{plot_valuesVSit_2D}}
 for performing additional plots on results of frequentist methods.
 }

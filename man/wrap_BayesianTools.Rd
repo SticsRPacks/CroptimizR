@@ -12,7 +12,8 @@ be replicated if several groups of situations for this parameter)}
 
 \item{optim_options}{List of options of the parameter estimation method, containing:
 \itemize{
-\item \code{path_results} The path where to store the results (optional, default=getwd())
+\item \code{out_dir} Directory path where to write the optimization results (optional, default to \code{getwd()})
+\item \code{path_results} \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} \code{path_results} is no longer supported, use \code{out_dir} instead.
 \item specific options depending on the method used. Click on the links to see examples with the \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html}{simplex}
 and \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html}{DreamZS} methods.
 }}
