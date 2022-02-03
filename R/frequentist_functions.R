@@ -1,3 +1,76 @@
+#' @title Summarizes results of frequentist methods
+#'
+#' @inheritParams estim_param
+#'
+#' @param optim_results Results list returned by frequentist method wrappers
+#'
+#' @return Prints results of frequentist methods
+#'
+summary_frequentist <- function(optim_options, param_info, optim_results) {
+
+  param_names <- get_params_names(param_info)
+  nb_params=length(param_names)
+  bounds=get_params_bounds(param_info)
+  path_results <- optim_options$path_results
+  init_values <- optim_results$init_values
+  est_values <- optim_results$est_values
+  crit_values <- optim_results$crit_values
+  ind_min_crit <- optim_results$ind_min_crit
+  min_crit_value <- optim_results$min_crit_value
+
+  # Display of parameters values for the repetition which has the smallest criterion
+  for (ipar in 1:nb_params) {
+    print(paste("Estimated value for", param_names[ipar], ": ", est_values[ind_min_crit,ipar]))
+  }
+  print(paste("Minimum value of the criterion:", min_crit_value))
+  print(paste("Complementary graphs and results can be found in ", path_results))
+
+}
+
+
+#' @title Post-treat results of frequentist methods
+#'
+#' @inheritParams estim_param
+#'
+#' @param optim_results Results list returned by frequentist method wrappers
+#' @param crit_options List containing several arguments given to `estim_param` function:
+#' `param_names`, `obs_list`, `crit_function`, `model_function`, `model_options`,
+#' `param_info`, `transform_obs`, `transform_sim`
+#' that must be passed to main_crit function by the methods wrappers.
+#'
+#' @return Updated results of frequentist method
+#'
+post_treat_frequentist <- function(optim_options, param_info, optim_results,
+                                   crit_options) {
+
+  param_names <- get_params_names(param_info)
+  nb_params=length(param_names)
+  crit_function <- crit_options$crit_function
+  info_crit_list <- crit_options$info_crit_list
+
+  # Recompute final value of minimized criterion
+  # (just to check it is correct and to get the observation list used)
+  info_final <- main_crit(param_values=optim_results$final_values,
+                          crit_options=c(crit_options,return_obs_sim=TRUE))
+  if (info_final$crit != optim_results$min_crit_value) {
+    stop(paste("Internal error: incoherent computation of minimum criterion value. \nValue obtained in method wrapper:",
+               optim_results$min_crit_value, "\nValue obtained afterwards:", info_final$crit))
+  }
+
+  if (identical(crit_function, crit_ols)) {
+    sapply(info_crit_list, function(x) {
+      final_info_crit <- x(obs_list=info_final$obs_intersect,
+                            crit=info_final$crit,
+                            param_nb=nb_params)
+      optim_results[x()$name] <<- final_info_crit
+    })
+  }
+
+  return(optim_results)
+
+}
+
+
 #' @title Generate plots for frequentist methods
 #'
 #' @inheritParams estim_param
