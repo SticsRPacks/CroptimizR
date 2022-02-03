@@ -57,14 +57,12 @@ post_treat_frequentist <- function(optim_options, param_info, optim_results,
                optim_results$min_crit_value, "\nValue obtained afterwards:", info_final$crit))
   }
 
-  if (identical(crit_function, crit_ols)) {
-    sapply(info_crit_list, function(x) {
-      final_info_crit <- x(obs_list=info_final$obs_intersect,
-                            crit=info_final$crit,
-                            param_nb=nb_params)
-      optim_results[x()$name] <<- final_info_crit
-    })
-  }
+  sapply(info_crit_list, function(x) {
+    final_info_crit <- x(obs_list=info_final$obs_intersect,
+                         crit=info_final$crit,
+                         param_nb=nb_params)
+    optim_results[x()$name] <<- final_info_crit
+  })
 
   return(optim_results)
 

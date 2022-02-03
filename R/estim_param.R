@@ -217,33 +217,37 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
     }
   }
 
-  ## candidate_param
-  ## for the moment candidate_param can only be used with simplex and ols crit ...
-  if (!is.null(candidate_param)) {
-    if (!identical(crit_function, crit_ols)) {
-        stop(paste("For the moment the argument candidate_param can only be used with ols criterion.",
-                 "\n Either set candidate_param=NULL or set optim_method=\"simplex\" and crit_function=crit_ols."))
-    }
-  }
-  if (!all(candidate_param %in% param_names)) {
-    stop("Parameters included in argument candidate_param must be defined in param_info argument.")
-  }
-
   ## Information criterion
   if (is.function(info_crit_func)) {
     info_crit_list <- list(info_crit_func)
   } else if (is.list(info_crit_func)) {
     info_crit_list <- info_crit_func
-  } else {
-    stop("info_crit_func should be a function or a list of functions")
+  } else if (!is.null(info_crit_func)) {
+    stop("Argument info_crit_func should be NULL, a function or a list of functions.")
   }
-  sapply(info_crit_list, function(x) {
-    if ( (!is.function(x)) || (is.null(x()$name))) {
-      stop(paste("info_crit_func argument may be badly defined:\n",
-                 "The information functions should return a named list including an element called name containing the name of the function when called without arguments."))
-    }
-  })
+  if (!is.null(info_crit_func)) {
+    sapply(info_crit_list, function(x) {
+      if ( (!is.function(x)) || (is.null(x()$name))) {
+        stop(paste("info_crit_func argument may be badly defined:\n",
+                   "The information functions should return a named list including an element called name containing the name of the function when called without arguments."))
+      }
+    })
+    # set to NULL the info_crit that are not compatible with the crit_function used
+    info_crit_list[ sapply(info_crit_list, function(x)
+                             { ( x()$name=="AIC" || x()$name=="AICc" || x()$name=="BIC" ) && !identical(crit_function, crit_ols) }
+                           ) ] <- NULL
+  }
+  if (length(info_crit_list)==0) info_crit_list=NULL
 
+
+  ## candidate_param
+  ## candidate_param can only be used if info_crit_list[[1]] is provided and if it is compatible with the crit_function used
+  if (!is.null(candidate_param) && is.null(info_crit_list)) {
+      stop("The argument candidate_param can only be used if argument info_crit_list is provided and compatible with the crit_function used.")
+  }
+  if (!all(candidate_param %in% param_names)) {
+    stop("Parameters included in argument candidate_param must be defined in param_info argument.")
+  }
 
   # Create an environment accessible by all functions for storing information during the estimation process
   parent = eval(parse(text = ".GlobalEnv"))
