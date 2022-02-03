@@ -187,7 +187,7 @@ installed R packages. This can be done using the command
 `update.packages()` or clicking on the Update button of the Packages
 panel of Rstudio.
 
-The last released version of the package can be installed from
+The latest released version of the package can be installed from
 [GitHub](https://github.com/) using:
 
 ``` r
@@ -203,7 +203,7 @@ remotes::install_github("SticsRPacks/CroptimizR@*release")
 ```
 
 If an update of the XML package is proposed, answer no, it seems that
-there is a problem of installation for its last version.
+there is a problem of installation for its latest version.
 
 If you want to use CroptimizR with the Stics model, facilities for the
 installation of all the necessary packages are provided (see

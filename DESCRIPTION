@@ -32,7 +32,8 @@ Imports:
 	stringr,
 	tibble,
 	ggplot2,
-	methods
+	methods,
+  lifecycle
 Suggests:
     testthat (>= 2.1.0),
     covr,
