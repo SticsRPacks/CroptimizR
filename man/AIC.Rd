@@ -20,7 +20,7 @@ the variable is not observed at the given date.}
 \value{
 Value of the AIC criterion.
 If called without arguments, returns a named list with element "name" containing
-the name of the function and "species" containing "Information criterion"
+the name of the function
 }
 \description{
 Computes AIC for ordinary least squares

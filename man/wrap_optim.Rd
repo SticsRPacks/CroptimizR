@@ -4,40 +4,12 @@
 \alias{wrap_optim}
 \title{A wrapper for optim function}
 \usage{
-wrap_optim(param_names, optim_options, param_info, crit_options)
+wrap_optim(optim_options, param_info, crit_options)
 }
 \arguments{
-\item{param_names}{Name(s) of parameters to estimate (a parameter name must
-be replicated if several groups of situations for this parameter)}
+\item{optim_options}{see description in estim_param}
 
-\item{optim_options}{List of options of the parameter estimation method, containing:
-\itemize{
-\item \code{out_dir} Directory path where to write the optimization results (optional, default to \code{getwd()})
-\item \code{path_results} \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} \code{path_results} is no longer supported, use \code{out_dir} instead.
-\item specific options depending on the method used. Click on the links to see examples with the \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html}{simplex}
-and \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html}{DreamZS} methods.
-}}
-
-\item{param_info}{Information on the parameters to estimate.
-Either
-a list containing:
-\itemize{
-\item \code{ub} and \code{lb}, named vectors of upper and lower bounds (-Inf and Inf can be used if init_values is provided),
-\item \code{init_values}, a data.frame containing initial
-values to test for the parameters (optional, if not provided, or if less values
-than number of repetitions of the minimization are provided, the, or part
-of the, initial values will be randomly generated using LHS sampling within
-parameter bounds).
-}
-
-or a named list containing for each parameter:
-\itemize{
-\item \code{sit_list}, the list of situations per group,
-\item \code{ub} and \code{lb}, vectors of upper and lower bounds (one value per group),
-\item \code{init_values}, the list of initial values per group  (data.frame, one column per group, optional).
-(see \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html}{here}
-for an example)
-}}
+\item{param_info}{see description in estim_param}
 
 \item{crit_options}{List containing several arguments given to \code{estim_param} function:
 \code{param_names}, \code{obs_list}, \code{crit_function}, \code{model_function}, \code{model_options},

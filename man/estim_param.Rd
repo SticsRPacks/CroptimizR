@@ -13,11 +13,13 @@ estim_param(
   optim_options,
   param_info,
   forced_param_values = NULL,
+  candidate_param = NULL,
   transform_obs = NULL,
   transform_sim = NULL,
   satisfy_par_const = NULL,
   var_names = NULL,
-  info_level = 1
+  info_level = 1,
+  info_crit_func = list(CroptimizR::AICc, CroptimizR::AIC, CroptimizR::BIC)
 )
 }
 \arguments{
@@ -30,7 +32,7 @@ the variable is not observed at the given date.}
 \item{crit_function}{Function implementing the criterion to optimize
 (optional, see default value in the function signature). See
 \href{https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html}{here}
-for more details about the list of proposed criterion.}
+for more details about the list of proposed criteria.}
 
 \item{model_function}{Crop Model wrapper function to use.}
 
@@ -77,6 +79,9 @@ model wrapper through its param_values argument so that the given parameters
 always take the same values for each model simulation. Should not include values
 for estimated parameters (i.e. parameters defined in \code{param_info} argument).}
 
+\item{candidate_param}{Names of the parameters, among those defined in the argument param_info,
+that must only be considered as candidate for parameter estimation (see details section).}
+
 \item{transform_obs}{User function for transforming observations before each criterion
 evaluation (optional), see details section for more information}
 
@@ -107,6 +112,14 @@ i.e. as used to compute the criterion for each evaluation (element obs_intersect
 \item \code{4} to add all model wrapper results for each evaluation, and all transformations if transform_sim is provided.
 (elements sim and sim_transformed in the returned list),
 }}
+
+\item{info_crit_func}{Function (or list of functions) to compute information criteria.
+(optional, see default value in the function signature and \href{https://sticsrpacks.github.io/CroptimizR/reference/information_criteria.html}{here}
+for more details about the list of proposed information criteria.).
+Values of the information criteria will be stored in the returned list.
+In case parameter selection is activated (i.e. if the argument candidate_param
+is defined (see details section)), the first information criterion given will be used.
+ONLY AVAILABLE FOR THE MOMENT FOR crit_function==crit_ols.}
 }
 \value{
 prints, graphs and a list containing the results of the parameter estimation,
@@ -119,6 +132,18 @@ for performing additional plots on results of frequentist methods.
 main function for parameter estimation
 }
 \details{
+If the candidate_param argument is given, a parameter selection procedure following
+the AgMIP calibration phaseIII protocol will be performed:
+The candidate parameters are added one by one (in the given order) to the parameters
+that MUST be estimated (i.e. the one defined in param_info but not in candidate_param).
+Each time a new candidate is added:
+\itemize{
+\item the parameter estimation is performed and an information criterion is computed (see argument info_crit_func)
+\item if the information criterion is inferior to all the ones obtained before,
+then the current candidate parameter is added to the list of parameters to estimate
+The result includes a summary of all the steps (data.frame param_selection_steps).
+}
+
 The optional argument \code{transform_obs} must be a function with 4 arguments:
 \itemize{
 \item model_results: the list of simulated results returned by the mode_wrapper used
