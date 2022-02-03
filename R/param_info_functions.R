@@ -301,7 +301,7 @@ get_init_values <- function(param_info) {
         param_info[[i]]$init_values=
           as.data.frame(param_info[[i]]$init_values)
 
-        if (ncol(param_info[[i]]$init_values) !=
+        if (!is.null(param_info[[i]]$sit_list) && ncol(param_info[[i]]$init_values) !=
             length(param_info[[i]]$sit_list)) {
 
           param_info[[i]]$init_values=t(param_info[[i]]$init_values)
