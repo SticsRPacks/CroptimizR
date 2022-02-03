@@ -4,7 +4,7 @@
 #' @param crit_value Final value of the estimated criterion
 #' @param param_nb Number of estimated parameters
 #'
-#' @return Value of the AIC criterion.
+#' @return Value of the AIC criterion for ordinary least squares.
 #' If called without arguments, returns a named list with element "name" containing
 #' the name of the function
 #'
@@ -31,7 +31,7 @@ AIC <- function(obs_list, crit_value, param_nb) {
 #' @param crit_value Final value of the estimated criterion
 #' @param param_nb Number of estimated parameters
 #'
-#' @return Value of the AICc criterion
+#' @return Value of the AICc criterion for ordinary least squares.
 #' If called without arguments, returns a named list with element "name" containing
 #' the name of the function and "species" containing "Information criterion"
 #'
@@ -65,7 +65,7 @@ AICc <- function(obs_list, crit_value, param_nb) {
 #' @param crit_value Final value of the estimated criterion
 #' @param param_nb Number of estimated parameters
 #'
-#' @return Value of the BIC criterion
+#' @return Value of the BIC criterion for ordinary least squares.
 #' If called without arguments, returns a named list with element "name" containing
 #' the name of the function and "species" containing "Information criterion"
 #'

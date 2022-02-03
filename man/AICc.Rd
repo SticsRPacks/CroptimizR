@@ -18,7 +18,7 @@ the variable is not observed at the given date.}
 \item{param_nb}{Number of estimated parameters}
 }
 \value{
-Value of the AICc criterion
+Value of the AICc criterion for ordinary least squares.
 If called without arguments, returns a named list with element "name" containing
 the name of the function and "species" containing "Information criterion"
 }
