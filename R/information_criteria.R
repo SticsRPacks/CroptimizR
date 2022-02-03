@@ -6,14 +6,14 @@
 #'
 #' @return Value of the AIC criterion.
 #' If called without arguments, returns a named list with element "name" containing
-#' the name of the function and "species" containing "Information criterion"
+#' the name of the function
 #'
 #' @export
 #'
 AIC <- function(obs_list, crit_value, param_nb) {
 
   if (nargs()==0) {
-    return(list(name="AIC", species="Information criterion"))
+    return(list(name="AIC"))
   }
 
   # Total number of observations
@@ -40,7 +40,7 @@ AIC <- function(obs_list, crit_value, param_nb) {
 AICc <- function(obs_list, crit_value, param_nb) {
 
   if (nargs()==0) {
-    return(list(name="AICc", species="Information criterion"))
+    return(list(name="AICc"))
   }
 
   # Total number of observations
@@ -74,7 +74,7 @@ AICc <- function(obs_list, crit_value, param_nb) {
 BIC <- function(obs_list, crit_value, param_nb) {
 
   if (nargs()==0) {
-    return(list(name="BIC", species="Information criterion"))
+    return(list(name="BIC"))
   }
 
   # Total number of observations

@@ -141,7 +141,7 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
     optim_options$path_results <- optim_options$out_dir # to remove when we update inside the function
   }
 
-  # Remove CroptimizR environment before exiting
+  # Remove CroptimizR environment before exiting and save stored results (even if the process crashes)
   on.exit({
     if (exists(".croptEnv")) {
       rm(".croptEnv")
@@ -238,11 +238,9 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
     stop("info_crit_func should be a function or a list of functions")
   }
   sapply(info_crit_list, function(x) {
-    if ( (!is.function(x)) || (tolower(x()$species) != "information criterion") ||
-         (is.null(x()$name))) {
+    if ( (!is.function(x)) || (is.null(x()$name))) {
       stop(paste("info_crit_func argument may be badly defined:\n",
-                 "The information functions should return a named list including an element called name containing the name of the function",
-                 "and an element called species containing \"Information criterion\", when called without arguments."))
+                 "The information functions should return a named list including an element called name containing the name of the function when called without arguments."))
     }
   })
 
