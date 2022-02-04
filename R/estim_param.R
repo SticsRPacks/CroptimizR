@@ -278,7 +278,7 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
     param_info <- complete_init_values(param_info, nb_values=init_values_nb)
     ### Initialize already estimated parameters with the values leading to the best criterion obtained so far
     if (!is.null(param_selection_steps)) {
-      ind_min_infocrit <- which.min(param_selection_steps[[info_crit_list[[1]]$name]])
+      ind_min_infocrit <- which.min(param_selection_steps[[info_crit_list[[1]]()$name]])
       best_final_values <- param_selection_steps[ind_min_infocrit,"Final values", drop=FALSE]
       names(best_final_values) <- param_selection_steps[ind_min_infocrit,"Estimated parameters", drop=FALSE]
       init_values <- get_init_values(param_info)
@@ -333,7 +333,7 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
       ### Select the next list of candidate parameters
       res_select_param <- select_param_FwdRegAgMIP(oblig_param_list, candidate_param,
                                       crt_candidates,
-                                      param_selection_steps[[info_crit_list[[1]]$name]])
+                                      param_selection_steps[[info_crit_list[[1]]()$name]])
       crt_candidates <- res_select_param$next_candidates
       if (res_select_param$selected) {
         res <- res_tmp
