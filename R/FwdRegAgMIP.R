@@ -105,29 +105,40 @@ select_param_FwdRegAgMIP <- function(oblig_param_list, add_param_list, crt_list,
 post_treat_FwdRegAgMIP <- function(optim_results, crit_options, crt_list, param_selection_steps) {
 
   info_crit_func <- crit_options$info_crit_list[[1]]
-  final_info_crit <- optim_results[info_crit_func()$name]
+  final_info_crit <- optim_results[[info_crit_func()$name]]
 
   ## RE-compute main_crit with the initial values of the parameters
   init_crit <- main_crit(param_values=optim_results$init_values[optim_results$ind_min_crit,],
-                         crit_options=c(crit_options,return_obs_sim=TRUE))
+                         crit_options=c(crit_options,return_obs_sim=FALSE))
 
   ## Store the results per step
   digits <- 2
-  info_new_step <- setNames(data.frame(paste(crt_list,collapse = ", "),
-                                       paste(format(optim_results$init_values[optim_results$ind_min_crit,],
-                                                    scientific=FALSE, digits=digits,
-                                                    nsmall=2), collapse=", "),
-                                       format(init_crit, scientific=FALSE, digits=digits, nsmall=2),
-                                       #init_info_crit=format(init_info_crit, scientific=FALSE, digits=digits, nsmall=2),
-                                       paste(format(optim_results$final_values, scientific=FALSE, digits=digits, nsmall=2),collapse=", "),
-                                       format(optim_results$min_crit_value, scientific=FALSE, digits=digits, nsmall=2),
-                                       format(final_info_crit, scientific=FALSE, digits=digits, nsmall=2),
+  # info_new_step <- setNames(data.frame(paste(crt_list,collapse = ", "),
+  #                                      paste(format(optim_results$init_values[optim_results$ind_min_crit,],
+  #                                                   scientific=FALSE, digits=digits,
+  #                                                   nsmall=2), collapse=", "),
+  #                                      #init_info_crit=format(init_info_crit, scientific=FALSE, digits=digits, nsmall=2),
+  #                                      paste(format(optim_results$final_values, scientific=FALSE, digits=digits, nsmall=2),collapse=", "),
+  #                                      format(init_crit$crit, scientific=FALSE, digits=digits, nsmall=2),
+  #                                      format(optim_results$min_crit_value, scientific=FALSE, digits=digits, nsmall=2),
+  #                                      format(final_info_crit, scientific=FALSE, digits=digits, nsmall=2),
+  #                                      ""),
+  #                           c("Estimated parameters","Initial parameter values","Final values",
+  #                             "Initial Sum of squared errors",
+  #                             "Final Sum of squared errors",info_crit_func()$name,"Selected step"))
+  info_new_step <- setNames(tibble(list(crt_list),
+                                       list(optim_results$init_values[optim_results$ind_min_crit,]),
+                                       list(optim_results$final_values),
+                                       init_crit,
+                                       optim_results$min_crit_value,
+                                       final_info_crit,
                                        ""),
                             c("Estimated parameters","Initial parameter values","Final values",
                               "Initial Sum of squared errors",
                               "Final Sum of squared errors",info_crit_func()$name,"Selected step"))
   param_selection_steps <- dplyr::bind_rows(param_selection_steps, info_new_step)
   ind_min_infocrit <- which.min(param_selection_steps[[info_crit_func()$name]])
+  param_selection_steps[,"Selected step"] <- ""
   param_selection_steps[ind_min_infocrit,"Selected step"] <- "X"
 
   return(param_selection_steps)
@@ -153,17 +164,15 @@ summary_FwdRegAgMIP <- function(param_selection_steps, info_crit_list, path_resu
   cat("End of parameter selection process\n")
   cat("----------------------\n\n")
 
-  ind_min_infocrit <- which.min(param_selection_steps[[info_crit_list[[1]]$name]])
+  ind_min_infocrit <- which.min(param_selection_steps[[info_crit_list[[1]]()$name]])
   cat("Selected step:",ind_min_infocrit,"\n")
-  selected_param <- param_selection_steps[ind_min_infocrit,"Estimated parameters", drop=FALSE]
-  cat("Selected parameters:",selected_param,"\n")
-  param_values <- param_selection_steps[ind_min_infocrit,"Final values", drop=FALSE]
+  selected_param <- param_selection_steps$`Estimated parameters`[[ind_min_infocrit]]
+  cat("Selected parameters:",paste(selected_param, collapse = ","),"\n")
+  param_values <- param_selection_steps$`Final values`[[ind_min_infocrit]]
   nb_params <- length(param_values)
   for (ipar in 1:nb_params) {
     cat("Estimated value for", selected_param[ipar], ": ", param_values[ipar],"\n")
   }
-  cat("\nA table summarizing the results obtained at the different steps is stored in ", file.path(path_results,"param_selection_steps.csv"),"\n")
-  cat("Graphs and detailed results obtained for the different steps can be found in ", file.path(path_results,"results_all_steps","step_#"),"folders.\n")
 
 }
 
@@ -181,14 +190,23 @@ summary_FwdRegAgMIP <- function(param_selection_steps, info_crit_list, path_resu
 #' @return Save param_selection_steps in a csv file in folder path_results
 #'
 #' @importFrom utils write.table
+#' @importFrom purrr modify
 #'
 #' @keywords internal
 #'
 save_results_FwdRegAgMIP <- function(param_selection_steps, path_results) {
 
-  df <- as.data.frame(sapply(param_selection_steps, as.character, simplify = FALSE))
-  write.table(df, sep=";", file=file.path(path_results,
-                                          paste0("param_selection_steps.csv")),
+  save(param_selection_steps, file=file.path(path_results, "param_selection_steps.Rdata"))
+
+  tb <- purrr::modify_if(param_selection_steps, function(x) !is.list(x), as.list)
+  # format everything in char and 2 digits
+  tb <- purrr::modify(tb, function(x) unlist(purrr::modify(x, function(y) paste(format(y, scientific=FALSE, digits=2, nsmall=2),collapse=", "))))
+
+  utils::write.table(tb, sep=";", file=file.path(path_results, "param_selection_steps.csv"),
               row.names=FALSE)
+
+  cat("\nA table summarizing the results obtained at the different steps is stored in ", file.path(path_results,"param_selection_steps.csv"),"\n",
+      " and ",file.path(path_results,"param_selection_steps.Rdata"),"\n")
+  cat("Graphs and detailed results obtained for the different steps can be found in ", file.path(path_results,"results_all_steps","step_#"),"folders.\n")
 
 }

@@ -279,10 +279,10 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
     ### Initialize already estimated parameters with the values leading to the best criterion obtained so far
     if (!is.null(param_selection_steps)) {
       ind_min_infocrit <- which.min(param_selection_steps[[info_crit_list[[1]]()$name]])
-      best_final_values <- param_selection_steps[ind_min_infocrit,"Final values", drop=FALSE]
-      names(best_final_values) <- param_selection_steps[ind_min_infocrit,"Estimated parameters", drop=FALSE]
+      best_final_values <- param_selection_steps$`Final values`[[ind_min_infocrit]]
+      names(best_final_values) <- param_selection_steps$`Estimated parameters`[[ind_min_infocrit]]
       init_values <- get_init_values(param_info)
-      init_values[,names(best_final_values), drop=FALSE] <- best_final_values
+      init_values[,names(best_final_values)] <- as.data.frame(as.list(best_final_values))[rep(1,init_values_nb),,drop=FALSE]
       param_info <- set_init_values(param_info, init_values)
     }
 
