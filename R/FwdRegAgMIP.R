@@ -113,19 +113,6 @@ post_treat_FwdRegAgMIP <- function(optim_results, crit_options, crt_list, param_
 
   ## Store the results per step
   digits <- 2
-  # info_new_step <- setNames(data.frame(paste(crt_list,collapse = ", "),
-  #                                      paste(format(optim_results$init_values[optim_results$ind_min_crit,],
-  #                                                   scientific=FALSE, digits=digits,
-  #                                                   nsmall=2), collapse=", "),
-  #                                      #init_info_crit=format(init_info_crit, scientific=FALSE, digits=digits, nsmall=2),
-  #                                      paste(format(optim_results$final_values, scientific=FALSE, digits=digits, nsmall=2),collapse=", "),
-  #                                      format(init_crit$crit, scientific=FALSE, digits=digits, nsmall=2),
-  #                                      format(optim_results$min_crit_value, scientific=FALSE, digits=digits, nsmall=2),
-  #                                      format(final_info_crit, scientific=FALSE, digits=digits, nsmall=2),
-  #                                      ""),
-  #                           c("Estimated parameters","Initial parameter values","Final values",
-  #                             "Initial Sum of squared errors",
-  #                             "Final Sum of squared errors",info_crit_func()$name,"Selected step"))
   info_new_step <- setNames(tibble(list(crt_list),
                                        list(optim_results$init_values[optim_results$ind_min_crit,]),
                                        list(optim_results$final_values),
@@ -171,7 +158,7 @@ summary_FwdRegAgMIP <- function(param_selection_steps, info_crit_list, path_resu
   param_values <- param_selection_steps$`Final values`[[ind_min_infocrit]]
   nb_params <- length(param_values)
   for (ipar in 1:nb_params) {
-    cat("Estimated value for", selected_param[ipar], ": ", param_values[ipar],"\n")
+    cat("Estimated value for", selected_param[ipar], ": ", format(param_values[ipar], scientific=FALSE, digits=2, nsmall=2),"\n")
   }
 
 }
