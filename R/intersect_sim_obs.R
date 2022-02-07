@@ -11,6 +11,10 @@ intersect_sim_obs <- function(sim_list, obs_list) {
 
   # Intersect situations
   situations <- intersect(names(sim_list), names(obs_list))
+  if (length(situations)==0) {
+    warning("Simulations and observations do not contain common situations.")
+    return(NA)
+  }
   if (length(situations) < length(names(sim_list))) {
     sim_list[setdiff(names(sim_list), situations)] <- NULL
   }
