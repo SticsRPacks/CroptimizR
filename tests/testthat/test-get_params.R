@@ -46,6 +46,11 @@ prior_3$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1",
 prior_3$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
                                              c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),
                                init_values=data.frame(c(200,300),c(250,350)),lb=50,ub=400)
+prior_4=list(init_values=c(dlaimax=0.001),
+             lb=c(dlaimax=0.0001),
+             ub=c(dlaimax=0.01))
+prior_5=list()
+prior_5$dlaimax=list(init_values=c(0.001),lb=0.0001,ub=0.1)
 test_that("get_init_values", {
   expect_equal(eval(parse(text = "CroptimizR:::get_init_values(prior_1)")),
                data.frame(dlaimax=1e-03, durvieF=2e+02))
@@ -53,6 +58,10 @@ test_that("get_init_values", {
                data.frame(dlaimax=c(0.001,0.002), durvieF=c(50,200)))
   expect_equal(eval(parse(text = "CroptimizR:::get_init_values(prior_3)")),
                data.frame(dlaimax=c(0.001, 0.002), durvieF1=c(200, 300), durvieF2=c(250, 350)))
+  expect_equal(eval(parse(text = "CroptimizR:::get_init_values(prior_4)")),
+               data.frame(dlaimax=1e-03))
+  expect_equal(eval(parse(text = "CroptimizR:::get_init_values(prior_5)")),
+               data.frame(dlaimax=c(0.001)))
 })
 
 

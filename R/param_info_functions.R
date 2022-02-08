@@ -276,7 +276,7 @@ get_init_values <- function(param_info) {
     if (is.element(rownames(init_values)[1],params_names)) {
       init_values=as.data.frame(t(init_values))
       rownames(init_values)=1:nrow(init_values)
-      init_values=init_values[,params_names]  # to ensure that params_names and
+      init_values=init_values[,params_names, drop=FALSE]  # to ensure that params_names and
       # init_values have columns in same order
     } else if (!is.element(colnames(init_values)[1],params_names)) {
       if (ncol(init_values)!=length(params_names)) {
@@ -305,8 +305,6 @@ get_init_values <- function(param_info) {
             length(param_info[[i]]$sit_list)) {
 
           param_info[[i]]$init_values=t(param_info[[i]]$init_values)
-          rownames(param_info[[i]]$init_values)=
-            1:nrow(param_info[[i]]$init_values)
 
         }
 
@@ -319,10 +317,12 @@ get_init_values <- function(param_info) {
     }
 
     init_values=do.call(cbind, sapply(param_info, function(x) x$init_values))
+    if (!is.data.frame(init_values)) init_values <- as.data.frame(init_values)
     if (all(is.na(init_values))) {
       init_values=NULL
     } else {
       colnames(init_values)=params_names
+      rownames(init_values)=1:nrow(init_values)
     }
 
   }
