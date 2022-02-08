@@ -194,6 +194,6 @@ save_results_FwdRegAgMIP <- function(param_selection_steps, path_results) {
 
   cat("\nA table summarizing the results obtained at the different steps is stored in ", file.path(path_results,"param_selection_steps.csv"),"\n",
       " and ",file.path(path_results,"param_selection_steps.Rdata"),"\n")
-  cat("Graphs and detailed results obtained for the different steps can be found in ", file.path(path_results,"results_all_steps","step_#"),"folders.\n")
+  cat("Graphs and detailed results obtained for the different steps can be found in ", file.path(path_results,"results_all_steps","step_#"),"folders.\n\n")
 
 }
