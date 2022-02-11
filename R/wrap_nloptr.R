@@ -31,7 +31,7 @@ wrap_nloptr <- function(optim_options,param_info,crit_options) {
   # return requested information if only optim_options is given in argument
   if (nargs()==1 & methods::hasArg(optim_options)) {
     return(list(package="nloptr", family="Frequentist",
-                method="NLOPT_LN_NELDERMEAD", init_values_nb=optim_options$nb_rep))
+                method="NLOPT_LN_NELDERMEAD", init_values_nb=nb_rep))
   }
 
   crit_options$tot_max_eval <- nb_rep*maxeval
@@ -58,7 +58,7 @@ wrap_nloptr <- function(optim_options,param_info,crit_options) {
     elapsed <- Sys.time() - start_time
     progress <- 1.0 * irep / nb_rep
     remaining <- elapsed / progress - elapsed
-    print(sprintf('Working: %.2f%%. ETA: %.2f', progress * 100, remaining))
+    cat(sprintf('Working: %.2f%%. Estimated Time of Arrival: %.2f\n', progress * 100, remaining))
   }
   if (all(is.na(sapply(nlo,function(x) x$objective)))) {
     stop(paste("All",nb_rep,

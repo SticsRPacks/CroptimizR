@@ -15,6 +15,7 @@ wrap_BayesianTools <- function(optim_options,param_info,crit_options) {
   if (is.null(optim_options$iterations)) {
     stop("The total number of iterations of the Bayesian method used is missing: please provide it in optim_options$iterations.")
   }
+  if (is.null((optim_options$startValue))) { optim_options$startValue=3 }
   if (!is.numeric(optim_options$startValue)) {
     stop("startValue should be the number of markov chains. Please use param_info$init_values to prescribe initial values for the parameters.")
   }
