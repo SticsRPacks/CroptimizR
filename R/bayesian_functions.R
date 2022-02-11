@@ -23,7 +23,7 @@ summary_bayesian <- function(optim_options, param_info, optim_results) {
   else {
     print(tmp)
   }
-  print(paste("Complementary graphs and results can be found in ", path_results))
+  cat(paste("Complementary graphs and results can be found in ", path_results,"\n\n"))
 
 }
 

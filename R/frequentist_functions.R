@@ -20,11 +20,12 @@ summary_frequentist <- function(optim_options, param_info, optim_results) {
 
   # Display of parameters values for the repetition which has the smallest criterion
   for (ipar in 1:nb_params) {
-    print(paste("Estimated value for", param_names[ipar], ": ",
-                format(est_values[ind_min_crit,ipar], scientific=FALSE, digits=2, nsmall=2)))
+    cat(paste("\nEstimated value for", param_names[ipar], ": ",
+                format(est_values[ind_min_crit,ipar], scientific=FALSE, digits=2, nsmall=0),"\n"))
   }
-  print(paste("Minimum value of the criterion:", min_crit_value))
-  print(paste("Complementary graphs and results can be found in ", path_results))
+  cat(paste("Minimum value of the criterion:", format(min_crit_value,
+                                                      scientific=FALSE, digits=2, nsmall=0),"\n"))
+  cat(paste("Complementary graphs and results can be found in ", path_results,"\n\n"))
 
 }
 

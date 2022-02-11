@@ -154,7 +154,7 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
 
   # Measured elapse time
   tictoc::tic.clearlog()
-  tictoc::tic("Total time for parameter estimation")
+  tictoc::tic(quiet = TRUE)
 
   # Check inputs
 
@@ -257,6 +257,7 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
     value = .croptEnv,
     pos = parent
   )
+  .croptEnv$total_eval_count <- 0
 
   # Initializations before parameter selection loop
   oblig_param_list <- setdiff(param_names, candidate_param)
@@ -268,9 +269,9 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
   # Parameter selection loop
   while(!is.null(crt_candidates)) {
 
-    print("---------------------")
-    print(paste("Estimated parameters:",paste(crt_candidates,collapse=" ")))
-    print("---------------------")
+    cat("\n---------------------\n")
+    cat(paste("Estimated parameters:",paste(crt_candidates,collapse=" "),"\n"))
+    cat("---------------------\n")
 
     ## Initialize parameters
     tmp <- optim_switch(optim_method=optim_method,optim_options=optim_options)
@@ -354,8 +355,21 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
   }
 
   # Measure elapse time
-  tictoc::toc(log=TRUE)
-  res$total_time=unlist(tictoc::tic.log(format = TRUE))
+  log.lst <- tictoc::tic.log(format = FALSE)
+  timings <- unlist(lapply(log.lst, function(x) x$toc - x$tic))
+  res$model_total_time = as.numeric(format(sum(timings), scientific=FALSE, digits=0, nsmall=0))
+  res$model_average_time = as.numeric(format(mean(timings), scientific=FALSE, digits=2, nsmall=0))
+  cat(paste("Average time for the model to simulate all required situations:",res$model_average_time,
+            "sec elapsed\n"))
+  res$total_eval_count <- .croptEnv$total_eval_count
+  cat(paste("Total number of criterion evaluation:",res$total_eval_count,"\n"))
+  cat(paste("Total time of model simulations:",res$model_total_time,"sec elapsed\n"))
+  tictoc::tic.clearlog()
+  tictoc::toc(quiet = TRUE, log=TRUE)
+  log.lst <- tictoc::tic.log(format = FALSE)
+  res$total_time=as.numeric(format(log.lst[[1]]$toc-log.lst[[1]]$tic, scientific=FALSE, digits=0, nsmall=0))
+  cat(paste("Total time of parameter estimation process:",res$total_time,"sec elapsed\n"))
+  cat("----------------------\n")
   tictoc::tic.clearlog()
 
   return(res)

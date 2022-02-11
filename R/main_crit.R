@@ -211,11 +211,14 @@ main_crit <- function(param_values, crit_options) {
   }
 
   # Call model function
+  tictoc::tic(quiet = TRUE)
   try(model_results <- model_function(model_options = model_options,
                                   param_values = param_values,
                                   sit_names = sit_names,
                                   var_names = var_names,
                                   sit_var_dates_mask = sit_var_dates_mask))
+  tictoc::toc(quiet = TRUE, log=TRUE)
+  .croptEnv$total_eval_count <- .croptEnv$total_eval_count + 1
   sim <- model_results
 
 
