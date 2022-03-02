@@ -33,7 +33,8 @@ Imports:
 	tibble,
 	ggplot2,
 	methods,
-  lifecycle
+  lifecycle,
+  purrr
 Suggests:
     testthat (>= 2.1.0),
     covr,
