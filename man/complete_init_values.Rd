@@ -39,7 +39,7 @@ for an example)
 If you want randomization, set it to NULL}
 
 \item{satisfy_par_const}{User function for including constraints on estimated
-parameters (optional), see details section for more information}
+parameters (optional), see details section for more information.}
 }
 \value{
 A list similar to param_info including nb_values initial values. If

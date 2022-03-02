@@ -17,9 +17,10 @@ estim_param(
   transform_obs = NULL,
   transform_sim = NULL,
   satisfy_par_const = NULL,
-  var_names = NULL,
+  var = NULL,
   info_level = 1,
-  info_crit_func = list(CroptimizR::AICc, CroptimizR::AIC, CroptimizR::BIC)
+  info_crit_func = list(CroptimizR::AICc, CroptimizR::AIC, CroptimizR::BIC),
+  var_names = lifecycle::deprecated()
 )
 }
 \arguments{
@@ -83,20 +84,19 @@ for estimated parameters (i.e. parameters defined in \code{param_info} argument)
 that must only be considered as candidate for parameter estimation (see details section).}
 
 \item{transform_obs}{User function for transforming observations before each criterion
-evaluation (optional), see details section for more information}
+evaluation (optional), see details section for more information.}
 
 \item{transform_sim}{User function for transforming simulations before each criterion
-evaluation  (optional), see details section for more information}
+evaluation  (optional), see details section for more information.}
 
 \item{satisfy_par_const}{User function for including constraints on estimated
-parameters (optional), see details section for more information}
+parameters (optional), see details section for more information.}
 
-\item{var_names}{(optional) List of variables for which the wrapper must return results.
+\item{var}{(optional) List of variables for which the wrapper must return results.
 By default the wrapper is asked to simulate only the observed variables. However,
 it may be useful to simulate also other variables, typically when transform_sim
 and/or transform_obs functions are used. Note however that it is
-active only if
-the model_function used handles this argument.}
+active only if the model_function used handles this argument.}
 
 \item{info_level}{(optional) Integer that controls the level of information returned and stored
 by estim_param (in addition to the results automatically provided that depends on the method used).
@@ -110,7 +110,7 @@ i.e. as used to compute the criterion for each evaluation (element sim_intersect
 \item \code{3} to add observations, after transformation if transform_obs is provided, and after intersection with simulations,
 i.e. as used to compute the criterion for each evaluation (element obs_intersect in the returned list),
 \item \code{4} to add all model wrapper results for each evaluation, and all transformations if transform_sim is provided.
-(elements sim and sim_transformed in the returned list),
+(elements sim and sim_transformed in the returned list).
 }}
 
 \item{info_crit_func}{Function (or list of functions) to compute information criteria.
@@ -120,6 +120,9 @@ Values of the information criteria will be stored in the returned list.
 In case parameter selection is activated (i.e. if the argument candidate_param
 is defined (see details section)), the first information criterion given will be used.
 ONLY AVAILABLE FOR THE MOMENT FOR crit_function==crit_ols.}
+
+\item{var_names}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} \code{var_names} is no
+longer supported, use \code{var} instead.}
 }
 \value{
 prints, graphs and a list containing the results of the parameter estimation,

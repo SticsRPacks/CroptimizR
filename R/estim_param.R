@@ -5,22 +5,28 @@
 #' one column named Date with the dates (Date or POSIXct format) of the different observations
 #' and one column per observed variables with either the measured values or NA, if
 #' the variable is not observed at the given date.
+#'
 #' @param crit_function Function implementing the criterion to optimize
 #' (optional, see default value in the function signature). See
 #' [here](https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html)
 #' for more details about the list of proposed criteria.
+#'
 #' @param model_function Crop Model wrapper function to use.
+#'
 #' @param model_options List of options for the Crop Model wrapper (see help of
 #' the Crop Model wrapper function used).
+#'
 #' @param optim_method Name of the parameter estimation method to use (optional,
 #' see default value in the function signature). For the moment, can be "simplex"
 #' or "dreamzs". See [here](https://sticsrpacks.github.io/CroptimizR/articles/Available_parameter_estimation_algorithms.html)
 #' for a brief description and references on the available methods.
+#'
 #' @param optim_options List of options of the parameter estimation method, containing:
 #'   - `out_dir` Directory path where to write the optimization results (optional, default to `getwd()`)
 #'   - `path_results` `r lifecycle::badge("deprecated")` `path_results` is no longer supported, use `out_dir` instead.
 #'   - specific options depending on the method used. Click on the links to see examples with the [simplex](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html)
 #' and [DreamZS](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html) methods.
+#'
 #' @param param_info Information on the parameters to estimate.
 #' Either
 #' a list containing:
@@ -37,25 +43,31 @@
 #'   - `init_values`, the list of initial values per group  (data.frame, one column per group, optional).
 #' (see [here](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html)
 #' for an example)
+#'
 #' @param forced_param_values Named vector, must contain the values for the model parameters
 #' to force (optional, NULL by default). These values will be transferred to the
 #' model wrapper through its param_values argument so that the given parameters
 #' always take the same values for each model simulation. Should not include values
 #' for estimated parameters (i.e. parameters defined in `param_info` argument).
+#'
 #' @param candidate_param Names of the parameters, among those defined in the argument param_info,
 #' that must only be considered as candidate for parameter estimation (see details section).
+#'
 #' @param transform_obs User function for transforming observations before each criterion
-#' evaluation (optional), see details section for more information
+#' evaluation (optional), see details section for more information.
+#'
 #' @param transform_sim User function for transforming simulations before each criterion
-#' evaluation  (optional), see details section for more information
+#' evaluation  (optional), see details section for more information.
+#'
 #' @param satisfy_par_const User function for including constraints on estimated
-#' parameters (optional), see details section for more information
-#' @param var_names (optional) List of variables for which the wrapper must return results.
+#' parameters (optional), see details section for more information.
+#'
+#' @param var (optional) List of variables for which the wrapper must return results.
 #' By default the wrapper is asked to simulate only the observed variables. However,
 #' it may be useful to simulate also other variables, typically when transform_sim
 #' and/or transform_obs functions are used. Note however that it is
-#' active only if
-#' the model_function used handles this argument.
+#' active only if the model_function used handles this argument.
+#'
 #' @param info_level (optional) Integer that controls the level of information returned and stored
 #' by estim_param (in addition to the results automatically provided that depends on the method used).
 #' Higher code give more details.
@@ -67,7 +79,8 @@
 #'   - `3` to add observations, after transformation if transform_obs is provided, and after intersection with simulations,
 #' i.e. as used to compute the criterion for each evaluation (element obs_intersect in the returned list),
 #'   - `4` to add all model wrapper results for each evaluation, and all transformations if transform_sim is provided.
-#' (elements sim and sim_transformed in the returned list),
+#' (elements sim and sim_transformed in the returned list).
+#'
 #' @param info_crit_func Function (or list of functions) to compute information criteria.
 #' (optional, see default value in the function signature and [here](https://sticsrpacks.github.io/CroptimizR/reference/information_criteria.html)
 #' for more details about the list of proposed information criteria.).
@@ -75,6 +88,9 @@
 #' In case parameter selection is activated (i.e. if the argument candidate_param
 #' is defined (see details section)), the first information criterion given will be used.
 #' ONLY AVAILABLE FOR THE MOMENT FOR crit_function==crit_ols.
+#'
+#' @param var_names `r lifecycle::badge("deprecated")` `var_names` is no
+#'   longer supported, use `var` instead.
 #'
 #' @details
 #'   If the candidate_param argument is given, a parameter selection procedure following
@@ -129,9 +145,10 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
                         optim_options, param_info, forced_param_values=NULL,
                         candidate_param=NULL, transform_obs=NULL,
                         transform_sim=NULL, satisfy_par_const=NULL,
-                        var_names=NULL, info_level=1,
+                        var=NULL, info_level=1,
                         info_crit_func=list(CroptimizR::AICc, CroptimizR::AIC,
-                                            CroptimizR::BIC)) {
+                                            CroptimizR::BIC),
+                        var_names=lifecycle::deprecated()) {
 
   # Managing parameter names changes between versions:
   if (rlang::has_name(optim_options, "path_results")) {
@@ -139,6 +156,11 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
   } else if(rlang::has_name(optim_options, "out_dir")){
     # Note: we add a test here again because it is potentially never given
     optim_options$path_results <- optim_options$out_dir # to remove when we update inside the function
+  }
+  if (lifecycle::is_present(var_names)) {
+    lifecycle::deprecate_warn("0.5.0", "estim_param(var_names)", "estim_param(var)")
+  } else {
+    var_names <- var # to remove when we update inside the function
   }
 
   # Remove CroptimizR environment before exiting and save stored results (even if the process crashes)

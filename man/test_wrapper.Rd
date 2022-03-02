@@ -8,8 +8,10 @@ test_wrapper(
   model_function,
   model_options,
   param_values,
-  sit_names,
-  var_names = NULL
+  situation,
+  var = NULL,
+  sit_names = lifecycle::deprecated(),
+  var_names = lifecycle::deprecated()
 )
 }
 \arguments{
@@ -20,9 +22,15 @@ the Crop Model wrapper function used).}
 
 \item{param_values}{a named vector that contains values and names for AT LEAST TWO model parameters THAT ARE EXPECTED TO PLAY ON ITS RESULTS.}
 
-\item{sit_names}{Vector of situations names for which results must be tested.}
+\item{situation}{Vector of situations names for which results must be tested.}
 
-\item{var_names}{(optional) Vector of variables names for which results must be tested.}
+\item{var}{(optional) Vector of variables names for which results must be tested.}
+
+\item{sit_names}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} \code{sit_names} is no
+longer supported, use \code{situation} instead.}
+
+\item{var_names}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} \code{var_names} is no
+longer supported, use \code{var} instead.}
 }
 \value{
 A list containing:
