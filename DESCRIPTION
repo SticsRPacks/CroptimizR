@@ -1,7 +1,6 @@
 Package: CroptimizR
 Type: Package
 Title: A Package for Parameter Estimation, Uncertainty and Sensitivity Analysis for Crop Models  https://github.com/SticsRPacks/CroptimizR
-Date: 2021-07-22
 Version: 0.4.0
 Authors@R: c(person("Samuel", "Buis",, "samuel.buis@inra.fr", c("aut", "cre")),
  person("Michel", "Giner",, "michel.giner@cirad.fr", c("aut")),
@@ -18,6 +17,8 @@ Encoding: UTF-8
 LazyData: true
 ByteCompile: true
 RoxygenNote: 7.1.1
+Depends:
+    R (>= 3.6.0)
 Imports:
     nloptr,
     lhs,
