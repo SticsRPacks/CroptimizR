@@ -98,7 +98,7 @@ Here model parameters values are read in the model input files.
 ```{r eval=params$eval_auto_test, results='hide', message=FALSE, warning=FALSE}
 
 # Set the model options (see '? stics_wrapper_options' for details)
-model_options= stics_wrapper_options(javastics_path, data_dir = stics_inputs_path, parallel=FALSE)
+model_options= stics_wrapper_options(javastics=javastics_path, workspace = stics_inputs_path, parallel=FALSE)
 
 # Run the model on all situations found in stics_inputs_path
 sim_before_optim=stics_wrapper(model_options=model_options)
