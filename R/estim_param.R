@@ -379,7 +379,7 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
   # Measure elapse time
   log.lst <- tictoc::tic.log(format = FALSE)
   timings <- unlist(lapply(log.lst, function(x) x$toc - x$tic))
-  res$model_total_time = as.numeric(format(sum(timings), scientific=FALSE, digits=0, nsmall=0))
+  res$model_total_time = as.numeric(format(sum(timings), scientific=FALSE, digits=1, nsmall=0))
   res$model_average_time = as.numeric(format(mean(timings), scientific=FALSE, digits=2, nsmall=0))
   cat(paste("Average time for the model to simulate all required situations:",res$model_average_time,
             "sec elapsed\n"))
