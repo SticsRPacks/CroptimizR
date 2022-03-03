@@ -71,7 +71,7 @@ This part is not shown here, it is the same as this of the [specific and varieta
 ```{r eval=params$eval_auto_test, echo=FALSE, message=FALSE, warning=FALSE}
 # Read observation files
 obs_list=get_obs(javastics_workspace_path)
-obs_list=filter_obs(obs_list, var_names=c("lai_n"),include=TRUE)
+obs_list=filter_obs(obs_list, var=c("lai_n"),include=TRUE)
 ```
 
 

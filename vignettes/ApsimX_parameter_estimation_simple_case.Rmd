@@ -128,7 +128,7 @@ obs_list <- read_apsimx_output(sim_before_optim$db_file_name,
                                model_options$observed_table_name,
                                model_options$variable_names,
                                names(sim_before_optim$sim_list))
-obs_list=filter_obs(obs_list, sit_names=sit_name,include=TRUE)
+obs_list=filter_obs(obs_list, situation=sit_name,include=TRUE)
 ```
 
 

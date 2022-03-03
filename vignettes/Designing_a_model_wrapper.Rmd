@@ -52,7 +52,7 @@ Here's a header for a basic version of a model wrapper:
 #' NULL), the simulations will be performed using default values of the parameters 
 #' (e.g. as read in the model input files).
 #'
-#' @param sit_names Vector of situations names for which results must be returned. 
+#' @param situation Vector of situations names for which results must be returned. 
 #'
 #' @param model_options List containing any information needed to run the model 
 #' (e.g. path to model input files and executable, ...) 
@@ -62,7 +62,7 @@ Here's a header for a basic version of a model wrapper:
 #` simulated output values (one element of the list per simulated situation) 
 #'     o `error`: an error code indicating if at least one simulation ended with an error.
 
-model_wrapper <- function( param_values=NULL, sit_names, model_options, ...) {
+model_wrapper <- function( param_values=NULL, situation, model_options, ...) {
 
 }
 
@@ -71,7 +71,7 @@ model_wrapper <- function( param_values=NULL, sit_names, model_options, ...) {
 **Each argument detailed here must be defined for any CroptimizR model wrapper. You can use this header to develop yours.
 Be careful, "..." is mandatory at the end of the argument list since CroptimizR may give additional arguments for more advanced wrappers.**
 
-The shape of the `param_values` and `sit_names` arguments are imposed by CroptimizR. This is not the case of the `model_options` argument (except the fact that is must be a list): its content must be defined by the developper of the model wrapper. It is typically used to provide to the model wrapper what it needs to run the model (e.g. path to the model executable, path to the directory containing model input files for the situations to simulate, ...). The user provides `model_options` to `estim_param` which gives it as is to the model wrapper.
+The shape of the `param_values` and `situation` arguments are imposed by CroptimizR. This is not the case of the `model_options` argument (except the fact that is must be a list): its content must be defined by the developper of the model wrapper. It is typically used to provide to the model wrapper what it needs to run the model (e.g. path to the model executable, path to the directory containing model input files for the situations to simulate, ...). The user provides `model_options` to `estim_param` which gives it as is to the model wrapper.
 
 It is advisable to define `param_values` as an optional argument, so that the model wrapper can be used directly by the user (i.e. outside of `estim_param`) to run the model using default values for all of its parameters.
 
@@ -96,14 +96,14 @@ It is advisable to define `param_values` as an optional argument, so that the mo
   The value returned by the model wrapper must be a list, noted `results` in the following. This list must contain an element named `sim_list`. `sim_list` must be a named list (names = situations names) of size the number of situations to simulate and having the attribute "cropr_simulation" (to use the [CroPlotR package](https://github.com/SticsRPacks/CroPlotR)). 
   You can initialize it like this: 
   
-  `results$sim_list <- setNames(vector("list",length(sit_names)), nm = sit_names)`
+  `results$sim_list <- setNames(vector("list",length(situation)), nm = situation)`
   `attr(results$sim_list, "class")= "cropr_simulation"`
   
   Each element of the list should contains a data.frame (or a tibble) with the results obtained for all simulated variables and dates for the given situation.
   
   The data.frames must have one column called `Date` containing the simulations dates, in Date or POSIXct format (see R function `base::as.Date` or `base::as.POSIXct`). The other columns contains the values of the simulated variables, and their names must be put as column names.
   
-  For example, if `sit_names` is `c("situation1","situation2","situation3"), sim_list should look like:
+  For example, if `situation` is `c("situation1","situation2","situation3"), sim_list should look like:
   
   ```{r eval=FALSE}
   
@@ -148,15 +148,15 @@ A typical pseudo-code implementation of a basic wrapper function is thus:
 
 ```{r eval=FALSE}
 
-model_wrapper <- function( param_values=NULL, sit_names, model_options, ...) {
+model_wrapper <- function( param_values=NULL, situation, model_options, ...) {
   
   # Initializations
   param_names <- names(param_values)
-  results <- list(sim_list = setNames(vector("list",length(sit_names)), nm = sit_names),
+  results <- list(sim_list = setNames(vector("list",length(situation)), nm = situation),
                  error=FALSE)
   attr(results$sim_list, "class")= "cropr_simulation"
   
-  for (situation in sit_names) {
+  for (situation in situation) {
       
       # overwrite model input parameters of names contained in param_names with values 
       # retrieved in param_values
@@ -188,7 +188,7 @@ model_wrapper <- function( param_values=NULL, sit_names, model_options, ...) {
 
 * Run the test_wrapper function
 
-  `test_wrapper(model_function, model_options, param_values, sit_names, var_names=NULL)`
+  `test_wrapper(model_function, model_options, param_values, situation, var=NULL)`
   
   This function has been created to perfom several checks on user model wrappers.
   
@@ -197,8 +197,8 @@ model_wrapper <- function( param_values=NULL, sit_names, model_options, ...) {
     * model_function: the crop Model wrapper function to use.
     * model_options: the list of options of the Crop Model wrapper.
     * param_values: a named vector that contains values and names for AT LEAST TWO model parameters THAT ARE EXPECTED TO PLAY ON ITS RESULTS (e.g. param_values <- c(P1=10, P2=50))
-    * sit_names: a vector of situations names for which results must be tested.
-    * var_names (optional): a vector of variables names for which results must be tested (if taken into account by the wrapper)  
+    * situation: a vector of situations names for which results must be tested.
+    * var (optional): a vector of variables names for which results must be tested (if taken into account by the wrapper)  
   
   
   It runs the given model wrapper consecutively with different subsets of param_values. 
@@ -339,10 +339,10 @@ model_wrapper <- function( param_values=NULL, sit_names, model_options, ...) {
 
 * Outputs selection
 
-  Two additional arguments (`var_names` and `sit_var_dates_mask`) can be defined in the wrapper and are provided by the `estim_param` function when it calls the wrapper. 
+  Two additional arguments (`var` and `sit_var_dates_mask`) can be defined in the wrapper and are provided by the `estim_param` function when it calls the wrapper. 
   They can be used to select the results to return and are particularly useful if this selection allows saving computation time or memory (for example if model results are read in a databasis with specific request per variable and/or date, or if model results are read in different files depending on the variables ...).
   
-  `var_names` is a vector of variables names for which results must be returned. 
+  `var` is a vector of variables names for which results must be returned. 
   
   `sit_var_dates_mask` is a list of data.frame similar to `results$sim_list`. It indicates the list of variables and dates for each situation for which results must be returned: if `sit_var_dates_mask$situation1[j,"var1"]` does not contain NA, then the simulated value of variable "var1" at date `sit_var_dates_mask$situation1[j,"Date"]` must be returned in `results$sim_list[["situation1"]]`.
   
@@ -388,7 +388,7 @@ lai_toymodel <- function(year, max_lai=8, julday_incslope=100, inc_slope=5,
 }
 
 
-laitm_simple_wrapper <- function(param_values=NULL, sit_names, model_options, ...) {
+laitm_simple_wrapper <- function(param_values=NULL, situation, model_options, ...) {
   
   # A basic wrapper for lai_toymodel  
   #
@@ -396,7 +396,7 @@ laitm_simple_wrapper <- function(param_values=NULL, sit_names, model_options, ..
   #   - param_values: (optional) named vector containing the values of the lay_toymodel 
   #     parameters to force among max_lai, inc_slope, dec_slope, julday_incslope and 
   #     julday_decslope 
-  #   - sit_names: Vector of situations names for which results must be returned.
+  #   - situation: Vector of situations names for which results must be returned.
   #     In this case, the names of the situations are coded as "year_suffix" 
   #   - model_options: not used in this case
   #   - ...: mandatory since CroptimizR will give additional arguments not used here
@@ -408,17 +408,17 @@ laitm_simple_wrapper <- function(param_values=NULL, sit_names, model_options, ..
   #      - One column per simulated variable (lai in this case)
   # 
   # Details:
-  #  - Runs the lai_toymodel for a set of situations defined in sit_names 
+  #  - Runs the lai_toymodel for a set of situations defined in situation 
   #  - Forces the parameters of lai_toymodel with the values given in param_values 
   #    argument   
   #  - Returns the required simulated values
   #
   
-  results <- list(sim_list = setNames(vector("list",length(sit_names)), nm = sit_names),
+  results <- list(sim_list = setNames(vector("list",length(situation)), nm = situation),
                  error=FALSE)
   attr(results$sim_list, "class")= "cropr_simulation"
 
-  for (sit in sit_names) {
+  for (sit in situation) {
     
     # Retrieve year, emergence and crop_duration from situation name
     tmp <- stringr::str_split(sit,"_")
@@ -462,7 +462,7 @@ Testing this wrapper using the test_wrapper function:
 library(CroptimizR)
 
 test_wrapper(model_function = laitm_simple_wrapper, model_options = NULL, 
-             param_values = c(inc_slope=25, dec_slope=10), sit_names = c("2005_a"))
+             param_values = c(inc_slope=25, dec_slope=10), situation = c("2005_a"))
 
 ```
 
@@ -474,7 +474,7 @@ library(CroptimizR)
 library(dplyr)
 
 
-tmp <- laitm_simple_wrapper(sit_names="2005_a", param_values = c(inc_slope=25, dec_slope=10))
+tmp <- laitm_simple_wrapper(situation="2005_a", param_values = c(inc_slope=25, dec_slope=10))
 
 # Create synthetic observations by selecting simulated results
 ind <- sort(sample(nrow(tmp$sim_list$`2005_a`),50))
@@ -494,7 +494,7 @@ if(!require("CroPlotR")){
     devtools::install_github("SticsRPacks/CroPlotR@*release")
     library("CroPlotR")
 }
-tmp <- laitm_simple_wrapper(sit_names=c("2005_a","2006_b"),
+tmp <- laitm_simple_wrapper(situation=c("2005_a","2006_b"),
                             param_values = res$final_values)
 plot(tmp$sim_list,obs=obs_synth,type="scatter")
 
@@ -506,7 +506,7 @@ plot(tmp$sim_list,obs=obs_synth,type="scatter")
 This one can be used to perform simultaneous estimation of specific and varietal parameters on a dataset including several cultivars.
 
 ```{r, eval=TRUE}
-laitm_simple_wrapper_v2 <- function(param_values=NULL, sit_names, model_options, ...) {
+laitm_simple_wrapper_v2 <- function(param_values=NULL, situation, model_options, ...) {
   
   # A basic wrapper for lai_toymodel  
   #
@@ -516,7 +516,7 @@ laitm_simple_wrapper_v2 <- function(param_values=NULL, sit_names, model_options,
   #     julday_incslope and julday_decslope. An optional column named Situation containing   
   #     the name of the situations allows to define different values of the parameters
   #     for different situations. 
-  #   - sit_names: Vector of situations names for which results must be returned.
+  #   - situation: Vector of situations names for which results must be returned.
   #     In this case, the names of the situations are coded as "year_suffix" 
   #   - model_options: not used in this case
   #   - ...: mandatory since CroptimizR will give additional arguments not used here
@@ -528,19 +528,19 @@ laitm_simple_wrapper_v2 <- function(param_values=NULL, sit_names, model_options,
   #      - One column per simulated variable (lai in this case)
   # 
   # Details:
-  #  - Runs the lai_toymodel for a set of situations defined in sit_names 
+  #  - Runs the lai_toymodel for a set of situations defined in situation 
   #  - Forces the parameters of lai_toymodel with the values given in param_values 
   #   argument   
   #  - Returns the required simulated values
   #
   
-  results <- list(sim_list = setNames(vector("list",length(sit_names)), 
-                                      nm = sit_names), error=FALSE)
+  results <- list(sim_list = setNames(vector("list",length(situation)), 
+                                      nm = situation), error=FALSE)
   attr(results$sim_list, "class")= "cropr_simulation"
 
   param_values <- tibble::tibble(!!!param_values)  # convert param_values in a tibble
   
-  for (sit in sit_names) {
+  for (sit in situation) {
     
     # Retrieve year, emergence and crop_duration from situation name
     tmp <- stringr::str_split(sit,"_")
@@ -595,7 +595,7 @@ Testing this wrapper using the test_wrapper function:
 library(CroptimizR)
 
 test_wrapper(model_function = laitm_simple_wrapper_v2, model_options = NULL, 
-             param_values = c(inc_slope=25, dec_slope=10), sit_names = c("2005_a"))
+             param_values = c(inc_slope=25, dec_slope=10), situation = c("2005_a"))
 
 ```
 
@@ -607,7 +607,7 @@ of specific (dec_slope here) and varietal (inc_slope) parameters using this wrap
 library(CroptimizR)
 library(dplyr)
 
-tmp <- laitm_simple_wrapper_v2(sit_names=c("2005_a","2006_b"),
+tmp <- laitm_simple_wrapper_v2(situation=c("2005_a","2006_b"),
                             param_values = dplyr::tibble(situation=c("2005_a","2006_b"),
                                                   inc_slope=c(25,50), dec_slope=c(10,10)))
 
@@ -635,7 +635,7 @@ if(!require("CroPlotR")){
     devtools::install_github("SticsRPacks/CroPlotR@*release")
     library("CroPlotR")
 }
-tmp <- laitm_simple_wrapper_v2(sit_names=c("2005_a","2006_b"),
+tmp <- laitm_simple_wrapper_v2(situation=c("2005_a","2006_b"),
                             param_values = dplyr::tibble(situation=c("2005_a","2006_b"),
                                                   inc_slope=c(res$final_values[["inc_slope1"]],res$final_values[["inc_slope2"]]), dec_slope=res$final_values[["dec_slope"]]))
 plot(tmp$sim_list,obs=obs_synth,type="scatter")

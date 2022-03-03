@@ -121,7 +121,7 @@ In variables and parameters names, "(\*)" must be replaced by "_\*" to be handle
 sit_name="bo96iN+"  # can be a vector of situation names if you want to consider several, e.g. c("bo96iN+","bou00t1")
 var_name="lai_n"    # can be a vector of variable names if you want to consider several, e.g. c("lai_n","masec_n")
 obs_list= get_obs(javastics_workspace_path, usm = sit_name)
-obs_list= filter_obs(obs_list, var_names= var_name, include=TRUE)
+obs_list= filter_obs(obs_list, var= var_name, include=TRUE)
 ```
 
 
