@@ -389,7 +389,7 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
   tictoc::tic.clearlog()
   tictoc::toc(quiet = TRUE, log=TRUE)
   log.lst <- tictoc::tic.log(format = FALSE)
-  res$total_time=as.numeric(format(log.lst[[1]]$toc-log.lst[[1]]$tic, scientific=FALSE, digits=0, nsmall=0))
+  res$total_time=as.numeric(format(log.lst[[1]]$toc-log.lst[[1]]$tic, scientific=FALSE, digits=1, nsmall=0))
   cat(paste("Total time of parameter estimation process:",res$total_time,"sec elapsed\n"))
   cat("----------------------\n")
   tictoc::tic.clearlog()
