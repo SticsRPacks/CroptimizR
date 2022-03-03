@@ -6,20 +6,20 @@ obs_list <- list(
 
 test_that("filter_obs filters-out correctly", {
   # Remove all variables:
-  expect_null(suppressWarnings(filter_obs(obs_list, var_names = c("var1", "var2"))))
-  expect_warning(filter_obs(obs_list, var_names = c("var1", "var2")),
+  expect_null(suppressWarnings(filter_obs(obs_list, var = c("var1", "var2"))))
+  expect_warning(filter_obs(obs_list, var = c("var1", "var2")),
                  "All variables have been excluded from the list")
 })
 
 
 test_that("filter_obs filters-in correctly", {
   expect_equal(
-    suppressWarnings(filter_obs(obs_list, var_names = c("var1"), include = TRUE)),
+    suppressWarnings(filter_obs(obs_list, var = c("var1"), include = TRUE)),
     list(sit1 = obs_list[[1]][,1:2])
   )
 
   expect_equivalent(
-    suppressWarnings(filter_obs(obs_list, var_names = c("var2"), include = TRUE)),
+    suppressWarnings(filter_obs(obs_list, var = c("var2"), include = TRUE)),
     list(
       sit1 = obs_list[[1]][2,c(1,3)],
       sit3 = obs_list[[3]][,c(1,3)]
@@ -27,12 +27,12 @@ test_that("filter_obs filters-in correctly", {
   )
 
   expect_warning(
-    filter_obs(obs_list, var_names = c("var1"), include = TRUE),
+    filter_obs(obs_list, var = c("var1"), include = TRUE),
     "No observations found in USM\\(s\\) sit2, sit3",
   )
 
   expect_warning(
-    filter_obs(obs_list, var_names = c("var2"), include = TRUE),
+    filter_obs(obs_list, var = c("var2"), include = TRUE),
     "No observations found in USM\\(s\\) sit2",
   )
 

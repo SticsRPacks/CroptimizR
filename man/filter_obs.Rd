@@ -6,10 +6,12 @@
 \usage{
 filter_obs(
   obs_list,
-  var_names = NULL,
-  sit_names = NULL,
+  var = NULL,
+  situation = NULL,
   dates = NULL,
-  include = FALSE
+  include = FALSE,
+  var_names = lifecycle::deprecated(),
+  sit_names = lifecycle::deprecated()
 )
 }
 \arguments{
@@ -19,13 +21,19 @@ one column named Date with the dates (Date or POSIXct format) of the different o
 and one column per observed variables with either the measured values or NA, if
 the variable is not observed at the given date.}
 
-\item{var_names}{(optional, if not given all variables will be kept) Vector containing the names of the variables to include or exclude}
+\item{var}{(optional, if not given all variables will be kept) Vector containing the names of the variables to include or exclude}
 
-\item{sit_names}{(optional, if not given all situations will be kept) Vector containing the names of the situations to include or exclude}
+\item{situation}{(optional, if not given all situations will be kept) Vector containing the names of the situations to include or exclude}
 
 \item{dates}{(optional, if not given all dates will be kept) Vector containing the dates (POSIXct format) to include or exclude}
 
 \item{include}{(optional, FALSE by default) Flag indicating if the variables / situations / dates listed in inputs must be included (TRUE) or not (FALSE) in the resulting list}
+
+\item{var_names}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} \code{var_names} is no
+longer supported, use \code{var} instead.}
+
+\item{sit_names}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} \code{sit_names} is no
+longer supported, use \code{situation} instead.}
 }
 \value{
 obs_list List of filtered observed values (same format as \code{obs_list} input argument)
@@ -41,7 +49,7 @@ obs_list <- list(sit1=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-10")),
                                  var1=c(1.3,2)))
 
 # Keep only var1
-filter_obs(obs_list,var_names=c("var1"),include=TRUE)
+filter_obs(obs_list,var=c("var1"),include=TRUE)
 
 # Exclude observations at date "2009-11-30"
 filter_obs(obs_list,dates=as.POSIXct(c("2009-11-30")))

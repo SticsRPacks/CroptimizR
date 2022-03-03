@@ -1,10 +1,14 @@
 #' @title Filter observation list to exclude situations, variables or dates
 #'
 #' @inheritParams estim_param
-#' @param var_names (optional, if not given all variables will be kept) Vector containing the names of the variables to include or exclude
-#' @param sit_names (optional, if not given all situations will be kept) Vector containing the names of the situations to include or exclude
+#' @param var (optional, if not given all variables will be kept) Vector containing the names of the variables to include or exclude
+#' @param situation (optional, if not given all situations will be kept) Vector containing the names of the situations to include or exclude
 #' @param dates (optional, if not given all dates will be kept) Vector containing the dates (POSIXct format) to include or exclude
 #' @param include (optional, FALSE by default) Flag indicating if the variables / situations / dates listed in inputs must be included (TRUE) or not (FALSE) in the resulting list
+#' @param var_names `r lifecycle::badge("deprecated")` `var_names` is no
+#'   longer supported, use `var` instead.
+#' @param sit_names `r lifecycle::badge("deprecated")` `sit_names` is no
+#'   longer supported, use `situation` instead.
 #'
 #' @return obs_list List of filtered observed values (same format as `obs_list` input argument)
 #'
@@ -23,14 +27,28 @@
 #'                                  var1=c(1.3,2)))
 #'
 #' # Keep only var1
-#' filter_obs(obs_list,var_names=c("var1"),include=TRUE)
+#' filter_obs(obs_list,var=c("var1"),include=TRUE)
 #'
 #' # Exclude observations at date "2009-11-30"
 #' filter_obs(obs_list,dates=as.POSIXct(c("2009-11-30")))
 #'
 #'
 
-filter_obs <- function(obs_list, var_names=NULL, sit_names=NULL, dates=NULL, include=FALSE) {
+filter_obs <- function(obs_list, var=NULL, situation=NULL, dates=NULL,
+                       include=FALSE, var_names=lifecycle::deprecated(),
+                       sit_names=lifecycle::deprecated()) {
+
+  # Managing parameter names changes between versions:
+  if (lifecycle::is_present(sit_names)) {
+    lifecycle::deprecate_warn("0.5.0", "filter_obs(sit_names)", "filter_obs(situation)")
+  } else {
+    sit_names <- situation # to remove when we update inside the function
+  }
+  if (lifecycle::is_present(var_names)) {
+    lifecycle::deprecate_warn("0.5.0", "filter_obs(var_names)", "filter_obs(var)")
+  } else {
+    var_names <- var # to remove when we update inside the function
+  }
 
   # Check obs_list format
   if (is.null(obs_list)) {
