@@ -62,21 +62,26 @@ test_wrapper <- function(model_function, model_options, param_values, situation,
 
   param_values_1 <- param_values[1]
   param_values_2 <- param_values
-  if ("sit_names" %in% names(formals(model_function))) {
-    sim_1       <- model_function(param_values = param_values_1, model_options = model_options,
-                                  sit_names=sit_names, var_names=var_names)
-    sim_2       <- model_function(param_values = param_values_2, model_options = model_options,
-                                  sit_names=sit_names, var_names=var_names)
-    sim_3       <- model_function(param_values = param_values_1, model_options = model_options,
-                                  sit_names=sit_names, var_names=var_names)
-    lifecycle::deprecate_warn("0.5.0", "model_function(sit_names, var_names)", "model_function(situation, var)")
-  } else {
+  # hum, this test is a bit uggly but seems to be necessary
+  # (wrappers may have or not the arguments situation and var or their old name sit_names and var_names
+  # and they may have both in case the use deprecated arguments for sit_names and var_names ...
+  if ( (("situation" %in% names(formals(model_function))) | ("var" %in% names(formals(model_function)))) |
+       !(("sit_names" %in% names(formals(model_function))) |  ("var_names" %in% names(formals(model_function)))) ) {
     sim_1       <- model_function(param_values = param_values_1, model_options = model_options,
                                   situation=sit_names, var=var_names)
     sim_2       <- model_function(param_values = param_values_2, model_options = model_options,
                                   situation=sit_names, var=var_names)
     sim_3       <- model_function(param_values = param_values_1, model_options = model_options,
                                   situation=sit_names, var=var_names)
+  } else if ( ("sit_names" %in% names(formals(model_function))) |  ("var_names" %in% names(formals(model_function)))) {
+    sim_1       <- model_function(param_values = param_values_1, model_options = model_options,
+                                  sit_names=sit_names, var_names=var_names)
+    sim_2       <- model_function(param_values = param_values_2, model_options = model_options,
+                                  sit_names=sit_names, var_names=var_names)
+    sim_3       <- model_function(param_values = param_values_1, model_options = model_options,
+                                  sit_names=sit_names, var_names=var_names)
+    lifecycle::deprecate_warn("0.5.0", "model_function(sit_names)", "model_function(situation)")
+    lifecycle::deprecate_warn("0.5.0", "model_function(var_names)", "model_function(var)")
   }
 
   results <- list(test_results=test_results,

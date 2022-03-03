@@ -212,19 +212,24 @@ main_crit <- function(param_values, crit_options) {
 
   # Call model function
   tictoc::tic(quiet = TRUE)
-  if ("sit_names" %in% names(formals(model_function))) {
-    try(model_results <- model_function(model_options = model_options,
-                                        param_values = param_values,
-                                        sit_names = sit_names,
-                                        var_names = var_names,
-                                        sit_var_dates_mask = sit_var_dates_mask))
-    lifecycle::deprecate_warn("0.5.0", "model_function(sit_names, var_names)", "model_function(situation, var)")
-  } else {
+  # hum, this test is a bit uggly but seems to be necessary
+  # (wrappers may have or not the arguments situation and var or their old name sit_names and var_names
+  # and they may have both in case the use deprecated arguments for sit_names and var_names ...
+  if ( (("situation" %in% names(formals(model_function))) | ("var" %in% names(formals(model_function)))) |
+       !(("sit_names" %in% names(formals(model_function))) |  ("var_names" %in% names(formals(model_function)))) ) {
     try(model_results <- model_function(model_options = model_options,
                                         param_values = param_values,
                                         situation = sit_names,
                                         var = var_names,
                                         sit_var_dates_mask = sit_var_dates_mask))
+  } else if ( ("sit_names" %in% names(formals(model_function))) |  ("var_names" %in% names(formals(model_function)))) {
+    try(model_results <- model_function(model_options = model_options,
+                                        param_values = param_values,
+                                        sit_names = sit_names,
+                                        var_names = var_names,
+                                        sit_var_dates_mask = sit_var_dates_mask))
+    lifecycle::deprecate_warn("0.5.0", "model_function(sit_names)", "model_function(situation)")
+    lifecycle::deprecate_warn("0.5.0", "model_function(var_names)", "model_function(var)")
   }
   tictoc::toc(quiet = TRUE, log=TRUE)
   .croptEnv$total_eval_count <- .croptEnv$total_eval_count + 1
