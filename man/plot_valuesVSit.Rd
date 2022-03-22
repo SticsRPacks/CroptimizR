@@ -8,7 +8,7 @@ plot_valuesVSit(
   df,
   param_info,
   iter_or_eval = c("iter", "eval"),
-  crit_log = FALSE,
+  crit_log = TRUE,
   rep_label = c("begin_end", "begin", "end")
 )
 }

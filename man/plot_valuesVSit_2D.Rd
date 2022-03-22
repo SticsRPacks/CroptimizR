@@ -7,10 +7,10 @@
 plot_valuesVSit_2D(
   df,
   param_info,
-  iter_or_eval = c("iter", "eval"),
+  iter_or_eval = c("eval", "iter"),
   fill = c("crit", "rep"),
-  crit_log = FALSE,
-  lines = TRUE,
+  crit_log = TRUE,
+  lines = FALSE,
   rep_label = c("begin_end", "begin", "end")
 )
 }

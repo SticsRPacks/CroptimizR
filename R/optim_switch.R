@@ -69,6 +69,9 @@ optim_switch <- function(...) {
 
       res=do.call(wrap_nloptr, wrap_args)
       if (nargs()>2) {
+        if (arguments$crit_options$info_level>=1) {
+          res$params_and_crit <- dplyr::bind_rows(.croptEnv$params_and_crit)
+        }
         res <- post_treat_frequentist(optim_options=optim_options, param_info=param_info,
                                       optim_results=res, crit_options=crit_options)
         res$plots <- plot_frequentist(optim_options=optim_options, param_info=param_info,
@@ -89,6 +92,9 @@ optim_switch <- function(...) {
 
       res=do.call(wrap_optim, wrap_args)
       if (nargs()>2) {
+        if (arguments$crit_options$info_level>=1) {
+          res$params_and_crit <- dplyr::bind_rows(.croptEnv$params_and_crit)
+        }
         res <- post_treat_frequentist(optim_options=optim_options, param_info=param_info,
                                       optim_results=res, crit_options=crit_options)
         res$plots <- plot_frequentist(optim_options=optim_options, param_info=param_info, optim_results=res)

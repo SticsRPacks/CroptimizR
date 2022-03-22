@@ -39,7 +39,7 @@ for an example)
 \item{optim_results}{Results list returned by frequentist method wrappers}
 }
 \value{
-Returns the list of plots + save them in pdf files.
+Returns the list of plots + save them in a pdf file.
 }
 \description{
 Generate plots for frequentist methods

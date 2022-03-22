@@ -77,7 +77,7 @@ post_treat_frequentist <- function(optim_options, param_info, optim_results,
 #'
 #' @param optim_results Results list returned by frequentist method wrappers
 #'
-#' @return Returns the list of plots + save them in pdf files.
+#' @return Returns the list of plots + save them in a pdf file.
 #'
 #' @keywords internal
 #'
@@ -91,21 +91,21 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
 
   tryCatch(
     {
-      grDevices::pdf(file = file.path(path_results,"EstimatedVSinit.pdf") , width = 9, height = 9)
+      grDevices::pdf(file = file.path(path_results,"plots.pdf") , width = 9, height = 9)
     },
     error=function(cond) {
-      filename=paste0("EstimatedVSinit_new.pdf")
-      warning("Error trying to create ",path_results,"/EstimatedVSinit.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
+      filename=paste0("plots_new.pdf")
+      warning("Error trying to create ",path_results,"/plots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
       message(cond)
       grDevices::pdf(file = file.path(path_results,filename) , width = 9, height = 9)
     })
 
 
+  # EstimatedVSinit plot
+
   tryCatch(
     {
       p <- plot_estimVSinit(init_values, est_values, crit_values, bounds$lb, bounds$ub)
-      print(p)
-      grDevices::dev.off()
     },
     error=function(cond) {
 
@@ -115,11 +115,30 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
       message(cond)
 
       p <- plot_estimVSinit(init_values, est_values, crit_values, bounds$lb, bounds$ub, bubble=FALSE)
-      print(p)
-      grDevices::dev.off()
+
     })
 
+
+  # ValuesVSit plot
+
+  if (!is.null(optim_results$params_and_crit)) {
+
+    p <- c(p,plot_valuesVSit(optim_results$params_and_crit, param_info))
+
+  }
+
+  # ValuesVSit_2D plot
+
+  if (!is.null(optim_results$params_and_crit)) {
+
+    p <- c(p,plot_valuesVSit_2D(optim_results$params_and_crit, param_info))
+
+  }
+
+  print(p)
+  grDevices::dev.off()
   return(p)
+
 }
 
 #' @title Create plots of estimated versus initial values of the parameters
@@ -131,6 +150,7 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
 #' @param ub Vector containing the upper bounds of the estimated parameters
 #' @param bubble Logical indicating if bubbles of size proportional to the minimum
 #' values of the criterion should be plot (TRUE, default value) or not (FALSE).
+#' @param crit_log If TRUE, consider criterion values in log scale in bubble plot
 #'
 #' @return A named list containing one plot per parameter
 #'
@@ -143,7 +163,7 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
 #'
 #' @export
 #'
-plot_estimVSinit <- function(init_values, est_values, crit, lb, ub, bubble=TRUE) {
+plot_estimVSinit <- function(init_values, est_values, crit, lb, ub, bubble=TRUE, crit_log=TRUE) {
 
   nb_params <- ncol(init_values)
   param_names <-  colnames(init_values)
@@ -159,7 +179,8 @@ plot_estimVSinit <- function(init_values, est_values, crit, lb, ub, bubble=TRUE)
 
   for (param_name in param_names) {
 
-    df <- data.frame(init_values=init_values[,param_name],est_values=est_values[,param_name],crit=crit)
+    df <- data.frame(init_values=init_values[,param_name],est_values=est_values[,param_name],
+                     crit=crit)
     row.names(df) = paste0(seq(1:nb_rep))
 
     if (bubble) {
@@ -196,10 +217,17 @@ plot_estimVSinit <- function(init_values, est_values, crit, lb, ub, bubble=TRUE)
       xlim(minvalue[param_name],maxvalue[param_name]) + ylim(minvalue[param_name],maxvalue[param_name])
 
     if (bubble) {
+      trans <- "identity"
+      if (crit_log) {
+        trans <- "log10"
+      }
       if (length(unique(crit))>1) {
-        p[[param_name]]  <- p[[param_name]] +  scale_size_binned(range = c(2, 20), name="Final Value of \n minimized criteria")
+        p[[param_name]]  <- p[[param_name]] +  scale_size_binned(range = c(2, 20),
+                                                                 name="Final Value of \n minimized criteria",
+                                                                 trans=trans)
       } else {
-        p[[param_name]]  <- p[[param_name]] +  scale_size(name="Final Value of \n minimized criteria")
+        p[[param_name]]  <- p[[param_name]] +  scale_size(name="Final Value of \n minimized criteria",
+                                                          trans=trans)
       }
     }
 
@@ -235,7 +263,7 @@ plot_estimVSinit <- function(init_values, est_values, crit, lb, ub, bubble=TRUE)
 #' @export
 #'
 plot_valuesVSit <- function(df, param_info, iter_or_eval=c("iter", "eval"),
-                            crit_log=FALSE, rep_label=c("begin_end","begin","end")) {
+                            crit_log=TRUE, rep_label=c("begin_end","begin","end")) {
 
   param_names <- get_params_names(param_info)
   bounds=get_params_bounds(param_info)
@@ -343,11 +371,12 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval=c("iter", "eval"),
 #'
 #' @export
 #'
-plot_valuesVSit_2D <- function(df, param_info, iter_or_eval=c("iter","eval"),
-                               fill=c("crit","rep"), crit_log=FALSE, lines=TRUE,
+plot_valuesVSit_2D <- function(df, param_info, iter_or_eval=c("eval","iter"),
+                               fill=c("crit","rep"), crit_log=TRUE, lines=FALSE,
                                rep_label=c("begin_end","begin","end")) {
 
   param_names <- get_params_names(param_info)
+  if (length(param_names)<=1) return()
   bounds=get_params_bounds(param_info)
 
   lab= "evaluations"
