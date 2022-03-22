@@ -266,7 +266,7 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval=c("iter", "eval"),
                             crit_log=TRUE, rep_label=c("begin_end","begin","end")) {
 
   param_names <- get_params_names(param_info)
-  bounds=get_params_bounds(param_info)
+  bounds <- get_params_bounds(param_info)
 
   lab= "evaluations"
   if (iter_or_eval[1]=="iter") {
@@ -306,11 +306,11 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval=c("iter", "eval"),
     for (irep in unique(df$rep)) {
       p[[param_name]] <- p[[param_name]] +
         geom_line(data=filter(df,rep==irep))
-      if (rep_label=="begin_end" || rep_label=="begin") {
+      if (rep_label[1]=="begin_end" || rep_label[1]=="begin") {
         p[[param_name]] <- p[[param_name]] +
           geom_label(aes(label=rep), data=filter(df,rep==irep) %>% filter(eval==min(.data$eval)), size=3)
       }
-      if (rep_label=="begin_end" || rep_label=="end") {
+      if (rep_label[1]=="begin_end" || rep_label[1]=="end") {
         p[[param_name]] <- p[[param_name]] +
           geom_label(aes(label=rep), data=filter(df,rep==irep) %>% filter(eval==max(.data$eval)), size=3)
       }
@@ -423,11 +423,11 @@ plot_valuesVSit_2D <- function(df, param_info, iter_or_eval=c("eval","iter"),
       for (irep in unique(df$rep)) {
         p[[ipair]] <- p[[ipair]] +
           geom_path(data=filter(df,rep==irep))
-        if (rep_label=="begin_end" || rep_label=="begin") {
+        if (rep_label[1]=="begin_end" || rep_label[1]=="begin") {
           p[[ipair]] <- p[[ipair]] +
             geom_label(aes(label=rep), data=filter(df,rep==irep) %>% filter(eval==min(.data$eval)), size=3)
         }
-        if (rep_label=="begin_end" || rep_label=="end") {
+        if (rep_label[1]=="begin_end" || rep_label[1]=="end") {
           p[[ipair]] <- p[[ipair]] +
             geom_label(aes(label=rep), data=filter(df,rep==irep) %>% filter(eval==max(.data$eval)), size=3)
         }
