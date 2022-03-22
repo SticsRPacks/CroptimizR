@@ -23,9 +23,12 @@
 #'
 #' @param optim_options List of options of the parameter estimation method, containing:
 #'   - `out_dir` Directory path where to write the optimization results (optional, default to `getwd()`)
-#'   - `path_results` `r lifecycle::badge("deprecated")` `path_results` is no longer supported, use `out_dir` instead.
+#'   - `ranseed` Set random seed so that each execution of estim_param give the same
+#'   results when using the same seed. If you want randomization, set it to NULL,
+#'   otherwise set it to a number of your choice (e.g. 1234).
 #'   - specific options depending on the method used. Click on the links to see examples with the [simplex](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html)
 #' and [DreamZS](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html) methods.
+#'   - `path_results` `r lifecycle::badge("deprecated")` `path_results` is no longer supported, use `out_dir` instead.
 #'
 #' @param param_info Information on the parameters to estimate.
 #' Either
@@ -178,6 +181,9 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
   tictoc::tic.clearlog()
   tictoc::tic(quiet = TRUE)
 
+  # set seed
+  set.seed(optim_options$ranseed)
+
   # Check inputs
 
   ## optim_options
@@ -298,7 +304,8 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
     ## Initialize parameters
     tmp <- optim_switch(optim_method=optim_method,optim_options=optim_options)
     init_values_nb <- tmp$init_values_nb
-    param_info <- complete_init_values(param_info, nb_values=init_values_nb)
+    param_info <- complete_init_values(param_info, nb_values=init_values_nb,
+                                       satisfy_par_const=satisfy_par_const)
     ### Initialize already estimated parameters with the values leading to the best criterion obtained so far
     if (!is.null(param_selection_steps)) {
       ind_min_infocrit <- which.min(param_selection_steps[[info_crit_list[[1]]()$name]])
