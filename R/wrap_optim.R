@@ -80,7 +80,7 @@ wrap_optim <- function(optim_options,param_info,crit_options) {
     elapsed <- Sys.time() - start_time
     progress <- 1.0 * irep / nb_rep
     remaining <- elapsed / progress - elapsed
-    cat(sprintf('Working: %.2f%%. Estimated Time of Arrival: %.2f\n', progress * 100, remaining))
+    cat(sprintf('Working: %.2f%%. Estimated remaining time: %.2f %s\n', progress * 100, remaining, units(remaining)))
 
   }
   if (all(is.na(sapply(optim,function(x) x$value)))) {
