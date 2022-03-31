@@ -246,6 +246,7 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
   }
 
   ## Information criterion
+  info_crit_list <- list()
   if (is.function(info_crit_func)) {
     info_crit_list <- list(info_crit_func)
   } else if (is.list(info_crit_func)) {
