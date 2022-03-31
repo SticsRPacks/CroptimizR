@@ -77,6 +77,47 @@ crit_ols <- function(sim_list, obs_list) {
 
 #' @export
 #' @rdname ls_criteria
+crit_wls <- function(sim_list, obs_list, weight, alpha=1) {
+
+  # weight: for the moment weight is supposed to be a list of shape similar to obs_list
+  # several shape for weight could be considered (a named vector (per variable),
+  # a list similar to observations, or a df with a column situation to consider
+  # different values for different situations)
+  # alpha: multiplicative coefficient applied to weight
+
+  if(!nargs()) return("ls")  # return criterion type (ls, log-ls, likelihood, log-likelihood) if no argument given
+
+  # intersect weight with obs ...
+  tmp <- intersect_sim_obs(weight, obs_list)
+  if (!is.list(tmp)) {
+    warning("Intersection of weights and observations is empty (no date and/or variable in common)!")
+    return(NA)
+  }
+  weight <- tmp$sim_list
+
+  var_list <- unique(unlist(lapply(obs_list, function(x) colnames(x))))
+  var_list <- setdiff(var_list, "Date")
+
+  result <- 0
+
+  for (var in var_list) {
+    obs <- unlist(sapply(obs_list, function(x) x[is.element(colnames(x), var)]))
+    sim <- unlist(sapply(sim_list, function(x) x[is.element(colnames(x), var)]))
+    weight <- unlist(sapply(weight, function(x) x[is.element(colnames(x), var)]))
+    res <- (obs - sim) / (weight*alpha)
+    res <- res[!is.na(res)]
+
+    sz <- length(res)
+
+    result <- result + res %*% res
+  }
+
+  return(as.numeric(result))
+}
+
+
+#' @export
+#' @rdname ls_criteria
 crit_log_cwss <- function(sim_list, obs_list) {
 
   if(!nargs()) return("log-ls")  # return criterion type (ls, log-ls, likelihood, log-likelihood) if no argument given

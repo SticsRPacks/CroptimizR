@@ -3,11 +3,14 @@
 \name{ls_criteria}
 \alias{ls_criteria}
 \alias{crit_ols}
+\alias{crit_wls}
 \alias{crit_log_cwss}
 \alias{crit_log_cwss_corr}
 \title{Criteria to optimize}
 \usage{
 crit_ols(sim_list, obs_list)
+
+crit_wls(sim_list, obs_list, weight, alpha = 1)
 
 crit_log_cwss(sim_list, obs_list)
 
