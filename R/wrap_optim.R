@@ -62,6 +62,7 @@ wrap_optim <- function(optim_options,param_info,crit_options) {
   start_time <- Sys.time()
   for (irep in 1:nb_rep){
 
+    crit_options$irep <- irep
     if (method=="L-BFGS-B" || method=="Brent") {
       try(optim[[irep]] <- stats::optim(par=as.numeric(init_values[irep,]), fn = main_crit,
                                         method=method,
