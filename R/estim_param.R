@@ -237,11 +237,12 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
     if (!is.vector(forced_param_values)) {
       stop("Incorrect format for argument forced_param_values, should be a vector.")
     }
-    if (any(names(forced_param_values) %in% param_names)) {
+    if (any(names(forced_param_values) %in% setdiff(param_names, candidate_param))) {
       stop("The following parameters are defined both in forced_param_values and param_info
            arguments of estim_param function while they should not (a parameter cannot
-           be both forced and estimated):",paste(intersect(names(forced_param_values),param_names),
-                                                 collapse=","))
+           be both forced and estimated except if it is part of the `candidate` parameters):",
+           paste(intersect(names(forced_param_values),setdiff(param_names, candidate_param)),
+                 collapse=","))
     }
   }
 
