@@ -303,6 +303,7 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval=c("iter", "eval"),
       mid <- (max(log10(df$crit))-min(log10(df$crit)))/2+min(log10(df$crit))
     } else {
       warning("The criterion takes negative values, log transformation will not be done.")
+      crit_log <- FALSE
     }
   }
 
@@ -409,11 +410,14 @@ plot_valuesVSit_2D <- function(df, param_info, iter_or_eval=c("eval","iter"),
   df$rep <- as.factor(df$rep)
   trans <- "identity"
   mid <- (max(df$crit)-min(df$crit))/2+min(df$crit)
-  if (all(df$crit>0)) {
-    trans <- "log10"
-    mid <- (max(log10(df$crit))-min(log10(df$crit)))/2+min(log10(df$crit))
-  } else {
-    warning("The criterion takes negative values, log transformation will not be done.")
+  if (crit_log) {
+    if (all(df$crit>0)) {
+      trans <- "log10"
+      mid <- (max(log10(df$crit))-min(log10(df$crit)))/2+min(log10(df$crit))
+    } else {
+      warning("The criterion takes negative values, log transformation will not be done.")
+      crit_log <- FALSE
+    }
   }
 
   tmp<-rbind(bounds$lb,bounds$ub,select(df,-rep,-.data$crit, -eval, -.data$iter))  # -.data$ avoid NOTES on check ...
