@@ -155,7 +155,7 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
 
   # Managing parameter names changes between versions:
   if (rlang::has_name(optim_options, "path_results")) {
-    lifecycle::deprecate_warn("0.5.0", "estim_param(optim_options = 'use `out_dir` instead of `path_results`')")
+    lifecycle::deprecate_warn("0.5.0", "estim_param(optim_options = 'is deprecated, use `out_dir` instead of `path_results`')")
   } else if(rlang::has_name(optim_options, "out_dir")){
     # Note: we add a test here again because it is potentially never given
     optim_options$path_results <- optim_options$out_dir # to remove when we update inside the function
