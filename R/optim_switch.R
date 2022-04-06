@@ -49,7 +49,12 @@ optim_switch <- function(...) {
       if (!is.null(optim_options$path_results))
         save(res, file = file.path(optim_options$path_results,"optim_results.Rdata"))
 
-      if (!flag_error) return(res)
+      if (!flag_error) {
+        return(res)
+      } else {
+        warning(paste("An error occured during the parameter estimation process (see other error and warning messages). Partial results saved in",
+                      file.path(optim_options$path_results,"optim_results.Rdata")))
+      }
 
     })
 
@@ -108,7 +113,6 @@ optim_switch <- function(...) {
     },
     error=function(cond) {
       flag_error <<- TRUE
-      stop(cond)
     })
 
   return(res)
