@@ -131,8 +131,6 @@ longer supported, use \code{var} instead.}
 prints, graphs and a list containing the results of the parameter estimation,
 which content depends on the method used and on the values of the \code{info_level} argument.
 All results are saved in the folder \code{optim_options$out_dir}.
-See also the functions \code{\link{plot_valuesVSit}} and \code{\link{plot_valuesVSit_2D}}
-for performing additional plots on results of frequentist methods.
 }
 \description{
 main function for parameter estimation
