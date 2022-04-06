@@ -150,7 +150,6 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
 #' @param ub Vector containing the upper bounds of the estimated parameters
 #' @param bubble Logical indicating if bubbles of size proportional to the minimum
 #' values of the criterion should be plot (TRUE, default value) or not (FALSE).
-#' @param crit_log If TRUE, consider criterion values in log scale in bubble plot
 #'
 #' @return A named list containing one plot per parameter
 #'
@@ -163,7 +162,7 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
 #'
 #' @export
 #'
-plot_estimVSinit <- function(init_values, est_values, crit, lb, ub, bubble=TRUE, crit_log=TRUE) {
+plot_estimVSinit <- function(init_values, est_values, crit, lb, ub, bubble=TRUE) {
 
   nb_params <- ncol(init_values)
   param_names <-  colnames(init_values)
@@ -217,17 +216,11 @@ plot_estimVSinit <- function(init_values, est_values, crit, lb, ub, bubble=TRUE,
       xlim(minvalue[param_name],maxvalue[param_name]) + ylim(minvalue[param_name],maxvalue[param_name])
 
     if (bubble) {
-      trans <- "identity"
-      if (crit_log) {
-        trans <- "log10"
-      }
       if (length(unique(crit))>1) {
         p[[param_name]]  <- p[[param_name]] +  scale_size_binned(range = c(2, 20),
-                                                                 name="Final Value of \n minimized criteria",
-                                                                 trans=trans)
+                                                                 name="Final Value of \n minimized criteria")
       } else {
-        p[[param_name]]  <- p[[param_name]] +  scale_size(name="Final Value of \n minimized criteria",
-                                                          trans=trans)
+        p[[param_name]]  <- p[[param_name]] +  scale_size(name="Final Value of \n minimized criteria")
       }
     }
 
