@@ -45,7 +45,6 @@ Suggests:
 	SticsOnR,
 	ApsimOnR,
 	gridExtra,
-	hydroGOF,
 	doParallel,
 	devtools,
 	CroPlotR
