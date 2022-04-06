@@ -96,7 +96,6 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
     error=function(cond) {
       filename=paste0("plots_new.pdf")
       warning("Error trying to create ",path_results,"/plots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
-      message(cond)
       grDevices::pdf(file = file.path(path_results,filename) , width = 9, height = 9)
     })
 
@@ -112,7 +111,6 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
       warning("Error trying to create EstimatedVSinit bubble graph file. \n
               Maybe linked with the values of the criterion to plot (size of the bubbles):",
               paste0(crit_values,collapse = ","),"\n Trying without the bubbles ...")
-      message(cond)
 
       p <- plot_estimVSinit(init_values, est_values, crit_values, bounds$lb, bounds$ub, bubble=FALSE)
 
