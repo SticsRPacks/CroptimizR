@@ -46,12 +46,12 @@ optim_switch <- function(...) {
 
       }
 
-      if (!is.null(optim_options$path_results))
+      if (!is.null(optim_options$path_results) & length(res)>0)
         save(res, file = file.path(optim_options$path_results,"optim_results.Rdata"))
 
-      if (!flag_error) {
+      if (!flag_error) {  # do not return in case of error, otherwise error is not catched in tests
         return(res)
-      } else {
+      } else if (length(res)>0) {
         warning(paste("An error occured during the parameter estimation process (see other error and warning messages). Partial results saved in",
                       file.path(optim_options$path_results,"optim_results.Rdata")))
       }
@@ -69,6 +69,7 @@ optim_switch <- function(...) {
     crit_options <- arguments$crit_options
   }
 
+  flag_unknown_method <- FALSE
   tryCatch(
     if (optim_method=="nloptr.simplex" || optim_method=="simplex") {
 
@@ -107,13 +108,17 @@ optim_switch <- function(...) {
       }
 
     } else {
-
-      stop(paste0("Unknown method ",optim_method,", please choose between nloptr.simplex, BayesianTools.dreamzs and optim."))
-
+      flag_unknown_method <- TRUE
     },
     error=function(cond) {
+      warning(cond)
       flag_error <<- TRUE
     })
+
+  if (flag_unknown_method) {
+    flag_error <- TRUE
+    stop(paste0("Unknown method ",optim_method,", please choose between nloptr.simplex, BayesianTools.dreamzs and optim."))
+  }
 
   return(res)
 
