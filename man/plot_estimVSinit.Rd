@@ -4,15 +4,7 @@
 \alias{plot_estimVSinit}
 \title{Create plots of estimated versus initial values of the parameters}
 \usage{
-plot_estimVSinit(
-  init_values,
-  est_values,
-  crit,
-  lb,
-  ub,
-  bubble = TRUE,
-  crit_log = TRUE
-)
+plot_estimVSinit(init_values, est_values, crit, lb, ub, bubble = TRUE)
 }
 \arguments{
 \item{init_values}{Data.frame containing initial values of the parameters for each repetition}
@@ -27,8 +19,6 @@ plot_estimVSinit(
 
 \item{bubble}{Logical indicating if bubbles of size proportional to the minimum
 values of the criterion should be plot (TRUE, default value) or not (FALSE).}
-
-\item{crit_log}{If TRUE, consider criterion values in log scale in bubble plot}
 }
 \value{
 A named list containing one plot per parameter
