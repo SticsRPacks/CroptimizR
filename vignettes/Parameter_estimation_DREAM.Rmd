@@ -14,7 +14,7 @@ params:
   eval_auto_vignette: TRUE     # automatic execution of the vignette
   eval_manual_vignette: FALSE  # manual execution of the vignette (e.g. to create results graphs included in it)
   eval_auto_test: FALSE  # automatic test execution of the vignette, SET IT TO TRUE IF manual_vignette IS SET TO TRUE
-  path_to_JavaStics: "D:/Home/sbuis/Documents/GitHub/CroptimizR/vignettes/JavaSTICS-1.41-stics-9.0"
+  path_to_JavaStics: "D:/Home/sbuis/Documents/OUTILS-INFORMATIQUE/STICS/JavaSTICS-1.41-stics-9.0"
   result_path: "D:/Home/sbuis/Documents/GitHub/CroptimizR/vignettes"
 ---
 
