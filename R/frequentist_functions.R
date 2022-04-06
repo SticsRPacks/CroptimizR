@@ -88,19 +88,19 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
   init_values <- optim_results$init_values
   est_values <- optim_results$est_values
   crit_values <- optim_results$crit_values
+  p_all <- list()
+
+  # EstimatedVSinit plot
 
   tryCatch(
     {
-      grDevices::pdf(file = file.path(path_results,"plots.pdf") , width = 9, height = 9)
+      grDevices::pdf(file = file.path(path_results,"EstimatedVSinit.pdf") , width = 9, height = 9)
     },
     error=function(cond) {
-      filename=paste0("plots_new.pdf")
-      warning("Error trying to create ",path_results,"/plots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
+      filename=paste0("EstimatedVSinit_new.pdf")
+      warning("Error trying to create ",path_results,"/EstimatedVSinit.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
       grDevices::pdf(file = file.path(path_results,filename) , width = 9, height = 9)
     })
-
-
-  # EstimatedVSinit plot
 
   tryCatch(
     {
@@ -116,26 +116,56 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
 
     })
 
+  print(p)
+  grDevices::dev.off()
+  p_all$estimVSinit <- p
 
   # ValuesVSit plot
 
+  tryCatch(
+    {
+      grDevices::pdf(file = file.path(path_results,"ValuesVSit.pdf") , width = 9, height = 9)
+    },
+    error=function(cond) {
+      filename=paste0("ValuesVSit_new.pdf")
+      warning("Error trying to create ",path_results,"/ValuesVSit.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
+      grDevices::pdf(file = file.path(path_results,filename) , width = 9, height = 9)
+    })
+
   if (!is.null(optim_results$params_and_crit)) {
 
-    p <- c(p,plot_valuesVSit(optim_results$params_and_crit, param_info))
+    p <- plot_valuesVSit(optim_results$params_and_crit, param_info)
+    print(p)
+    grDevices::dev.off()
+    p_all$valuesVSit <- p
 
   }
 
   # ValuesVSit_2D plot
 
+  tryCatch(
+    {
+      grDevices::pdf(file = file.path(path_results,"ValuesVSit_2D.pdf") , width = 9, height = 9)
+    },
+    error=function(cond) {
+      filename=paste0("ValuesVSit_2D_new.pdf")
+      warning("Error trying to create ",path_results,"/ValuesVSit_2D.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
+      grDevices::pdf(file = file.path(path_results,filename) , width = 9, height = 9)
+    })
+
   if (!is.null(optim_results$params_and_crit)) {
 
-    p <- c(p,plot_valuesVSit_2D(optim_results$params_and_crit, param_info))
+    p <- plot_valuesVSit_2D(optim_results$params_and_crit, param_info)
+    print(p)
+    grDevices::dev.off()
+    p_all$valuesVSit_2D <- p
 
   }
 
   print(p)
   grDevices::dev.off()
-  return(p)
+
+  return(p_all)
 
 }
 
@@ -189,10 +219,11 @@ plot_estimVSinit <- function(init_values, est_values, crit, lb, ub, bubble=TRUE)
     }
 
     p[[param_name]] <- ggplot(df, tmp_aes) +
-      labs(title=paste0("Estimated vs Initial values of ",param_name," for the different repetitions"),
+      labs(title=paste0("Estimated vs Initial values of ",param_name," \n for the different repetitions"),
            y = paste("Estimated value for", param_name),
            x = paste("Initial value for", param_name),
-           fill = "Criterion")
+           fill = "Criterion") +
+      theme(plot.title = element_text(hjust = 0.5))
 
     if (bubble) {
       p[[param_name]]  <- p[[param_name]] +  geom_point(alpha=0.5, color="red")
