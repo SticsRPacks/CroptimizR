@@ -261,9 +261,9 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
       }
     })
     # set to NULL the info_crit that are not compatible with the crit_function used
-    info_crit_list[ sapply(info_crit_list, function(x)
-                             { ( x()$name=="AIC" || x()$name=="AICc" || x()$name=="BIC" ) && !identical(crit_function, crit_ols) }
-                           ) ] <- NULL
+    # info_crit_list[ sapply(info_crit_list, function(x)
+    #                          { ( x()$name=="AIC" || x()$name=="AICc" || x()$name=="BIC" ) && !identical(crit_function, crit_ols) }
+    #                        ) ] <- NULL
   }
   if (length(info_crit_list)==0) info_crit_list=NULL
 
