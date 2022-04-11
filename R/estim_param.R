@@ -25,7 +25,7 @@
 #'   - `out_dir` Directory path where to write the optimization results (optional, default to `getwd()`)
 #'   - `ranseed` Set random seed so that each execution of estim_param give the same
 #'   results when using the same seed. If you want randomization, set it to NULL,
-#'   otherwise set it to a number of your choice (e.g. 1234).
+#'   otherwise set it to a number of your choice (e.g. 1234) (optional, default to `getwd()`)
 #'   - specific options depending on the method used. Click on the links to see examples with the [simplex](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html)
 #' and [DreamZS](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html) methods.
 #'   - `path_results` `r lifecycle::badge("deprecated")` `path_results` is no longer supported, use `out_dir` instead.
@@ -134,18 +134,17 @@
 #' @return prints, graphs and a list containing the results of the parameter estimation,
 #' which content depends on the method used and on the values of the `info_level` argument.
 #' All results are saved in the folder `optim_options$out_dir`.
-#' See also the functions \code{\link{plot_valuesVSit}} and \code{\link{plot_valuesVSit_2D}}
-#' for performing additional plots on results of frequentist methods.
 #'
 #' @seealso For more details and examples, see the different vignettes in
 #' [CroptimizR website](https://sticsrpacks.github.io/CroptimizR/)
 #'
 #' @export
 #'
+#'
 
 estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
                         model_options=NULL, optim_method="nloptr.simplex",
-                        optim_options, param_info, forced_param_values=NULL,
+                        optim_options=NULL, param_info, forced_param_values=NULL,
                         candidate_param=NULL, transform_obs=NULL,
                         transform_sim=NULL, satisfy_par_const=NULL,
                         var=NULL, info_level=1,
@@ -155,7 +154,7 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
 
   # Managing parameter names changes between versions:
   if (rlang::has_name(optim_options, "path_results")) {
-    lifecycle::deprecate_warn("0.5.0", "estim_param(optim_options = 'use `out_dir` instead of `path_results`')")
+    lifecycle::deprecate_warn("0.5.0", "estim_param(optim_options = 'is deprecated, use `out_dir` instead of `path_results`')")
   } else if(rlang::has_name(optim_options, "out_dir")){
     # Note: we add a test here again because it is potentially never given
     optim_options$path_results <- optim_options$out_dir # to remove when we update inside the function
@@ -237,15 +236,17 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
     if (!is.vector(forced_param_values)) {
       stop("Incorrect format for argument forced_param_values, should be a vector.")
     }
-    if (any(names(forced_param_values) %in% param_names)) {
+    if (any(names(forced_param_values) %in% setdiff(param_names, candidate_param))) {
       stop("The following parameters are defined both in forced_param_values and param_info
            arguments of estim_param function while they should not (a parameter cannot
-           be both forced and estimated):",paste(intersect(names(forced_param_values),param_names),
-                                                 collapse=","))
+           be both forced and estimated except if it is part of the `candidate` parameters):",
+           paste(intersect(names(forced_param_values),setdiff(param_names, candidate_param)),
+                 collapse=","))
     }
   }
 
   ## Information criterion
+  info_crit_list <- list()
   if (is.function(info_crit_func)) {
     info_crit_list <- list(info_crit_func)
   } else if (is.list(info_crit_func)) {

@@ -185,10 +185,9 @@ res=estim_param(obs_list=obs_list,
                             param_info=param_info)
 ```
 
-The `estim_param` function returns a list which is also stored in the optim_results.Rdata file of the `optim_options$out_dir` folder. This list contains different information depending on the method used.
+The `estim_param` function returns a list which is also stored in the optim_results.Rdata file of the `optim_options$out_dir` folder. 
 
-
-For the Nelder-Mead simplex method it includes among others:
+This list contains different information depending on the method used. For the Nelder-Mead simplex method it includes among others:
 
 * the final values estimated for the parameters
 
@@ -238,6 +237,12 @@ res$crit_values
 res$crit_values
 ```
 
+* the plots automatically generated (see their description here-after) in ggplot format (=> can be modified using standard ggplot commands)
+
+* elapsed time measurements (total time, total time of model simulations, average time of model simulations)
+
+* the list of values of the parameters and of the criterion for each evaluation during the minimization (`params_and_crit`), if `info_level>=1`
+
 * the `nlo` variable, a list returned by the nloptr function that contains detailed information on the results of the minimization for each repetition.
 
 `nlo` is a list of size the number of repetitions. Each element stores many information about the corresponding minimization,
@@ -254,9 +259,9 @@ load(file.path("ResultsSimpleCase","optim_results.Rdata"))
 print(res$nlo[[res$ind_min_crit]])
 ```
 
+This data is also stored in the `optim_options$out_dir` folder (file optim_results.Rdata) along with a set of pdf files:
 
-
-Complementary graphs and data are stored in the `optim_options$out_dir` folder. Among them, the EstimatedVSinit.pdf file containing the following figures:
+* the EstimatedVSinit.pdf file contains the following figures:
 
 
 ```{r eval=params$eval_auto_vignette, echo=FALSE, out.width = '45%'}
@@ -269,11 +274,7 @@ knitr::include_graphics("ResultsSimpleCase/estimInit_durvieF.PNG")
 
 Figure 1: plots of estimated vs initial values of parameters dlaimax and durvieF. Numbers represent the repetition number of the minimization and the size of the bubbles the final value of the minimized criterion. The number in white, `r res$ind_min_crit` in this case, is the minimization that leads to the minimal value of the criterion among all repetitions. In this case, the minimizations converge towards different values for the parameters, which indicates the presence of local minima. Values of durvieF are close to the bounds. In realistic calibration cases with many observed situations / variables / dates this may indicate the presence of biases in the observation values or in the model output values simulated (this simple case with only one situation does not allow to derive such conclusion).
 
-Additional plots for inspecting the variations of parameters and criterion values over the iterations or evaluations can be obtained using the `plot_valuesVSit` and `plot_valuesVSit_2D` functions.
-
-```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE, echo=TRUE}
-plot_valuesVSit(res$params_and_crit, param_info)
-```
+* the ValuesVSit.pdf file contains:
 
 ```{r eval=params$eval_auto_vignette, echo=FALSE, out.width = '45%', fig.show = "hold", fig.align="default"}
 
@@ -287,10 +288,7 @@ knitr::include_graphics("ResultsSimpleCase/durvieFVSit.PNG")
 
 Figure 2: The top left figure displays the evolution of the minimized criterion value in function of the iterations of the minimization. Colors and labels represent the repetition number. The top right figure displays the evolution of the value of the dlaimax parameter in function of the iterations of the minimization. Labels represent the repetition number and colors the value of the minimized criterion. The figure at the bottom is the same but for the durvieF parameter.
 
-
-```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE, echo=TRUE}
-plot_valuesVSit_2D(res$params_and_crit, param_info, iter_or_eval=c("eval"), lines=FALSE)
-```
+* the ValuesVSit_2D.pdf file contains:
 
 ```{r eval=params$eval_auto_vignette, echo=FALSE, message=FALSE, warning=FALSE, out.width = '60%', fig.cap="Figure 3: This figure displays all the values proposed by the minimizer for the durvieF (Y axis) and dlaimax (X-axis) parameters and the associated values of the minimized criterion (dot colors)."}
 knitr::include_graphics("ResultsSimpleCase/dlaimaxVSdurvieF.PNG")

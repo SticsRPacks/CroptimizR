@@ -10,7 +10,7 @@ estim_param(
   model_function,
   model_options = NULL,
   optim_method = "nloptr.simplex",
-  optim_options,
+  optim_options = NULL,
   param_info,
   forced_param_values = NULL,
   candidate_param = NULL,
@@ -48,9 +48,12 @@ for a brief description and references on the available methods.}
 \item{optim_options}{List of options of the parameter estimation method, containing:
 \itemize{
 \item \code{out_dir} Directory path where to write the optimization results (optional, default to \code{getwd()})
-\item \code{path_results} \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} \code{path_results} is no longer supported, use \code{out_dir} instead.
+\item \code{ranseed} Set random seed so that each execution of estim_param give the same
+results when using the same seed. If you want randomization, set it to NULL,
+otherwise set it to a number of your choice (e.g. 1234) (optional, default to \code{getwd()})
 \item specific options depending on the method used. Click on the links to see examples with the \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html}{simplex}
 and \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html}{DreamZS} methods.
+\item \code{path_results} \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} \code{path_results} is no longer supported, use \code{out_dir} instead.
 }}
 
 \item{param_info}{Information on the parameters to estimate.
@@ -128,8 +131,6 @@ longer supported, use \code{var} instead.}
 prints, graphs and a list containing the results of the parameter estimation,
 which content depends on the method used and on the values of the \code{info_level} argument.
 All results are saved in the folder \code{optim_options$out_dir}.
-See also the functions \code{\link{plot_valuesVSit}} and \code{\link{plot_valuesVSit_2D}}
-for performing additional plots on results of frequentist methods.
 }
 \description{
 main function for parameter estimation

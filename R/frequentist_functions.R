@@ -88,20 +88,19 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
   init_values <- optim_results$init_values
   est_values <- optim_results$est_values
   crit_values <- optim_results$crit_values
+  p_all <- list()
+
+  # EstimatedVSinit plot
 
   tryCatch(
     {
-      grDevices::pdf(file = file.path(path_results,"plots.pdf") , width = 9, height = 9)
+      grDevices::pdf(file = file.path(path_results,"EstimatedVSinit.pdf") , width = 9, height = 9)
     },
     error=function(cond) {
-      filename=paste0("plots_new.pdf")
-      warning("Error trying to create ",path_results,"/plots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
-      message(cond)
+      filename=paste0("EstimatedVSinit_new.pdf")
+      warning("Error trying to create ",path_results,"/EstimatedVSinit.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
       grDevices::pdf(file = file.path(path_results,filename) , width = 9, height = 9)
     })
-
-
-  # EstimatedVSinit plot
 
   tryCatch(
     {
@@ -112,32 +111,61 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
       warning("Error trying to create EstimatedVSinit bubble graph file. \n
               Maybe linked with the values of the criterion to plot (size of the bubbles):",
               paste0(crit_values,collapse = ","),"\n Trying without the bubbles ...")
-      message(cond)
 
       p <- plot_estimVSinit(init_values, est_values, crit_values, bounds$lb, bounds$ub, bubble=FALSE)
 
     })
 
+  print(p)
+  grDevices::dev.off()
+  p_all$estimVSinit <- p
 
   # ValuesVSit plot
 
+  tryCatch(
+    {
+      grDevices::pdf(file = file.path(path_results,"ValuesVSit.pdf") , width = 9, height = 9)
+    },
+    error=function(cond) {
+      filename=paste0("ValuesVSit_new.pdf")
+      warning("Error trying to create ",path_results,"/ValuesVSit.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
+      grDevices::pdf(file = file.path(path_results,filename) , width = 9, height = 9)
+    })
+
   if (!is.null(optim_results$params_and_crit)) {
 
-    p <- c(p,plot_valuesVSit(optim_results$params_and_crit, param_info))
+    p <- plot_valuesVSit(optim_results$params_and_crit, param_info)
+    print(p)
+    grDevices::dev.off()
+    p_all$valuesVSit <- p
 
   }
 
   # ValuesVSit_2D plot
 
+  tryCatch(
+    {
+      grDevices::pdf(file = file.path(path_results,"ValuesVSit_2D.pdf") , width = 9, height = 9)
+    },
+    error=function(cond) {
+      filename=paste0("ValuesVSit_2D_new.pdf")
+      warning("Error trying to create ",path_results,"/ValuesVSit_2D.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
+      grDevices::pdf(file = file.path(path_results,filename) , width = 9, height = 9)
+    })
+
   if (!is.null(optim_results$params_and_crit)) {
 
-    p <- c(p,plot_valuesVSit_2D(optim_results$params_and_crit, param_info))
+    p <- plot_valuesVSit_2D(optim_results$params_and_crit, param_info)
+    print(p)
+    grDevices::dev.off()
+    p_all$valuesVSit_2D <- p
 
   }
 
   print(p)
   grDevices::dev.off()
-  return(p)
+
+  return(p_all)
 
 }
 
@@ -150,7 +178,6 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
 #' @param ub Vector containing the upper bounds of the estimated parameters
 #' @param bubble Logical indicating if bubbles of size proportional to the minimum
 #' values of the criterion should be plot (TRUE, default value) or not (FALSE).
-#' @param crit_log If TRUE, consider criterion values in log scale in bubble plot
 #'
 #' @return A named list containing one plot per parameter
 #'
@@ -163,7 +190,7 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
 #'
 #' @export
 #'
-plot_estimVSinit <- function(init_values, est_values, crit, lb, ub, bubble=TRUE, crit_log=TRUE) {
+plot_estimVSinit <- function(init_values, est_values, crit, lb, ub, bubble=TRUE) {
 
   nb_params <- ncol(init_values)
   param_names <-  colnames(init_values)
@@ -192,10 +219,11 @@ plot_estimVSinit <- function(init_values, est_values, crit, lb, ub, bubble=TRUE,
     }
 
     p[[param_name]] <- ggplot(df, tmp_aes) +
-      labs(title=paste0("Estimated vs Initial values of ",param_name," for the different repetitions"),
+      labs(title=paste0("Estimated vs Initial values of ",param_name," \n for the different repetitions"),
            y = paste("Estimated value for", param_name),
            x = paste("Initial value for", param_name),
-           fill = "Criterion")
+           fill = "Criterion") +
+      theme(plot.title = element_text(hjust = 0.5))
 
     if (bubble) {
       p[[param_name]]  <- p[[param_name]] +  geom_point(alpha=0.5, color="red")
@@ -217,17 +245,11 @@ plot_estimVSinit <- function(init_values, est_values, crit, lb, ub, bubble=TRUE,
       xlim(minvalue[param_name],maxvalue[param_name]) + ylim(minvalue[param_name],maxvalue[param_name])
 
     if (bubble) {
-      trans <- "identity"
-      if (crit_log) {
-        trans <- "log10"
-      }
       if (length(unique(crit))>1) {
         p[[param_name]]  <- p[[param_name]] +  scale_size_binned(range = c(2, 20),
-                                                                 name="Final Value of \n minimized criteria",
-                                                                 trans=trans)
+                                                                 name="Final Value of \n minimized criteria")
       } else {
-        p[[param_name]]  <- p[[param_name]] +  scale_size(name="Final Value of \n minimized criteria",
-                                                          trans=trans)
+        p[[param_name]]  <- p[[param_name]] +  scale_size(name="Final Value of \n minimized criteria")
       }
     }
 
@@ -281,6 +303,7 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval=c("iter", "eval"),
       mid <- (max(log10(df$crit))-min(log10(df$crit)))/2+min(log10(df$crit))
     } else {
       warning("The criterion takes negative values, log transformation will not be done.")
+      crit_log <- FALSE
     }
   }
 
@@ -387,11 +410,14 @@ plot_valuesVSit_2D <- function(df, param_info, iter_or_eval=c("eval","iter"),
   df$rep <- as.factor(df$rep)
   trans <- "identity"
   mid <- (max(df$crit)-min(df$crit))/2+min(df$crit)
-  if (all(df$crit>0)) {
-    trans <- "log10"
-    mid <- (max(log10(df$crit))-min(log10(df$crit)))/2+min(log10(df$crit))
-  } else {
-    warning("The criterion takes negative values, log transformation will not be done.")
+  if (crit_log) {
+    if (all(df$crit>0)) {
+      trans <- "log10"
+      mid <- (max(log10(df$crit))-min(log10(df$crit)))/2+min(log10(df$crit))
+    } else {
+      warning("The criterion takes negative values, log transformation will not be done.")
+      crit_log <- FALSE
+    }
   }
 
   tmp<-rbind(bounds$lb,bounds$ub,select(df,-rep,-.data$crit, -eval, -.data$iter))  # -.data$ avoid NOTES on check ...

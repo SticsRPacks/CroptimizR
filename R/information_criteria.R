@@ -49,8 +49,9 @@ AICc <- function(obs_list, crit_value, param_nb) {
   p <- param_nb
 
   if ((n-p-1)==0) {
-    stop("AICc criterion cannot be used if n-p-1==0,
-         where n is the number of observation and p the number of parameters")
+    warning("AICc takes Inf value since n-p-1==0,
+         where n is the number of observation and p the number of parameters.")
+    return(Inf)
   }
 
   return(n*log(crit_value/n)+2*p+2*p*(p+1)/(n-p-1))
