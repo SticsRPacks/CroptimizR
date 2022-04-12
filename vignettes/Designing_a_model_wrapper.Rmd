@@ -97,7 +97,8 @@ It is advisable to define `param_values` as an optional argument, so that the mo
   You can initialize it like this: 
   
   `results$sim_list <- setNames(vector("list",length(situation)), nm = situation)`
-  `attr(results$sim_list, "class")= "cropr_simulation"`
+  
+  `attr(results$sim_list, "class") <- "cropr_simulation"`
   
   Each element of the list should contains a data.frame (or a tibble) with the results obtained for all simulated variables and dates for the given situation.
   

@@ -167,9 +167,9 @@ main_crit <- function(param_values, crit_options) {
   }
 
   # Handle the parameters to force
-  if (is.vector(param_values)) {
+  if (is.vector(param_values) | is.list(param_values)) {
     param_values <- c(forced_param_values,param_values)
-  } else if(!is.null(forced_param_values)) {
+  } else if(!is.null(forced_param_values) & length(forced_param_values)>0) {
     param_values <- dplyr::bind_cols(tibble::tibble(!!!forced_param_values),param_values)
   }
 
