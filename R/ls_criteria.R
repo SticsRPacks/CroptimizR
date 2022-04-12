@@ -87,24 +87,38 @@ crit_wls <- function(sim_list, obs_list, weight, alpha=1) {
 
   if(!nargs()) return("ls")  # return criterion type (ls, log-ls, likelihood, log-likelihood) if no argument given
 
-  # intersect weight with obs ...
-  tmp <- intersect_sim_obs(weight, obs_list)
-  if (!is.list(tmp)) {
-    warning("Intersection of weights and observations is empty (no date and/or variable in common)!")
-    return(NA)
-  }
-  weight <- tmp$sim_list
-
   var_list <- unique(unlist(lapply(obs_list, function(x) colnames(x))))
   var_list <- setdiff(var_list, "Date")
+
+  if (is.list(weight)) {
+    # intersect weight with obs ...
+    tmp <- intersect_sim_obs(weight, obs_list)
+    if (!is.list(tmp)) {
+      warning("Intersection of weights and observations is empty (no date and/or variable in common)!")
+      return(NA)
+    }
+    weight <- tmp$sim_list
+  } else if (is.vector(weight)) {
+    if (!all(var_list %in% names(weight))) {
+      stop(paste("Argument `weight` must include one value per observed variable. \n Seems that no value has been provided for variable",
+                 setdiff(var_list, names(weight))))
+    }
+  } else {
+    stop("Argument `weight` must be either a named list, of shape similar to obs_list, or a named vector (one value per observed variable)")
+  }
+
 
   result <- 0
 
   for (var in var_list) {
     obs <- unlist(sapply(obs_list, function(x) x[is.element(colnames(x), var)]))
     sim <- unlist(sapply(sim_list, function(x) x[is.element(colnames(x), var)]))
-    weight <- unlist(sapply(weight, function(x) x[is.element(colnames(x), var)]))
-    res <- (obs - sim) / (weight*alpha)
+    if (is.list(weight)) {
+      crt_weight <- unlist(sapply(weight, function(x) x[is.element(colnames(x), var)]))
+    } else if (is.vector(weight)) {
+      crt_weight <- weight[[var]]
+    }
+    res <- (obs - sim) / (crt_weight*alpha)
     res <- res[!is.na(res)]
 
     sz <- length(res)
