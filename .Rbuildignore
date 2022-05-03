@@ -8,7 +8,7 @@
 CODE_OF_CONDUCT.md
 README.Rmd
 ^bin$
-
+^CITATION.cff$
 # temporary
 R/tests.txt
 Preliminary\ work
