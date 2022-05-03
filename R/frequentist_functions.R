@@ -162,9 +162,6 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
 
   }
 
-  print(p)
-  grDevices::dev.off()
-
   return(p_all)
 
 }
