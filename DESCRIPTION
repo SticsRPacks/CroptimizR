@@ -2,6 +2,7 @@ Package: CroptimizR
 Type: Package
 Title: A Package to estimate parameters of Crop Models
 Version: 0.4.0
+Date: 2021-07-22
 Authors@R: c(person(given = "Samuel", family = "Buis", email = "samuel.buis@inrae.fr", role= c("aut", "cre"), comment = c(ORCID = "0000-0002-8676-5447")),
 			person(given = "Patrice", family = "Lecharpentier", email = "patrice.lecharpentier@inrae.fr", role= "aut", comment = c(ORCID = "0000-0002-4044-4322")),
 			person(given = "Remi", family = "Vezy", email = "remi.vezy@cirad.fr", role= "aut",comment = c(ORCID = "0000-0002-0808-1461")),
