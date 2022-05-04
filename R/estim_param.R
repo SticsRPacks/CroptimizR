@@ -148,8 +148,8 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
                         candidate_param=NULL, transform_obs=NULL,
                         transform_sim=NULL, satisfy_par_const=NULL,
                         var=NULL, info_level=1,
-                        info_crit_func=list(CroptimizR::AICc, CroptimizR::AIC,
-                                            CroptimizR::BIC),
+                        info_crit_func=list(CroptimizR::BIC, CroptimizR::AICc,
+                                            CroptimizR::AIC),
                         var_names=lifecycle::deprecated()) {
 
   # Managing parameter names changes between versions:
@@ -382,6 +382,7 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
   if (!is.null(candidate_param)) {
     summary_FwdRegAgMIP(param_selection_steps, info_crit_list, path_results_ORI)
     save_results_FwdRegAgMIP(param_selection_steps, path_results_ORI)
+    res$param_selection_steps <- param_selection_steps
   }
 
   # Measure elapse time
