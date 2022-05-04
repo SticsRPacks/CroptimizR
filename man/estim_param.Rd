@@ -19,7 +19,7 @@ estim_param(
   satisfy_par_const = NULL,
   var = NULL,
   info_level = 1,
-  info_crit_func = list(CroptimizR::AICc, CroptimizR::AIC, CroptimizR::BIC),
+  info_crit_func = list(CroptimizR::BIC, CroptimizR::AICc, CroptimizR::AIC),
   var_names = lifecycle::deprecated()
 )
 }
