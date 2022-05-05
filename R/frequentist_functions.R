@@ -162,9 +162,6 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
 
   }
 
-  print(p)
-  grDevices::dev.off()
-
   return(p_all)
 
 }
@@ -307,7 +304,7 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval=c("iter", "eval"),
     }
   }
 
-  tmp<-rbind(bounds$lb,bounds$ub,df)
+  tmp<-rbind(bounds$lb,bounds$ub,select(df,param_names))
   tmp[tmp==Inf | tmp==-Inf]<-NA
   minvalue<-apply(tmp,2,min,na.rm=TRUE); maxvalue<-apply(tmp,2,max,na.rm=TRUE)
   minvalue<-minvalue-0.05*(maxvalue-minvalue); maxvalue<-maxvalue+0.05*(maxvalue-minvalue)
@@ -420,7 +417,7 @@ plot_valuesVSit_2D <- function(df, param_info, iter_or_eval=c("eval","iter"),
     }
   }
 
-  tmp<-rbind(bounds$lb,bounds$ub,select(df,-rep,-.data$crit, -eval, -.data$iter))  # -.data$ avoid NOTES on check ...
+  tmp<-rbind(bounds$lb,bounds$ub,select(df,param_names))  # -.data$ avoid NOTES on check ...
   tmp[tmp==Inf | tmp==-Inf]<-NA
   minvalue<-apply(tmp,2,min,na.rm=TRUE); maxvalue<-apply(tmp,2,max,na.rm=TRUE)
   minvalue<-minvalue-0.05*(maxvalue-minvalue); maxvalue<-maxvalue+0.05*(maxvalue-minvalue)

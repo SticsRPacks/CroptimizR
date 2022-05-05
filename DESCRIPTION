@@ -1,14 +1,19 @@
 Package: CroptimizR
 Type: Package
-Title: A Package for Parameter Estimation, Uncertainty and Sensitivity Analysis for Crop Models  https://github.com/SticsRPacks/CroptimizR
+Title: A Package to estimate parameters of Crop Models
 Version: 0.4.0
-Authors@R: c(person("Samuel", "Buis",, "samuel.buis@inra.fr", c("aut", "cre")),
- person("Michel", "Giner",, "michel.giner@cirad.fr", c("aut")),
- person("Patrice", "Lecharpentier",, "patrice.lecharpentier@inra.fr", c("aut")),
- person("Julie", "Constantin",, "julie.constantin@inra.fr", c("rev")),
- person("Benjamin", "Dumont",, "benjamin.dumont@uliege.be", c("rev")),
- person("SticsRpacks",role=c("aut","cph")))
-Description: CroptimizR allows users to perform parameter estimation, uncertainty and sensitivity analysis for crop models. Learn more at https://SticsRPacks.github.io/CroptimizR/.
+Date: 2021-07-22
+Authors@R: c(person(given = "Samuel", family = "Buis", email = "samuel.buis@inrae.fr", role= c("aut", "cre"), comment = c(ORCID = "0000-0002-8676-5447")),
+			person(given = "Patrice", family = "Lecharpentier", email = "patrice.lecharpentier@inrae.fr", role= "aut", comment = c(ORCID = "0000-0002-4044-4322")),
+			person(given = "Remi", family = "Vezy", email = "remi.vezy@cirad.fr", role= "aut",comment = c(ORCID = "0000-0002-0808-1461")),
+			person(given = "Michel", family = "Giner", email = "michel.giner@cirad.fr", role= "aut", comment = c(ORCID = "0000-0002-9310-2377")),
+			person(given = "Theo", family = "Vailhere", role= "ctb"),
+			person(given = "Thomas", family = "Robine", role= "ctb"),
+			person(given = "Drew", family = "Holzworth", role= "ctb"),
+			person(given = "Julie", family = "Constantin", role= "rev"),
+			person(given = "Benjamin", family = "Dumont", role= "rev")
+			)
+Description: CroptimizR provides facilities to estimate parameters of crop models.
 URL: https://github.com/SticsRPacks/CroptimizR, 
  https://doi.org/10.5281/zenodo.4066451
 BugReports: https://github.com/SticsRPacks/CroptimizR/issues

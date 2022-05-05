@@ -82,7 +82,7 @@ In this example, xml files are stored in `javastics_workspace_path` and the Stic
 
 ```{r gen_dirs, eval=params$eval_auto_test, results='hide', message=FALSE, warning=FALSE}
 stics_inputs_path=file.path(data_dir,"TxtFiles")
-dir.create(stics_inputs_path)
+dir.create(stics_inputs_path, showWarnings = FALSE)
 
 gen_usms_xml2txt(javastics = javastics_path, workspace = javastics_workspace_path,
   out_dir = stics_inputs_path, verbose = TRUE)

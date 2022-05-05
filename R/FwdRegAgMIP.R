@@ -113,8 +113,10 @@ post_treat_FwdRegAgMIP <- function(optim_results, crit_options, crt_list, param_
 
   ## Store the results per step
   digits <- 2
+  v_init=as.vector(t(optim_results$init_values[optim_results$ind_min_crit,]))
+  names(v_init)=names(optim_results$init_values)
   info_new_step <- setNames(tibble(list(crt_list),
-                                       list(optim_results$init_values[optim_results$ind_min_crit,]),
+                                       list(v_init),
                                        list(optim_results$final_values),
                                        init_crit,
                                        optim_results$min_crit_value,
@@ -183,8 +185,6 @@ summary_FwdRegAgMIP <- function(param_selection_steps, info_crit_list, path_resu
 #'
 save_results_FwdRegAgMIP <- function(param_selection_steps, path_results) {
 
-  save(param_selection_steps, file=file.path(path_results, "param_selection_steps.Rdata"))
-
   tb <- purrr::modify_if(param_selection_steps, function(x) !is.list(x), as.list)
   # format everything in char and 2 digits
   tb <- purrr::modify(tb, function(x) unlist(purrr::modify(x, function(y) paste(format(y, scientific=FALSE, digits=2, nsmall=2),collapse=", "))))
@@ -192,8 +192,7 @@ save_results_FwdRegAgMIP <- function(param_selection_steps, path_results) {
   utils::write.table(tb, sep=";", file=file.path(path_results, "param_selection_steps.csv"),
               row.names=FALSE)
 
-  cat("\nA table summarizing the results obtained at the different steps is stored in ", file.path(path_results,"param_selection_steps.csv"),"\n",
-      " and ",file.path(path_results,"param_selection_steps.Rdata"),"\n")
+  cat("\nA table summarizing the results obtained at the different steps is stored in ", file.path(path_results,"param_selection_steps.csv"),"\n")
   cat("Graphs and detailed results obtained for the different steps can be found in ", file.path(path_results,"results_all_steps","step_#"),"folders.\n\n")
 
 }
