@@ -1,13 +1,11 @@
-#' @title Check the consistency of observation and simulation lists and make them consistent if possible
+#' @title Try to make observation and simulation lists consistent if possible
 #'
 #' @param sim_list List of simulated values
 #' @param obs_list List of observed values
 #'
 #' @return A list containing consistent obs and sim lists
 #'
-#' @details This function checks:
-#' (i) the homogeneity of types of obs and sim Date columns
-#' (ii) that variables in obs and sim list have same types and are numeric
+#' @details This function checks and fix the homogeneity of types of obs and sim Date columns
 #'
 #' @keywords internal
 #'
@@ -62,6 +60,39 @@ make_obsSim_consistent <- function(sim_list, obs_list) {
     sapply(names(obs_list),function(x) obs_list[[x]]$Date <<- as.Date(obs_list[[x]]$Date))
   }
 
+  return(list(obs_list=obs_list,sim_list=sim_list))
+}
+
+
+#' @title Check the consistency of observation and simulation lists
+#'
+#' @param sim_list List of simulated values
+#' @param obs_list List of observed values
+#'
+#' @details This function checks:
+#' (i) that Date columns in obs and sim are either in Date or POSIXct formats
+#' (ii) that variables in obs and sim list have same types and are numeric
+#'
+#' @keywords internal
+#'
+check_obsSim_consistency <- function(sim_list, obs_list) {
+
+  # Check homogeneity of types of obs and sim Date columns
+  # ------------------------------------------------------
+
+  isPosixObs <- sapply(obs_list,function(x) lubridate::is.POSIXct(x$Date)); isAllPosixObs <- all(isPosixObs)
+  isDateObs <- sapply(obs_list,function(x) lubridate::is.Date(x$Date)); isAllDateObs <- all(isDateObs)
+  isPosixSim <- sapply(sim_list,function(x) lubridate::is.POSIXct(x$Date)); isAllPosixSim <- all(isPosixSim)
+  isDateSim <- sapply(sim_list,function(x) lubridate::is.Date(x$Date)); isAllDateSim <- all(isDateSim)
+
+  if (!all(isPosixObs | isDateObs)) {
+    stop(paste("Error: incorrect format for Date column of observation list for situations",
+               paste(names(obs_list)[!(isPosixObs | isDateObs)],collapse = ", "),". \n Date columns should be of type Date or POSIXct."))
+  }
+  if (!all(isPosixSim | isDateSim)) {
+    stop(paste("Error: incorrect format for Date column of simulation list for situations",
+               paste(names(sim_list)[!(isPosixSim | isDateSim)],collapse = ", "),". \n Date columns should be of type Date or POSIXct."))
+  }
 
   # Check that variables in obs and sim list have same types
   # --------------------------------------------------------
@@ -90,5 +121,4 @@ make_obsSim_consistent <- function(sim_list, obs_list) {
                   paste(nonNumeric_sit,collapse = ",")))
   }
 
-  return(list(obs_list=obs_list,sim_list=sim_list))
 }
