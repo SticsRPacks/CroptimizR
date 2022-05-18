@@ -99,5 +99,6 @@ intersect_sim_obs <- function(sim_list, obs_list) {
     }
   })
 
+  attr(sim_list, "class") <- "cropr_simulation"
   return(list(sim_list = sim_list, obs_list = obs_list))
 }
