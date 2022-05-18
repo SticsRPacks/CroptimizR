@@ -131,6 +131,7 @@ main_crit <- function(param_values, crit_options) {
   model_function <- crit_options$model_function
   model_options <- crit_options$model_options
   param_info <- crit_options$param_info
+  transform_var <- crit_options$transform_var
   transform_obs <- crit_options$transform_obs
   transform_sim <- crit_options$transform_sim
   satisfy_par_const <- crit_options$satisfy_par_const
@@ -266,6 +267,16 @@ main_crit <- function(param_values, crit_options) {
       })
     sim_transformed <- model_results
   }
+  if (!is.null(transform_var)) {
+    model_results$sim_list <- lapply(model_results$sim_list, function(x) {
+      for (var in intersect(names(x),names(transform_var))) {
+        x[var] <- transform_var[[var]](x[var])
+      }
+      return(x)
+    })
+    attr(model_results$sim_list, "class") <- "cropr_simulation"
+    sim_transformed <- model_results
+  }
   # Check results, return NA if incorrect
   if (is.null(model_results) || (!is.null(model_results$error) && model_results$error)) {
     warning("Error in transformation of simulation results.")
@@ -294,6 +305,14 @@ main_crit <- function(param_values, crit_options) {
         stop()
       })
   }
+  if (!is.null(transform_var)) {
+    obs_list <- lapply(obs_list, function(x) {
+      for (var in intersect(names(x),names(transform_var))) {
+        x[var] <- transform_var[[var]](x[var])
+      }
+      return(x)
+    })
+  }
   # Check results, return NA if incorrect
   if ( is.null(obs_list) || !is.obs(obs_list) ) {
     warning("Transformation of observations returned an empty list or a list with an unexpected format.")
@@ -316,6 +335,7 @@ main_crit <- function(param_values, crit_options) {
   # Filter reserved columns that should not be taken into account in the computation of the criterion
   obs_sim_list$sim_list <- sapply(obs_sim_list$sim_list, function(x) {x[ , !(names(x) %in% "Plant"),drop=FALSE]},
                                   simplify = F)
+  attr(obs_sim_list$sim_list, "class") <- "cropr_simulation"
   obs_sim_list$obs_list <- sapply(obs_sim_list$obs_list, function(x) {x[ , !(names(x) %in% "Plant"),drop=FALSE]},
                                   simplify = F)
 
