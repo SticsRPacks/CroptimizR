@@ -48,13 +48,18 @@
 #' for an example)
 #'
 #' @param forced_param_values Named vector, must contain the values for the model parameters
-#' to force (optional, NULL by default). These values will be transferred to the
+#' to force. These values will be transferred to the
 #' model wrapper through its param_values argument so that the given parameters
 #' always take the same values for each model simulation. Should not include values
 #' for estimated parameters (i.e. parameters defined in `param_info` argument).
 #'
 #' @param candidate_param Names of the parameters, among those defined in the argument param_info,
 #' that must only be considered as candidate for parameter estimation (see details section).
+#'
+#' @param transform_var Named vector of functions to apply both on simulated and
+#' observed variables. `transform_var=c(var1=log, var2=sqrt)` will for example
+#' apply log-transformation on simulated and observed values of variable var1,
+#' and square-root transformation on values of variable var2.
 #'
 #' @param transform_obs User function for transforming observations before each criterion
 #' evaluation (optional), see details section for more information.
@@ -145,7 +150,7 @@
 estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
                         model_options=NULL, optim_method="nloptr.simplex",
                         optim_options=NULL, param_info, forced_param_values=NULL,
-                        candidate_param=NULL, transform_obs=NULL,
+                        candidate_param=NULL, transform_var=NULL, transform_obs=NULL,
                         transform_sim=NULL, satisfy_par_const=NULL,
                         var=NULL, info_level=1,
                         info_crit_func=list(CroptimizR::BIC, CroptimizR::AICc,
@@ -342,6 +347,7 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
     crit_options <- list(param_names=crt_candidates, obs_list=obs_list,
                       crit_function=crit_function, model_function=model_function,
                       model_options=model_options, param_info=param_info_tmp,
+                      transform_var=transform_var,
                       transform_obs=transform_obs, transform_sim=transform_sim,
                       satisfy_par_const=satisfy_par_const,
                       path_results=optim_options$path_results,
