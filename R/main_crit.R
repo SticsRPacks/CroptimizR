@@ -300,9 +300,11 @@ main_crit <- function(param_values, crit_options) {
     return(crit<-NA)
   }
 
+  # Make observations and simulations consistent if possible
+  obs_sim_list <- CroptimizR:::make_obsSim_consistent(model_results$sim_list, obs_list)
 
   # Intersect sim and obs
-  obs_sim_list <- intersect_sim_obs(model_results$sim_list, obs_list)
+  obs_sim_list <- intersect_sim_obs(obs_sim_list$sim_list, obs_sim_list$obs_list)
   if (!is.list(obs_sim_list)) {
     warning("Intersection of simulations and observations is empty (no date and/or variable in common)!")
     return(crit<-NA)
@@ -319,8 +321,8 @@ main_crit <- function(param_values, crit_options) {
   obs_sim_list$obs_list <- sapply(obs_sim_list$obs_list, function(x) {x[ , !(names(x) %in% "Plant"),drop=FALSE]},
                                   simplify = F)
 
-  # Check consistency of observations and simulations and make them consistent if possible
-  obs_sim_list <- CroptimizR:::make_obsSim_consistent(obs_sim_list$sim_list,  obs_sim_list$obs_list)
+  # Check consistency of observations and simulations
+  CroptimizR:::check_obsSim_consistency(obs_sim_list$sim_list,  obs_sim_list$obs_list)
 
   # Compute criterion value
   crit=crit_function(obs_sim_list$sim_list, obs_sim_list$obs_list)

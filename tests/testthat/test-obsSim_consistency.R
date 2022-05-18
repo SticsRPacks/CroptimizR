@@ -15,7 +15,7 @@ sim_list <- obs_list
 sim_list[[1]]$var1 <- as.character(sim_list[[1]]$var1)
 sim_list[[3]]$var2 <- as.character(sim_list[[3]]$var2)
 test_that("Capture non-consistent variable types", {
-  expect_error(eval(parse(text = "CroptimizR:::make_obsSim_consistent(sim_list, obs_list)")),"different types")
+  expect_error(eval(parse(text = "CroptimizR:::check_obsSim_consistency(sim_list, obs_list)")),"different types")
 })
 
 # Check if it captures that some Date columns are of non expected type
@@ -23,7 +23,7 @@ sim_list <- obs_list
 sim_list[[1]]$Date <- as.character(sim_list[[1]]$Date)
 sim_list[[3]]$Date <- as.character(sim_list[[3]]$Date)
 test_that("Capture unexpected type for Date columns", {
-  expect_error(eval(parse(text = "CroptimizR:::make_obsSim_consistent(sim_list, obs_list)")),"incorrect format")
+  expect_error(eval(parse(text = "CroptimizR:::check_obsSim_consistency(sim_list, obs_list)")),"incorrect format")
 })
 
 # Check if it corrects non consistent types for sim and obs Dates
