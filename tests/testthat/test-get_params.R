@@ -49,8 +49,8 @@ prior_3$durvieF <- list(sit_list=list(c("bo96iN+", "lu96iN+",
                                         "lu96iN6", "lu97iN+"),
                                       c("bou99t3", "bou00t3",
                                         "bou99t1", "bou00t1")),
-                               init_values=data.frame(c(200,300),c(250,350),
-                                                      lb=50,ub=400))
+                               init_values=data.frame(c(200,300),c(250,350)),
+                                                      lb=50,ub=400)
 prior_4 <- list(init_values=c(dlaimax=0.001),
              lb=c(dlaimax=0.0001),
              ub=c(dlaimax=0.01))
