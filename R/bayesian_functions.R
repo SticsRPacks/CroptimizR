@@ -9,23 +9,23 @@
 #' @keywords internal
 #'
 summary_bayesian <- function(optim_options, param_info, optim_results) {
-
   param_names <- get_params_names(param_info)
   nb_params <- length(param_names)
   path_results <- optim_options$path_results
   out <- optim_results$out
 
   ## Print results
-  codaObject <- getSample(out, start = 1, coda = TRUE)  # thin=1
+  codaObject <- getSample(out, start = 1, coda = TRUE) # thin=1
   tmp <- summary(codaObject)
-  if (nb_params>=2) {
-    summary(out) }
-  else {
+  if (nb_params >= 2) {
+    summary(out)
+  } else {
     print(tmp)
   }
-  cat(paste("Complementary graphs and results can be found in ",
-            path_results,"\n\n"))
-
+  cat(paste(
+    "Complementary graphs and results can be found in ",
+    path_results, "\n\n"
+  ))
 }
 
 
@@ -41,105 +41,140 @@ summary_bayesian <- function(optim_options, param_info, optim_results) {
 #' @keywords internal
 #'
 plot_bayesian <- function(optim_options, param_info, optim_results) {
-
   param_names <- get_params_names(param_info)
   nb_params <- length(param_names)
   bounds <- get_params_bounds(param_info)
   path_results <- optim_options$path_results
   out <- optim_results$out
   nb_chains <- length(out$chain)
-  nb_iterations <- nrow(optim_results$post_sample)/nb_chains
+  nb_iterations <- nrow(optim_results$post_sample) / nb_chains
 
   tryCatch(
     {
-      grDevices::pdf(file = file.path(path_results,"iterAndDensityPlots.pdf") ,
-                     width = 9, height = 9)
+      grDevices::pdf(
+        file = file.path(path_results, "iterAndDensityPlots.pdf"),
+        width = 9, height = 9
+      )
       graphics::plot(out)
       grDevices::dev.off()
     },
-    error=function(cond) {
-      filename <- paste0("iterAndDensityPlots",
-                         format(Sys.time(), "%Y_%d_%H_%M_%S"),".pdf")
-      warning("Error trying to create ",
-              path_results,
-              "/iterAndDensityPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
+    error = function(cond) {
+      filename <- paste0(
+        "iterAndDensityPlots",
+        format(Sys.time(), "%Y_%d_%H_%M_%S"), ".pdf"
+      )
+      warning(
+        "Error trying to create ",
+        path_results,
+        "/iterAndDensityPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ", filename
+      )
       utils::flush.console()
-      grDevices::pdf(file = file.path(path_results,filename) ,
-                     width = 9, height = 9)
+      grDevices::pdf(
+        file = file.path(path_results, filename),
+        width = 9, height = 9
+      )
       graphics::plot(out)
       grDevices::dev.off()
-    })
+    }
+  )
 
   tryCatch(
     {
-      grDevices::pdf(file = file.path(path_results,"marginalPlots.pdf") ,
-                     width = 9, height = 9)
+      grDevices::pdf(
+        file = file.path(path_results, "marginalPlots.pdf"),
+        width = 9, height = 9
+      )
       marginalPlot(out)
       grDevices::dev.off()
     },
-    error=function(cond) {
-      filename <- paste0("marginalPlots",
-                         format(Sys.time(), "%Y_%d_%H_%M_%S"),".pdf")
-      warning("Error trying to create ",path_results,
-              "/marginalPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
+    error = function(cond) {
+      filename <- paste0(
+        "marginalPlots",
+        format(Sys.time(), "%Y_%d_%H_%M_%S"), ".pdf"
+      )
+      warning(
+        "Error trying to create ", path_results,
+        "/marginalPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ", filename
+      )
       utils::flush.console()
-      grDevices::pdf(file = file.path(path_results,filename) ,
-                     width = 9, height = 9)
+      grDevices::pdf(
+        file = file.path(path_results, filename),
+        width = 9, height = 9
+      )
       marginalPlot(out)
       grDevices::dev.off()
-    })
+    }
+  )
 
-  if (nb_params>=2) {
+  if (nb_params >= 2) {
     tryCatch(
       {
-        grDevices::pdf(file = file.path(path_results,"correlationPlots.pdf") ,
-                       width = 9, height = 9)
+        grDevices::pdf(
+          file = file.path(path_results, "correlationPlots.pdf"),
+          width = 9, height = 9
+        )
         correlationPlot(out)
         grDevices::dev.off()
       },
-      error=function(cond) {
-        filename <- paste0("correlationPlots",
-                           format(Sys.time(), "%Y_%d_%H_%M_%S"),".pdf")
-        warning("Error trying to create ",path_results,
-                "/correlationPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
+      error = function(cond) {
+        filename <- paste0(
+          "correlationPlots",
+          format(Sys.time(), "%Y_%d_%H_%M_%S"), ".pdf"
+        )
+        warning(
+          "Error trying to create ", path_results,
+          "/correlationPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ", filename
+        )
         utils::flush.console()
-        grDevices::pdf(file = file.path(path_results,filename) ,
-                       width = 9, height = 9)
+        grDevices::pdf(
+          file = file.path(path_results, filename),
+          width = 9, height = 9
+        )
         correlationPlot(out)
         grDevices::dev.off()
-      })
+      }
+    )
   }
 
-  if (nb_params>=2) {
+  if (nb_params >= 2) {
     # seems that it does not work for a single parameter
     # also, Nbiteration must be > thin+50 otherwise coda::gelman.plot end with
     # an error
-    if ( nb_iterations>=(optim_options$thin+50) ) {
+    if (nb_iterations >= (optim_options$thin + 50)) {
       tryCatch(
         {
-          grDevices::pdf(file = file.path(path_results,"gelmanDiagPlots.pdf") ,
-                         width = 9, height = 9)
-          gelmanDiagnostics(out, thin=optim_options$thin, log="y", plot = T)
+          grDevices::pdf(
+            file = file.path(path_results, "gelmanDiagPlots.pdf"),
+            width = 9, height = 9
+          )
+          gelmanDiagnostics(out, thin = optim_options$thin, log = "y", plot = T)
           grDevices::dev.off()
         },
-        error=function(cond) {
-          filename <- paste0("gelmanDiagPlots",
-                             format(Sys.time(), "%Y_%d_%H_%M_%S"),".pdf")
-          warning("Error trying to create ",path_results,
-                  "/gelmanDiagPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
+        error = function(cond) {
+          filename <- paste0(
+            "gelmanDiagPlots",
+            format(Sys.time(), "%Y_%d_%H_%M_%S"), ".pdf"
+          )
+          warning(
+            "Error trying to create ", path_results,
+            "/gelmanDiagPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ", filename
+          )
           utils::flush.console()
-          grDevices::pdf(file = file.path(path_results,filename) ,
-                         width = 9, height = 9)
-          gelmanDiagnostics(out, thin=optim_options$thin, log="y", plot = T)
+          grDevices::pdf(
+            file = file.path(path_results, filename),
+            width = 9, height = 9
+          )
+          gelmanDiagnostics(out, thin = optim_options$thin, log = "y", plot = T)
           grDevices::dev.off()
-        })
-
+        }
+      )
     } else {
-      gelmanDiagnostics(out, thin=optim_options$thin, plot = F)
-      warning(paste0("Number of iterations after burnin phase is too low (",
-                     nb_iterations,
-          ") to generate gelmanDiagPlots.pdf (should be superior to thin+50)"))
+      gelmanDiagnostics(out, thin = optim_options$thin, plot = F)
+      warning(paste0(
+        "Number of iterations after burnin phase is too low (",
+        nb_iterations,
+        ") to generate gelmanDiagPlots.pdf (should be superior to thin+50)"
+      ))
     }
   }
-
 }

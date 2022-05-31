@@ -12,7 +12,7 @@ intersect_sim_obs <- function(sim_list, obs_list) {
 
   # Intersect situations
   situations <- intersect(names(sim_list), names(obs_list))
-  if (length(situations)==0) {
+  if (length(situations) == 0) {
     warning("Simulations and observations do not contain common situations.")
     return(NA)
   }
@@ -35,8 +35,10 @@ intersect_sim_obs <- function(sim_list, obs_list) {
   )
 
   # keep situations with common variables
-  idx <- sapply(list_vars,
-                function(x) length(setdiff(x,get_reserved_keywords())) >= 1)
+  idx <- sapply(
+    list_vars,
+    function(x) length(setdiff(x, get_reserved_keywords())) >= 1
+  )
   situations <- situations[idx]
   list_vars <- list_vars[situations]
   if (length(list_vars) == 0) {
@@ -46,13 +48,21 @@ intersect_sim_obs <- function(sim_list, obs_list) {
 
   # Intersect dates
   sim_list <- sapply(situations,
-    function(x) sim_list[[x]][, is.element(colnames(sim_list[[x]]),
-                                           list_vars[[x]])],
+    function(x) {
+      sim_list[[x]][, is.element(
+        colnames(sim_list[[x]]),
+        list_vars[[x]]
+      )]
+    },
     simplify = F
   )
   obs_list <- sapply(situations,
-    function(x) obs_list[[x]][, is.element(colnames(obs_list[[x]]),
-                                           list_vars[[x]])],
+    function(x) {
+      obs_list[[x]][, is.element(
+        colnames(obs_list[[x]]),
+        list_vars[[x]]
+      )]
+    },
     simplify = F
   )
   list_dates <- sapply(situations,
@@ -69,40 +79,43 @@ intersect_sim_obs <- function(sim_list, obs_list) {
   }
 
   sim_list <- sapply(situations,
-   function(x) sim_list[[x]][is.element(sim_list[[x]]$Date, list_dates[[x]]), ],
+    function(x) sim_list[[x]][is.element(sim_list[[x]]$Date, list_dates[[x]]), ],
     simplify = F
   )
   obs_list <- sapply(situations,
-   function(x) obs_list[[x]][is.element(obs_list[[x]]$Date, list_dates[[x]]), ],
+    function(x) obs_list[[x]][is.element(obs_list[[x]]$Date, list_dates[[x]]), ],
     simplify = F
   )
 
   # Remove rows (i.e. Dates) for which all obs variables are NA
   sapply(names(obs_list), function(y) {
-ind<-apply(obs_list[[y]][!(names(obs_list[[y]]) %in% get_reserved_keywords())],
-               1, function(x) any(!is.na(x)))
-    obs_list[[y]]<<-obs_list[[y]][ind,]
-    sim_list[[y]]<<-sim_list[[y]][ind,]
-    if (nrow(obs_list[[y]])==0) {
-      obs_list[[y]]<<-NULL
-      sim_list[[y]]<<-NULL
+    ind <- apply(
+      obs_list[[y]][!(names(obs_list[[y]]) %in% get_reserved_keywords())],
+      1, function(x) any(!is.na(x))
+    )
+    obs_list[[y]] <<- obs_list[[y]][ind, ]
+    sim_list[[y]] <<- sim_list[[y]][ind, ]
+    if (nrow(obs_list[[y]]) == 0) {
+      obs_list[[y]] <<- NULL
+      sim_list[[y]] <<- NULL
     }
   })
-  if ((length(obs_list)==0) | (length(sim_list)==0)) {
-warning(
-  "Simulations and observations do not contain common dates and variables")
+  if ((length(obs_list) == 0) | (length(sim_list) == 0)) {
+    warning(
+      "Simulations and observations do not contain common dates and variables"
+    )
     return(NA)
   }
 
   # Remove cols (i.e. Variables) for which all obs values are NA
   sapply(names(obs_list), function(y) {
-    ind<-apply(obs_list[[y]], 2, function(x) all(is.na(x)))
-    var_2_remove<-names(obs_list[[y]])[ind]
-    obs_list[[y]][var_2_remove]<<-NULL
-    sim_list[[y]][var_2_remove]<<-NULL
-    if (length(obs_list[[y]])==0) {
-      obs_list[[y]]<<-NULL
-      sim_list[[y]]<<-NULL
+    ind <- apply(obs_list[[y]], 2, function(x) all(is.na(x)))
+    var_2_remove <- names(obs_list[[y]])[ind]
+    obs_list[[y]][var_2_remove] <<- NULL
+    sim_list[[y]][var_2_remove] <<- NULL
+    if (length(obs_list[[y]]) == 0) {
+      obs_list[[y]] <<- NULL
+      sim_list[[y]] <<- NULL
     }
   })
 

@@ -35,50 +35,47 @@
 #'
 select_param_FwdRegAgMIP <- function(oblig_param_list, add_param_list, crt_list,
                                      info_crit_values) {
-
   res <- list()
   res$next_candidates <- NULL
-  if (length(info_crit_values)>1) {
-    crt_info_crit <- tail(info_crit_values,1)
-    prev_info_crit <- head(info_crit_values,length(info_crit_values)-1)
+  if (length(info_crit_values) > 1) {
+    crt_info_crit <- tail(info_crit_values, 1)
+    prev_info_crit <- head(info_crit_values, length(info_crit_values) - 1)
   }
 
   if (is.null(add_param_list)) {
-
     res$selected <- TRUE
     return(res)
-
-  } else if (crt_list[length(crt_list)]==
-             add_param_list[length(add_param_list)]) {
+  } else if (crt_list[length(crt_list)] ==
+    add_param_list[length(add_param_list)]) {
 
     # we tested all parameters
-    if (crt_info_crit<min(prev_info_crit)) {
+    if (crt_info_crit < min(prev_info_crit)) {
       res$selected <- TRUE
     } else {
       res$selected <- FALSE
     }
     return(res)
-
-  } else if (length(crt_list)==length(oblig_param_list)) {
+  } else if (length(crt_list) == length(oblig_param_list)) {
 
     # we only tested so far the obligatory parameters
     res$selected <- TRUE
-    res$next_candidates <- c(oblig_param_list,add_param_list[1])
-
+    res$next_candidates <- c(oblig_param_list, add_param_list[1])
   } else {
-
-    if (crt_info_crit<min(prev_info_crit)) {
+    if (crt_info_crit < min(prev_info_crit)) {
       # Add the next candidate to the list
       res$selected <- TRUE
-      res$next_candidates <- c(crt_list,
-           add_param_list[which(add_param_list==crt_list[length(crt_list)])+1])
-
+      res$next_candidates <- c(
+        crt_list,
+        add_param_list[which(add_param_list == crt_list[length(crt_list)]) + 1]
+      )
     } else {
 
       # Replace the last candidate parameter by the next candidate
       res$selected <- FALSE
-      res$next_candidates <- c(crt_list[-length(crt_list)],
-           add_param_list[which(add_param_list==crt_list[length(crt_list)])+1])
+      res$next_candidates <- c(
+        crt_list[-length(crt_list)],
+        add_param_list[which(add_param_list == crt_list[length(crt_list)]) + 1]
+      )
     }
   }
 
@@ -110,35 +107,41 @@ select_param_FwdRegAgMIP <- function(oblig_param_list, add_param_list, crt_list,
 #'
 post_treat_FwdRegAgMIP <- function(optim_results, crit_options, crt_list,
                                    param_selection_steps) {
-
   info_crit_func <- crit_options$info_crit_list[[1]]
   final_info_crit <- optim_results[[info_crit_func()$name]]
 
   ## RE-compute main_crit with the initial values of the parameters
   init_crit <- main_crit(
-           param_values=optim_results$init_values[optim_results$ind_min_crit,],
-                         crit_options=c(crit_options,return_obs_sim=FALSE))
+    param_values = optim_results$init_values[optim_results$ind_min_crit, ],
+    crit_options = c(crit_options, return_obs_sim = FALSE)
+  )
 
   ## Store the results per step
   digits <- 2
-  v_init <- as.vector(t(optim_results$init_values[optim_results$ind_min_crit,]))
+  v_init <- as.vector(t(optim_results$init_values[optim_results$ind_min_crit, ]))
   names(v_init) <- names(optim_results$init_values)
-  info_new_step <- setNames(tibble(list(crt_list),
-                                       list(v_init),
-                                       list(optim_results$final_values),
-                                       init_crit,
-                                       optim_results$min_crit_value,
-                                       final_info_crit,
-                                       ""),
-                            c("Estimated parameters","Initial parameter values",
-                              "Final values",
-                              "Initial Sum of squared errors",
-                              "Final Sum of squared errors",
-                              info_crit_func()$name,"Selected step"))
-param_selection_steps <- dplyr::bind_rows(param_selection_steps, info_new_step)
+  info_new_step <- setNames(
+    tibble(
+      list(crt_list),
+      list(v_init),
+      list(optim_results$final_values),
+      init_crit,
+      optim_results$min_crit_value,
+      final_info_crit,
+      ""
+    ),
+    c(
+      "Estimated parameters", "Initial parameter values",
+      "Final values",
+      "Initial Sum of squared errors",
+      "Final Sum of squared errors",
+      info_crit_func()$name, "Selected step"
+    )
+  )
+  param_selection_steps <- dplyr::bind_rows(param_selection_steps, info_new_step)
   ind_min_infocrit <- which.min(param_selection_steps[[info_crit_func()$name]])
-  param_selection_steps[,"Selected step"] <- ""
-  param_selection_steps[ind_min_infocrit,"Selected step"] <- "X"
+  param_selection_steps[, "Selected step"] <- ""
+  param_selection_steps[ind_min_infocrit, "Selected step"] <- "X"
 
   return(param_selection_steps)
 }
@@ -159,25 +162,27 @@ param_selection_steps <- dplyr::bind_rows(param_selection_steps, info_new_step)
 #'
 summary_FwdRegAgMIP <- function(param_selection_steps,
                                 info_crit_list, path_results) {
-
   cat("----------------------\n")
   cat("End of parameter selection process\n")
   cat("----------------------\n\n")
 
   ind_min_infocrit <-
     which.min(param_selection_steps[[info_crit_list[[1]]()$name]])
-  cat("Selected step:",ind_min_infocrit,"\n")
+  cat("Selected step:", ind_min_infocrit, "\n")
   selected_param <-
     param_selection_steps$`Estimated parameters`[[ind_min_infocrit]]
-  cat("Selected parameters:",paste(selected_param, collapse = ","),"\n")
+  cat("Selected parameters:", paste(selected_param, collapse = ","), "\n")
   param_values <- param_selection_steps$`Final values`[[ind_min_infocrit]]
   nb_params <- length(param_values)
   for (ipar in 1:nb_params) {
-    cat("Estimated value for", selected_param[ipar],
-        ": ", format(param_values[ipar], scientific=FALSE,
-                     digits=2, nsmall=2),"\n")
+    cat(
+      "Estimated value for", selected_param[ipar],
+      ": ", format(param_values[ipar],
+        scientific = FALSE,
+        digits = 2, nsmall = 2
+      ), "\n"
+    )
   }
-
 }
 
 
@@ -199,23 +204,40 @@ summary_FwdRegAgMIP <- function(param_selection_steps,
 #' @keywords internal
 #'
 save_results_FwdRegAgMIP <- function(param_selection_steps, path_results) {
-
-  tb <- purrr::modify_if(param_selection_steps,
-                         function(x) !is.list(x), as.list)
+  tb <- purrr::modify_if(
+    param_selection_steps,
+    function(x) !is.list(x), as.list
+  )
   # format everything in char and 2 digits
-  tb <- purrr::modify(tb,
-                      function(x) unlist(
-                  purrr::modify(x,function(y) paste(format(y, scientific=FALSE,
-                                          digits=2, nsmall=2),collapse=", "))))
+  tb <- purrr::modify(
+    tb,
+    function(x) {
+      unlist(
+        purrr::modify(x, function(y) {
+          paste(format(y,
+            scientific = FALSE,
+            digits = 2, nsmall = 2
+          ), collapse = ", ")
+        })
+      )
+    }
+  )
 
-  utils::write.table(tb, sep=";", file=file.path(path_results,
-                                                 "param_selection_steps.csv"),
-                     row.names=FALSE)
+  utils::write.table(tb,
+    sep = ";", file = file.path(
+      path_results,
+      "param_selection_steps.csv"
+    ),
+    row.names = FALSE
+  )
 
-  cat("\nA table summarizing the results obtained at the different steps ",
-      "is stored in ",file.path(path_results,"param_selection_steps.csv"),"\n")
-  cat("Graphs and detailed results obtained for the different steps can be ",
-      "found in ",file.path(path_results,"results_all_steps","step_#"),
-      "folders.\n\n")
-
+  cat(
+    "\nA table summarizing the results obtained at the different steps ",
+    "is stored in ", file.path(path_results, "param_selection_steps.csv"), "\n"
+  )
+  cat(
+    "Graphs and detailed results obtained for the different steps can be ",
+    "found in ", file.path(path_results, "results_all_steps", "step_#"),
+    "folders.\n\n"
+  )
 }

@@ -9,8 +9,7 @@
 #' @return A vector of parameter names
 #'
 #' @examples
-#'
-#'\donttest{
+#' \donttest{
 #' # A simple case
 #' param_info <- list(
 #'   lb = c(dlaimax = 0.0005, durvieF = 50),
@@ -35,8 +34,8 @@
 #'   lb = c(50, 50), ub = c(400, 400)
 #' )
 #' CroptimizR:::get_params_names(param_info)
-#' CroptimizR:::get_params_names(param_info, short_list=TRUE)
-#'}
+#' CroptimizR:::get_params_names(param_info, short_list = TRUE)
+#' }
 #'
 #' @keywords internal
 #'
@@ -48,17 +47,17 @@ get_params_names <- function(param_info, short_list = FALSE) {
       res <- names(param_info)
     } else {
       nb_groups <- sapply(param_info, function(x) length(x$sit_list))
-      nb_groups[nb_groups==0]=1
+      nb_groups[nb_groups == 0] <- 1
       nb_params_sl <- length(nb_groups)
       # build suffix
       suffix <- rep("", sum(nb_groups))
-      count=1
+      count <- 1
       for (i in 1:nb_params_sl) {
         if (nb_groups[i] > 1) {
-          suffix[count:(count+nb_groups[i]-1)] <- as.character(1:nb_groups[i])
-          count=count+nb_groups[i]
+          suffix[count:(count + nb_groups[i] - 1)] <- as.character(1:nb_groups[i])
+          count <- count + nb_groups[i]
         } else {
-          count=count+1
+          count <- count + 1
         }
       }
 
@@ -83,8 +82,7 @@ get_params_names <- function(param_info, short_list = FALSE) {
 #' @return A list containing the vectors of lower and upper bounds (`ub` and `lb`)
 #'
 #' @examples
-#'
-#'\donttest{
+#' \donttest{
 #' # A simple case
 #' param_info <- list(
 #'   lb = c(dlaimax = 0.0005, durvieF = 50),
@@ -109,7 +107,7 @@ get_params_names <- function(param_info, short_list = FALSE) {
 #'   lb = c(50, 100), ub = c(400, 500)
 #' )
 #' CroptimizR:::get_params_bounds(param_info)
-#'}
+#' }
 #'
 #' @keywords internal
 #'
@@ -135,8 +133,7 @@ get_params_bounds <- function(param_info) {
 #' @return A list similar to the one given in input but filtered
 #'
 #' @examples
-#'
-#'\donttest{
+#' \donttest{
 #' param_info <- list(
 #'   lb = c(dlaimax = 0.0005, durvieF = 50),
 #'   ub = c(dlaimax = 0.0025, durvieF = 400)
@@ -160,24 +157,27 @@ get_params_bounds <- function(param_info) {
 #'   lb = c(50, 100), ub = c(400, 500)
 #' )
 #' CroptimizR:::filter_param_info(param_info, "durvieF")
-#'}
+#' }
 #'
 #' @keywords internal
 #'
 filter_param_info <- function(param_info, param_names) {
-
   if (!is.null(param_info$lb) && !is.null(param_info$ub)) {
     if (!all(param_names %in% names(param_info$lb))) {
-      stop(paste("Error filtering param_info, parameters",
-                 paste(setdiff(param_names,names(param_info$lb)),collapse = ","),
-                 "not included in param_info."))
+      stop(paste(
+        "Error filtering param_info, parameters",
+        paste(setdiff(param_names, names(param_info$lb)), collapse = ","),
+        "not included in param_info."
+      ))
     }
-    param_info <- lapply(param_info,function(x) x[param_names])
+    param_info <- lapply(param_info, function(x) x[param_names])
   } else {
     if (!all(param_names %in% names(param_info))) {
-      stop(paste("Error filtering param_info, parameters",
-                 paste(setdiff(param_names,names(param_info)),collapse = ","),
-                 "not included in param_info."))
+      stop(paste(
+        "Error filtering param_info, parameters",
+        paste(setdiff(param_names, names(param_info)), collapse = ","),
+        "not included in param_info."
+      ))
     }
     param_info <- param_info[param_names]
   }
@@ -198,20 +198,23 @@ filter_param_info <- function(param_info, param_names) {
 #' @keywords internal
 #'
 set_init_values <- function(param_info, init_values) {
-
   param_names <- colnames(init_values)
   if (!is.null(param_info$lb) && !is.null(param_info$ub)) {
     if (!all(param_names %in% names(param_info$lb))) {
-      stop(paste("Error in param_info: parameters",
-                 paste(setdiff(param_names,names(param_info$lb)),collapse = ","),
-                 "not defined."))
+      stop(paste(
+        "Error in param_info: parameters",
+        paste(setdiff(param_names, names(param_info$lb)), collapse = ","),
+        "not defined."
+      ))
     }
     param_info$init_values <- init_values
   } else {
-    lapply(names(param_info),
-           function(x) {
-             param_info[[x]]$init_values <<- init_values[,get_params_names(param_info[x])]
-           })
+    lapply(
+      names(param_info),
+      function(x) {
+        param_info[[x]]$init_values <<- init_values[, get_params_names(param_info[x])]
+      }
+    )
   }
 
   return(param_info)
@@ -224,47 +227,67 @@ set_init_values <- function(param_info, init_values) {
 #' `r lifecycle::badge("deprecated")`
 #'
 #' @examples
-#'\donttest{
+#' \donttest{
 #' # Simple cases
-#' param_info=list(init_values=c(dlaimax=0.001, durvieF=200),
-#'                        lb=c(dlaimax=0.0001, durvieF=50),
-#'                        ub=c(dlaimax=0.01, durvieF=400))
+#' param_info <- list(
+#'   init_values = c(dlaimax = 0.001, durvieF = 200),
+#'   lb = c(dlaimax = 0.0001, durvieF = 50),
+#'   ub = c(dlaimax = 0.01, durvieF = 400)
+#' )
 #' CroptimizR:::get_params_init_values(param_info)
 #'
-#' param_info=list(init_values=data.frame(dlaimax=c(0.001,0.002), durvieF=c(50,200)),
-#'                        lb=c(dlaimax=0.0001, durvieF=50),
-#'                        ub=c(dlaimax=0.01, durvieF=400))
+#' param_info <- list(
+#'   init_values = data.frame(dlaimax = c(0.001, 0.002), durvieF = c(50, 200)),
+#'   lb = c(dlaimax = 0.0001, durvieF = 50),
+#'   ub = c(dlaimax = 0.01, durvieF = 400)
+#' )
 #' CroptimizR:::get_params_init_values(param_info)
 #' # ->
 #' CroptimizR:::get_init_values(param_info)
 #'
 #' # Cases with groups of situations per parameter
-#' param_info=list()
-#' param_info$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1",
-#'                                                "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),
-#'                                init_values=0.001,lb=0.0001,ub=0.1)
-#' param_info$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
-#'                                              c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),
-#'                                init_values=c(200,300),lb=50,ub=400)
+#' param_info <- list()
+#' param_info$dlaimax <- list(
+#'   sit_list = list(c(
+#'     "bou99t3", "bou00t3", "bou99t1", "bou00t1",
+#'     "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"
+#'   )),
+#'   init_values = 0.001, lb = 0.0001, ub = 0.1
+#' )
+#' param_info$durvieF <- list(
+#'   sit_list = list(
+#'     c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
+#'     c("bou99t3", "bou00t3", "bou99t1", "bou00t1")
+#'   ),
+#'   init_values = c(200, 300), lb = 50, ub = 400
+#' )
 #' CroptimizR:::get_params_init_values(param_info)
 #' # ->
 #' CroptimizR:::get_init_values(param_info)
 #'
-#' param_info=list()
-#' param_info$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1",
-#'                                                "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),
-#'                                init_values=c(0.001,0.002),lb=0.0001,ub=0.1)
-#' param_info$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
-#'                                              c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),
-#'                                init_values=data.frame(c(200,300),c(250,350)),lb=50,ub=400)
+#' param_info <- list()
+#' param_info$dlaimax <- list(
+#'   sit_list = list(c(
+#'     "bou99t3", "bou00t3", "bou99t1", "bou00t1",
+#'     "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"
+#'   )),
+#'   init_values = c(0.001, 0.002), lb = 0.0001, ub = 0.1
+#' )
+#' param_info$durvieF <- list(
+#'   sit_list = list(
+#'     c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
+#'     c("bou99t3", "bou00t3", "bou99t1", "bou00t1")
+#'   ),
+#'   init_values = data.frame(c(200, 300), c(250, 350)), lb = 50, ub = 400
+#' )
 #' CroptimizR:::get_params_init_values(param_info)
 #' # ->
 #' CroptimizR:::get_init_values(param_info)
-#'}
+#' }
 #'
 #' @keywords internal
 #'
-get_params_init_values = function(param_info) {
+get_params_init_values <- function(param_info) {
   lifecycle::deprecate_warn("0.5.0", "get_params_init_values()", "get_init_values()")
   return(get_init_values(param_info))
 }
@@ -278,66 +301,84 @@ get_params_init_values = function(param_info) {
 #' estimated (one column per parameter)
 #'
 #' @examples
-#'\donttest{
+#' \donttest{
 #' # Simple cases
-#' param_info=list(init_values=c(dlaimax=0.001, durvieF=200),
-#'                        lb=c(dlaimax=0.0001, durvieF=50),
-#'                        ub=c(dlaimax=0.01, durvieF=400))
+#' param_info <- list(
+#'   init_values = c(dlaimax = 0.001, durvieF = 200),
+#'   lb = c(dlaimax = 0.0001, durvieF = 50),
+#'   ub = c(dlaimax = 0.01, durvieF = 400)
+#' )
 #' CroptimizR:::get_init_values(param_info)
 #'
-#' param_info=list(init_values=data.frame(dlaimax=c(0.001,0.002), durvieF=c(50,200)),
-#'                        lb=c(dlaimax=0.0001, durvieF=50),
-#'                        ub=c(dlaimax=0.01, durvieF=400))
+#' param_info <- list(
+#'   init_values = data.frame(dlaimax = c(0.001, 0.002), durvieF = c(50, 200)),
+#'   lb = c(dlaimax = 0.0001, durvieF = 50),
+#'   ub = c(dlaimax = 0.01, durvieF = 400)
+#' )
 #' CroptimizR:::get_init_values(param_info)
 #'
 #' # Cases with groups of situations per parameter
-#' param_info=list()
-#' param_info$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1",
-#'                                                "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),
-#'                                init_values=0.001,lb=0.0001,ub=0.1)
-#' param_info$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
-#'                                              c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),
-#'                                init_values=c(200,300),lb=50,ub=400)
+#' param_info <- list()
+#' param_info$dlaimax <- list(
+#'   sit_list = list(c(
+#'     "bou99t3", "bou00t3", "bou99t1", "bou00t1",
+#'     "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"
+#'   )),
+#'   init_values = 0.001, lb = 0.0001, ub = 0.1
+#' )
+#' param_info$durvieF <- list(
+#'   sit_list = list(
+#'     c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
+#'     c("bou99t3", "bou00t3", "bou99t1", "bou00t1")
+#'   ),
+#'   init_values = c(200, 300), lb = 50, ub = 400
+#' )
 #' CroptimizR:::get_init_values(param_info)
 #'
-#' param_info=list()
-#' param_info$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1",
-#'                                                "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),
-#'                                init_values=c(0.001,0.002),lb=0.0001,ub=0.1)
-#' param_info$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
-#'                                              c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),
-#'                                init_values=data.frame(c(200,300),c(250,350)),lb=50,ub=400)
+#' param_info <- list()
+#' param_info$dlaimax <- list(
+#'   sit_list = list(c(
+#'     "bou99t3", "bou00t3", "bou99t1", "bou00t1",
+#'     "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"
+#'   )),
+#'   init_values = c(0.001, 0.002), lb = 0.0001, ub = 0.1
+#' )
+#' param_info$durvieF <- list(
+#'   sit_list = list(
+#'     c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
+#'     c("bou99t3", "bou00t3", "bou99t1", "bou00t1")
+#'   ),
+#'   init_values = data.frame(c(200, 300), c(250, 350)), lb = 50, ub = 400
+#' )
 #' CroptimizR:::get_init_values(param_info)
-#'}
+#' }
 #'
 #' @keywords internal
 #'
 get_init_values <- function(param_info) {
-
-  init_values=NULL
-  params_names=get_params_names(param_info)
+  init_values <- NULL
+  params_names <- get_params_names(param_info)
 
 
   # Simple case, no simultaneous estimation of varietal and specific parameters
   if (!is.null(param_info$init_values)) {
-
-    init_values=as.data.frame(param_info$init_values)
+    init_values <- as.data.frame(param_info$init_values)
 
     # check if colnames were set to params_names, if not set them
     # and handle translation if necessary
-    if (is.element(rownames(init_values)[1],params_names)) {
-      init_values=as.data.frame(t(init_values))
-      rownames(init_values)=1:nrow(init_values)
-      init_values=init_values[,params_names, drop=FALSE]  # to ensure that params_names and
+    if (is.element(rownames(init_values)[1], params_names)) {
+      init_values <- as.data.frame(t(init_values))
+      rownames(init_values) <- 1:nrow(init_values)
+      init_values <- init_values[, params_names, drop = FALSE] # to ensure that params_names and
       # init_values have columns in same order
-    } else if (!is.element(colnames(init_values)[1],params_names)) {
-      if (ncol(init_values)!=length(params_names)) {
-        init_values=t(init_values)
+    } else if (!is.element(colnames(init_values)[1], params_names)) {
+      if (ncol(init_values) != length(params_names)) {
+        init_values <- t(init_values)
       }
-      names(init_values)=params_names
-      rownames(init_values)=1:nrow(init_values)
+      names(init_values) <- params_names
+      rownames(init_values) <- 1:nrow(init_values)
     } else {
-      init_values=init_values[,params_names, drop=FALSE] # to ensure that params_names and
+      init_values <- init_values[, params_names, drop = FALSE] # to ensure that params_names and
       # init_values have columns in same order
     }
 
@@ -347,40 +388,30 @@ get_init_values <- function(param_info) {
     # check if colnames were set to params_names, if not set them
     # and handle translation if necessary
     for (i in 1:length(param_info)) {
-
       if (!is.null(param_info[[i]]$init_values)) {
-
-        param_info[[i]]$init_values=
+        param_info[[i]]$init_values <-
           as.data.frame(param_info[[i]]$init_values)
 
         if (!is.null(param_info[[i]]$sit_list) && ncol(param_info[[i]]$init_values) !=
-            length(param_info[[i]]$sit_list)) {
-
-          param_info[[i]]$init_values=t(param_info[[i]]$init_values)
-
+          length(param_info[[i]]$sit_list)) {
+          param_info[[i]]$init_values <- t(param_info[[i]]$init_values)
         }
-
       } else {
-
-        param_info[[i]]$init_values=data.frame(NA)
-
+        param_info[[i]]$init_values <- data.frame(NA)
       }
-
     }
 
-    init_values=do.call(cbind, sapply(param_info, function(x) x$init_values))
+    init_values <- do.call(cbind, sapply(param_info, function(x) x$init_values))
     if (!is.data.frame(init_values)) init_values <- as.data.frame(init_values)
     if (all(is.na(init_values))) {
-      init_values=NULL
+      init_values <- NULL
     } else {
-      colnames(init_values)=params_names
-      rownames(init_values)=1:nrow(init_values)
+      colnames(init_values) <- params_names
+      rownames(init_values) <- 1:nrow(init_values)
     }
-
   }
 
   return(init_values)
-
 }
 
 
@@ -401,45 +432,53 @@ get_init_values <- function(param_info) {
 #'
 #' @keywords internal
 #'
-complete_init_values <- function(param_info, nb_values, ranseed=NULL,
-                                 satisfy_par_const=NULL) {
-
+complete_init_values <- function(param_info, nb_values, ranseed = NULL,
+                                 satisfy_par_const = NULL) {
   tmp <- get_params_bounds(param_info)
-  lb <- tmp$lb; ub <- tmp$ub
+  lb <- tmp$lb
+  ub <- tmp$ub
   init_values <- get_init_values(param_info)
 
   if (!is.null(lb) && !is.null(ub)) {
     param_names <- names(lb)
-    sampled_values <- as.data.frame(sample_params(list(lb=lb, ub=ub),nb_values,ranseed))
+    sampled_values <- as.data.frame(sample_params(list(lb = lb, ub = ub), nb_values, ranseed))
     if (!is.null(satisfy_par_const)) {
-      idx <- which(sapply(1:nrow(sampled_values),function(x) {satisfy_par_const(sampled_values[x,])}))
-      sampled_values <- sampled_values[idx,]
+      idx <- which(sapply(1:nrow(sampled_values), function(x) {
+        satisfy_par_const(sampled_values[x, ])
+      }))
+      sampled_values <- sampled_values[idx, ]
       count <- 1
-      while (nrow(sampled_values)<nb_values && count<1000) {
-        seed <- sample(1000,1,replace=FALSE)
-        sampled_tmp <- as.data.frame(CroptimizR:::sample_params(list(lb=lb, ub=ub),nb_values,
-                                                                seed=seed))
-        idx <- which(sapply(1:nrow(sampled_tmp),function(x) {satisfy_par_const(sampled_tmp[x,])}))
-        sampled_values <- dplyr::bind_rows(sampled_values,sampled_tmp[idx,])
-        count <- count+1
+      while (nrow(sampled_values) < nb_values && count < 1000) {
+        seed <- sample(1000, 1, replace = FALSE)
+        sampled_tmp <- as.data.frame(CroptimizR:::sample_params(list(lb = lb, ub = ub), nb_values,
+          seed = seed
+        ))
+        idx <- which(sapply(1:nrow(sampled_tmp), function(x) {
+          satisfy_par_const(sampled_tmp[x, ])
+        }))
+        sampled_values <- dplyr::bind_rows(sampled_values, sampled_tmp[idx, ])
+        count <- count + 1
       }
-      if (count>=1000) stop(paste("Error, number of sampling of initial values reached maximum allowed value: ",count,
-                            "samplings have been performed but this did not allow to gather",nb_values,"satisfying the prescribed constraints on the parameters."))
-      sampled_values <- sampled_values[1:nb_values,]
+      if (count >= 1000) {
+        stop(paste(
+          "Error, number of sampling of initial values reached maximum allowed value: ", count,
+          "samplings have been performed but this did not allow to gather", nb_values, "satisfying the prescribed constraints on the parameters."
+        ))
+      }
+      sampled_values <- sampled_values[1:nb_values, ]
     }
     for (param in param_names) {
-      idx <- which(!is.na(init_values[,param]))
-      if (length(idx)>0) {
-        sampled_values[idx[1:min(nb_values,length(idx))],param] <- init_values[idx[1:min(nb_values,length(idx))],param]
+      idx <- which(!is.na(init_values[, param]))
+      if (length(idx) > 0) {
+        sampled_values[idx[1:min(nb_values, length(idx))], param] <- init_values[idx[1:min(nb_values, length(idx))], param]
       }
     }
   } else {
-    if (nrow(init_values)<nb_values || any(is.na(init_values))) {
+    if (nrow(init_values) < nb_values || any(is.na(init_values))) {
       stop("Init_values must contain initial values for all parameters and repetitions if ub and lb are not provided.")
     }
     sampled_values <- init_values
   }
 
   return(set_init_values(param_info, sampled_values))
-
 }
