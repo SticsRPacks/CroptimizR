@@ -11,13 +11,13 @@
 summary_bayesian <- function(optim_options, param_info, optim_results) {
 
   param_names <- get_params_names(param_info)
-  nb_params=length(param_names)
+  nb_params <- length(param_names)
   path_results <- optim_options$path_results
   out <- optim_results$out
 
   ## Print results
-  codaObject = getSample(out, start = 1, coda = TRUE)  # thin=1
-  tmp=summary(codaObject)
+  codaObject <- getSample(out, start = 1, coda = TRUE)  # thin=1
+  tmp <- summary(codaObject)
   if (nb_params>=2) {
     summary(out) }
   else {
@@ -42,12 +42,12 @@ summary_bayesian <- function(optim_options, param_info, optim_results) {
 plot_bayesian <- function(optim_options, param_info, optim_results) {
 
   param_names <- get_params_names(param_info)
-  nb_params=length(param_names)
+  nb_params <- length(param_names)
   bounds=get_params_bounds(param_info)
   path_results <- optim_options$path_results
   out <- optim_results$out
-  nb_chains=length(out$chain)
-  nb_iterations=nrow(optim_results$post_sample)/nb_chains
+  nb_chains <- length(out$chain)
+  nb_iterations <- nrow(optim_results$post_sample)/nb_chains
 
   tryCatch(
     {
@@ -56,7 +56,7 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
       grDevices::dev.off()
     },
     error=function(cond) {
-      filename=paste0("iterAndDensityPlots",format(Sys.time(), "%Y_%d_%H_%M_%S"),".pdf")
+      filename <- paste0("iterAndDensityPlots",format(Sys.time(), "%Y_%d_%H_%M_%S"),".pdf")
       warning("Error trying to create ",path_results,"/iterAndDensityPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
       utils::flush.console()
       grDevices::pdf(file = file.path(path_results,filename) , width = 9, height = 9)
@@ -71,7 +71,7 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
       grDevices::dev.off()
     },
     error=function(cond) {
-      filename=paste0("marginalPlots",format(Sys.time(), "%Y_%d_%H_%M_%S"),".pdf")
+      filename <- paste0("marginalPlots",format(Sys.time(), "%Y_%d_%H_%M_%S"),".pdf")
       warning("Error trying to create ",path_results,"/marginalPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
       utils::flush.console()
       grDevices::pdf(file = file.path(path_results,filename) , width = 9, height = 9)
@@ -87,7 +87,7 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
         grDevices::dev.off()
       },
       error=function(cond) {
-        filename=paste0("correlationPlots",format(Sys.time(), "%Y_%d_%H_%M_%S"),".pdf")
+        filename <- paste0("correlationPlots",format(Sys.time(), "%Y_%d_%H_%M_%S"),".pdf")
         warning("Error trying to create ",path_results,"/correlationPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
         utils::flush.console()
         grDevices::pdf(file = file.path(path_results,filename) , width = 9, height = 9)
@@ -107,7 +107,7 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
           grDevices::dev.off()
         },
         error=function(cond) {
-          filename=paste0("gelmanDiagPlots",format(Sys.time(), "%Y_%d_%H_%M_%S"),".pdf")
+          filename <- paste0("gelmanDiagPlots",format(Sys.time(), "%Y_%d_%H_%M_%S"),".pdf")
           warning("Error trying to create ",path_results,"/gelmanDiagPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
           utils::flush.console()
           grDevices::pdf(file = file.path(path_results,filename) , width = 9, height = 9)

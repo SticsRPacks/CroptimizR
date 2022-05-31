@@ -113,8 +113,8 @@ post_treat_FwdRegAgMIP <- function(optim_results, crit_options, crt_list, param_
 
   ## Store the results per step
   digits <- 2
-  v_init=as.vector(t(optim_results$init_values[optim_results$ind_min_crit,]))
-  names(v_init)=names(optim_results$init_values)
+  v_init <- as.vector(t(optim_results$init_values[optim_results$ind_min_crit,]))
+  names(v_init) <- names(optim_results$init_values)
   info_new_step <- setNames(tibble(list(crt_list),
                                        list(v_init),
                                        list(optim_results$final_values),
