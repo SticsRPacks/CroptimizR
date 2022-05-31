@@ -43,7 +43,7 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
 
   param_names <- get_params_names(param_info)
   nb_params <- length(param_names)
-  bounds=get_params_bounds(param_info)
+  bounds <- get_params_bounds(param_info)
   path_results <- optim_options$path_results
   out <- optim_results$out
   nb_chains <- length(out$chain)

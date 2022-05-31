@@ -73,7 +73,7 @@ optim_switch <- function(...) {
   tryCatch(
     if (optim_method=="nloptr.simplex" || optim_method=="simplex") {
 
-      res=do.call(wrap_nloptr, wrap_args)
+      res <- do.call(wrap_nloptr, wrap_args)
       if (nargs()>2) {
         if (arguments$crit_options$info_level>=1) {
           res$params_and_crit <- dplyr::bind_rows(.croptEnv$params_and_crit)
@@ -88,7 +88,7 @@ optim_switch <- function(...) {
 
     } else if (optim_method=="BayesianTools.dreamzs" || optim_method=="dreamzs") {
 
-      res=do.call(wrap_BayesianTools, wrap_args)
+      res <- do.call(wrap_BayesianTools, wrap_args)
       if (nargs()>2) {
         res$plots <- plot_bayesian(optim_options=optim_options, param_info=param_info, optim_results=res)
         summary_bayesian(optim_options=optim_options, param_info=param_info, optim_results=res)
@@ -96,7 +96,7 @@ optim_switch <- function(...) {
 
     } else if (optim_method=="optim") {
 
-      res=do.call(wrap_optim, wrap_args)
+      res <- do.call(wrap_optim, wrap_args)
       if (nargs()>2) {
         if (arguments$crit_options$info_level>=1) {
           res$params_and_crit <- dplyr::bind_rows(.croptEnv$params_and_crit)

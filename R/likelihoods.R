@@ -45,7 +45,7 @@ likelihood_log_ciidn <- function(sim_list,obs_list) {
   if(!nargs()) return("log-likelihood")  # return criterion type (ls, log-ls, likelihood, log-likelihood) if no argument given
 
   var_list <- unique(unlist(lapply(obs_list,function (x) colnames(x))))
-  var_list=setdiff(var_list,"Date")
+  var_list <- setdiff(var_list,"Date")
 
   result <- 0
 

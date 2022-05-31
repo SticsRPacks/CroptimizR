@@ -106,20 +106,20 @@ crit_log_cwss_corr <- function(sim_list,obs_list) {
 
   if(!nargs()) return("log-ls")  # return criterion type (ls, log-ls, likelihood, log-likelihood) if no argument given
 
-  var_list=unique(unlist(lapply(obs_list,function (x) colnames(x))))
-  var_list=setdiff(var_list,"Date")
+  var_list <- unique(unlist(lapply(obs_list,function (x) colnames(x))))
+  var_list <- setdiff(var_list,"Date")
   result<-0
 
   for (var in var_list) {
     result1<-0
     for (i in 1:length(obs_list)) {
-      obs=obs_list[[i]][[var]]
+      obs <- obs_list[[i]][[var]]
       if (length(obs)!=0) {
-      sim=sim_list[[i]][[var]]
-      res=obs-sim
-      res=res[!is.na(res)]
+      sim <- sim_list[[i]][[var]]
+      res <- obs-sim
+      res <- res[!is.na(res)]
       #compte les USM
-      sz=length(res)
+      sz <- length(res)
       result1<-result1+(1/sz)*(res%*%res)
       }
     }

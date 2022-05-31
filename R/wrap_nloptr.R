@@ -17,12 +17,12 @@
 
 wrap_nloptr <- function(optim_options,param_info,crit_options) {
 
-  if (is.null((nb_rep=optim_options$nb_rep))) { nb_rep<-5 }
-  if (is.null((xtol_rel=optim_options$xtol_rel))) { xtol_rel<-1e-4 }
-  if (is.null((ftol_rel=optim_options$ftol_rel))) { ftol_rel<-1e-10 }
-  if (is.null((maxeval=optim_options$maxeval))) { maxeval<-500 }
-  if (is.null((ranseed=optim_options$ranseed))) { ranseed<-NULL }
-  if (is.null((path_results=optim_options$path_results))) { path_results<-getwd() }
+  if (is.null((nb_rep <- optim_options$nb_rep))) { nb_rep<-5 }
+  if (is.null((xtol_rel <- optim_options$xtol_rel))) { xtol_rel<-1e-4 }
+  if (is.null((ftol_rel <- optim_options$ftol_rel))) { ftol_rel<-1e-10 }
+  if (is.null((maxeval <- optim_options$maxeval))) { maxeval<-500 }
+  if (is.null((ranseed <- optim_options$ranseed))) { ranseed<-NULL }
+  if (is.null((path_results <- optim_options$path_results))) { path_results<-getwd() }
   if (!is.null((optim_options$algorithm))) if (toupper(optim_options$algorithm)!="NLOPT_LN_NELDERMEAD") {
      warning("Only NLOPT_LN_NELDERMEAD algorithm is interfaced in CroptimizR for package nloptr.")
     }
@@ -36,8 +36,8 @@ wrap_nloptr <- function(optim_options,param_info,crit_options) {
 
   crit_options$tot_max_eval <- nb_rep*maxeval
   param_names <- get_params_names(param_info)
-  nb_params=length(param_names)
-  bounds=get_params_bounds(param_info)
+  nb_params <- length(param_names)
+  bounds <- get_params_bounds(param_info)
   init_values <- get_init_values(param_info)
 
   # Run nloptr for each repetition
@@ -70,11 +70,11 @@ wrap_nloptr <- function(optim_options,param_info,crit_options) {
   }
 
   # Get the estimated values
-  est_values=t(rbind(sapply(nlo,`[[`,"solution")))
-  colnames(est_values)=param_names
+  est_values <- t(rbind(sapply(nlo,`[[`,"solution")))
+  colnames(est_values) <- param_names
 
   # Which repetion has the smallest criterion
-  ind_min_crit=which.min(sapply(nlo, function(x) x$objective))
+  ind_min_crit <- which.min(sapply(nlo, function(x) x$objective))
 
   # Store all criterion values
   crit <- sapply(nlo, function(x) x$objective)

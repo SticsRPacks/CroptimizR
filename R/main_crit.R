@@ -137,12 +137,12 @@ main_crit <- function(param_values, crit_options) {
   var_names <- crit_options$var_names
   forced_param_values <- crit_options$forced_param_values
 
-  param_names=get_params_names(param_info)
+  param_names <- get_params_names(param_info)
   names(param_values) <- param_names
   situation_names <- names(obs_list)
-  nb_situations=length(situation_names)
-  param_names_sl=get_params_names(param_info, short_list = TRUE)
-  nb_params_sl=length(param_names_sl)
+  nb_situations <- length(situation_names)
+  param_names_sl <- get_params_names(param_info, short_list = TRUE)
+  nb_params_sl <- length(param_names_sl)
   crit <- NA
   model_results <- NA
   obs_sim_list <- NA
@@ -325,7 +325,7 @@ main_crit <- function(param_values, crit_options) {
   CroptimizR:::check_obsSim_consistency(obs_sim_list$sim_list,  obs_sim_list$obs_list)
 
   # Compute criterion value
-  crit=crit_function(obs_sim_list$sim_list, obs_sim_list$obs_list)
+  crit <- crit_function(obs_sim_list$sim_list, obs_sim_list$obs_list)
   if (is.nan(crit)) {
     warning(paste0("Optimized criterion returned NaN value. \n Estimated parameters: ",paste(param_names,collapse=" "),", values: ",paste(param_values, collapse=" ")))
   }
