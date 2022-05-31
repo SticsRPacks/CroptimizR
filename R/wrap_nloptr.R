@@ -22,8 +22,11 @@ wrap_nloptr <- function(optim_options,param_info,crit_options) {
   if (is.null((ftol_rel <- optim_options$ftol_rel))) { ftol_rel<-1e-10 }
   if (is.null((maxeval <- optim_options$maxeval))) { maxeval<-500 }
   if (is.null((ranseed <- optim_options$ranseed))) { ranseed<-NULL }
-  if (is.null((path_results <- optim_options$path_results))) { path_results<-getwd() }
-  if (!is.null((optim_options$algorithm))) if (toupper(optim_options$algorithm)!="NLOPT_LN_NELDERMEAD") {
+  if (is.null((path_results <- optim_options$path_results))) {
+    path_results<-getwd()
+    }
+  if (!is.null((optim_options$algorithm)))
+    if (toupper(optim_options$algorithm)!="NLOPT_LN_NELDERMEAD") {
      warning("Only NLOPT_LN_NELDERMEAD algorithm is interfaced in CroptimizR for package nloptr.")
     }
   algorithm<-"NLOPT_LN_NELDERMEAD"
@@ -42,13 +45,15 @@ wrap_nloptr <- function(optim_options,param_info,crit_options) {
 
   # Run nloptr for each repetition
   nlo <- vector("list",nb_rep)
-  nlo<-lapply(nlo,function(x) {x<-list(objective=NA,solution=rep(NA,nb_params))})
+  nlo<-lapply(nlo,function(x) {x<-list(objective=NA,
+                                       solution=rep(NA,nb_params))})
 
   start_time <- Sys.time()
   for (irep in 1:nb_rep){
 
     crit_options$irep <- irep
-    try(nlo[[irep]] <- nloptr::nloptr(x0 = as.numeric(init_values[irep,]), eval_f = main_crit,
+    try(nlo[[irep]] <- nloptr::nloptr(x0 = as.numeric(init_values[irep,]),
+                                      eval_f = main_crit,
                           lb = bounds$lb, ub = bounds$ub,
                           opts = list("algorithm"=algorithm,
                                       "xtol_rel"=xtol_rel, "maxeval"=maxeval,
@@ -58,7 +63,8 @@ wrap_nloptr <- function(optim_options,param_info,crit_options) {
     elapsed <- Sys.time() - start_time
     progress <- 1.0 * irep / nb_rep
     remaining <- elapsed / progress - elapsed
-    cat(sprintf('Working: %.2f%%. Estimated remaining time: %.2f %s\n', progress * 100, remaining, units(remaining)))
+    cat(sprintf('Working: %.2f%%. Estimated remaining time: %.2f %s\n',
+                progress * 100, remaining, units(remaining)))
   }
   if (all(is.na(sapply(nlo,function(x) x$objective)))) {
     stop(paste("All",nb_rep,
@@ -66,7 +72,7 @@ wrap_nloptr <- function(optim_options,param_info,crit_options) {
                "\n   * Please look at warning messages."))
   } else if (any(is.na(sapply(nlo,function(x) x$objective)))) {
     warning(paste("Some repetitions of the parameter estimation aborted.",
-               "\n   * Please look at other warning messages for more details."))
+           "\n   * Please look at other warning messages for more details."))
   }
 
   # Get the estimated values

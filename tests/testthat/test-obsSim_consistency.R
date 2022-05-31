@@ -1,6 +1,9 @@
-obs_list <- list(sit1=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-10")),var1=c(1.1,1.5),var2=c(NA,2.1)),
-              sit2=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-5")),var1=c(1.3,2)),
-              sit3=data.frame(Date=as.POSIXct(c("2010-10-03","2010-10-04")),var1=c(1.,1.1),var2=c(2.0,2.1)))
+obs_list <- list(sit1=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-10")),
+                                 var1=c(1.1,1.5),var2=c(NA,2.1)),
+              sit2=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-5")),
+                              var1=c(1.3,2)),
+              sit3=data.frame(Date=as.POSIXct(c("2010-10-03","2010-10-04")),
+                              var1=c(1.,1.1),var2=c(2.0,2.1)))
 
 # Check if nothing is captured if sim and obs lists are identical
 res <- eval(parse(text = "CroptimizR:::make_obsSim_consistent(obs_list, obs_list)"))

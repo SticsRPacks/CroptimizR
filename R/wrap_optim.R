@@ -29,7 +29,9 @@ wrap_optim <- function(optim_options,param_info,crit_options) {
     if (method=="Nelder-Mead") maxit<-500
     else maxit <- 100
   }
-  if (is.null((path_results <- optim_options$path_results))) { path_results <- getwd() }
+  if (is.null((path_results <- optim_options$path_results))) {
+    path_results <- getwd()
+    }
 
   # return requested information if only optim_options is given in argument
   if (nargs()==1 & methods::hasArg(optim_options)) {
@@ -48,7 +50,7 @@ wrap_optim <- function(optim_options,param_info,crit_options) {
 
   # Optim package switches the method to L-BFGS if bounds are provided since
   # they are not handled with other methods ...
-  # as bounds are required in estim_param, we set them to [-Inf,Inf] (for graphs)
+  # as bounds are required in estim_param, we set them to [-Inf,Inf](for graphs)
   # and we do not provide them to optim if method is not L-BFGS
   if (method!="L-BFGS-B" && method!="Brent") {
     bounds$lb<-rep(-Inf,nb_params)
@@ -64,14 +66,16 @@ wrap_optim <- function(optim_options,param_info,crit_options) {
 
     crit_options$irep <- irep
     if (method=="L-BFGS-B" || method=="Brent") {
-      try(optim[[irep]] <- stats::optim(par=as.numeric(init_values[irep,]), fn = main_crit,
+      try(optim[[irep]] <- stats::optim(par=as.numeric(init_values[irep,]),
+                                        fn = main_crit,
                                         method=method,
                                         lower=bounds$lb, upper=bounds$ub,
                                         control = optim_options$control,
                                         hessian=hessian,
                                         crit_options=crit_options))
     } else {
-      try(optim[[irep]] <- stats::optim(par=as.numeric(init_values[irep,]), fn = main_crit,
+      try(optim[[irep]] <- stats::optim(par=as.numeric(init_values[irep,]),
+                                        fn = main_crit,
                                         method=method,
                                         control = optim_options$control,
                                         hessian=hessian,
@@ -81,7 +85,8 @@ wrap_optim <- function(optim_options,param_info,crit_options) {
     elapsed <- Sys.time() - start_time
     progress <- 1.0 * irep / nb_rep
     remaining <- elapsed / progress - elapsed
-    cat(sprintf('Working: %.2f%%. Estimated remaining time: %.2f %s\n', progress * 100, remaining, units(remaining)))
+    cat(sprintf('Working: %.2f%%. Estimated remaining time: %.2f %s\n',
+                progress * 100, remaining, units(remaining)))
 
   }
   if (all(is.na(sapply(optim,function(x) x$value)))) {
@@ -90,7 +95,7 @@ wrap_optim <- function(optim_options,param_info,crit_options) {
                "\n   * Please look at warning messages."))
   } else if (any(is.na(sapply(optim,function(x) x$value)))) {
     warning(paste("Some repetitions of the parameter estimation aborted.",
-                  "\n   * Please look at other warning messages for more details."))
+              "\n   * Please look at other warning messages for more details."))
   }
 
 
@@ -99,7 +104,9 @@ wrap_optim <- function(optim_options,param_info,crit_options) {
   colnames(est_values) <- param_names
 
   # Which repetition has the smallest criterion
-  ind_min_crit <- which.min(sapply(optim, function(x) {if (!is.null(x$value)) x$value}))
+  ind_min_crit <- which.min(sapply(optim, function(x) {
+    if (!is.null(x$value)) x$value
+    }))
 
   # Store all criterion values
   crit <- sapply(optim, function(x) x$value)

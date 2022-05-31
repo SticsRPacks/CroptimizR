@@ -1,7 +1,10 @@
 obs_list <- list(
-  sit1 = data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-10")),var1=c(1.1,1.5),var2=c(NA,2.1)),
-  sit2 = data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-5")),var1=c(NA,NA)),
-  sit3 = data.frame(Date=as.POSIXct(c("2010-10-03","2010-10-04")),var1=c(NA,NA),var2=c(2.0,2.1))
+  sit1 = data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-10")),
+                    var1=c(1.1,1.5),var2=c(NA,2.1)),
+  sit2 = data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-5")),
+                    var1=c(NA,NA)),
+  sit3 = data.frame(Date=as.POSIXct(c("2010-10-03","2010-10-04")),
+                    var1=c(NA,NA),var2=c(2.0,2.1))
 )
 
 test_that("filter_obs filters-out correctly", {
