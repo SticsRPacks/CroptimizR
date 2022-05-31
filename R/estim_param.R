@@ -302,26 +302,6 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
     cat(paste("Estimated parameters:",paste(crt_candidates,collapse=" "),"\n"))
     cat("---------------------\n")
 
-    ## Initialize parameters
-    tmp <- optim_switch(optim_method=optim_method,optim_options=optim_options)
-    init_values_nb <- tmp$init_values_nb
-    param_info <- complete_init_values(param_info, nb_values=init_values_nb,
-                                       satisfy_par_const=satisfy_par_const)
-    ### Initialize already estimated parameters with the values leading to the best criterion obtained so far
-    if (!is.null(param_selection_steps)) {
-      ind_min_infocrit <- which.min(param_selection_steps[[info_crit_list[[1]]()$name]])
-      best_final_values <- param_selection_steps$`Final values`[[ind_min_infocrit]]
-      names(best_final_values) <- param_selection_steps$`Estimated parameters`[[ind_min_infocrit]]
-      init_values <- get_init_values(param_info)
-      init_values[,names(best_final_values)] <- as.data.frame(as.list(best_final_values))[rep(1,init_values_nb),,drop=FALSE]
-      param_info <- set_init_values(param_info, init_values)
-    }
-
-    ## nb_rep may be different for the different parameter selection steps
-    ## ... quite ugly ... should be improved ...
-    if (!is.null(optim_options$nb_rep))
-      optim_options$nb_rep <- init_values_nb[min(length(init_values_nb),count)]
-
     ## Filter information about the parameters to estimate
     param_info_tmp <- filter_param_info(param_info, crt_candidates)
     bounds=get_params_bounds(param_info_tmp)
@@ -330,6 +310,26 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
     if (any(inter_forc_cand)) {
       forced_param_values_tmp <- forced_param_values[-which(inter_forc_cand)]
     }
+
+    ## Initialize parameters
+    tmp <- optim_switch(optim_method=optim_method,optim_options=optim_options)
+    ## nb_rep may be different for the different parameter selection steps
+    ## ... quite ugly ... should be improved ...
+    init_values_nb <- tmp$init_values_nb[min(length(tmp$init_values_nb),count)]
+    param_info_tmp <- complete_init_values(param_info_tmp, nb_values=init_values_nb,
+                                       satisfy_par_const=satisfy_par_const)
+    ### Initialize already estimated parameters with the values leading to the best criterion obtained so far
+    if (!is.null(param_selection_steps)) {
+      ind_min_infocrit <- which.min(param_selection_steps[[info_crit_list[[1]]()$name]])
+      best_final_values <- param_selection_steps$`Final values`[[ind_min_infocrit]]
+      names(best_final_values) <- param_selection_steps$`Estimated parameters`[[ind_min_infocrit]]
+      init_values <- get_init_values(param_info_tmp)
+      init_values[,names(best_final_values)] <- as.data.frame(as.list(best_final_values))[rep(1,init_values_nb),,drop=FALSE]
+      param_info_tmp <- set_init_values(param_info_tmp, init_values)
+    }
+
+    if (!is.null(optim_options$nb_rep))
+      optim_options$nb_rep <- init_values_nb
 
     ## Redefine path_result in case of several steps (results are stored in step_* sub-directories of optim_options$path_results)
     if (!is.null(candidate_param)) {
