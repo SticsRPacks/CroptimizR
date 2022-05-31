@@ -2,10 +2,12 @@
 #'
 #' @param data_list List of values to check
 #'
-#' @return TRUE if data_list has the expected format, FALSE otherwise (+ warnings)
+#' @return TRUE if data_list has the expected format,
+#' FALSE otherwise (+ warnings)
 #'
-#' @details data is expected to be stored in a vector of named list containing for
-#' each situation a data.frame with a column "Date" plus one column per variable
+#' @details data is expected to be stored in a vector of named list containing
+#' for each situation a data.frame with a column "Date" plus one column per
+#'  variable
 #'
 #' @examples
 #'
@@ -34,7 +36,8 @@
 is.data <- function(data_list) {
 
   # Check data_list format
-  if (!is.list(data_list) || !all(sapply(data_list, function(x) is.data.frame(x))) ) {
+  if (!is.list(data_list) || !all(sapply(data_list,
+                                         function(x) is.data.frame(x))) ) {
     warning("Incorrect format: Should be a named list containing data.frames.")
     return(FALSE)
   }
@@ -50,9 +53,10 @@ is.data <- function(data_list) {
     return(FALSE)
   }
   # Check there are no replicated Dates
-  if (any(sapply(data_list, function(x) length(unique(x$Date))<length(x$Date)))) {
+  if (any(sapply(data_list,
+                 function(x) length(unique(x$Date))<length(x$Date)))) {
     warning(paste("Incorrect format, Date column include replicated dates for situations",
-               paste(names(data_list)[sapply(data_list, function(x) length(unique(x$Date))<length(x$Date))],collapse = ",")))
+               paste(names(data_list)[sapply(data_list,function(x) length(unique(x$Date))<length(x$Date))],collapse = ",")))
     return(FALSE)
   }
 

@@ -39,7 +39,9 @@ main_crit <- function(param_values, crit_options) {
                                                                             tibble::tibble(!!!param_values_ori),
                                                                             satisfy_const=satisfy_const)
 
-      if (!is.null(crit_options$irep)) { ## this condition is there to detect frequentist methods ... should be changed for more robust test later ...
+      if (!is.null(crit_options$irep)) {
+        ## this condition is there to detect frequentist methods ...
+        ## should be changed for more robust test later ...
 
         if ((.croptEnv$eval_count == 1) || (crit_options$irep > .croptEnv$params_and_crit[[.croptEnv$eval_count-1]]$rep) ) {
 
@@ -56,8 +58,10 @@ main_crit <- function(param_values, crit_options) {
 
           eval <- .croptEnv$params_and_crit[[.croptEnv$eval_count-1]]$eval+1
           iter <- NA
-          if (!is.na(crit) && (is.na(.croptEnv$last_crit) || crit < .croptEnv$last_crit)) {
-            ## in the if above, is.na(.croptEnv$last_crit) is there in case crit==NA at the first evaluation
+          if (!is.na(crit) && (is.na(.croptEnv$last_crit) ||
+                               crit < .croptEnv$last_crit)) {
+            ## in the if above, is.na(.croptEnv$last_crit) is there in case
+            ## crit==NA at the first evaluation
             iter <- .croptEnv$last_iter+1
             .croptEnv$last_iter <- iter
             .croptEnv$last_crit <- crit
@@ -108,7 +112,8 @@ main_crit <- function(param_values, crit_options) {
     }
 
     if (is.na(crit)) {
-      filename <- file.path(crit_options$path_results,paste0("debug_crit_NA.Rdata"))
+      filename <- file.path(crit_options$path_results,
+                            paste0("debug_crit_NA.Rdata"))
       warning(paste("The optimized criterion has taken the NA value. \n  * Parameter values, obs_list and model results will be saved in",
                     filename,"for sake of debugging."))
       # just warns in this case. The optimization method may handle the problem which
@@ -156,10 +161,12 @@ main_crit <- function(param_values, crit_options) {
   # Transform parameters
   # TO DO
 
-  # Handle the case of group of parameters (i.e. different values depending on the situations)
+  # Handle the case of group of parameters (i.e. different values depending on
+  # the situations)
   param_values_ori <- param_values
   if  ("sit_list" %in% names(param_info[[1]])) {
-    sit_names_param_info <- unique(unlist(lapply(param_info,function(x) {unlist(x$sit_list)})))
+    sit_names_param_info <- unique(unlist(lapply(param_info,
+                                            function(x) {unlist(x$sit_list)})))
     param_values_df <- sapply(sit_names_param_info,
                               function(x) CroptimizR:::get_params_per_sit(param_info,x,param_values),
                               simplify=FALSE)

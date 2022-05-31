@@ -6,9 +6,12 @@
 #' @param sim_list List of simulated variables
 #' @param obs_list List of observed variables
 #'
-#' @return The value of the likelihood given the observed and simulated values of the variables.
+#' @return The value of the likelihood given the observed and simulated values
+#'  of the variables.
 #'
-#' @details The following log-likelihoods are proposed ([see html version](https://sticsrpacks.github.io/CroptimizR/reference/likelihood.html) for a better rendering of equations):
+#' @details The following log-likelihoods are proposed ([see html version]
+#' (https://sticsrpacks.github.io/CroptimizR/reference/likelihood.html)
+#' for a better rendering of equations):
 #' \itemize{
 #'   \item `likelihood_log_ciidn`: log transformation of concentrated version of iid normal likelihood \cr
 #'           The concentrated version of iid normal likelihood is:
@@ -30,7 +33,8 @@
 #'           However, errors for different observations over time of the same variable in the same situation are assumed to be highly correlated.
 #'           In this way, each situation contributes a single term to the overall sum of squared errors regardless of the number of observations which may be usefull in case one have situations with very heterogenous number of dates of observations.
 #' }
-#' `sim_list` and `obs_list` must have the same structure (i.e. same number of variables, dates, situations, ... use internal function
+#' `sim_list` and `obs_list` must have the same structure
+#' (i.e. same number of variables, dates, situations, ... use internal function
 #' intersect_sim_obs before calling the criterion functions).
 #'
 #' @name Likelihoods
@@ -41,9 +45,10 @@ NULL
 #' @export
 #' @rdname Likelihoods
 likelihood_log_ciidn <- function(sim_list,obs_list) {
+  # return criterion type (ls, log-ls, likelihood, log-likelihood)
+  # if no argument given
 
-  if(!nargs()) return("log-likelihood")  # return criterion type (ls, log-ls, likelihood, log-likelihood) if no argument given
-
+  if(!nargs()) return("log-likelihood")
   var_list <- unique(unlist(lapply(obs_list,function (x) colnames(x))))
   var_list <- setdiff(var_list,"Date")
 
@@ -66,8 +71,9 @@ likelihood_log_ciidn <- function(sim_list,obs_list) {
 #' @export
 #' @rdname Likelihoods
 likelihood_log_ciidn_corr <- function(sim_list,obs_list) {
-
-  if(!nargs()) return("log-likelihood")  # return criterion type (ls, log-ls, likelihood, log-likelihood) if no argument given
+  # return criterion type (ls, log-ls, likelihood, log-likelihood)
+  # if no argument given
+  if(!nargs()) return("log-likelihood")
 
   var_list <- unique(unlist(lapply(obs_list,function (x) colnames(x))))
   var_list <- setdiff(var_list,"Date")
