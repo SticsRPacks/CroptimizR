@@ -20,14 +20,14 @@
 #'
 #' # Missing Date column
 #' data_list <- list(sit1=data.frame(var1=c(1.1,1.5),var2=c(NA,2.1)),
-#'                  sit2=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-5")),
+#'                 sit2=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-5")),
 #'                                  var1=c(1.3,2)))
 #' CroptimizR:::is.data(data_list)
 #'
 #' # Bad Date format
 #' data_list <- list(sit1=data.frame(Date=c("2009-11-30","2009-12-10"),
 #'                                   var1=c(1.1,1.5),var2=c(NA,2.1)),
-#'                  sit2=data.frame(Date=c("2009-11-30","2009-12-5"),var1=c(1.3,2)))
+#'              sit2=data.frame(Date=c("2009-11-30","2009-12-5"),var1=c(1.3,2)))
 #' CroptimizR:::is.data(data_list)
 #'}
 #'
@@ -55,8 +55,11 @@ is.data <- function(data_list) {
   # Check there are no replicated Dates
   if (any(sapply(data_list,
                  function(x) length(unique(x$Date))<length(x$Date)))) {
-    warning(paste("Incorrect format, Date column include replicated dates for situations",
-               paste(names(data_list)[sapply(data_list,function(x) length(unique(x$Date))<length(x$Date))],collapse = ",")))
+    warning(paste(
+      "Incorrect format, Date column include replicated dates for situations",
+      paste(names(data_list)[sapply(data_list,
+                            function(x) length(unique(x$Date))<length(x$Date))],
+            collapse = ",")))
     return(FALSE)
   }
 
@@ -89,7 +92,7 @@ is.data <- function(data_list) {
 #' # Bad Date format
 #' sim_list <- list(sit1=data.frame(Date=c("2009-11-30","2009-12-10"),
 #'                                       var1=c(1.1,1.5),var2=c(NA,2.1)),
-#'                  sit2=data.frame(Date=c("2009-11-30","2009-12-5"),var1=c(1.3,2)))
+#'              sit2=data.frame(Date=c("2009-11-30","2009-12-5"),var1=c(1.3,2)))
 #' CroptimizR:::is.sim(sim_list)
 #'}
 #'
@@ -118,13 +121,13 @@ is.sim <- function(sim_list) {
 #'\donttest{
 #' obs_list <- list(sit1=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-10")),
 #'                                  var1=c(1.1,1.5),var2=c(NA,2.1)),
-#'                  sit2=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-5")),
+#'                sit2=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-5")),
 #'                                  var1=c(1.3,2)))
 #' CroptimizR:::is.obs(obs_list)
 #'
 #' # Missing Date column
 #' obs_list <- list(sit1=data.frame(var1=c(1.1,1.5),var2=c(NA,2.1)),
-#'                  sit2=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-5")),
+#'                sit2=data.frame(Date=as.POSIXct(c("2009-11-30","2009-12-5")),
 #'                                  var1=c(1.3,2)))
 #' CroptimizR:::is.obs(obs_list)
 #'

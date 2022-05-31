@@ -13,7 +13,8 @@ test_that("obs and sim are identical", {
 })
 
 
-# Check if it captures that there are non consistent types for some sim and obs variables
+# Check if it captures that there are non consistent types for some sim and obs
+# variables
 sim_list <- obs_list
 sim_list[[1]]$var1 <- as.character(sim_list[[1]]$var1)
 sim_list[[3]]$var2 <- as.character(sim_list[[3]]$var2)

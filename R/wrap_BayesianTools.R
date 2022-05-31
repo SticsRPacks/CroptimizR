@@ -19,7 +19,9 @@ wrap_BayesianTools <- function(optim_options,param_info,crit_options) {
   if (!is.numeric(optim_options$startValue)) {
     stop("startValue should be the number of markov chains. Please use param_info$init_values to prescribe initial values for the parameters.")
   }
-  if (is.null((path_results <- optim_options$path_results))) { path_results <- getwd() }
+  if (is.null((path_results <- optim_options$path_results))) {
+    path_results <- getwd()
+    }
   if (is.null((optim_options$method))) {
     method <- "DREAMzs"
   } else {
@@ -35,7 +37,8 @@ wrap_BayesianTools <- function(optim_options,param_info,crit_options) {
 
 
 
-  crit_options$tot_max_eval <- optim_options$iterations + optim_options$startValue -
+  crit_options$tot_max_eval <- optim_options$iterations +
+    optim_options$startValue -
     optim_options$iterations %% optim_options$startValue
   param_names <- get_params_names(param_info)
   nb_params <- length(param_names)
@@ -47,13 +50,16 @@ wrap_BayesianTools <- function(optim_options,param_info,crit_options) {
   default <- applySettingsDefault(settings = NULL, sampler = method)
 
   # Put default values for options not set by the user
-  sapply(names(default),function(x) {if (is.null(optim_options[[x]])) {optim_options[[x]]<<-default[[x]]}})
+  sapply(names(default),function(x) {if (is.null(optim_options[[x]])) {
+    optim_options[[x]]<<-default[[x]]
+    }})
 
   # if burnin has not been set , set it by default to adaptation if it is set
   if (method=="DREAMzs") {
     if(optim_options$adaptation <1) optim_options$adaptation <- optim_options$adaptation*optim_options$iterations
     if (optim_options$burnin<optim_options$adaptation) {
-      warning(paste0("burnin (=",optim_options$burnin,") < adaptation (=",optim_options$adaptation,")
+      warning(paste0("burnin (=",optim_options$burnin,") < adaptation (=",
+      optim_options$adaptation,")
                   => burnin is set equal to adaptation."))
       optim_options$burnin <- optim_options$adaptation
     }

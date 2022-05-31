@@ -39,10 +39,17 @@
 #'           situation,
 #'           \eqn{ f_{jk}(X_i;\theta) } the corresponding model prediction, \eqn{N_j} the number of situations including at least one observation of variable \eqn{j}, and \eqn{n_{ij}} the number of observation of variable \eqn{j} on situation \eqn{i}. . \cr
 #'           `crit_log_cwss_corr` computes the log of this equation. \cr
-#'           In this criterion, one still assume that errors in different situations or for different variables in the same situation are independent.
-#'           However, errors for different observations over time of the same variable in the same situation are assumed to be highly correlated.
-#'           In this way, each situation contributes a single term to the overall sum of squared errors regardless of the number of observations which may be usefull in case one have situations with very heterogenous number of dates of observations.
-#'           More details about this criterion are given in Wallach et al. (2011), equation 8.
+#'           In this criterion, one still assume that errors in different
+#'           situations or for different variables in the same situation are
+#'           independent.
+#'           However, errors for different observations over time of the same
+#'           variable in the same situation are assumed to be highly correlated.
+#'           In this way, each situation contributes a single term to the
+#'           overall sum of squared errors regardless of the number of
+#'           observations which may be usefull in case one have situations with
+#'            very heterogenous number of dates of observations.
+#'           More details about this criterion are given in Wallach et al.
+#'           (2011), equation 8.
 #' }
 #' `sim_list` and `obs_list` must have the same structure (i.e. same number of
 #' variables, dates, situations, ... use internal function
