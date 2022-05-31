@@ -23,7 +23,8 @@ summary_bayesian <- function(optim_options, param_info, optim_results) {
   else {
     print(tmp)
   }
-  cat(paste("Complementary graphs and results can be found in ", path_results,"\n\n"))
+  cat(paste("Complementary graphs and results can be found in ",
+            path_results,"\n\n"))
 
 }
 
@@ -51,13 +52,17 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
 
   tryCatch(
     {
-      grDevices::pdf(file = file.path(path_results,"iterAndDensityPlots.pdf") , width = 9, height = 9)
+      grDevices::pdf(file = file.path(path_results,"iterAndDensityPlots.pdf") ,
+                     width = 9, height = 9)
       graphics::plot(out)
       grDevices::dev.off()
     },
     error=function(cond) {
-      filename <- paste0("iterAndDensityPlots",format(Sys.time(), "%Y_%d_%H_%M_%S"),".pdf")
-      warning("Error trying to create ",path_results,"/iterAndDensityPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
+      filename <- paste0("iterAndDensityPlots",
+                         format(Sys.time(), "%Y_%d_%H_%M_%S"),".pdf")
+      warning("Error trying to create ",
+              path_results,
+              "/iterAndDensityPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
       utils::flush.console()
       grDevices::pdf(file = file.path(path_results,filename) , width = 9, height = 9)
       graphics::plot(out)
