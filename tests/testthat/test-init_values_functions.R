@@ -21,7 +21,7 @@ test_that("Initial values and constraints", {
   expect_equal(res2$init_values$dlaimax[1], param_info$init_values$dlaimax[1])
   expect_equal(res2$init_values$durvieF[1:2],
                param_info$init_values$durvieF[1:2])
-  expect_true(all(sapply(1:nrow(res3$init_values),
+  expect_true(all(sapply(seq_along(res3$init_values),
                          function(x) satisfy_par_const(res3$init_values[x,]))))
 
 })

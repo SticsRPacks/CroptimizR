@@ -127,7 +127,7 @@ crit_log_cwss_corr <- function(sim_list,obs_list) {
 
   for (var in var_list) {
     result1<-0
-    for (i in 1:length(obs_list)) {
+    for (i in seq_along(obs_list)) {
       obs <- obs_list[[i]][[var]]
       if (length(obs)!=0) {
       sim <- sim_list[[i]][[var]]
