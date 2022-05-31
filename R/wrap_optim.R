@@ -17,19 +17,19 @@
 
 wrap_optim <- function(optim_options,param_info,crit_options) {
 
-  if (is.null((nb_rep=optim_options$nb_rep))) { nb_rep <- 5 }
-  if (is.null((ranseed=optim_options$ranseed))) { ranseed <- NULL }
-  if (is.null((hessian=optim_options$hessian))) { hessian <- FALSE }
-  if (is.null((method=optim_options$method))) { method <- "Nelder-Mead" }
+  if (is.null((nb_rep <- optim_options$nb_rep))) { nb_rep <- 5 }
+  if (is.null((ranseed <- optim_options$ranseed))) { ranseed <- NULL }
+  if (is.null((hessian <- optim_options$hessian))) { hessian <- FALSE }
+  if (is.null((method <- optim_options$method))) { method <- "Nelder-Mead" }
   else if (toupper(method)=="SANN") {
     warning("SANN algorithm is not yet interfaced in CroptimizR for package optim. Nelder-Mead will be used.")
     method <- "Nelder-Mead"
   }
-  if (is.null((maxit=optim_options$control$maxit))) {
+  if (is.null((maxit <- optim_options$control$maxit))) {
     if (method=="Nelder-Mead") maxit<-500
-    else maxit=100
+    else maxit <- 100
   }
-  if (is.null((path_results=optim_options$path_results))) { path_results <- getwd() }
+  if (is.null((path_results <- optim_options$path_results))) { path_results <- getwd() }
 
   # return requested information if only optim_options is given in argument
   if (nargs()==1 & methods::hasArg(optim_options)) {
@@ -40,10 +40,10 @@ wrap_optim <- function(optim_options,param_info,crit_options) {
 
   crit_options$tot_max_eval <- nb_rep*maxit
   param_names <- get_params_names(param_info)
-  nb_params=length(param_names)
+  nb_params <- length(param_names)
   set.seed(ranseed)
 
-  bounds=get_params_bounds(param_info)
+  bounds <- get_params_bounds(param_info)
   init_values <- get_init_values(param_info)
 
   # Optim package switches the method to L-BFGS if bounds are provided since
@@ -95,11 +95,11 @@ wrap_optim <- function(optim_options,param_info,crit_options) {
 
 
   # Get the estimated values
-  est_values=t(rbind(sapply(optim,`[[`,"par")))
-  colnames(est_values)=param_names
+  est_values <- t(rbind(sapply(optim,`[[`,"par")))
+  colnames(est_values) <- param_names
 
   # Which repetition has the smallest criterion
-  ind_min_crit=which.min(sapply(optim, function(x) {if (!is.null(x$value)) x$value}))
+  ind_min_crit <- which.min(sapply(optim, function(x) {if (!is.null(x$value)) x$value}))
 
   # Store all criterion values
   crit <- sapply(optim, function(x) x$value)

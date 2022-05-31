@@ -9,8 +9,8 @@
 summary_frequentist <- function(optim_options, param_info, optim_results) {
 
   param_names <- get_params_names(param_info)
-  nb_params=length(param_names)
-  bounds=get_params_bounds(param_info)
+  nb_params <- length(param_names)
+  bounds <- get_params_bounds(param_info)
   path_results <- optim_options$path_results
   init_values <- optim_results$init_values
   est_values <- optim_results$est_values
@@ -46,7 +46,7 @@ post_treat_frequentist <- function(optim_options, param_info, optim_results,
                                    crit_options) {
 
   param_names <- get_params_names(param_info)
-  nb_params=length(param_names)
+  nb_params <- length(param_names)
   crit_function <- crit_options$crit_function
   info_crit_list <- crit_options$info_crit_list
 
@@ -83,7 +83,7 @@ post_treat_frequentist <- function(optim_options, param_info, optim_results,
 #'
 plot_frequentist <- function(optim_options, param_info, optim_results) {
 
-  bounds=get_params_bounds(param_info)
+  bounds <- get_params_bounds(param_info)
   path_results <- optim_options$path_results
   init_values <- optim_results$init_values
   est_values <- optim_results$est_values
@@ -97,7 +97,7 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
       grDevices::pdf(file = file.path(path_results,"EstimatedVSinit.pdf") , width = 9, height = 9)
     },
     error=function(cond) {
-      filename=paste0("EstimatedVSinit_new.pdf")
+      filename <- paste0("EstimatedVSinit_new.pdf")
       warning("Error trying to create ",path_results,"/EstimatedVSinit.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
       grDevices::pdf(file = file.path(path_results,filename) , width = 9, height = 9)
     })
@@ -127,7 +127,7 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
       grDevices::pdf(file = file.path(path_results,"ValuesVSit.pdf") , width = 9, height = 9)
     },
     error=function(cond) {
-      filename=paste0("ValuesVSit_new.pdf")
+      filename <- paste0("ValuesVSit_new.pdf")
       warning("Error trying to create ",path_results,"/ValuesVSit.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
       grDevices::pdf(file = file.path(path_results,filename) , width = 9, height = 9)
     })
@@ -148,7 +148,7 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
       grDevices::pdf(file = file.path(path_results,"ValuesVSit_2D.pdf") , width = 9, height = 9)
     },
     error=function(cond) {
-      filename=paste0("ValuesVSit_2D_new.pdf")
+      filename <- paste0("ValuesVSit_2D_new.pdf")
       warning("Error trying to create ",path_results,"/ValuesVSit_2D.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",filename)
       grDevices::pdf(file = file.path(path_results,filename) , width = 9, height = 9)
     })
@@ -205,7 +205,7 @@ plot_estimVSinit <- function(init_values, est_values, crit, lb, ub, bubble=TRUE)
 
     df <- data.frame(init_values=init_values[,param_name],est_values=est_values[,param_name],
                      crit=crit)
-    row.names(df) = paste0(seq(1:nb_rep))
+    row.names(df) <- paste0(seq(1:nb_rep))
 
     if (bubble) {
       tmp_aes <- aes(x=init_values, y=est_values, size = crit)
@@ -287,7 +287,7 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval=c("iter", "eval"),
   param_names <- get_params_names(param_info)
   bounds <- get_params_bounds(param_info)
 
-  lab= "evaluations"
+  lab <- "evaluations"
   if (iter_or_eval[1]=="iter") {
     df <- filter(df, !is.na(.data$iter))
     lab <- "iterations"
@@ -397,9 +397,9 @@ plot_valuesVSit_2D <- function(df, param_info, iter_or_eval=c("eval","iter"),
 
   param_names <- get_params_names(param_info)
   if (length(param_names)<=1) return()
-  bounds=get_params_bounds(param_info)
+  bounds <- get_params_bounds(param_info)
 
-  lab= "evaluations"
+  lab <- "evaluations"
   if (iter_or_eval[1]=="iter") {
     df <- filter(df, !is.na(.data$iter))
     lab <- "iterations"
