@@ -135,7 +135,7 @@ post_treat_FwdRegAgMIP <- function(optim_results, crit_options, crt_list,
                               "Initial Sum of squared errors",
                               "Final Sum of squared errors",
                               info_crit_func()$name,"Selected step"))
-  param_selection_steps <- dplyr::bind_rows(param_selection_steps, info_new_step)
+param_selection_steps <- dplyr::bind_rows(param_selection_steps, info_new_step)
   ind_min_infocrit <- which.min(param_selection_steps[[info_crit_func()$name]])
   param_selection_steps[,"Selected step"] <- ""
   param_selection_steps[ind_min_infocrit,"Selected step"] <- "X"
@@ -212,9 +212,10 @@ save_results_FwdRegAgMIP <- function(param_selection_steps, path_results) {
                                                  "param_selection_steps.csv"),
                      row.names=FALSE)
 
-  cat("\nA table summarizing the results obtained at the different steps is stored in ",
-      file.path(path_results,"param_selection_steps.csv"),"\n")
-  cat("Graphs and detailed results obtained for the different steps can be found in ",
-      file.path(path_results,"results_all_steps","step_#"),"folders.\n\n")
+  cat("\nA table summarizing the results obtained at the different steps ",
+      "is stored in ",file.path(path_results,"param_selection_steps.csv"),"\n")
+  cat("Graphs and detailed results obtained for the different steps can be ",
+      "found in ",file.path(path_results,"results_all_steps","step_#"),
+      "folders.\n\n")
 
 }

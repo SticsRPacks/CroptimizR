@@ -89,7 +89,8 @@ ind<-apply(obs_list[[y]][!(names(obs_list[[y]]) %in% get_reserved_keywords())],
     }
   })
   if ((length(obs_list)==0) | (length(sim_list)==0)) {
-warning("Simulations and observations do not contain common dates and variables")
+warning(
+  "Simulations and observations do not contain common dates and variables")
     return(NA)
   }
 
