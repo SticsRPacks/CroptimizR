@@ -61,7 +61,7 @@ prior_3$dlaimax <- list(
     "bou00t1", "bo96iN+", "lu96iN+",
     "lu96iN6", "lu97iN+"
   )),
-  init_values = data.frame(c(0.001, 0.002), lb = 0.0001, ub = 0.1)
+  init_values = data.frame(c(0.001, 0.002)), lb = 0.0001, ub = 0.1
 )
 prior_3$durvieF <- list(
   sit_list = list(
