@@ -16,7 +16,8 @@ param_info2$dlaimax <- list(
     "bou99t3", "bou00t3", "bou99t1", "bou00t1",
     "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"
   )),
-  lb = 0.0005, ub = 0.0025)
+  lb = 0.0005, ub = 0.0025
+)
 param_info2$durvieF <- list(
   sit_list = list(
     c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
@@ -27,6 +28,6 @@ param_info2$durvieF <- list(
 param_info2_res <- param_info2["durvieF"]
 
 test_that("filter_param_info", {
-  expect_equal(eval(parse(text = "CroptimizR:::filter_param_info(param_info1, \"durvieF\")")),param_info1_res)
-  expect_equal(eval(parse(text = "CroptimizR:::filter_param_info(param_info2, \"durvieF\")")),param_info2_res)
+  expect_equal(eval(parse(text = "CroptimizR:::filter_param_info(param_info1, \"durvieF\")")), param_info1_res)
+  expect_equal(eval(parse(text = "CroptimizR:::filter_param_info(param_info2, \"durvieF\")")), param_info2_res)
 })

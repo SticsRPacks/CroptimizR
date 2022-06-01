@@ -6,5 +6,5 @@
 #' @keywords internal
 #'
 get_reserved_keywords <- function() {
- return(c("Date","Plant"))
+  return(c("Date", "Plant"))
 }

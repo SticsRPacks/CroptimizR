@@ -49,25 +49,27 @@ NULL
 
 #' @export
 #' @rdname Likelihoods
-likelihood_log_ciidn <- function(sim_list,obs_list) {
+likelihood_log_ciidn <- function(sim_list, obs_list) {
   # return criterion type (ls, log-ls, likelihood, log-likelihood)
   # if no argument given
 
-  if(!nargs()) return("log-likelihood")
-  var_list <- unique(unlist(lapply(obs_list,function (x) colnames(x))))
-  var_list <- setdiff(var_list,"Date")
+  if (!nargs()) {
+    return("log-likelihood")
+  }
+  var_list <- unique(unlist(lapply(obs_list, function(x) colnames(x))))
+  var_list <- setdiff(var_list, "Date")
 
   result <- 0
 
   for (var in var_list) {
-    obs <- unlist(sapply(obs_list,function (x) x[is.element(colnames(x),var)]))
-    sim <- unlist(sapply(sim_list,function (x) x[is.element(colnames(x),var)]))
-    res <- obs-sim
+    obs <- unlist(sapply(obs_list, function(x) x[is.element(colnames(x), var)]))
+    sim <- unlist(sapply(sim_list, function(x) x[is.element(colnames(x), var)]))
+    res <- obs - sim
     res <- res[!is.na(res)]
 
     sz <- length(res)
 
-    result <- result - (sz/2+2)*log(res%*%res)
+    result <- result - (sz / 2 + 2) * log(res %*% res)
   }
 
   return(as.numeric(result))
@@ -75,13 +77,15 @@ likelihood_log_ciidn <- function(sim_list,obs_list) {
 
 #' @export
 #' @rdname Likelihoods
-likelihood_log_ciidn_corr <- function(sim_list,obs_list) {
+likelihood_log_ciidn_corr <- function(sim_list, obs_list) {
   # return criterion type (ls, log-ls, likelihood, log-likelihood)
   # if no argument given
-  if(!nargs()) return("log-likelihood")
+  if (!nargs()) {
+    return("log-likelihood")
+  }
 
-  var_list <- unique(unlist(lapply(obs_list,function (x) colnames(x))))
-  var_list <- setdiff(var_list,"Date")
+  var_list <- unique(unlist(lapply(obs_list, function(x) colnames(x))))
+  var_list <- setdiff(var_list, "Date")
 
   result <- 0
 
@@ -89,16 +93,16 @@ likelihood_log_ciidn_corr <- function(sim_list,obs_list) {
     result1 <- 0
     for (i in seq_along(obs_list)) {
       obs <- obs_list[[i]][[var]]
-      if (length(obs)!=0) {
+      if (length(obs) != 0) {
         sim <- sim_list[[i]][[var]]
-        res <- obs-sim
+        res <- obs - sim
         res <- res[!is.na(res)]
         sz <- length(res)
-        result1 <- result1 + (1/sz)*(res%*%res)
+        result1 <- result1 + (1 / sz) * (res %*% res)
       }
     }
-    Nj <-sum(sapply(obs_list,function (x) is.element(var,colnames(x))))
-    result<-result-((Nj/2)+2)*log(result1)
+    Nj <- sum(sapply(obs_list, function(x) is.element(var, colnames(x))))
+    result <- result - ((Nj / 2) + 2) * log(result1)
   }
 
   return(as.numeric(result))
