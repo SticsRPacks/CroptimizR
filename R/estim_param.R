@@ -294,6 +294,7 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
   if (length(crt_candidates)==0) crt_candidates <- candidate_param[[1]] # in case there are only candidates ...
   count <- 1
   param_selection_steps<-NULL
+  tmp <- optim_switch(optim_method=optim_method,optim_options=optim_options)
 
   # Parameter selection loop
   while(!is.null(crt_candidates)) {
@@ -312,7 +313,6 @@ estim_param <- function(obs_list, crit_function=crit_log_cwss, model_function,
     }
 
     ## Initialize parameters
-    tmp <- optim_switch(optim_method=optim_method,optim_options=optim_options)
     ## nb_rep may be different for the different parameter selection steps
     ## ... quite ugly ... should be improved ...
     init_values_nb <- tmp$init_values_nb[min(length(tmp$init_values_nb),count)]
