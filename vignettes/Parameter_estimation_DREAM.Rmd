@@ -39,7 +39,7 @@ This part is not shown here, it is the same as this of the [introductory example
 
 ```{r setup_install_per_package, eval=params$eval_auto_test,  echo=FALSE}
 # Install and load the needed libraries
-# This one is adapted for manual or test cases (one can first install the 
+# This one is adapted for manual or test cases (one can first install the
 # version of the libraries we want to test)
 library(SticsOnR)
 library(SticsRFiles)
@@ -54,7 +54,7 @@ javastics_path <- path_to_JavaStics
 
 # Download the example USMs and define the path to the JavaStics workspace 
 # (JavaStics XML input files):
-data_dir <- file.path(SticsRFiles::download_data(example_dirs = "study_case_1", 
+data_dir <- file.path(SticsRFiles::download_data(example_dirs = "study_case_1",
                                                  stics_version = "V9.0"))
 javastics_workspace_path <- file.path(data_dir, "XmlFiles")
 stics_inputs_path <- file.path(data_dir, "TxtFiles")
@@ -83,22 +83,24 @@ obs_list <- filter_obs(obs_list, var = c("lai_n"), include = TRUE)
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
 param_info <- list()
-param_info$dlaimax <- list(sit_list = list(c("bou99t3", "bou00t3", "bou99t1", 
-                                        "bou00t1", "bo96iN+", "lu96iN+", 
+param_info$dlaimax <- list(sit_list = list(c("bou99t3", "bou00t3", "bou99t1",
+                                        "bou00t1", "bo96iN+", "lu96iN+",
                                         "lu96iN6", "lu97iN+")),
                         lb = 0.0005, ub = 0.0025)
 param_info$durvieF <- list(sit_list = list(c("bo96iN+", "lu96iN+", "lu96iN6",
                                           "lu97iN+"),
                                       c("bou99t3", "bou00t3", "bou99t1",
                                         "bou00t1")),
-                        lb = c(50,100),ub = c(400,450))
+                        lb = c(50, 100),ub = c(400, 450))
 ```
 
 
 ## Set options for the model
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
-model_options= stics_wrapper_options(javastics=javastics_path, workspace = stics_inputs_path, parallel=TRUE)
+model_options <- stics_wrapper_options(javastics = javastics_path,
+                                       workspace = stics_inputs_path,
+                                       parallel = TRUE)
 ```
 
 ## Set options for the DREAM method
@@ -106,13 +108,14 @@ model_options= stics_wrapper_options(javastics=javastics_path, workspace = stics
 The main basic options are set here. The reader can refer to `? DREAMzs` (see doc for input argument `settings`) for documentation on more advanced ones. Note that `startValue` can also be used to provide initial values for the Markov Chains (in that case, it must be a matrix having as many lines as desired number of Markov Chains and a number of columns equivalent to the number of estimated parameters, ordered in the same way as `param_info$lb` and `param_info$ub`).
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
-optim_options=list()
+optim_options <- list()
 optim_options$iterations <- 10000 # Total number of iterations
                                   # (=> optim_options$iterations/
                                   # optim_options$startValue
                                   # iterations per chain)
 optim_options$startValue <- 3 # Number of markov chains
-optim_options$out_dir <- data_dir # path where to store the results (graph and Rdata)
+optim_options$out_dir <- data_dir # path where to store the results
+                                  # (graph and Rdata)
 optim_options$ranseed <- 1234 # seed for random numbers
 ```
 
@@ -130,7 +133,7 @@ The `param_info` argument has the same content as in the [specific and varietal 
 
 
 ```{r eval=params$eval_auto_test, results='hide', message=FALSE, warning=FALSE}
-optim_results=estim_param(obs_list = obs_list,
+optim_results <- estim_param(obs_list = obs_list,
                           crit_function = likelihood_log_ciidn,
                           model_function = stics_wrapper,
                           model_options = model_options,
@@ -157,7 +160,7 @@ The results printed in output on the R console are the following:
 ## ## # Runtime:  54194.02  sec.
 ## ##
 ## ## # Parameters
-## ##            psf     MAP    2.5%  median   97.5%
+##               psf     MAP    2.5%  median   97.5%
 ## ## dlaimax  1.045   0.001   0.001   0.001   0.001
 ## ## durvieF1 1.000 289.864 213.438 311.226 398.462
 ## ## durvieF2 1.009 208.487 147.158 298.312 443.323
@@ -197,9 +200,12 @@ In this case, we obtain:
 
 
 ```{r eval=params$eval_auto_vignette, echo=FALSE, out.width = '45%'}
-knitr::include_graphics("ResultsSpecificVarietalDREAM/N10000/Gelman_dlaimax.PNG")
-knitr::include_graphics("ResultsSpecificVarietalDREAM/N10000/Gelman_durvieF1.PNG")
-knitr::include_graphics("ResultsSpecificVarietalDREAM/N10000/Gelman_durvieF2.PNG")
+knitr::include_graphics(
+  "ResultsSpecificVarietalDREAM/N10000/Gelman_dlaimax.PNG")
+knitr::include_graphics(
+  "ResultsSpecificVarietalDREAM/N10000/Gelman_durvieF1.PNG")
+knitr::include_graphics(
+  "ResultsSpecificVarietalDREAM/N10000/Gelman_durvieF2.PNG")
 ```
 
 Figure 1: Gelman diagnostic.
@@ -209,9 +215,12 @@ marginalPlots.pdf shows estimation of the prior (blue) and posterior (pink) dens
 
 
 ```{r eval=params$eval_auto_vignette, echo=FALSE, out.width = '45%'}
-knitr::include_graphics("ResultsSpecificVarietalDREAM/N10000/densities_dlaimax.PNG")
-knitr::include_graphics("ResultsSpecificVarietalDREAM/N10000/densities_durvieF1.PNG")
-knitr::include_graphics("ResultsSpecificVarietalDREAM/N10000/densities_durvieF2.PNG")
+knitr::include_graphics(
+  "ResultsSpecificVarietalDREAM/N10000/densities_dlaimax.PNG")
+knitr::include_graphics(
+  "ResultsSpecificVarietalDREAM/N10000/densities_durvieF1.PNG")
+knitr::include_graphics(
+  "ResultsSpecificVarietalDREAM/N10000/densities_durvieF2.PNG")
 ```
 
 Figure 2: Prior and posterior densities.
@@ -220,7 +229,8 @@ correlationPlots.pdf gives information about the correlation between parameters:
 
 
 ```{r eval=params$eval_auto_vignette, echo=FALSE, out.width = '75%'}
-knitr::include_graphics("ResultsSpecificVarietalDREAM/N10000/correlation_plot.PNG")
+knitr::include_graphics(
+  "ResultsSpecificVarietalDREAM/N10000/correlation_plot.PNG")
 ```
 
 Figure 3: Correlation plot.

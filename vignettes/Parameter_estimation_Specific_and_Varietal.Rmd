@@ -41,7 +41,8 @@ This part is not shown here, it is the same as this of the [introductory example
 
 ```{r setup_install_per_package, eval=params$eval_auto_test,  echo=FALSE}
 # Install and load the needed libraries
-# This one is adapted for manual or test cases (one can first install the version of the libraries we want to test)
+# This one is adapted for manual or test cases (one can first install the 
+# version of the libraries we want to test)
 library(SticsOnR)
 library(SticsRFiles)
 library(CroptimizR)
@@ -54,14 +55,14 @@ library(gridExtra)
 ```{r setup_initializations, eval=params$eval_auto_test, message=FALSE, results=FALSE, warning=FALSE,  echo=FALSE}
 
 # DEFINE THE PATH TO YOUR LOCALLY INSTALLED VERSION OF JAVASTICS
-javastics_path=path_to_JavaStics
+javastics_path <- path_to_JavaStics
 
 # Download the example USMs and define the path to the JavaStics workspace 
 # (JavaStics XML input files):
 data_dir <- file.path(SticsRFiles::download_data(example_dirs="study_case_1",
                                                  stics_version = "V9.0"))
 javastics_workspace_path <- file.path(data_dir, "XmlFiles")
-stics_inputs_path=file.path(data_dir, "TxtFiles")
+stics_inputs_path <- file.path(data_dir, "TxtFiles")
 
 # Generate Stics input files from JavaStics input files
 dir.create(stics_inputs_path, showWarnings = FALSE)
@@ -78,8 +79,8 @@ In this example, observed LAI are used for all USMs for which there is an observ
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
 # Read observation files
-obs_list=get_obs(javastics_workspace_path)
-obs_list=filter_obs(obs_list, var=c("lai_n"), include=TRUE)
+obs_list <- get_obs(javastics_workspace_path)
+obs_list <- filter_obs(obs_list, var = c("lai_n"), include = TRUE)
 ```
 
 
@@ -94,12 +95,12 @@ param_info=list()
 param_info$dlaimax <- list(sit_list = list(c("bou99t3", "bou00t3", "bou99t1", 
                                              "bou00t1", "bo96iN+", "lu96iN+", 
                                              "lu96iN6", "lu97iN+")),
-                        lb=0.0005,ub=0.0025)
+                        lb = 0.0005,ub = 0.0025)
 param_info$durvieF <- list(sit_list = list(c("bo96iN+", "lu96iN+", "lu96iN6",
                                              "lu97iN+"),
                                       c("bou99t3", "bou00t3", "bou99t1",
                                         "bou00t1")),
-                        lb = c(50,100),ub  =c(400,450))
+                        lb = c(50, 100), ub = c(400, 450))
 ```
 
 
@@ -107,7 +108,7 @@ param_info$durvieF <- list(sit_list = list(c("bo96iN+", "lu96iN+", "lu96iN6",
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
 
-model_options= stics_wrapper_options(javastics = javastics_path, 
+model_options <- stics_wrapper_options(javastics = javastics_path,
                                      workspace = stics_inputs_path,
                                      parallel = TRUE)
 ```
@@ -117,7 +118,7 @@ model_options= stics_wrapper_options(javastics = javastics_path,
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
 
-optim_options=list()
+optim_options <- list()
 optim_options$nb_rep <- 7 # Number of repetitions of the minimization
                           # (each time starting with different initial
                           # values for the estimated parameters)
@@ -127,7 +128,8 @@ optim_options$xtol_rel <- 1e-04 # Tolerance criterion between two iterations
                                 # (threshold for the relative difference of
                                 # parameter values between the 2 previous
                                 # iterations)
-optim_options$out_dir <- data_dir # path where to store the results (graph and Rdata)
+optim_options$out_dir <- data_dir # path where to store the results 
+                                  # (graph and Rdata)
 optim_options$ranseed <- 1234 # random seed
 ```
 
@@ -138,7 +140,7 @@ The optimization is performed here with the Nelder-Mead simplex method and `crit
 
 
 ```{r eval=params$eval_auto_test, results='hide', message=FALSE, warning=FALSE}
-res=estim_param(obs_list = obs_list,
+res <- estim_param(obs_list = obs_list,
                             model_function = stics_wrapper,
                             model_options = model_options,
                             optim_options = optim_options,
@@ -181,20 +183,20 @@ sim_after_optim <- stics_wrapper(param_values = res$final_values,
                               model_options = model_options)
 
 stats <- summary(sim_before_optim$sim_list, obs = obs_list)
-p <- plot(sim_before_optim$sim_list, obs= obs_list, type = "scatter", 
+p <- plot(sim_before_optim$sim_list, obs= obs_list, type = "scatter",
           all_situations = TRUE)
 p1 <- p[[1]] + labs(title = paste("Before Optimization, \n RMSE=",
-                                  round(stats$RMSE,digits = 2))) +
+                                  round(stats$RMSE, digits = 2))) +
   theme(plot.title = element_text(size = 9, hjust = 0.5))
 
 stats <- summary(sim_after_optim$sim_list, obs = obs_list)
-p <- plot(sim_after_optim$sim_list, obs = obs_list, type = "scatter", 
+p <- plot(sim_after_optim$sim_list, obs = obs_list, type = "scatter",
           all_situations = TRUE)
-p2 <- p[[1]] + labs(title=paste("After Optimization, \n RMSE=",
+p2 <- p[[1]] + labs(title = paste("After Optimization, \n RMSE=",
                                 round(stats$RMSE,digits = 2))) +
   theme(plot.title = element_text(size = 9, hjust = 0.5))
 
-p=grid.arrange(grobs = list(p1,p2), nrow = 1, ncol = 2)
+p <- grid.arrange(grobs = list(p1 ,p2), nrow = 1, ncol = 2)
 # Save the graph
 ggsave(file.path(optim_options$out_dir,
                  paste0("sim_obs", ".png")), plot = p)

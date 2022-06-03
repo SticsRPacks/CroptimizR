@@ -165,7 +165,7 @@ The number of repetitions `nb_rep` is advised to be set at least to 5, while 10 
 
 ```{r message=FALSE, warning=FALSE}
 
-optim_options=list()
+optim_options <-list()
 optim_options$nb_rep <- 7 # Number of repetitions of the minimization
                           # (each time starting with different initial
                           # values for the estimated parameters)
@@ -176,10 +176,12 @@ optim_options$xtol_rel <- 1e-03 # Tolerance criterion between two iterations
                                 # parameter values between the 2 previous
                                 # iterations)
 
-optim_options$out_dir <- getwd() # path where to store the results (graph and Rdata)
+optim_options$out_dir <- getwd() # path where to store the results
+                                 # (graph and Rdata)
 
-optim_options$ranseed <- 1234 # set random seed so that each execution give the same results
-                              # If you want randomization, don't set it.
+optim_options$ranseed <- 1234 # set random seed so that each execution give the
+                              #  same results. If you want randomization,
+                              # don't set it.
 ```
 
 
@@ -241,7 +243,7 @@ sim_after_optim <- apsimx_wrapper(param_values = res$final_values,
 Here we use the [CroPlotR](https://github.com/SticsRPacks/CroPlotR) package for comparing simulations and observations. As CroptimizR, CroPlotR can be used with any crop model.
 
 ```{r results='hide', message=FALSE, warning=FALSE}
-p <- plot(sim_before_optim$sim_list, obs=obs_list, select_dyn = c("common"))
+p <- plot(sim_before_optim$sim_list, obs = obs_list, select_dyn = c("common"))
 p1 <- p[[sit_name]] + labs(title = "Before Optimization")
 
 p <- plot(sim_after_optim$sim_list, obs = obs_list, select_dyn = c("common"))

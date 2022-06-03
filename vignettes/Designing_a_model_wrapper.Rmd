@@ -43,26 +43,26 @@ Here's a header for a basic version of a model wrapper:
 ```{r eval=FALSE}
 #' @title My model wrapper for CroptimizR
 #'
-#' @description This function runs my crop model on a set of situations 
-#' (i.e. environments) using the values of the parameters defined in the 
+#' @description This function runs my crop model on a set of situations
+#' (i.e. environments) using the values of the parameters defined in the
 #' param_values argument. It returns the values of the simulated outputs.
 #'
-#' @param param_values (optional) a named vector that contains the value(s) and 
-#' name(s) of the parameters to force for each situation to simulate. 
-#' If not provided (or if is NULL), the simulations will be performed using 
+#' @param param_values (optional) a named vector that contains the value(s) and
+#' name(s) of the parameters to force for each situation to simulate.
+#' If not provided (or if is NULL), the simulations will be performed using
 #' default values of the parameters (e.g. as read in the model input files).
 #'
-#' @param situation Vector of situations names for which results must be 
-#' returned. 
+#' @param situation Vector of situations names for which results must be
+#' returned.
 #'
-#' @param model_options List containing any information needed to run the model 
-#' (e.g. path to model input files and executable, ...) 
+#' @param model_options List containing any information needed to run the model
+#' (e.g. path to model input files and executable, ...)
 #'
 #' @return A list containing:
-#'     o `sim_list`: a `named list` (names = situations names) of data.frames 
-#'     (or tibbles) of simulated output values (one element of the list per  
-#`      simulated situation) 
-#'     o `error`: an error code indicating if at least one simulation ended 
+#'     o `sim_list`: a `named list` (names = situations names) of data.frames
+#'     (or tibbles) of simulated output values (one element of the list per 
+#`      simulated situation)
+#'     o `error`: an error code indicating if at least one simulation ended
 #'     with an error.
 
 model_wrapper <- function(param_values=NULL, situation, model_options, ...) {
@@ -662,8 +662,8 @@ if(!require("CroPlotR")){
 tmp <- laitm_simple_wrapper_v2(situation = c("2005_a","2006_b"),
                             param_values = dplyr::tibble(situation=c("2005_a",
                                                                      "2006_b"),
-                                                  inc_slope=c(res$final_values[["inc_slope1"]],res$final_values[["inc_slope2"]]), dec_slope=res$final_values[["dec_slope"]]))
-plot(tmp$sim_list,obs=obs_synth,type="scatter")
+inc_slope=c(res$final_values[["inc_slope1"]], res$final_values[["inc_slope2"]]), dec_slope=res$final_values[["dec_slope"]]))
+plot(tmp$sim_list,obs=obs_synth, type="scatter")
 
 ```
 
