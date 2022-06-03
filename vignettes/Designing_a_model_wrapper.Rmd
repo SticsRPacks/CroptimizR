@@ -43,26 +43,29 @@ Here's a header for a basic version of a model wrapper:
 ```{r eval=FALSE}
 #' @title My model wrapper for CroptimizR
 #'
-#' @description This function runs my crop model on a set of situations (i.e. environments) 
-#' using the values of the parameters defined in the param_values argument. It returns 
-#' the values of the simulated outputs.
+#' @description This function runs my crop model on a set of situations 
+#' (i.e. environments) using the values of the parameters defined in the 
+#' param_values argument. It returns the values of the simulated outputs.
 #'
-#' @param param_values (optional) a named vector that contains the value(s) and name(s) 
-#' of the parameters to force for each situation to simulate. If not provided (or if is 
-#' NULL), the simulations will be performed using default values of the parameters 
-#' (e.g. as read in the model input files).
+#' @param param_values (optional) a named vector that contains the value(s) and 
+#' name(s) of the parameters to force for each situation to simulate. 
+#' If not provided (or if is NULL), the simulations will be performed using 
+#' default values of the parameters (e.g. as read in the model input files).
 #'
-#' @param situation Vector of situations names for which results must be returned. 
+#' @param situation Vector of situations names for which results must be 
+#' returned. 
 #'
 #' @param model_options List containing any information needed to run the model 
 #' (e.g. path to model input files and executable, ...) 
 #'
 #' @return A list containing:
-#'     o `sim_list`: a `named list` (names = situations names) of data.frames (or tibbles) of 
-#` simulated output values (one element of the list per simulated situation) 
-#'     o `error`: an error code indicating if at least one simulation ended with an error.
+#'     o `sim_list`: a `named list` (names = situations names) of data.frames 
+#'     (or tibbles) of simulated output values (one element of the list per  
+#`      simulated situation) 
+#'     o `error`: an error code indicating if at least one simulation ended 
+#'     with an error.
 
-model_wrapper <- function( param_values=NULL, situation, model_options, ...) {
+model_wrapper <- function(param_values=NULL, situation, model_options, ...) {
 
 }
 
@@ -153,18 +156,20 @@ model_wrapper <- function( param_values=NULL, situation, model_options, ...) {
   
   # Initializations
   param_names <- names(param_values)
-  results <- list(sim_list = setNames(vector("list",length(situation)), nm = situation),
-                 error=FALSE)
-  attr(results$sim_list, "class")= "cropr_simulation"
+  results <- list(sim_list = setNames(vector("list", length(situation)), 
+                                      nm = situation),
+                 error = FALSE)
+  attr(results$sim_list, "class") <- "cropr_simulation"
   
   for (situation in situation) {
       
-      # overwrite model input parameters of names contained in param_names with values 
-      # retrieved in param_values
+      # overwrite model input parameters of names contained in param_names with  
+      # values retrieved in param_values
       
       # run the model for the given situation 
       
-      # read the results and store the data.frame in result$sim_list[[situation]]
+      # read the results and store the data.frame in 
+      # result$sim_list[[situation]]
       
       if (any_error_returned_by_the model_or_detected_in_its_results) {
         warning("any_useful_information_to_describe_the_error")
@@ -357,23 +362,24 @@ model_wrapper <- function( param_values=NULL, situation, model_options, ...) {
 
 ```{r, eval=TRUE}
 
-lai_toymodel <- function(year, max_lai=8, julday_incslope=100, inc_slope=5, 
-                         julday_decslope=200, dec_slope=2) {
-  # Simulate lai for a single crop over 2 years (from 01/01/year to 31/12/(year+1) 
-  # with a simple double-logistic function 
+lai_toymodel <- function(year, max_lai = 8, julday_incslope = 100, 
+                         inc_slope = 5, julday_decslope = 200, dec_slope = 2) {
+  # Simulate lai for a single crop over 2 years  
+  # (from 01/01/year to 31/12/(year+1) with a simple double-logistic function 
   #
   # Arguments
   #   - year: first year of simulation 
   #   - max_lai: max value for lai
   #   - inc_slope and dec_slope: increasing and decreasing slope
-  #   - julday_incslope and julday_decslope: julian days of maximal increasing and 
-  #     decreasing slopes
+  #   - julday_incslope and julday_decslope: julian days of maximal increasing 
+  #     and decreasing slopes
   # 
   # Value
   #   - lai: vector of simulated lai
   #   - dates: vector of dates (POSIXct) for which lai is computed
   
-  end_day <- format(as.Date(paste0(year+1,"-12-31"), format = "%Y-%m-%d", origin=paste0(year,"-01-01")), "%j")
+  end_day <- format(as.Date(paste0(year+1,"-12-31"), format = "%Y-%m-%d", 
+                            origin=paste0(year,"-01-01")), "%j")
   jul_days <- 1:as.numeric(end_day)
   
   lai <- max_lai * ( 1/(1+exp((julday_incslope-jul_days)/inc_slope)) - 
@@ -389,18 +395,20 @@ lai_toymodel <- function(year, max_lai=8, julday_incslope=100, inc_slope=5,
 }
 
 
-laitm_simple_wrapper <- function(param_values=NULL, situation, model_options, ...) {
+laitm_simple_wrapper <- function(param_values=NULL, situation, 
+                                 model_options, ...) {
   
   # A basic wrapper for lai_toymodel  
   #
   # Arguments
-  #   - param_values: (optional) named vector containing the values of the lay_toymodel 
-  #     parameters to force among max_lai, inc_slope, dec_slope, julday_incslope and 
-  #     julday_decslope 
-  #   - situation: Vector of situations names for which results must be returned.
+  #   - param_values: (optional) named vector containing the values of the  
+  #     lay_toymodel parameters to force among max_lai, inc_slope, dec_slope,  
+  #     julday_incslope and julday_decslope 
+  #   - situation: Vector of situations names for which results must be returned
   #     In this case, the names of the situations are coded as "year_suffix" 
   #   - model_options: not used in this case
-  #   - ...: mandatory since CroptimizR will give additional arguments not used here
+  #   - ...: mandatory since CroptimizR will give additional arguments not used 
+  #   here
   #
   # Value:
   #   A named list of tibble per situation. 
@@ -410,19 +418,20 @@ laitm_simple_wrapper <- function(param_values=NULL, situation, model_options, ..
   # 
   # Details:
   #  - Runs the lai_toymodel for a set of situations defined in situation 
-  #  - Forces the parameters of lai_toymodel with the values given in param_values 
-  #    argument   
+  #  - Forces the parameters of lai_toymodel with the values given in  
+  #    param_values argument   
   #  - Returns the required simulated values
   #
   
-  results <- list(sim_list = setNames(vector("list",length(situation)), nm = situation),
-                 error=FALSE)
-  attr(results$sim_list, "class")= "cropr_simulation"
+  results <- list(sim_list = setNames(vector("list", length(situation)), 
+                                      nm = situation),
+                 error = FALSE)
+  attr(results$sim_list, "class") <- "cropr_simulation"
 
   for (sit in situation) {
     
     # Retrieve year, emergence and crop_duration from situation name
-    tmp <- stringr::str_split(sit,"_")
+    tmp <- stringr::str_split(sit, "_")
     year <- as.numeric(tmp[[1]][[1]])
 
     # Check inputs
@@ -433,7 +442,7 @@ laitm_simple_wrapper <- function(param_values=NULL, situation, model_options, ..
       return(results)
     }
     if (!all(names(param_values) %in% c("max_lai", "inc_slope", "dec_slope", 
-                                        "julday_incslope", "julday_decslope"))) {
+                                      "julday_incslope", "julday_decslope"))) {
       warning(paste("Unknown parameters in param_values:",
                     paste(names(param_values),collapse = ",")))
       results$error=TRUE
@@ -443,11 +452,11 @@ laitm_simple_wrapper <- function(param_values=NULL, situation, model_options, ..
     # Call the lai_toymodel with varying arguments depending on what is given in 
     # param_values
     res_laitm <- do.call('lai_toymodel', c(as.list(param_values), 
-                                           list(year=year)))
+                                           list(year = year)))
     
     # Fill the result variable
-    results$sim_list[[sit]] <-  dplyr::tibble(Date=res_laitm$dates, 
-                                              lai=res_laitm$lai)
+    results$sim_list[[sit]] <-  dplyr::tibble(Date = res_laitm$dates, 
+                                              lai = res_laitm$lai)
     
   }
   
@@ -463,7 +472,8 @@ Testing this wrapper using the test_wrapper function:
 library(CroptimizR)
 
 test_wrapper(model_function = laitm_simple_wrapper, model_options = NULL, 
-             param_values = c(inc_slope=25, dec_slope=10), situation = c("2005_a"))
+             param_values = c(inc_slope = 25, dec_slope = 10), 
+             situation = c("2005_a"))
 
 ```
 
@@ -475,29 +485,32 @@ library(CroptimizR)
 library(dplyr)
 
 
-tmp <- laitm_simple_wrapper(situation="2005_a", param_values = c(inc_slope=25, dec_slope=10))
+tmp <- laitm_simple_wrapper(situation = "2005_a", 
+                            param_values = c(inc_slope = 25, dec_slope = 10))
 
 # Create synthetic observations by selecting simulated results
-ind <- sort(sample(nrow(tmp$sim_list$`2005_a`),50))
-obs_synth <- list(`2005_a`=tmp$sim_list$`2005_a`[ind,])
+ind <- sort(sample(nrow(tmp$sim_list$`2005_a`), 50))
+obs_synth <- list(`2005_a`= tmp$sim_list$`2005_a`[ind,])
 
 # Try to retrieve inc_slope and dec_slope values
-param_info <- list(lb=c(inc_slope=1,dec_slope=1), ub=c(inc_slope=100,dec_slope=100))
-optim_options <- list(nb_rep=5, maxeval=100, xtol_rel=1e-2)
+param_info <- list(lb = c(inc_slope = 1, dec_slope = 1), 
+                   ub = c(inc_slope = 100, dec_slope = 100))
+optim_options <- list(nb_rep = 5, maxeval = 100, xtol_rel = 1e-2)
 res <- estim_param(obs_synth, crit_function = crit_ols,
             model_function = laitm_simple_wrapper,
             optim_options=optim_options,
             param_info = param_info)
 res$final_values
 
-# Plot the simulations obtained with the optimized values of the parameters VS the observed ones using the CroPlotR package.
+# Plot the simulations obtained with the optimized values of the parameters VS 
+# the observed ones using the CroPlotR package.
 if(!require("CroPlotR")){
     devtools::install_github("SticsRPacks/CroPlotR@*release")
     library("CroPlotR")
 }
-tmp <- laitm_simple_wrapper(situation=c("2005_a","2006_b"),
+tmp <- laitm_simple_wrapper(situation=c("2005_a", "2006_b"),
                             param_values = res$final_values)
-plot(tmp$sim_list,obs=obs_synth,type="scatter")
+plot(tmp$sim_list,obs=obs_synth, type="scatter")
 
 ```
 
@@ -507,20 +520,23 @@ plot(tmp$sim_list,obs=obs_synth,type="scatter")
 This one can be used to perform simultaneous estimation of specific and varietal parameters on a dataset including several cultivars.
 
 ```{r, eval=TRUE}
-laitm_simple_wrapper_v2 <- function(param_values=NULL, situation, model_options, ...) {
+laitm_simple_wrapper_v2 <- function(param_values=NULL, situation, 
+                                    model_options, ...) {
   
   # A basic wrapper for lai_toymodel  
   #
   # Arguments
-  #   - param_values: (optional) a named vector or a tibble containing the values of the 
-  #     lay_toymodel parameters to force among max_lai, inc_slope, dec_slope, 
-  #     julday_incslope and julday_decslope. An optional column named Situation containing   
-  #     the name of the situations allows to define different values of the parameters
-  #     for different situations. 
-  #   - situation: Vector of situations names for which results must be returned.
+  #   - param_values: (optional) a named vector or a tibble containing the 
+  #     values of the lay_toymodel parameters to force among max_lai, inc_slope,
+  #     dec_slope,julday_incslope and julday_decslope. An optional column named 
+  #     Situation containing the name of the situations allows to define 
+  #     different values of the parameters for different situations. 
+  #   - situation: Vector of situations names for which results must be 
+  #     returned.
   #     In this case, the names of the situations are coded as "year_suffix" 
   #   - model_options: not used in this case
-  #   - ...: mandatory since CroptimizR will give additional arguments not used here
+  #   - ...: mandatory since CroptimizR will give additional arguments not used
+  #     here
   #
   # Value:
   #   A named list of tibble per situation. 
@@ -530,26 +546,27 @@ laitm_simple_wrapper_v2 <- function(param_values=NULL, situation, model_options,
   # 
   # Details:
   #  - Runs the lai_toymodel for a set of situations defined in situation 
-  #  - Forces the parameters of lai_toymodel with the values given in param_values 
-  #   argument   
+  #  - Forces the parameters of lai_toymodel with the values given in  
+  #   param_values argument   
   #  - Returns the required simulated values
   #
   
-  results <- list(sim_list = setNames(vector("list",length(situation)), 
-                                      nm = situation), error=FALSE)
-  attr(results$sim_list, "class")= "cropr_simulation"
+  results <- list(sim_list = setNames(vector("list", length(situation)), 
+                                      nm = situation), error = FALSE)
+  attr(results$sim_list, "class") <- "cropr_simulation"
 
-  param_values <- tibble::tibble(!!!param_values)  # convert param_values in a tibble
+  param_values <- tibble::tibble(!!!param_values)  # convert param_values 
+                                                    # in a tibble
   
   for (sit in situation) {
     
     # Retrieve year, emergence and crop_duration from situation name
-    tmp <- stringr::str_split(sit,"_")
+    tmp <- stringr::str_split(sit, "_")
     year <- as.numeric(tmp[[1]][[1]])
 
     # Check inputs
     if (year<1) {
-      warning(paste("sit_name",sit,
+      warning(paste("sit_name", sit,
                     "not well defined, first part is supposed to be a year!"))
       results$error=TRUE
       return(results)
@@ -569,18 +586,18 @@ laitm_simple_wrapper_v2 <- function(param_values=NULL, situation, model_options,
                                   "julday_incslope", "julday_decslope"))) {
       warning(paste("Unknown parameters in param_values:",
                     paste(names(param_values),collapse = ",")))
-      results$error=TRUE
+      results$error = TRUE
       return(results)
     }
 
     # Call the lai_toymodel with varying arguments depending on what is given in 
     # param_values
     res_laitm <- do.call('lai_toymodel', c(as.list(params), 
-                                           list(year=year)))
+                                           list(year = year)))
     
     # Fill the result variable
-    results$sim_list[[sit]] <-  dplyr::tibble(Date=res_laitm$dates, 
-                                              lai=res_laitm$lai)
+    results$sim_list[[sit]] <-  dplyr::tibble(Date = res_laitm$dates, 
+                                              lai = res_laitm$lai)
     
   }
   
@@ -596,7 +613,8 @@ Testing this wrapper using the test_wrapper function:
 library(CroptimizR)
 
 test_wrapper(model_function = laitm_simple_wrapper_v2, model_options = NULL, 
-             param_values = c(inc_slope=25, dec_slope=10), situation = c("2005_a"))
+             param_values = c(inc_slope = 25, dec_slope = 10),
+             situation = c("2005_a"))
 
 ```
 
@@ -608,36 +626,42 @@ of specific (dec_slope here) and varietal (inc_slope) parameters using this wrap
 library(CroptimizR)
 library(dplyr)
 
-tmp <- laitm_simple_wrapper_v2(situation=c("2005_a","2006_b"),
-                            param_values = dplyr::tibble(situation=c("2005_a","2006_b"),
-                                                  inc_slope=c(25,50), dec_slope=c(10,10)))
+tmp <- laitm_simple_wrapper_v2(situation = c("2005_a","2006_b"),
+                            param_values = dplyr::tibble(situation =c("2005_a",
+                                                                      "2006_b"),
+                                                  inc_slope = c(25,50),
+                                                  dec_slope = c(10,10)))
 
 # Create synthetic observations by selecting simulated results
 length_2005_a <- nrow(tmp$sim_list$`2005_a`)
 length_2006_b <- nrow(tmp$sim_list$`2006_b`)
-obs_synth <- list(`2005_a`=tmp$sim_list$`2005_a`[seq(from=1, to=length_2005_a, by=3),],
-                  `2006_b`=tmp$sim_list$`2006_b`[seq(from=1, to=length_2006_b, by=3),])
+obs_synth <- list(`2005_a`=tmp$sim_list$`2005_a`[seq(from=1, to=length_2005_a,
+                                                     by=3),],
+                  `2006_b`=tmp$sim_list$`2006_b`[seq(from=1, to=length_2006_b,
+                                                     by=3),])
 
 # Try to retrieve inc_slope and dec_slope values on both situations
-param_info=list(inc_slope=list(sit_list=list("2005_a","2006_b"),
-                          lb=c(1,1),ub=c(100,100)),
+param_info <- list(inc_slope = list(sit_list = list("2005_a", "2006_b"),
+                          lb = c(1,1), ub = c(100,100)),
                 dec_slope=list(sit_list=list(c("2005_a","2006_b")),
-                          lb=1,ub=100))
+                          lb = 1, ub = 100))
 
-optim_options <- list(nb_rep=5, maxeval=100, xtol_rel=1e-2)
+optim_options <- list(nb_rep = 5, maxeval = 100, xtol_rel = 1e-2)
 res <- estim_param(obs_synth, crit_function = crit_ols,
             model_function = laitm_simple_wrapper_v2,
-            optim_options=optim_options,
+            optim_options = optim_options,
             param_info = param_info)
 res$final_values
 
-# Plot the simulations obtained with the optimized values of the parameters VS the observed ones using the CroPlotR package.
+# Plot the simulations obtained with the optimized values of the parameters VS 
+# the observed ones using the CroPlotR package.
 if(!require("CroPlotR")){
     devtools::install_github("SticsRPacks/CroPlotR@*release")
     library("CroPlotR")
 }
-tmp <- laitm_simple_wrapper_v2(situation=c("2005_a","2006_b"),
-                            param_values = dplyr::tibble(situation=c("2005_a","2006_b"),
+tmp <- laitm_simple_wrapper_v2(situation = c("2005_a","2006_b"),
+                            param_values = dplyr::tibble(situation=c("2005_a",
+                                                                     "2006_b"),
                                                   inc_slope=c(res$final_values[["inc_slope1"]],res$final_values[["inc_slope2"]]), dec_slope=res$final_values[["dec_slope"]]))
 plot(tmp$sim_list,obs=obs_synth,type="scatter")
 
