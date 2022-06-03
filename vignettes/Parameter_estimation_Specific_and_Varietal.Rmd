@@ -41,7 +41,7 @@ This part is not shown here, it is the same as this of the [introductory example
 
 ```{r setup_install_per_package, eval=params$eval_auto_test,  echo=FALSE}
 # Install and load the needed libraries
-# This one is adapted for manual or test cases (one can first install the 
+# This one is adapted for manual or test cases (one can first install the
 # version of the libraries we want to test)
 library(SticsOnR)
 library(SticsRFiles)
@@ -57,16 +57,16 @@ library(gridExtra)
 # DEFINE THE PATH TO YOUR LOCALLY INSTALLED VERSION OF JAVASTICS
 javastics_path <- path_to_JavaStics
 
-# Download the example USMs and define the path to the JavaStics workspace 
+# Download the example USMs and define the path to the JavaStics workspace
 # (JavaStics XML input files):
-data_dir <- file.path(SticsRFiles::download_data(example_dirs="study_case_1",
+data_dir <- file.path(SticsRFiles::download_data(example_dirs = "study_case_1",
                                                  stics_version = "V9.0"))
 javastics_workspace_path <- file.path(data_dir, "XmlFiles")
 stics_inputs_path <- file.path(data_dir, "TxtFiles")
 
 # Generate Stics input files from JavaStics input files
 dir.create(stics_inputs_path, showWarnings = FALSE)
-gen_usms_xml2txt(javastics = javastics_path, 
+gen_usms_xml2txt(javastics = javastics_path,
                  workspace = javastics_workspace_path,
   out_dir = stics_inputs_path, verbose = TRUE)
 ```
@@ -91,11 +91,11 @@ Please note that bounds can take different values for the different groups of si
 
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
-param_info=list()
-param_info$dlaimax <- list(sit_list = list(c("bou99t3", "bou00t3", "bou99t1", 
-                                             "bou00t1", "bo96iN+", "lu96iN+", 
+param_info <- list()
+param_info$dlaimax <- list(sit_list = list(c("bou99t3", "bou00t3", "bou99t1",
+                                             "bou00t1", "bo96iN+", "lu96iN+",
                                              "lu96iN6", "lu97iN+")),
-                        lb = 0.0005,ub = 0.0025)
+                        lb = 0.0005, ub = 0.0025)
 param_info$durvieF <- list(sit_list = list(c("bo96iN+", "lu96iN+", "lu96iN6",
                                              "lu97iN+"),
                                       c("bou99t3", "bou00t3", "bou99t1",
@@ -128,7 +128,7 @@ optim_options$xtol_rel <- 1e-04 # Tolerance criterion between two iterations
                                 # (threshold for the relative difference of
                                 # parameter values between the 2 previous
                                 # iterations)
-optim_options$out_dir <- data_dir # path where to store the results 
+optim_options$out_dir <- data_dir # path where to store the results
                                   # (graph and Rdata)
 optim_options$ranseed <- 1234 # random seed
 ```
@@ -183,7 +183,7 @@ sim_after_optim <- stics_wrapper(param_values = res$final_values,
                               model_options = model_options)
 
 stats <- summary(sim_before_optim$sim_list, obs = obs_list)
-p <- plot(sim_before_optim$sim_list, obs= obs_list, type = "scatter",
+p <- plot(sim_before_optim$sim_list, obs = obs_list, type = "scatter",
           all_situations = TRUE)
 p1 <- p[[1]] + labs(title = paste("Before Optimization, \n RMSE=",
                                   round(stats$RMSE, digits = 2))) +
@@ -193,10 +193,10 @@ stats <- summary(sim_after_optim$sim_list, obs = obs_list)
 p <- plot(sim_after_optim$sim_list, obs = obs_list, type = "scatter",
           all_situations = TRUE)
 p2 <- p[[1]] + labs(title = paste("After Optimization, \n RMSE=",
-                                round(stats$RMSE,digits = 2))) +
+                                round(stats$RMSE, digits = 2))) +
   theme(plot.title = element_text(size = 9, hjust = 0.5))
 
-p <- grid.arrange(grobs = list(p1 ,p2), nrow = 1, ncol = 2)
+p <- grid.arrange(grobs = list(p1, p2), nrow = 1, ncol = 2)
 # Save the graph
 ggsave(file.path(optim_options$out_dir,
                  paste0("sim_obs", ".png")), plot = p)

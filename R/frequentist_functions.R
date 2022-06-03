@@ -105,8 +105,7 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
 
   # EstimatedVSinit plot
 
-  tryCatch(
-    {
+  tryCatch( {
       grDevices::pdf(
         file = file.path(path_results, "EstimatedVSinit.pdf"),
         width = 9, height = 9
@@ -125,8 +124,7 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
     }
   )
 
-  tryCatch(
-    {
+  tryCatch( {
       p <- plot_estimVSinit(
         init_values, est_values,
         crit_values, bounds$lb, bounds$ub
@@ -154,8 +152,7 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
 
   # ValuesVSit plot
 
-  tryCatch(
-    {
+  tryCatch( {
       grDevices::pdf(
         file = file.path(path_results, "ValuesVSit.pdf"),
         width = 9, height = 9
@@ -183,8 +180,7 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
 
   # ValuesVSit_2D plot
 
-  tryCatch(
-    {
+  tryCatch( {
       grDevices::pdf(
         file = file.path(path_results, "ValuesVSit_2D.pdf"),
         width = 9, height = 9

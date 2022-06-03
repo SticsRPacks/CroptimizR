@@ -66,7 +66,7 @@ javastics_path <- path_to_JavaStics
 
 # Download the example USMs and define the path to the JavaStics workspace
 # (JavaStics XML input files):
-data_dir <- file.path(SticsRFiles::download_data(example_dirs = "study_case_1", 
+data_dir <- file.path(SticsRFiles::download_data(example_dirs = "study_case_1",
                                                  stics_version = "V9.0"))
 
 javastics_workspace_path <- file.path(data_dir, "XmlFiles")
@@ -104,7 +104,7 @@ Here model parameters values are read in the model input files.
 ```{r eval=params$eval_auto_test, results='hide', message=FALSE, warning=FALSE}
 
 # Set the model options (see '? stics_wrapper_options' for details)
-model_options <- stics_wrapper_options(javastics = javastics_path, 
+model_options <- stics_wrapper_options(javastics = javastics_path,
                                        workspace = stics_inputs_path,
                                        parallel = FALSE)
 

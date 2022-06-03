@@ -15,7 +15,7 @@ summary_bayesian <- function(optim_options, param_info, optim_results) {
   out <- optim_results$out
 
   ## Print results
-  codaObject <- getSample(out, start = 1, coda = TRUE) # thin=1
+  codaObject <- getSample(out, start = 1, coda = TRUE)
   tmp <- summary(codaObject)
   if (nb_params >= 2) {
     summary(out)
@@ -78,8 +78,7 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
     }
   )
 
-  tryCatch(
-    {
+  tryCatch( {
       grDevices::pdf(
         file = file.path(path_results, "marginalPlots.pdf"),
         width = 9, height = 9
@@ -107,8 +106,7 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
   )
 
   if (nb_params >= 2) {
-    tryCatch(
-      {
+    tryCatch( {
         grDevices::pdf(
           file = file.path(path_results, "correlationPlots.pdf"),
           width = 9, height = 9
@@ -141,8 +139,7 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
     # also, Nbiteration must be > thin+50 otherwise coda::gelman.plot end with
     # an error
     if (nb_iterations >= (optim_options$thin + 50)) {
-      tryCatch(
-        {
+      tryCatch( {
           grDevices::pdf(
             file = file.path(path_results, "gelmanDiagPlots.pdf"),
             width = 9, height = 9

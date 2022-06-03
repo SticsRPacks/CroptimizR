@@ -52,7 +52,7 @@ library(CroptimizR)
 # DEFINE THE PATH TO YOUR LOCALLY INSTALLED VERSION OF JAVASTICS
 javastics_path <- path_to_JavaStics
 
-# Download the example USMs and define the path to the JavaStics workspace 
+# Download the example USMs and define the path to the JavaStics workspace
 # (JavaStics XML input files):
 data_dir <- file.path(SticsRFiles::download_data(example_dirs = "study_case_1",
                                                  stics_version = "V9.0"))
@@ -61,7 +61,7 @@ stics_inputs_path <- file.path(data_dir, "TxtFiles")
 
 # Generate Stics input files from JavaStics input files
 dir.create(stics_inputs_path)
-gen_usms_xml2txt(javastics = javastics_path, 
+gen_usms_xml2txt(javastics = javastics_path,
                  workspace = javastics_workspace_path,
   out_dir = stics_inputs_path, verbose = TRUE)
 ```
@@ -91,7 +91,7 @@ param_info$durvieF <- list(sit_list = list(c("bo96iN+", "lu96iN+", "lu96iN6",
                                           "lu97iN+"),
                                       c("bou99t3", "bou00t3", "bou99t1",
                                         "bou00t1")),
-                        lb = c(50, 100),ub = c(400, 450))
+                        lb = c(50, 100), ub = c(400, 450))
 ```
 
 

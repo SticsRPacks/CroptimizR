@@ -60,7 +60,7 @@ Here's a header for a basic version of a model wrapper:
 #'
 #' @return A list containing:
 #'     o `sim_list`: a `named list` (names = situations names) of data.frames
-#'     (or tibbles) of simulated output values (one element of the list per 
+#'     (or tibbles) of simulated output values (one element of the list per
 #`      simulated situation)
 #'     o `error`: an error code indicating if at least one simulation ended
 #'     with an error.
@@ -168,7 +168,7 @@ model_wrapper <- function( param_values=NULL, situation, model_options, ...) {
       
       # run the model for the given situation 
       
-      # read the results and store the data.frame in 
+      # read the results and store the data.frame in
       # result$sim_list[[situation]]
       
       if (any_error_returned_by_the model_or_detected_in_its_results) {
@@ -664,7 +664,6 @@ tmp <- laitm_simple_wrapper_v2(situation = c("2005_a","2006_b"),
                                                                      "2006_b"),
 inc_slope=c(res$final_values[["inc_slope1"]], res$final_values[["inc_slope2"]]), dec_slope=res$final_values[["dec_slope"]]))
 plot(tmp$sim_list,obs=obs_synth, type="scatter")
-
 ```
 
 ### Other examples 

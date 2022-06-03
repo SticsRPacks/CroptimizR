@@ -37,32 +37,34 @@ The parameter estimation is performed using the Nelder-Mead simplex method imple
 ```{r setup_initializations, message=FALSE, results=FALSE, warning=FALSE}
 
 # Install and load the needed libraries
-if(!require("CroptimizR")){
+if (!require("CroptimizR")) {
   devtools::install_github("SticsRPacks/CroptimizR@*release")
   library("CroptimizR")
 }
-if(!require("CroPlotR")){
+if (!require("CroPlotR")) {
   devtools::install_github("SticsRPacks/CroPlotR@*release")
   library("CroPlotR")
 }
-if(!require("ApsimOnR")){
+if (!require("ApsimOnR")) {
   devtools::install_github("hol430/ApsimOnR")
   library("ApsimOnR")
 }
-if(!require("dplyr")){
-  install.packages("dplyr",repos="http://cran.irsn.fr")
+if (!require("dplyr")) {
+  install.packages("dplyr", repos = "http://cran.irsn.fr")
   library("dplyr")
 }
-if(!require("ggplot2")){
-  install.packages("ggplot2",repos="http://cran.irsn.fr")
+if (!require("ggplot2")) {
+  install.packages("ggplot2", repos = "http://cran.irsn.fr")
   library("ggplot2")
 }
-if(!require("gridExtra")){
-  install.packages("gridExtra",repos="http://cran.irsn.fr")
+if (!require("gridExtra")) {
+  install.packages("gridExtra", repos = "http://cran.irsn.fr")
   library("gridExtra")
 }
 
-# DEFINE THE PATH TO THE LOCALLY INSTALLED VERSION OF APSIM (should be something like C:/path/to/apsimx/bin/Models.exe on windows, and /usr/local/bin/Models on linux)
+# DEFINE THE PATH TO THE LOCALLY INSTALLED VERSION OF APSIM (should be something
+# like C:/path/to/apsimx/bin/Models.exe on windows, and /usr/local/bin/Models
+# on linux)
 apsimx_path <- "D:\\Home\\sbuis\\Documents\\OUTILS-INFORMATIQUE\\APSIM2021.01.20.5937\\Bin\\Models.exe"
 ```
 
@@ -73,9 +75,11 @@ apsimx_path <- "D:\\Home\\sbuis\\Documents\\OUTILS-INFORMATIQUE\\APSIM2021.01.20
 
 ```{r message=FALSE, warning=FALSE}
 
-sit_name="GattonRowSpacingRowSpace25cm"  # among "GattonRowSpacingRowSpace25cm", "GattonRowSpacingRowSpace50cm","GattonRowSpacingRowSpaceN0"
+sit_name="GattonRowSpacingRowSpace25cm"  # among "GattonRowSpacingRowSpace25cm",
+                                         # "GattonRowSpacingRowSpace50cm",
+                                         # "GattonRowSpacingRowSpaceN0"
 
-var_name = c("Wheat.Leaf.LAI") # or "Wheat.AboveGround.Wt"
+var_name <- c("Wheat.Leaf.LAI") # or "Wheat.AboveGround.Wt"
 ```
 
 
@@ -122,15 +126,15 @@ We only keep observations for situation `sit_name` and variable `var_name` (`obs
 
 
 ```{r message=FALSE, warning=FALSE}
-# At the moment, observed data are read from the db file after the first 
-# simulation ran before optimization. But they may be loaded using the original 
+# At the moment, observed data are read from the db file after the first
+# simulation ran before optimization. But they may be loaded using the original
 # xlsx data file (from the files_path)
 
 obs_list <- read_apsimx_output(sim_before_optim$db_file_name,
                                model_options$observed_table_name,
                                model_options$variable_names,
                                names(sim_before_optim$sim_list))
-obs_list <- filter_obs(obs_list, situation = sit_name,include = TRUE)
+obs_list <- filter_obs(obs_list, situation = sit_name, include = TRUE)
 ```
 
 
@@ -147,9 +151,9 @@ Initial values for the minimization can also be provided in `param_info` (see `?
 # 2 parameters here: ExtinctionCoeff and RUE, of bounds [0.4,0.6] and [1.4,1.6]
 param_info <-
   list(lb=c(.Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue = 0.4,
-            .Simulations.Replacements.Wheat.Leaf.Photosynthesis.RUE.FixedValue = 1.4),
+    .Simulations.Replacements.Wheat.Leaf.Photosynthesis.RUE.FixedValue = 1.4),
        ub=c(.Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue = 0.6,
-            .Simulations.Replacements.Wheat.Leaf.Photosynthesis.RUE.FixedValue = 1.6))
+    .Simulations.Replacements.Wheat.Leaf.Photosynthesis.RUE.FixedValue = 1.6))
 ```
 
 
@@ -165,7 +169,7 @@ The number of repetitions `nb_rep` is advised to be set at least to 5, while 10 
 
 ```{r message=FALSE, warning=FALSE}
 
-optim_options <-list()
+optim_options <- list()
 optim_options$nb_rep <- 7 # Number of repetitions of the minimization
                           # (each time starting with different initial
                           # values for the estimated parameters)
@@ -250,10 +254,10 @@ p <- plot(sim_after_optim$sim_list, obs = obs_list, select_dyn = c("common"))
 p2 <- p[[sit_name]] + labs(title = "After Optimization") +
   ylim(NA, ggplot_build(p1)$layout$panel_params[[1]]$y.range[2])
 
-p <- grid.arrange(grobs=list(p1, p2), nrow = 1, ncol = 2)
+p <- grid.arrange(grobs = list(p1, p2), nrow = 1, ncol = 2)
 # Save the graph
 ggsave(file.path(optim_options$out_dir,
-                 paste0("sim_obs_plots",".png")), plot = p)
+                 paste0("sim_obs_plots", ".png")), plot = p)
 ```
 
 

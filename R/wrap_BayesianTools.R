@@ -106,7 +106,7 @@ wrap_BayesianTools <- function(optim_options, param_info, crit_options) {
 
   # Get a sample of the posterior and associated statistics
   post_sample <- getSample(out, coda = FALSE)
-  codaObject <- getSample(out, start = 1, coda = TRUE) # thin=1
+  codaObject <- getSample(out, start = 1, coda = TRUE)
   tmp <- summary(codaObject)
 
   ## Save the results

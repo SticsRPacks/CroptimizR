@@ -122,7 +122,10 @@ data_list4 <- list(
 )
 test_that("is.data", {
   expect_true(CroptimizR:::is.data(data_list1))
-  expect_false(suppressWarnings(eval(parse(text = "CroptimizR:::is.data(data_list2)"))))
-  expect_false(suppressWarnings(eval(parse(text = "CroptimizR:::is.data(data_list3)"))))
-  expect_false(suppressWarnings(eval(parse(text = "CroptimizR:::is.data(data_list4)"))))
+  expect_false(suppressWarnings(
+    eval(parse(text = "CroptimizR:::is.data(data_list2)"))))
+  expect_false(suppressWarnings(
+    eval(parse(text = "CroptimizR:::is.data(data_list3)"))))
+  expect_false(suppressWarnings(
+    eval(parse(text = "CroptimizR:::is.data(data_list4)"))))
 })
