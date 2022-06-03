@@ -75,9 +75,10 @@ apsimx_path <- "D:\\Home\\sbuis\\Documents\\OUTILS-INFORMATIQUE\\APSIM2021.01.20
 
 ```{r message=FALSE, warning=FALSE}
 
-sit_name="GattonRowSpacingRowSpace25cm"  # among "GattonRowSpacingRowSpace25cm",
-                                         # "GattonRowSpacingRowSpace50cm",
-                                         # "GattonRowSpacingRowSpaceN0"
+sit_name <- "GattonRowSpacingRowSpace25cm" 
+                                # among "GattonRowSpacingRowSpace25cm",
+                                # "GattonRowSpacingRowSpace50cm",
+                                # "GattonRowSpacingRowSpaceN0"
 
 var_name <- c("Wheat.Leaf.LAI") # or "Wheat.AboveGround.Wt"
 ```
@@ -150,9 +151,9 @@ Initial values for the minimization can also be provided in `param_info` (see `?
 ```{r message=FALSE, warning=FALSE}
 # 2 parameters here: ExtinctionCoeff and RUE, of bounds [0.4,0.6] and [1.4,1.6]
 param_info <-
-  list(lb=c(.Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue = 0.4,
+  list(lb = c(.Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue = 0.4,
     .Simulations.Replacements.Wheat.Leaf.Photosynthesis.RUE.FixedValue = 1.4),
-       ub=c(.Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue = 0.6,
+       ub = c(.Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue = 0.6,
     .Simulations.Replacements.Wheat.Leaf.Photosynthesis.RUE.FixedValue = 1.6))
 ```
 

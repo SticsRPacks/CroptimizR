@@ -112,9 +112,10 @@ It is advisable to define `param_values` as an optional argument, so that the mo
   ```{r eval=FALSE}
   
   sim_list$situation1
+  
   #> A tibble: *** x ***
   #>   Date         var1    var2    var3  ...
-  #>   <dttm>     <dbl>   <dbl>   <dbl> 
+  #>   <dttm>     <dbl>   <dbl>   <dbl>
   #> 1 1994-10-17   0      2.53    4.80
   #> 2 1994-10-18   0      2.31    4.66
   #> 3 1994-10-19   0      4.55    4.44
@@ -125,7 +126,7 @@ It is advisable to define `param_values` as an optional argument, so that the mo
   
   #> A tibble: *** x ***
   #>   Date         var1    var2    var3  ...
-  #>   <dttm>     <dbl>   <dbl>   <dbl> 
+  #>   <dttm>     <dbl>   <dbl>   <dbl>
   #> 1 1995-10-17   0      2.60    4.80
   #> 2 1995-10-18   0      3.42    4.70
   #> 3 1995-10-19   0      5.25    4.45
@@ -135,7 +136,7 @@ It is advisable to define `param_values` as an optional argument, so that the mo
   
   #> A tibble: *** x ***
   #>   Date         var1    var2    var3  ...
-  #>   <dttm>     <dbl>   <dbl>   <dbl> 
+  #>   <dttm>     <dbl>   <dbl>   <dbl>
   #> 1 1996-10-17   0      2.41    4.81
   #> 2 1996-10-18   0      3.03    4.71
   #> 3 1996-10-19   0      5.10    4.47
@@ -155,39 +156,31 @@ A typical pseudo-code implementation of a basic wrapper function is thus:
 
 ```{r eval=FALSE}
 
-model_wrapper <- function( param_values=NULL, situation, model_options, ...) {
+model_wrapper <- function ( param_values=NULL, situation, model_options, ...) {
   
   # Initializations
   param_names <- names(param_values)
-  results <- list(sim_list = setNames(vector("list", length(situation)), 
+  results <- list(sim_list = setNames(vector("list", length(situation)),
                                       nm = situation),
                  error = FALSE)
   attr(results$sim_list, "class") <- "cropr_simulation"
-  
+
   for (situation in situation) {
-      
-      # overwrite model input parameters of names contained in param_names with  
+      # overwrite model input parameters of names contained in param_names with
       # values retrieved in param_values
-      
-      # run the model for the given situation 
-      
-      # read the results and store the data.frame in
-      # result$sim_list[[situation]]
-      
-      if (any_error_returned_by_the model_or_detected_in_its_results) {
+      # run the model for the given situation
+    # read the results and store the data.frame in result$sim_list[[situation]]
+
+      if (any_error_returned_by_the_model_or_detected_in_its_results) {
         warning("any_useful_information_to_describe_the_error")
-        results$error=TRUE
+        results$error <- TRUE
       }
-      
     }
-    
-  }
   
+
   return(results)
-  
 }
 
-   
 ```
 
 
@@ -246,12 +239,12 @@ model_wrapper <- function( param_values=NULL, situation, model_options, ...) {
   If you want your model wrapper to be used for simultaneous estimation of specific and varietal parameters on a dataset including several cultivars (e.g. as in the example detailed in https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html), the `param_values` argument must be able to receive a data.frame (or tibble) including a specific column named `situation`. In this case, the different lines of the data.frame will specify the values of the parameters to use in the model for the situation given in the column `situation`, as in the example below:
   ```{r eval=FALSE}
   # A tibble: 4 x 4
-    situation  p1     p2     p3
-    <chr>     <dbl>  <dbl>  <dbl>
-  1 sit1      50.14  1.14   340.43
-  2 sit2      55.37  1.23   126.47
-  3 sit3      43.22  2.12   234.56
-  4 sit4      38.49  2.02   236.45
+#>    situation  p1     p2     p3
+#>    <chr>     <dbl>  <dbl>  <dbl>
+#>  1 sit1      50.14  1.14   340.43
+#>  2 sit2      55.37  1.23   126.47
+#>  3 sit3      43.22  2.12   234.56
+#>  4 sit4      38.49  2.02   236.45
   ```
   
   Depending on the application (simple case or simultaneous specific and varietal parameters estimation), the `estim_param` function will thus pass to the model wrapper either a named vector or a data.frame, including or not the `situation` column. Both shapes have thus to be handled in the model wrapper in this case. This may be done as in the following piece of code:

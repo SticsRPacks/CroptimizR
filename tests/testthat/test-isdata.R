@@ -30,8 +30,10 @@ obs_list3 <- list(
 )
 test_that("is.obs", {
   expect_true(eval(parse(text = "CroptimizR:::is.obs(obs_list1)")))
-  expect_false(suppressWarnings(eval(parse(text = "CroptimizR:::is.obs(obs_list2)"))))
-  expect_false(suppressWarnings(eval(parse(text = "CroptimizR:::is.obs(obs_list3)"))))
+  expect_false(suppressWarnings(
+    eval(parse(text = "CroptimizR:::is.obs(obs_list2)"))))
+  expect_false(suppressWarnings(
+    eval(parse(text = "CroptimizR:::is.obs(obs_list3)"))))
 })
 
 
@@ -71,8 +73,10 @@ sim_list3 <- list(
 
 test_that("is.sim", {
   expect_true(CroptimizR:::is.sim(sim_list1))
-  expect_false(suppressWarnings(eval(parse(text = "CroptimizR:::is.sim(sim_list2)"))))
-  expect_false(suppressWarnings(eval(parse(text = "CroptimizR:::is.sim(sim_list3)"))))
+  expect_false(suppressWarnings(
+    eval(parse(text = "CroptimizR:::is.sim(sim_list2)"))))
+  expect_false(suppressWarnings(
+    eval(parse(text = "CroptimizR:::is.sim(sim_list3)"))))
 })
 
 
