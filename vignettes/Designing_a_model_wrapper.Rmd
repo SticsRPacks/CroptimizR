@@ -112,30 +112,33 @@ It is advisable to define `param_values` as an optional argument, so that the mo
   ```{r eval=FALSE}
   
   sim_list$situation1
-  # A tibble: *** x ***
-     Date         var1    var2    var3  ...
-     <dttm>     <dbl>   <dbl>   <dbl> 
-   1 1994-10-17   0      2.53    4.80
-   2 1994-10-18   0      2.31    4.66
-   3 1994-10-19   0      4.55    4.44
-  
+  #> A tibble: *** x ***
+  #>   Date         var1    var2    var3  ...
+  #>   <dttm>     <dbl>   <dbl>   <dbl> 
+  #> 1 1994-10-17   0      2.53    4.80
+  #> 2 1994-10-18   0      2.31    4.66
+  #> 3 1994-10-19   0      4.55    4.44
+  #>
+  #>
   
   sim_list$situation2
-  # A tibble: *** x ***
-     Date         var1    var2    var3  ...
-     <dttm>     <dbl>   <dbl>   <dbl> 
-   1 1995-10-17   0      2.60    4.80
-   2 1995-10-18   0      3.42    4.70
-   3 1995-10-19   0      5.25    4.45
+  
+  #> A tibble: *** x ***
+  #>   Date         var1    var2    var3  ...
+  #>   <dttm>     <dbl>   <dbl>   <dbl> 
+  #> 1 1995-10-17   0      2.60    4.80
+  #> 2 1995-10-18   0      3.42    4.70
+  #> 3 1995-10-19   0      5.25    4.45
   
   
   sim_list$situation3
-  # A tibble: *** x ***
-     Date         var1    var2    var3  ...
-     <dttm>     <dbl>   <dbl>   <dbl> 
-   1 1996-10-17   0      2.41    4.81
-   2 1996-10-18   0      3.03    4.71
-   3 1996-10-19   0      5.10    4.47
+  
+  #> A tibble: *** x ***
+  #>   Date         var1    var2    var3  ...
+  #>   <dttm>     <dbl>   <dbl>   <dbl> 
+  #> 1 1996-10-17   0      2.41    4.81
+  #> 2 1996-10-18   0      3.03    4.71
+  #> 3 1996-10-19   0      5.10    4.47
   
   
   ```
