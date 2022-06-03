@@ -158,7 +158,8 @@ test_that("get_params_names", {
     c("dlaimax", "durvieF1", "durvieF2")
   )
   expect_equal(
-    eval(parse(text = "CroptimizR:::get_params_names(prior_2, short_list=TRUE)")),
+    eval(
+      parse(text = "CroptimizR:::get_params_names(prior_2, short_list=TRUE)")),
     c("dlaimax", "durvieF")
   )
   expect_equal(
@@ -166,7 +167,8 @@ test_that("get_params_names", {
     c("durvieF1", "durvieF2", "dlaimax")
   )
   expect_equal(
-    eval(parse(text = "CroptimizR:::get_params_names(prior_3, short_list=TRUE)")),
+    eval(
+      parse(text = "CroptimizR:::get_params_names(prior_3, short_list=TRUE)")),
     c("durvieF", "dlaimax")
   )
 })
@@ -191,6 +193,10 @@ sg <- list(
 vec <- c(1, 2, 3, 4, 5)
 names(vec) <- eval(parse(text = "CroptimizR:::get_params_names(sg)"))
 test_that("get_params_per_sit", {
-  expect_equal(eval(parse(text = "CroptimizR:::get_params_per_sit(sg, \"sit2\", vec)")), c(p1 = 1, p2 = 3, p3 = 4))
-  expect_equal(eval(parse(text = "CroptimizR:::get_params_per_sit(sg, \"sit4\", vec)")), c(p1 = 2, p2 = 3, p3 = 5))
+  expect_equal(eval(
+    parse(text = "CroptimizR:::get_params_per_sit(sg, \"sit2\", vec)")),
+    c(p1 = 1, p2 = 3, p3 = 4))
+  expect_equal(eval(
+    parse(text = "CroptimizR:::get_params_per_sit(sg, \"sit4\", vec)")),
+    c(p1 = 2, p2 = 3, p3 = 5))
 })

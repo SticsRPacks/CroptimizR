@@ -28,6 +28,10 @@ param_info2$durvieF <- list(
 param_info2_res <- param_info2["durvieF"]
 
 test_that("filter_param_info", {
-  expect_equal(eval(parse(text = "CroptimizR:::filter_param_info(param_info1, \"durvieF\")")), param_info1_res)
-  expect_equal(eval(parse(text = "CroptimizR:::filter_param_info(param_info2, \"durvieF\")")), param_info2_res)
+  expect_equal(eval(
+    parse(text = "CroptimizR:::filter_param_info(param_info1, \"durvieF\")")),
+    param_info1_res)
+  expect_equal(eval(
+    parse(text = "CroptimizR:::filter_param_info(param_info2, \"durvieF\")")),
+    param_info2_res)
 })

@@ -46,8 +46,12 @@ param_info <- list(
 )
 eval(parse(text = "init_values <- CroptimizR:::get_init_values(param_info)"))
 param_info_new <- within(param_info, rm(init_values))
-eval(parse(text = "param_info_new <- CroptimizR:::set_init_values(param_info, init_values)"))
-eval(parse(text = "init_values_new <- CroptimizR:::get_init_values(param_info_new)"))
+eval(
+  parse(
+text =
+  "param_info_new <- CroptimizR:::set_init_values(param_info, init_values)"))
+eval(parse(
+  text = "init_values_new <- CroptimizR:::get_init_values(param_info_new)"))
 
 test_that("set_init_values: simple case 1", {
   expect_identical(init_values, init_values_new)
@@ -64,8 +68,11 @@ param_info <- list(
 )
 eval(parse(text = "init_values <- CroptimizR:::get_init_values(param_info)"))
 param_info_new <- within(param_info, rm(init_values))
-eval(parse(text = "param_info_new <- CroptimizR:::set_init_values(param_info, init_values)"))
-eval(parse(text = "init_values_new <- CroptimizR:::get_init_values(param_info_new)"))
+eval(parse(
+  text =
+    "param_info_new <- CroptimizR:::set_init_values(param_info, init_values)"))
+eval(parse(
+  text = "init_values_new <- CroptimizR:::get_init_values(param_info_new)"))
 
 test_that("set_init_values: simple case 2", {
   expect_identical(init_values, init_values_new)
@@ -99,8 +106,11 @@ eval(parse(text = "init_values <- CroptimizR:::get_init_values(param_info)"))
 param_info_new <- param_info
 param_info_new$dlaimax$init_values <- NULL
 param_info_new$durvieF$init_values <- NULL
-eval(parse(text = "param_info_new <- CroptimizR:::set_init_values(param_info, init_values)"))
-eval(parse(text = "init_values_new <- CroptimizR:::get_init_values(param_info_new)"))
+eval(parse(
+text =
+  "param_info_new <- CroptimizR:::set_init_values(param_info, init_values)"))
+eval(parse(
+  text = "init_values_new <- CroptimizR:::get_init_values(param_info_new)"))
 
 test_that("set_init_values: Case 1 with groups of situations per parameter", {
   expect_identical(init_values, init_values_new)
@@ -138,8 +148,11 @@ eval(parse(text = "init_values <- CroptimizR:::get_init_values(param_info)"))
 param_info_new <- param_info
 param_info_new$dlaimax$init_values <- NULL
 param_info_new$durvieF$init_values <- NULL
-eval(parse(text = "param_info_new <- CroptimizR:::set_init_values(param_info, init_values)"))
-eval(parse(text = "init_values_new <- CroptimizR:::get_init_values(param_info_new)"))
+eval(parse(
+  text =
+    "param_info_new <- CroptimizR:::set_init_values(param_info, init_values)"))
+eval(parse(
+  text = "init_values_new <- CroptimizR:::get_init_values(param_info_new)"))
 
 test_that("set_init_values: Case 2 with groups of situations per parameter", {
   expect_identical(init_values, init_values_new)
