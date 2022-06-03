@@ -397,7 +397,11 @@ get_init_values <- function(param_info) {
           param_info[[i]]$init_values <- t(param_info[[i]]$init_values)
         }
       } else {
-        param_info[[i]]$init_values <- data.frame(NA)
+        if (!is.null(param_info[[i]]$sit_list)) {
+          param_info[[i]]$init_values <- data.frame(t(rep(NA,length(param_info[[i]]$sit_list))))
+        } else {
+          param_info[[i]]$init_values <- data.frame(NA)
+        }
       }
     }
 
