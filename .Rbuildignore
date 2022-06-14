@@ -21,3 +21,4 @@ vignettes/README.txt
 ^doc$
 ^Meta$
 ^\.github$
+^cran-comments\.md$

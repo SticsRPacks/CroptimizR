@@ -1,15 +1,19 @@
 #' @title Criteria to optimize
 #'
 #' @description
-#' Provide several least squares criteria to estimate parameters by minimizing the
-#' difference between observed and simulated values of model output variables.
+#' Provide several least squares criteria to estimate parameters by minimizing
+#' the difference between observed and simulated values of model output
+#' variables.
 #'
 #' @param sim_list List of simulated variables
 #' @param obs_list List of observed variables
 #'
-#' @return The value of the criterion given the observed and simulated values of the variables.
+#' @return The value of the criterion given the observed and simulated values of
+#'  the variables.
 #'
-#' @details The following criteria are proposed ([see html version](https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html) for a better rendering of equations):
+#' @details The following criteria are proposed ([see html version]
+#' (https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html)
+#' for a better rendering of equations):
 #' \itemize{
 #'   \item `crit_ols`: ordinary least squares \cr
 #'           The sum of squared residues for each variable: \cr
@@ -35,12 +39,20 @@
 #'           situation,
 #'           \eqn{ f_{jk}(X_i;\theta) } the corresponding model prediction, \eqn{N_j} the number of situations including at least one observation of variable \eqn{j}, and \eqn{n_{ij}} the number of observation of variable \eqn{j} on situation \eqn{i}. . \cr
 #'           `crit_log_cwss_corr` computes the log of this equation. \cr
-#'           In this criterion, one still assume that errors in different situations or for different variables in the same situation are independent.
-#'           However, errors for different observations over time of the same variable in the same situation are assumed to be highly correlated.
-#'           In this way, each situation contributes a single term to the overall sum of squared errors regardless of the number of observations which may be usefull in case one have situations with very heterogenous number of dates of observations.
-#'           More details about this criterion are given in Wallach et al. (2011), equation 8.
+#'           In this criterion, one still assume that errors in different
+#'           situations or for different variables in the same situation are
+#'           independent.
+#'           However, errors for different observations over time of the same
+#'           variable in the same situation are assumed to be highly correlated.
+#'           In this way, each situation contributes a single term to the
+#'           overall sum of squared errors regardless of the number of
+#'           observations which may be usefull in case one have situations with
+#'            very heterogenous number of dates of observations.
+#'           More details about this criterion are given in Wallach et al.
+#'           (2011), equation 8.
 #' }
-#' `sim_list` and `obs_list` must have the same structure (i.e. same number of variables, dates, situations, ... use internal function
+#' `sim_list` and `obs_list` must have the same structure (i.e. same number of
+#' variables, dates, situations, ... use internal function
 #' intersect_sim_obs before calling the criterion functions).
 #'
 #' @name ls_criteria
@@ -52,9 +64,12 @@ NULL
 #' @export
 #' @rdname ls_criteria
 crit_ols <- function(sim_list, obs_list) {
+  # return criterion type (ls, log-ls, likelihood, log-likelihood)
+  # if no argument given
 
-  if(!nargs()) return("ls")  # return criterion type (ls, log-ls, likelihood, log-likelihood) if no argument given
-
+  if (!nargs()) {
+    return("ls")
+  }
   var_list <- unique(unlist(lapply(obs_list, function(x) colnames(x))))
   var_list <- setdiff(var_list, "Date")
 
@@ -135,9 +150,12 @@ crit_wls <- function(sim_list, obs_list, weight, alpha=1) {
 #' @export
 #' @rdname ls_criteria
 crit_log_cwss <- function(sim_list, obs_list) {
+  # return criterion type (ls, log-ls, likelihood, log-likelihood) #
+  # if no argument given
 
-  if(!nargs()) return("log-ls")  # return criterion type (ls, log-ls, likelihood, log-likelihood) if no argument given
-
+  if (!nargs()) {
+    return("log-ls")
+  }
   var_list <- unique(unlist(lapply(obs_list, function(x) colnames(x))))
   var_list <- setdiff(var_list, "Date")
 
@@ -159,30 +177,33 @@ crit_log_cwss <- function(sim_list, obs_list) {
 
 #' @export
 #' @rdname ls_criteria
-crit_log_cwss_corr <- function(sim_list,obs_list) {
-
-  if(!nargs()) return("log-ls")  # return criterion type (ls, log-ls, likelihood, log-likelihood) if no argument given
-
-  var_list=unique(unlist(lapply(obs_list,function (x) colnames(x))))
-  var_list=setdiff(var_list,"Date")
-  result<-0
-
-  for (var in var_list) {
-    result1<-0
-    for (i in 1:length(obs_list)) {
-      obs=obs_list[[i]][[var]]
-      if (length(obs)!=0) {
-      sim=sim_list[[i]][[var]]
-      res=obs-sim
-      res=res[!is.na(res)]
-      #compte les USM
-      sz=length(res)
-      result1<-result1+(1/sz)*(res%*%res)
-      }
-    }
-    Nj <-sum(sapply(obs_list,function (x) is.element(var,colnames(x))))
-    result<-result+(Nj/2)*(log(result1)-log(Nj))
+crit_log_cwss_corr <- function(sim_list, obs_list) {
+  # return criterion type (ls, log-ls, likelihood, log-likelihood)
+  # if no argument given
+  if (!nargs()) {
+    return("log-ls")
   }
 
-return(as.numeric(result))
+  var_list <- unique(unlist(lapply(obs_list, function(x) colnames(x))))
+  var_list <- setdiff(var_list, "Date")
+  result <- 0
+
+  for (var in var_list) {
+    result1 <- 0
+    for (i in seq_along(obs_list)) {
+      obs <- obs_list[[i]][[var]]
+      if (length(obs) != 0) {
+        sim <- sim_list[[i]][[var]]
+        res <- obs - sim
+        res <- res[!is.na(res)]
+        # compte les USM
+        sz <- length(res)
+        result1 <- result1 + (1 / sz) * (res %*% res)
+      }
+    }
+    Nj <- sum(sapply(obs_list, function(x) is.element(var, colnames(x))))
+    result <- result + (Nj / 2) * (log(result1) - log(Nj))
+  }
+
+  return(as.numeric(result))
 }

@@ -1,4 +1,4 @@
-# CroptimizR 0.4.0 (2021-07-22)
+# CroptimizR 0.4.0 _2021-07-22_
 
 ## Main changes
 

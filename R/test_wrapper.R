@@ -38,8 +38,8 @@
 #' @export
 #'
 test_wrapper <- function(model_function, model_options, param_values, situation,
-                         var=NULL, sit_names=lifecycle::deprecated(),
-                         var_names=lifecycle::deprecated()) {
+                         var = NULL, sit_names = lifecycle::deprecated(),
+                         var_names = lifecycle::deprecated()) {
 
   # Managing parameter names changes between versions:
   if (lifecycle::is_present(sit_names)) {
@@ -54,42 +54,56 @@ test_wrapper <- function(model_function, model_options, param_values, situation,
   }
 
 
-  if(length(param_values)<=1) {
+  if (length(param_values) <= 1) {
     stop("param_values argument must include at least TWO parameters.")
   }
 
-  test_results <- c(test1=FALSE,test2=FALSE,test3=FALSE)
+  test_results <- c(test1 = FALSE, test2 = FALSE, test3 = FALSE)
 
   param_values_1 <- param_values[1]
   param_values_2 <- param_values
   # hum, this test is a bit uggly but seems to be necessary
   # (wrappers may have or not the arguments situation and var or their old name sit_names and var_names
   # and they may have both in case the use deprecated arguments for sit_names and var_names ...
-  if ( (("situation" %in% names(formals(model_function))) | ("var" %in% names(formals(model_function)))) |
-       !(("sit_names" %in% names(formals(model_function))) |  ("var_names" %in% names(formals(model_function)))) ) {
-    sim_1       <- model_function(param_values = param_values_1, model_options = model_options,
-                                  situation=sit_names, var=var_names)
-    sim_2       <- model_function(param_values = param_values_2, model_options = model_options,
-                                  situation=sit_names, var=var_names)
-    sim_3       <- model_function(param_values = param_values_1, model_options = model_options,
-                                  situation=sit_names, var=var_names)
-  } else if ( ("sit_names" %in% names(formals(model_function))) |  ("var_names" %in% names(formals(model_function)))) {
-    sim_1       <- model_function(param_values = param_values_1, model_options = model_options,
-                                  sit_names=sit_names, var_names=var_names)
-    sim_2       <- model_function(param_values = param_values_2, model_options = model_options,
-                                  sit_names=sit_names, var_names=var_names)
-    sim_3       <- model_function(param_values = param_values_1, model_options = model_options,
-                                  sit_names=sit_names, var_names=var_names)
+  if ((("situation" %in% names(formals(model_function))) | ("var" %in% names(formals(model_function)))) |
+    !(("sit_names" %in% names(formals(model_function))) | ("var_names" %in% names(formals(model_function))))) {
+    sim_1 <- model_function(
+      param_values = param_values_1, model_options = model_options,
+      situation = sit_names, var = var_names
+    )
+    sim_2 <- model_function(
+      param_values = param_values_2, model_options = model_options,
+      situation = sit_names, var = var_names
+    )
+    sim_3 <- model_function(
+      param_values = param_values_1, model_options = model_options,
+      situation = sit_names, var = var_names
+    )
+  } else if (("sit_names" %in% names(formals(model_function))) | ("var_names" %in% names(formals(model_function)))) {
+    sim_1 <- model_function(
+      param_values = param_values_1, model_options = model_options,
+      sit_names = sit_names, var_names = var_names
+    )
+    sim_2 <- model_function(
+      param_values = param_values_2, model_options = model_options,
+      sit_names = sit_names, var_names = var_names
+    )
+    sim_3 <- model_function(
+      param_values = param_values_1, model_options = model_options,
+      sit_names = sit_names, var_names = var_names
+    )
     lifecycle::deprecate_warn("0.5.0", "model_function(sit_names)", "model_function(situation)")
     lifecycle::deprecate_warn("0.5.0", "model_function(var_names)", "model_function(var)")
   }
 
-  results <- list(test_results=test_results,
-                  param_values_1=param_values_1,
-                  param_values_2=param_values_2,
-                  sim_1=sim_1,
-                  sim_2=sim_2,
-                  sim_3=sim_3)
+  results <- list(
+    test_results = test_results,
+    param_values_1 = param_values_1,
+    param_values_2 = param_values_2,
+    sim_1 = sim_1,
+    sim_2 = sim_2,
+    sim_3 = sim_3
+  )
 
   cat(crayon::green("Test the wrapper returns outputs in expected format ...\n"))
   if (!("error" %in% names(sim_1))) {
@@ -109,7 +123,7 @@ test_wrapper <- function(model_function, model_options, param_values, situation,
 
 
   cat(crayon::green("Test the wrapper gives identical results when running with same inputs ...\n"))
-  if (identical(sim_1,sim_3)) {
+  if (identical(sim_1, sim_3)) {
     cat(crayon::green("... OK\n"))
     results$test_results[2] <- TRUE
   } else {
@@ -119,7 +133,7 @@ test_wrapper <- function(model_function, model_options, param_values, situation,
   }
   cat("\n")
   cat(crayon::green("Test the wrapper gives different results when running with different inputs ...\n"))
-  if (!identical(sim_1,sim_2)) {
+  if (!identical(sim_1, sim_2)) {
     cat(crayon::green("... OK\n"))
     results$test_results[3] <- TRUE
   } else {
@@ -129,5 +143,4 @@ test_wrapper <- function(model_function, model_options, param_values, situation,
   }
 
   return(invisible(results))
-
 }
