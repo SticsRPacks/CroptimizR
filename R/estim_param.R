@@ -47,11 +47,13 @@
 #' (see [here](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html)
 #' for an example)
 #'
-#' @param forced_param_values Named vector, must contain the values for the model parameters
-#' to force. These values will be transferred to the
-#' model wrapper through its param_values argument so that the given parameters
-#' always take the same values for each model simulation. Should not include values
-#' for estimated parameters (i.e. parameters defined in `param_info` argument).
+#' @param forced_param_values Named vector or list, must contain the values (or
+#' arithmetic expression, see details section) for the model parameters to force. The corresponding
+#' values will be transferred to the model wrapper through its param_values argument
+#' during the estimation process.
+#' Should not include values for estimated parameters (i.e. parameters defined in
+#' `param_info` argument), except if they are listed as candidate parameters (see
+#' argument `candidate_param`).
 #'
 #' @param candidate_param Names of the parameters, among those defined in the argument param_info,
 #' that must only be considered as candidate for parameter estimation (see details section).
@@ -101,7 +103,7 @@
 #'   longer supported, use `var` instead.
 #'
 #' @details
-#'   If the candidate_param argument is given, a parameter selection procedure following
+#'   If the `candidate_param` argument is given, a parameter selection procedure following
 #'   the AgMIP calibration phaseIII protocol will be performed:
 #'   The candidate parameters are added one by one (in the given order) to the parameters
 #'   that MUST be estimated (i.e. the one defined in param_info but not in candidate_param).
@@ -135,6 +137,18 @@
 #'   - model_options: the list of model options as given to estim_param function
 #'   It must return a logical indicating if the parameters values satisfies the constraints
 #'   (freely defined by the user in the function body) or not.
+#'
+#'   The optional argument `forced_param_values` may contain arithmetic expressions to
+#'   automatically compute the values of some parameters in function of the values of
+#'   parameters that are estimated (equality constraints). For that, `forced_param_values`
+#'   must be a named list. Arithmetic expressions must be R expressions given under the
+#'   shape of character strings. For example:
+#'
+#'   forced_param_values = list(p1=5, p2=7, p3="5*p5+p6")
+#'
+#'   will pass to the model wrapper the value 5 for parameter p1, 7 for parameter p2,
+#'   and will dynamically compute the value of p3 in function of the values of parameters
+#'   p5 and p6 iteratively provided by the parameter estimation algorithm.
 #'
 #' @return prints, graphs and a list containing the results of the parameter estimation,
 #' which content depends on the method used and on the values of the `info_level` argument.
@@ -249,14 +263,17 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
       stop("Incorrect format for argument forced_param_values, should be a vector.")
     }
     if (any(names(forced_param_values) %in% setdiff(param_names, candidate_param))) {
-      stop(
+      tmp <- intersect(names(forced_param_values), setdiff(param_names, candidate_param))
+      warning(
         "The following parameters are defined both in forced_param_values and param_info
            arguments of estim_param function while they should not (a parameter cannot
            be both forced and estimated except if it is part of the `candidate` parameters):",
-        paste(intersect(names(forced_param_values), setdiff(param_names, candidate_param)),
-          collapse = ","
-        )
+        paste(tmp,collapse = ","),
+        "\n They will be removed from forced_param_values."
       )
+      forced_param_values <-
+        forced_param_values[setdiff(names(forced_param_values),
+                                    setdiff(param_names, candidate_param))]
     }
   }
 

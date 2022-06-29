@@ -1,5 +1,4 @@
 #' @title main function for criterion to optimize
-#'
 #' @param param_values Value(s) of the parameters
 #' @param crit_options A list containing the following elements:
 #' `param_names` Name(s) of parameters
@@ -35,6 +34,7 @@ main_crit <- function(param_values, crit_options) {
       .croptEnv$params_and_crit[[.croptEnv$eval_count]] <-
         dplyr::bind_cols(
           crit = crit, tibble::tibble(!!!param_values_ori),
+          forced_param_values=tibble::tibble(!!!forced_param_values),
           satisfy_const = satisfy_const
         )
 
@@ -183,11 +183,12 @@ main_crit <- function(param_values, crit_options) {
   }
 
   # Handle the parameters to force
-  if (is.vector(param_values) | is.list(param_values)) {
-    param_values <- c(forced_param_values, param_values)
-  } else if (!is.null(forced_param_values) & length(forced_param_values) > 0) {
+  forced_param_values <- compute_eq_const(forced_param_values, param_values)
+  if (tibble::is_tibble(param_values)) {
     param_values <-
-      dplyr::bind_cols(tibble::tibble(!!!forced_param_values), param_values)
+      dplyr::bind_cols(forced_param_values, param_values)
+  } else if (!is.null(forced_param_values) & length(forced_param_values) > 0) {
+    param_values <- c(forced_param_values, param_values)
   }
 
   # Apply constraints on the parameters
@@ -215,7 +216,6 @@ main_crit <- function(param_values, crit_options) {
       }
     }
   }
-
 
   sit_names <- situation_names
   if (is.null(var_names)) {

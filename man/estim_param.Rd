@@ -14,6 +14,7 @@ estim_param(
   param_info,
   forced_param_values = NULL,
   candidate_param = NULL,
+  transform_var = NULL,
   transform_obs = NULL,
   transform_sim = NULL,
   satisfy_par_const = NULL,
@@ -77,14 +78,21 @@ or a named list containing for each parameter:
 for an example)
 }}
 
-\item{forced_param_values}{Named vector, must contain the values for the model parameters
-to force (optional, NULL by default). These values will be transferred to the
-model wrapper through its param_values argument so that the given parameters
-always take the same values for each model simulation. Should not include values
-for estimated parameters (i.e. parameters defined in \code{param_info} argument).}
+\item{forced_param_values}{Named vector or list, must contain the values (or
+arithmetic expression, see details section) for the model parameters to force. The corresponding
+values will be transferred to the model wrapper through its param_values argument
+during the estimation process.
+Should not include values for estimated parameters (i.e. parameters defined in
+\code{param_info} argument), except if they are listed as candidate parameters (see
+argument \code{candidate_param}).}
 
 \item{candidate_param}{Names of the parameters, among those defined in the argument param_info,
 that must only be considered as candidate for parameter estimation (see details section).}
+
+\item{transform_var}{Named vector of functions to apply both on simulated and
+observed variables. \code{transform_var=c(var1=log, var2=sqrt)} will for example
+apply log-transformation on simulated and observed values of variable var1,
+and square-root transformation on values of variable var2.}
 
 \item{transform_obs}{User function for transforming observations before each criterion
 evaluation (optional), see details section for more information.}
@@ -136,7 +144,7 @@ All results are saved in the folder \code{optim_options$out_dir}.
 main function for parameter estimation
 }
 \details{
-If the candidate_param argument is given, a parameter selection procedure following
+If the \code{candidate_param} argument is given, a parameter selection procedure following
 the AgMIP calibration phaseIII protocol will be performed:
 The candidate parameters are added one by one (in the given order) to the parameters
 that MUST be estimated (i.e. the one defined in param_info but not in candidate_param).
@@ -178,6 +186,18 @@ by the estimation algorithm
 It must return a logical indicating if the parameters values satisfies the constraints
 (freely defined by the user in the function body) or not.
 }
+
+The optional argument \code{forced_param_values} may contain arithmetic expressions to
+automatically compute the values of some parameters in function of the values of
+parameters that are estimated (equality constraints). For that, \code{forced_param_values}
+must be a named list. Arithmetic expressions must be R expressions given under the
+shape of character strings. For example:
+
+forced_param_values = list(p1=5, p2=7, p3="5*p5+p6")
+
+will pass to the model wrapper the value 5 for parameter p1, 7 for parameter p2,
+and will dynamically compute the value of p3 in function of the values of parameters
+p5 and p6 iteratively provided by the parameter estimation algorithm.
 }
 \seealso{
 For more details and examples, see the different vignettes in
