@@ -18,6 +18,7 @@ A list containing consistent obs and sim lists
 Try to make observation and simulation lists consistent if possible
 }
 \details{
-This function checks and fix the homogeneity of types of obs and sim Date columns
+This function checks and fix the homogeneity of types of obs and sim
+Date columns
 }
 \keyword{internal}

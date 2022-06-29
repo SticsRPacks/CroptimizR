@@ -39,7 +39,6 @@ For the moment only works with uniform distributions but will be
 hopefully soon extended to any distribution
 }
 \examples{
-
 \donttest{
 # A simple case
 param_info <- list(

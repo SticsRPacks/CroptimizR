@@ -8,11 +8,12 @@ get_params_per_sit(sit_groups, situation, param_vec)
 }
 \arguments{
 \item{sit_groups}{Defines the groups of situations for each parameter
-A named list containing for each parameter the list of situations per group (\code{sit_list})}
+A named list containing for each parameter the list of situations per group
+(\code{sit_list})}
 
 \item{situation}{The name of the situation}
 
-\item{param_vec}{The (named) vector of parameters from which to extract values}
+\item{param_vec}{The (named)vector of parameters from which to extract values}
 }
 \value{
 A subvector of \code{param_vec} containing only the values that are
@@ -28,9 +29,18 @@ will be considered in the same order as in \code{sit_group}
 }
 \examples{
 sg <- list(
-  p1 = list(sit_list = list(c("sit1", "sit2", "sit3"), c("sit4", "sit5", "sit6"))),
-  p2 = list(sit_list = list(c("sit1", "sit2", "sit3", "sit4", "sit5", "sit6"))),
-  p3 = list(sit_list = list(c("sit1", "sit2", "sit3"), c("sit4", "sit5", "sit6")))
+  p1 = list(sit_list = list(
+    c("sit1", "sit2", "sit3"),
+    c("sit4", "sit5", "sit6")
+  )),
+  p2 = list(sit_list = list(c(
+    "sit1", "sit2", "sit3", "sit4", "sit5",
+    "sit6"
+  ))),
+  p3 = list(sit_list = list(c("sit1", "sit2", "sit3"), c(
+    "sit4", "sit5",
+    "sit6"
+  )))
 )
 vec <- c(1, 2, 3, 4, 5)
 names(vec) <- CroptimizR:::get_params_names(sg)

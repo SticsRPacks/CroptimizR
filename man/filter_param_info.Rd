@@ -37,7 +37,6 @@ A list similar to the one given in input but filtered
 Filter param_info list for a subset of parameters
 }
 \examples{
-
 \donttest{
 param_info <- list(
   lb = c(dlaimax = 0.0005, durvieF = 50),

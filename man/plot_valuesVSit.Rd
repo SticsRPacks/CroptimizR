@@ -2,7 +2,8 @@
 % Please edit documentation in R/frequentist_functions.R
 \name{plot_valuesVSit}
 \alias{plot_valuesVSit}
-\title{Create plots of parameters and criterion values per iteration or evaluation number}
+\title{Create plots of parameters and criterion values per iteration or
+evaluation number}
 \usage{
 plot_valuesVSit(
   df,
@@ -13,9 +14,12 @@ plot_valuesVSit(
 )
 }
 \arguments{
-\item{df}{Data.frame containing values of parameters (one column per estimated parameter),
-criterion (crit column), repetition number (rep), iteration number (iter) and evaluation number (eval)
-(similar to params_and_crit). See Details section for comments about the difference between evaluations and iterations.}
+\item{df}{Data.frame containing values of parameters (one column per
+estimated parameter), criterion (crit column), repetition number (rep),
+iteration number (iter) and evaluation number (eval)
+(similar to params_and_crit).
+See Details section for comments about the difference between evaluations
+and iterations.}
 
 \item{param_info}{Information on the parameters to estimate.
 Either
@@ -38,23 +42,29 @@ or a named list containing for each parameter:
 for an example)
 }}
 
-\item{iter_or_eval}{Values of the x axis: "iter" for iteration number, "eval" for evaluation number}
+\item{iter_or_eval}{Values of the x axis: "iter" for iteration number,
+"eval" for evaluation number}
 
 \item{crit_log}{If TRUE, consider criterion values in log scale}
 
-\item{rep_label}{Indicate if labels for the repetition number must be plotted at both beginning and end of lines ("begin_end"),
+\item{rep_label}{Indicate if labels for the repetition number must be
+plotted at both beginning and end of lines ("begin_end"),
 only at the beginning ("begin") or only at the end ("end")}
 }
 \value{
-A named list containing one plot per parameter and a plot for the criterion.
+A named list containing one plot per parameter and a plot for the
+criterion.
 }
 \description{
-Create plots of parameters and criterion values per iteration or evaluation number
+Create plots of parameters and criterion values per iteration or
+evaluation number
 }
 \details{
-Evaluation means evaluation of the criterion from proposed values of the parameters
-by the parameter estimation algorithm.
-An iteration is reached when an evaluation lead to a better value of the criterion than the previously obtained values.
+Evaluation means evaluation of the criterion from proposed values of
+the parameters by the parameter estimation algorithm.
+An iteration is reached when an evaluation lead to a better value of the
+criterion than the previously obtained values.
 There are thus more evaluations than iterations. The criterion decreases when
-iteration number increases while it is not the case when evaluation number increases.
+iteration number increases while it is not the case when evaluation number
+increases.
 }

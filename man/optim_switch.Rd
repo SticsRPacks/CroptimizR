@@ -13,15 +13,15 @@ optim_switch(...)
 
 \item{param_info}{see description in estim_param}
 
-\item{crit_options}{List containing several arguments given to \code{estim_param} function:
-\code{param_names}, \code{obs_list}, \code{crit_function}, \code{model_function}, \code{model_options},
-\code{param_info}, \code{transform_obs}, \code{transform_sim}
+\item{crit_options}{List containing several arguments given to \code{estim_param}
+function: \code{param_names}, \code{obs_list}, \code{crit_function}, \code{model_function},
+\code{model_options}, \code{param_info}, \code{transform_obs}, \code{transform_sim}
 that must be passed to main_crit function by the methods wrappers.}
 }
 \value{
-prints, graphs and a list containing the results of the parameter estimation,
-which content depends on the method used, all that saved in the defined in
-\code{optim_options.path_results}
+prints, graphs and a list containing the results of the parameter
+estimation, which content depends on the method used, all that saved in the
+defined in \code{optim_options.path_results}
 }
 \description{
 Call the required parameter estimation method

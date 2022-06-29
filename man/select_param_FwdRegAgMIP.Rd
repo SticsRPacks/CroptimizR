@@ -2,8 +2,9 @@
 % Please edit documentation in R/FwdRegAgMIP.R
 \name{select_param_FwdRegAgMIP}
 \alias{select_param_FwdRegAgMIP}
-\title{Provide a list of candidate parameters to estimate based on the Forward Selection
-algorithm proposed in AgMIP calibration phaseIII protocol and a given information criterion}
+\title{Provide a list of candidate parameters to estimate based on the
+Forward Selection algorithm proposed in AgMIP calibration phaseIII protocol
+and a given information criterion}
 \usage{
 select_param_FwdRegAgMIP(
   oblig_param_list,
@@ -16,34 +17,38 @@ select_param_FwdRegAgMIP(
 \item{oblig_param_list}{Vector of names of parameters that must be estimated
 (list of obligatory parameters)}
 
-\item{add_param_list}{Vector of names of additional parameters candidate to the
-estimation}
+\item{add_param_list}{Vector of names of additional parameters candidate to
+the estimation}
 
-\item{crt_list}{Vector of names of candidate parameters that have been previously
-used in parameter estimation}
+\item{crt_list}{Vector of names of candidate parameters that have been
+previously used in parameter estimation}
 
-\item{info_crit_values}{Values of the information criterion obtained so far for the different steps.}
+\item{info_crit_values}{Values of the information criterion obtained so far
+for the different steps.}
 }
 \value{
 A list that contains:
 (i) the names of the candidate parameters for next parameter estimation
 or NULL when all parameters have been tested (next_candidates)
-(ii) a flag that indicates if the previous parameters tested are selected (selected)
+(ii) a flag that indicates if the previous parameters tested are selected
+(selected)
 }
 \description{
-Provide a list of candidate parameters to estimate based on the Forward Selection
-algorithm proposed in AgMIP calibration phaseIII protocol and a given information criterion
+Provide a list of candidate parameters to estimate based on the
+Forward Selection algorithm proposed in AgMIP calibration phaseIII protocol
+and a given information criterion
 }
 \details{
-This function implements the Forward Selection based on information criterion
-as described in AgMIP Calibration protocol phase III
+This function implements the Forward Selection based on information
+criterion as described in AgMIP Calibration protocol phase III
 (Crop model calibration using phenology data)
-If current information criterion value is superior to the previous one, we replace the previously
-added candidate parameter in crt_list by the next one in add_param_list.
-If current information criterion value is inferior to the previous one, we add a new candidate
-parameter to crt_list
+If current information criterion value is superior to the previous one,
+we replace the previously added candidate parameter in crt_list by the next
+one in add_param_list.
+If current information criterion value is inferior to the previous one,
+we add a new candidate parameter to crt_list
 
-A first estimation using oblig_param_list as candidate parameters must be performed
-before calling this function
+A first estimation using oblig_param_list as candidate parameters must be
+performed before calling this function
 }
 \keyword{internal}

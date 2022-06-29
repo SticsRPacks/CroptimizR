@@ -22,14 +22,18 @@ crit_log_cwss_corr(sim_list, obs_list)
 \item{obs_list}{List of observed variables}
 }
 \value{
-The value of the criterion given the observed and simulated values of the variables.
+The value of the criterion given the observed and simulated values of
+the variables.
 }
 \description{
-Provide several least squares criteria to estimate parameters by minimizing the
-difference between observed and simulated values of model output variables.
+Provide several least squares criteria to estimate parameters by minimizing
+the difference between observed and simulated values of model output
+variables.
 }
 \details{
-The following criteria are proposed (\href{https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html}{see html version} for a better rendering of equations):
+The following criteria are proposed (\link{see html version}
+(https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html)
+for a better rendering of equations):
 \itemize{
 \item \code{crit_ols}: ordinary least squares \cr
 The sum of squared residues for each variable: \cr
@@ -55,11 +59,19 @@ where \eqn{ Y_{ijk} } is the observed value for the \eqn{k^{th}} time point of t
 situation,
 \eqn{ f_{jk}(X_i;\theta) } the corresponding model prediction, \eqn{N_j} the number of situations including at least one observation of variable \eqn{j}, and \eqn{n_{ij}} the number of observation of variable \eqn{j} on situation \eqn{i}. . \cr
 \code{crit_log_cwss_corr} computes the log of this equation. \cr
-In this criterion, one still assume that errors in different situations or for different variables in the same situation are independent.
-However, errors for different observations over time of the same variable in the same situation are assumed to be highly correlated.
-In this way, each situation contributes a single term to the overall sum of squared errors regardless of the number of observations which may be usefull in case one have situations with very heterogenous number of dates of observations.
-More details about this criterion are given in Wallach et al. (2011), equation 8.
+In this criterion, one still assume that errors in different
+situations or for different variables in the same situation are
+independent.
+However, errors for different observations over time of the same
+variable in the same situation are assumed to be highly correlated.
+In this way, each situation contributes a single term to the
+overall sum of squared errors regardless of the number of
+observations which may be usefull in case one have situations with
+very heterogenous number of dates of observations.
+More details about this criterion are given in Wallach et al.
+(2011), equation 8.
 }
-\code{sim_list} and \code{obs_list} must have the same structure (i.e. same number of variables, dates, situations, ... use internal function
+\code{sim_list} and \code{obs_list} must have the same structure (i.e. same number of
+variables, dates, situations, ... use internal function
 intersect_sim_obs before calling the criterion functions).
 }

@@ -39,7 +39,6 @@ A vector of parameter names
 Extract param names from parameter information
 }
 \examples{
-
 \donttest{
 # A simple case
 param_info <- list(
@@ -65,7 +64,7 @@ param_info$durvieF <- list(
   lb = c(50, 50), ub = c(400, 400)
 )
 CroptimizR:::get_params_names(param_info)
-CroptimizR:::get_params_names(param_info, short_list=TRUE)
+CroptimizR:::get_params_names(param_info, short_list = TRUE)
 }
 
 }

@@ -7,18 +7,22 @@
 plot_estimVSinit(init_values, est_values, crit, lb, ub, bubble = TRUE)
 }
 \arguments{
-\item{init_values}{Data.frame containing initial values of the parameters for each repetition}
+\item{init_values}{Data.frame containing initial values of the parameters
+for each repetition}
 
-\item{est_values}{Data.frame containing estimated values of the parameters for each repetition}
+\item{est_values}{Data.frame containing estimated values of the parameters
+for each repetition}
 
-\item{crit}{Vector containing the minimum value of the criterion for each repetition of the minimization}
+\item{crit}{Vector containing the minimum value of the criterion for each
+repetition of the minimization}
 
 \item{lb}{Vector containing the lower bounds of the estimated parameters}
 
 \item{ub}{Vector containing the upper bounds of the estimated parameters}
 
-\item{bubble}{Logical indicating if bubbles of size proportional to the minimum
-values of the criterion should be plot (TRUE, default value) or not (FALSE).}
+\item{bubble}{Logical indicating if bubbles of size proportional to the
+minimum values of the criterion should be plot (TRUE, default value)
+or not (FALSE).}
 }
 \value{
 A named list containing one plot per parameter
@@ -28,6 +32,6 @@ Create plots of estimated versus initial values of the parameters
 }
 \details{
 The number of the repetition that leads to the minimal value of the
-criterion over all repetitions is written in white (if bubble is TRUE) or in red
-(if bubble is false) while the other ones are written in black.
+criterion over all repetitions is written in white (if bubble is TRUE) or
+in red (if bubble is false) while the other ones are written in black.
 }
