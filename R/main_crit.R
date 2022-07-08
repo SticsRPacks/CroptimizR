@@ -123,12 +123,13 @@ main_crit <- function(param_values, crit_options) {
       save(param_values, obs_list, model_results, file = filename)
     }
 
-    if (!is.null(crit_options$return_obs_sim) && crit_options$return_obs_sim) {
+    if (!is.null(crit_options$return_detailed_info) && crit_options$return_detailed_info) {
       return(res <- list(
         crit = crit, obs_list = obs_list, sim = sim,
         sim_transformed = sim_transformed,
         sim_intersect = obs_sim_list$sim_list,
-        obs_intersect = obs_sim_list$obs_list
+        obs_intersect = obs_sim_list$obs_list,
+        forced_param_values = forced_param_values
       ))
     }
   })

@@ -379,17 +379,17 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
 
     crit_options <- list(
       param_names = crt_candidates, obs_list = obs_list,
-                      crit_function = crit_function, model_function = model_function,
-                      model_options = model_options, param_info = param_info_tmp,
-                      transform_var = transform_var,
-                      transform_obs = transform_obs, transform_sim = transform_sim,
-                      satisfy_par_const = satisfy_par_const,
-                      path_results = optim_options$path_results,
-                      var_names = var_names,
-                      forced_param_values = forced_param_values_tmp,
-                      info_level = info_level,
-                      info_crit_list = info_crit_list
-      )
+      crit_function = crit_function, model_function = model_function,
+      model_options = model_options, param_info = param_info_tmp,
+      transform_var = transform_var,
+      transform_obs = transform_obs, transform_sim = transform_sim,
+      satisfy_par_const = satisfy_par_const,
+      path_results = optim_options$path_results,
+      var_names = var_names,
+      forced_param_values = forced_param_values_tmp,
+      info_level = info_level,
+      info_crit_list = info_crit_list
+    )
 
     ## Run the estimation
     res_tmp <- optim_switch(
