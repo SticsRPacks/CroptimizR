@@ -12,6 +12,7 @@
 #'
 compute_eq_const <- function(forced_param_values, param_values) {
 
+  comp_forced_values <- NULL
   if (!is.null(forced_param_values)) {
 
     param_values <- tibble::tibble(!!!param_values)
