@@ -41,7 +41,9 @@ optim_switch <- function(...) {
         if (arguments$crit_options$info_level >= 4) {
           res$sim <- .croptEnv$sim
           res$sim_transformed <- .croptEnv$sim_transformed
-          rm("sim_transformed", envir = .croptEnv)
+          if (!is.null(res$sim_transformed)) {
+            rm("sim_transformed", envir = .croptEnv)
+          }
         }
       }
 
