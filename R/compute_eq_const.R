@@ -17,11 +17,12 @@ compute_eq_const <- function(forced_param_values, param_values) {
 
     param_values <- tibble::tibble(!!!param_values)
     param_values$situation <- NULL
+    nrows <- max(1,seq_len(nrow(param_values)))
     comp_forced_values <- matrix(ncol = length(forced_param_values),
-                                                nrow = nrow(param_values))
+                                                nrow = nrows)
     colnames(comp_forced_values) <- names(forced_param_values)
 
-    for (irow in seq_len(nrow(param_values))) {
+    for (irow in nrows) {
 
       expr_ls <-
         lapply(names(forced_param_values), function(x) paste(x,"<-",forced_param_values[[x]]))
@@ -37,7 +38,7 @@ compute_eq_const <- function(forced_param_values, param_values) {
 
     }
 
-    if (nrow(param_values)==1) {
+    if (nrows==1) {
       comp_forced_values <- comp_forced_values[1,]
     } else {
       comp_forced_values <- tibble::as_tibble(comp_forced_values)
