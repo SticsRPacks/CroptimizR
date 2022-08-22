@@ -34,9 +34,15 @@ main_crit <- function(param_values, crit_options) {
       .croptEnv$params_and_crit[[.croptEnv$eval_count]] <-
         dplyr::bind_cols(
           crit = crit, tibble::tibble(!!!param_values_ori),
-          forced_param_values=tibble::tibble(!!!forced_param_values),
           satisfy_const = satisfy_const
         )
+      if (!is.null(forced_param_values)) {
+        .croptEnv$params_and_crit[[.croptEnv$eval_count]] <-
+          dplyr::bind_cols(
+            .croptEnv$params_and_crit[[.croptEnv$eval_count]],
+            forced_param_values=tibble::tibble(!!!forced_param_values)
+          )
+      }
 
       if (!is.null(crit_options$irep)) {
         ## this condition is there to detect frequentist methods ...
