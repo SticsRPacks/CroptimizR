@@ -1,0 +1,5 @@
+"Estimated parameters";"Initial parameter values";"Final values";"Initial Sum of squared errors";"Final Sum of squared errors";"BIC";"Selected step"
+"stlevamf, stamflax";"356.22, 522.43";"404.58, 739.23";"2960.00";"147.00";"41.03";""
+"stlevamf, stamflax, tdmin   ";"404.58, 739.23,   7.67";"321.18, 589.73,   7.96";"4242.00";"91.00";"36.13";"X"
+"stlevamf , stamflax , tdmin    , stressdev";"321.18, 589.73,   7.96,   1.00";"321.18, 589.73,   7.96,   1.00";"91.00";"91.00";"38.90";""
+"stlevamf, stamflax, tdmin   , tdmax   ";"321.18, 589.73,   7.96,  30.20";"321.18, 589.73,   7.96,  31.07";"91.00";"91.00";"38.90";""
