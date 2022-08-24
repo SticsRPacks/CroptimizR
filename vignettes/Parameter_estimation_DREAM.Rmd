@@ -83,8 +83,8 @@ This part is not shown here, it is the same as this of the [specific and varieta
 # Read observation files
 obs_list <- get_obs(javastics_workspace_path)
 obs_list <- filter_obs(
-  obs_list, 
-  var = c("lai_n"), 
+  obs_list,
+  var = c("lai_n"),
   include = TRUE
 )
 ```
@@ -94,12 +94,12 @@ obs_list <- filter_obs(
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
 param_info <- list()
-param_info$dlaimax <- 
+param_info$dlaimax <-
   list(
     sit_list = list(
       c(
-        "bou99t3", 
-        "bou00t3", 
+        "bou99t3",
+        "bou00t3",
         "bou99t1",
         "bou00t1",
         "bo96iN+",
@@ -108,17 +108,17 @@ param_info$dlaimax <-
         "lu97iN+"
       )
     ),
-    lb = 0.0005, 
+    lb = 0.0005,
     ub = 0.0025
   )
-param_info$durvieF <- 
+param_info$durvieF <-
   list(
-    sit_list = 
+    sit_list =
       list(
-        c("bo96iN+", "lu96iN+", "lu96iN6","lu97iN+"),
+        c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
         c("bou99t3", "bou00t3", "bou99t1", "bou00t1")
       ),
-    lb = c(50, 100), 
+    lb = c(50, 100),
     ub = c(400, 450)
   )
 ```

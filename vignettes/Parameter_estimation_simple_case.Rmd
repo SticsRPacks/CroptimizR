@@ -96,7 +96,7 @@ dir.create(stics_inputs_path, showWarnings = FALSE)
 gen_usms_xml2txt(
   javastics = javastics_path,
   workspace = javastics_workspace_path,
-  out_dir = stics_inputs_path, 
+  out_dir = stics_inputs_path,
   verbose = TRUE
 )
 ```
@@ -111,7 +111,7 @@ Here model parameters values are read in the model input files.
 ```{r eval=params$eval_auto_test, results='hide', message=FALSE, warning=FALSE}
 
 # Set the model options (see '? stics_wrapper_options' for details)
-model_options <- 
+model_options <-
   stics_wrapper_options(
     javastics = javastics_path,
     workspace = stics_inputs_path,
@@ -340,35 +340,35 @@ Here we use the [CroPlotR](https://github.com/SticsRPacks/CroPlotR) package for 
 
 ```{r eval=params$eval_manual_vignette, warning=FALSE, message=FALSE}
 p <- plot(
-  sim_before_optim$sim_list, 
-  obs = obs_list, 
+  sim_before_optim$sim_list,
+  obs = obs_list,
   select_dyn = c("common")
 )
 
-p1 <- 
-  p[[sit_name]] + 
+p1 <-
+  p[[sit_name]] +
   labs(title = "Before Optimization") +
   theme(plot.title = element_text(size = 9, hjust = 0.5))
 
-p <- 
+p <-
   plot(
-    sim_after_optim$sim_list, 
-    obs = obs_list, 
+    sim_after_optim$sim_list,
+    obs = obs_list,
     select_dyn = c("common")
   )
 
 p2 <- p[[sit_name]] +
   labs(title = "After Optimization") +
   ylim(
-    NA, 
+    NA,
     ggplot_build(p1)$layout$panel_params[[1]]$y.range[2]
   ) +
   theme(plot.title = element_text(size = 9, hjust = 0.5))
 
 p <- grid.arrange(
-  grobs = list(p1, p2), 
+  grobs = list(p1, p2),
   nrow = 1,
-  ncol = 2, 
+  ncol = 2,
   widths = c(5, 5)
 )
 # Save the graph
@@ -395,17 +395,17 @@ knitr::include_graphics("ResultsSimpleCase/sim_obs_plots.png")
 # Move the files produced since the temp. folder is removed after Rmd execution
 file.copy(
   file.path(optim_options$out_dir, "EstimatedVSinit.pdf"),
-  params$result_path, 
+  params$result_path,
   overwrite = TRUE
 )
 file.copy(
   file.path(optim_options$out_dir, "optim_results.Rdata"),
-  params$result_path, 
+  params$result_path,
   overwrite = TRUE
 )
 file.copy(
   file.path(optim_options$out_dir, "sim_obs_plots.png"),
-  params$result_path, 
+  params$result_path,
   overwrite = TRUE
 )
 ```

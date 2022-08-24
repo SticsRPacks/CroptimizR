@@ -73,7 +73,7 @@ dir.create(stics_inputs_path, showWarnings = FALSE)
 gen_usms_xml2txt(
   javastics = javastics_path,
   workspace = javastics_workspace_path,
-  out_dir = stics_inputs_path, 
+  out_dir = stics_inputs_path,
   verbose = TRUE
 )
 ```
@@ -87,10 +87,10 @@ In this example, observed LAI are used for all USMs for which there is an observ
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
 # Read observation files
 obs_list <- get_obs(javastics_workspace_path)
-obs_list <- 
+obs_list <-
   filter_obs(
-    obs_list, 
-    var = c("lai_n"), 
+    obs_list,
+    var = c("lai_n"),
     include = TRUE
   )
 ```
@@ -104,32 +104,32 @@ Please note that bounds can take different values for the different groups of si
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
 param_info <- list()
-param_info$dlaimax <- 
+param_info$dlaimax <-
   list(
-    sit_list = 
+    sit_list =
       list(
         c(
-          "bou99t3", 
-          "bou00t3", 
+          "bou99t3",
+          "bou00t3",
           "bou99t1",
-          "bou00t1", 
+          "bou00t1",
           "bo96iN+",
           "lu96iN+",
-          "lu96iN6", 
+          "lu96iN6",
           "lu97iN+"
         )
       ),
-    lb = 0.0005, 
+    lb = 0.0005,
     ub = 0.0025
   )
 
 param_info$durvieF <- list(
-  sit_list = 
+  sit_list =
     list(
-      c("bo96iN+", "lu96iN+", "lu96iN6","lu97iN+"),
-      c("bou99t3", "bou00t3", "bou99t1","bou00t1")
+      c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
+      c("bou99t3", "bou00t3", "bou99t1", "bou00t1")
     ),
-  lb = c(50, 100), 
+  lb = c(50, 100),
   ub = c(400, 450)
 )
 ```
@@ -139,7 +139,7 @@ param_info$durvieF <- list(
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
 
-model_options <- 
+model_options <-
   stics_wrapper_options(
     javastics = javastics_path,
     workspace = stics_inputs_path,
@@ -222,34 +222,34 @@ sim_after_optim <- stics_wrapper(
 
 stats <- summary(sim_before_optim$sim_list, obs = obs_list)
 p <- plot(
-  sim_before_optim$sim_list, 
-  obs = obs_list, 
+  sim_before_optim$sim_list,
+  obs = obs_list,
   type = "scatter",
   all_situations = TRUE
 )
 
-p1 <- 
-  p[[1]] + 
-  labs(title = 
+p1 <-
+  p[[1]] +
+  labs(title =
          paste(
-           "Before Optimization, \n RMSE=", 
+           "Before Optimization, \n RMSE=",
            round(stats$RMSE, digits = 2)
          )
   ) +
   theme(plot.title = element_text(size = 9, hjust = 0.5))
 
 stats <- summary(sim_after_optim$sim_list, obs = obs_list)
-p <- 
+p <-
   plot(
-    sim_after_optim$sim_list, 
-    obs = obs_list, 
+    sim_after_optim$sim_list,
+    obs = obs_list,
     type = "scatter",
     all_situations = TRUE
   )
 
-p2 <- 
-  p[[1]] + 
-  labs(title = 
+p2 <-
+  p[[1]] +
+  labs(title =
          paste(
            "After Optimization, \n RMSE=",
            round(stats$RMSE, digits = 2)
@@ -263,7 +263,7 @@ ggsave(
   file.path(
     optim_options$out_dir,
     paste0("sim_obs", ".png")
-  ), 
+  ),
   plot = p
 )
 
@@ -281,17 +281,17 @@ knitr::include_graphics("ResultsSpecificVarietal/sim_obs.png")
 # Move the files produced since the temp. folder is removed after Rmd execution
 file.copy(
   file.path(optim_options$out_dir, "EstimatedVSinit.pdf"),
-  params$result_path, 
+  params$result_path,
   overwrite = TRUE
 )
 file.copy(
   file.path(optim_options$out_dir, "optim_results.Rdata"),
-  params$result_path, 
+  params$result_path,
   overwrite = TRUE
 )
 file.copy(
   file.path(optim_options$out_dir, "sim_obs.png"),
-  params$result_path, 
+  params$result_path,
   overwrite = TRUE
 )
 ```
