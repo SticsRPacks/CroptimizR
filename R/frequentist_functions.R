@@ -279,7 +279,7 @@ plot_estimVSinit <- function(init_values, est_values, crit, lb, ub,
       theme(plot.title = element_text(hjust = 0.5))
 
     if (bubble) {
-      p[[param_name]] <- p[[param_name]] + geom_point(alpha = 0.5, color = "red")
+    p[[param_name]] <- p[[param_name]] + geom_point(alpha = 0.5, color = "red")
     }
 
     p[[param_name]] <- p[[param_name]] +
@@ -352,7 +352,8 @@ plot_estimVSinit <- function(init_values, est_values, crit, lb, ub,
 #' @export
 #'
 plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
-                            crit_log = TRUE, rep_label = c("begin_end", "begin", "end")) {
+                            crit_log = TRUE,
+                            rep_label = c("begin_end", "begin", "end")) {
   param_names <- get_params_names(param_info)
   bounds <- get_params_bounds(param_info)
 
@@ -366,7 +367,8 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
   if (crit_log) {
     if (all(df$crit > 0)) {
       trans <- "log10"
-      mid <- (max(log10(df$crit)) - min(log10(df$crit))) / 2 + min(log10(df$crit))
+      mid <- (max(log10(df$crit)) -
+                min(log10(df$crit))) / 2 + min(log10(df$crit))
     } else {
       warning("The criterion takes negative values, log transformation will not be done.")
       crit_log <- FALSE
@@ -495,7 +497,8 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
 #' @export
 #'
 plot_valuesVSit_2D <- function(df, param_info, iter_or_eval = c("eval", "iter"),
-                               fill = c("crit", "rep"), crit_log = TRUE, lines = FALSE,
+                               fill = c("crit", "rep"), crit_log = TRUE,
+                               lines = FALSE,
                                rep_label = c("begin_end", "begin", "end")) {
   param_names <- get_params_names(param_info)
   if (length(param_names) <= 1) {
@@ -514,7 +517,8 @@ plot_valuesVSit_2D <- function(df, param_info, iter_or_eval = c("eval", "iter"),
   if (crit_log) {
     if (all(df$crit > 0)) {
       trans <- "log10"
-      mid <- (max(log10(df$crit)) - min(log10(df$crit))) / 2 + min(log10(df$crit))
+      mid <- (max(log10(df$crit)) -
+                min(log10(df$crit))) / 2 + min(log10(df$crit))
     } else {
       warning("The criterion takes negative values, log transformation will not be done.")
       crit_log <- FALSE
@@ -566,14 +570,14 @@ plot_valuesVSit_2D <- function(df, param_info, iter_or_eval = c("eval", "iter"),
         if (rep_label[1] == "begin_end" || rep_label[1] == "begin") {
           p[[ipair]] <- p[[ipair]] +
             geom_label(aes(label = rep),
-              data = filter(df, rep == irep) %>% filter(eval == min(.data$eval)),
+             data = filter(df, rep == irep) %>% filter(eval == min(.data$eval)),
               size = 3
             )
         }
         if (rep_label[1] == "begin_end" || rep_label[1] == "end") {
           p[[ipair]] <- p[[ipair]] +
             geom_label(aes(label = rep),
-              data = filter(df, rep == irep) %>% filter(eval == max(.data$eval)),
+            data = filter(df, rep == irep) %>% filter(eval == max(.data$eval)),
               size = 3
             )
         }
