@@ -12,37 +12,57 @@ get_params_init_values(param_info)
 \examples{
 \donttest{
 # Simple cases
-param_info=list(init_values=c(dlaimax=0.001, durvieF=200),
-                       lb=c(dlaimax=0.0001, durvieF=50),
-                       ub=c(dlaimax=0.01, durvieF=400))
+param_info <- list(
+  init_values = c(dlaimax = 0.001, durvieF = 200),
+  lb = c(dlaimax = 0.0001, durvieF = 50),
+  ub = c(dlaimax = 0.01, durvieF = 400)
+)
 CroptimizR:::get_params_init_values(param_info)
 
-param_info=list(init_values=data.frame(dlaimax=c(0.001,0.002), durvieF=c(50,200)),
-                       lb=c(dlaimax=0.0001, durvieF=50),
-                       ub=c(dlaimax=0.01, durvieF=400))
+param_info <- list(
+  init_values = data.frame(dlaimax = c(0.001, 0.002), durvieF = c(50, 200)),
+  lb = c(dlaimax = 0.0001, durvieF = 50),
+  ub = c(dlaimax = 0.01, durvieF = 400)
+)
 CroptimizR:::get_params_init_values(param_info)
 # ->
 CroptimizR:::get_init_values(param_info)
 
 # Cases with groups of situations per parameter
-param_info=list()
-param_info$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1",
-                                               "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),
-                               init_values=0.001,lb=0.0001,ub=0.1)
-param_info$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
-                                             c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),
-                               init_values=c(200,300),lb=50,ub=400)
+param_info <- list()
+param_info$dlaimax <- list(
+  sit_list = list(c(
+    "bou99t3", "bou00t3", "bou99t1", "bou00t1",
+    "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"
+  )),
+  init_values = 0.001, lb = 0.0001, ub = 0.1
+)
+param_info$durvieF <- list(
+  sit_list = list(
+    c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
+    c("bou99t3", "bou00t3", "bou99t1", "bou00t1")
+  ),
+  init_values = c(200, 300), lb = 50, ub = 400
+)
 CroptimizR:::get_params_init_values(param_info)
 # ->
 CroptimizR:::get_init_values(param_info)
 
-param_info=list()
-param_info$dlaimax=list(sit_list=list(c("bou99t3", "bou00t3", "bou99t1", "bou00t1",
-                                               "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+")),
-                               init_values=c(0.001,0.002),lb=0.0001,ub=0.1)
-param_info$durvieF=list(sit_list=list(c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
-                                             c("bou99t3", "bou00t3", "bou99t1", "bou00t1")),
-                               init_values=data.frame(c(200,300),c(250,350)),lb=50,ub=400)
+param_info <- list()
+param_info$dlaimax <- list(
+  sit_list = list(c(
+    "bou99t3", "bou00t3", "bou99t1", "bou00t1",
+    "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"
+  )),
+  init_values = c(0.001, 0.002), lb = 0.0001, ub = 0.1
+)
+param_info$durvieF <- list(
+  sit_list = list(
+    c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
+    c("bou99t3", "bou00t3", "bou99t1", "bou00t1")
+  ),
+  init_values = data.frame(c(200, 300), c(250, 350)), lb = 50, ub = 400
+)
 CroptimizR:::get_params_init_values(param_info)
 # ->
 CroptimizR:::get_init_values(param_info)

@@ -15,17 +15,17 @@ post_treat_FwdRegAgMIP(
 \arguments{
 \item{optim_results}{Results list returned by frequentist method wrappers}
 
-\item{crit_options}{List containing several arguments given to \code{estim_param} function:
-\code{param_names}, \code{obs_list}, \code{crit_function}, \code{model_function}, \code{model_options},
-\code{param_info}, \code{transform_obs}, \code{transform_sim}
+\item{crit_options}{List containing several arguments given to \code{estim_param}
+function: \code{param_names}, \code{obs_list}, \code{crit_function}, \code{model_function},
+\code{model_options}, \code{param_info}, \code{transform_obs}, \code{transform_sim}
 that must be passed to main_crit function by the methods wrappers.}
 
-\item{crt_list}{Vector of names of candidate parameters that have been previously
+\item{crt_list}{Vector of names of candidate parameters that have been
 used in parameter estimation}
 
 \item{param_selection_steps}{A tibble summarizing the results of the previous
-parameter estimation steps as returned by the previous call to this function,
-NULL if it is the first step.}
+previouslyparameter estimation steps as returned by the previous call to
+this function, NULL if it is the first step.}
 }
 \value{
 A tibble summarizing the results of the parameter estimation steps

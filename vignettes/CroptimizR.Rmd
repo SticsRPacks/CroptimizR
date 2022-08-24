@@ -116,13 +116,13 @@ In this example, observations are available for two situations, called here "sit
 The following code allows reading this file and store the observations in R in the expected format:
 
 ```{r}
-obs_df <- read.table("GettingStarted\\obs.csv",
-                     header = TRUE)
+obs_df <- read.table("GettingStarted/obs.csv", header = TRUE)
 obs_df$Date <- as.Date(obs_df$Date)
 obs_list <- split(obs_df[-1],obs_df$experiment)
 
 print(obs_list)
 ```
+
 ## Examples 
 
 * A simple introductory example of model calibration using the Stics model is given in this [vignette](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html).

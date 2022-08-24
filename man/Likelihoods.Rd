@@ -16,13 +16,16 @@ likelihood_log_ciidn_corr(sim_list, obs_list)
 \item{obs_list}{List of observed variables}
 }
 \value{
-The value of the likelihood given the observed and simulated values of the variables.
+The value of the likelihood given the observed and simulated values
+of the variables.
 }
 \description{
 Provide several likelihoods to estimate parameters using bayesian methods.
 }
 \details{
-The following log-likelihoods are proposed (\href{https://sticsrpacks.github.io/CroptimizR/reference/likelihood.html}{see html version} for a better rendering of equations):
+The following log-likelihoods are proposed (\link{see html version}
+(https://sticsrpacks.github.io/CroptimizR/reference/likelihood.html)
+for a better rendering of equations):
 \itemize{
 \item \code{likelihood_log_ciidn}: log transformation of concentrated version of iid normal likelihood \cr
 The concentrated version of iid normal likelihood is:
@@ -40,10 +43,16 @@ where \eqn{ Y_{ijk} } is the observed value for the \eqn{k^{th}} time point of t
 situation,
 \eqn{ f_{jk}(X_i;\theta) } the corresponding model prediction, \eqn{N_j} the number of situations including at least one observation of variable \eqn{j}, and \eqn{n_{ij}} the number of observation of variable \eqn{j} on situation \eqn{i}. \cr
 \code{likelihood_log_ciidn_corr} computes the log of this equation. \cr
-Here, one still assume that errors in different situations or for different variables in the same situation are independent.
-However, errors for different observations over time of the same variable in the same situation are assumed to be highly correlated.
-In this way, each situation contributes a single term to the overall sum of squared errors regardless of the number of observations which may be usefull in case one have situations with very heterogenous number of dates of observations.
+Here, one still assume that errors in different situations or for
+different variables in the same situation are independent.
+However, errors for different observations over time of the same
+variable in the same situation are assumed to be highly correlated.
+In this way, each situation contributes a single term to the
+overall sum of squared errors regardless of the number of
+observations which may be usefull in case one have situations with
+very heterogenous number of dates of observations.
 }
-\code{sim_list} and \code{obs_list} must have the same structure (i.e. same number of variables, dates, situations, ... use internal function
+\code{sim_list} and \code{obs_list} must have the same structure
+(i.e. same number of variables, dates, situations, ... use internal function
 intersect_sim_obs before calling the criterion functions).
 }

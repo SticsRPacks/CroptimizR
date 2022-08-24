@@ -19,8 +19,9 @@ the variable is not observed at the given date.}
 }
 \value{
 Value of the AICc criterion for ordinary least squares.
-If called without arguments, returns a named list with element "name" containing
-the name of the function and "species" containing "Information criterion"
+If called without arguments, returns a named list with element "name"
+containingthe name of the function and "species" containing
+"Information criterion"
 }
 \description{
 Computes AICc for ordinary least squares

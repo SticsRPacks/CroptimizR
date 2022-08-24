@@ -2,7 +2,8 @@
 % Please edit documentation in R/get_reserved_keywords.R
 \name{get_reserved_keywords}
 \alias{get_reserved_keywords}
-\title{Return reserved keywords that should not be used as (observed/simulated) variables names}
+\title{Return reserved keywords that should not be used as
+(observed/simulated) variables names}
 \usage{
 get_reserved_keywords()
 }
@@ -10,6 +11,7 @@ get_reserved_keywords()
 A vector including the names of the keywords
 }
 \description{
-Return reserved keywords that should not be used as (observed/simulated) variables names
+Return reserved keywords that should not be used as
+(observed/simulated) variables names
 }
 \keyword{internal}

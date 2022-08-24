@@ -12,7 +12,8 @@ intersect_sim_obs(sim_list, obs_list)
 \item{obs_list}{List of observed values}
 }
 \value{
-A list containing the new obs and sim lists having same situations, variables, dates
+A list containing the new obs and sim lists having same situations,
+variables, dates
 }
 \description{
 Intersect simulation and observation lists

@@ -2,7 +2,8 @@
 % Please edit documentation in R/frequentist_functions.R
 \name{plot_valuesVSit_2D}
 \alias{plot_valuesVSit_2D}
-\title{Create 2D plots of parameters values evolution per iteration or evaluation number}
+\title{Create 2D plots of parameters values evolution per iteration or
+evaluation number}
 \usage{
 plot_valuesVSit_2D(
   df,
@@ -15,9 +16,12 @@ plot_valuesVSit_2D(
 )
 }
 \arguments{
-\item{df}{Data.frame containing values of parameters (one column per estimated parameter),
-criterion (crit column), repetition number (rep), iteration number (iter) and evaluation number (eval)
-(similar to params_and_crit). See Details section for comments about the difference between evaluations and iterations.}
+\item{df}{Data.frame containing values of parameters (one column per
+estimated parameter), criterion (crit column), repetition number (rep),
+iteration number (iter) and evaluation number (eval)
+(similar to params_and_crit).
+See Details section for comments about the difference between evaluations
+and iterations.}
 
 \item{param_info}{Information on the parameters to estimate.
 Either
@@ -40,28 +44,34 @@ or a named list containing for each parameter:
 for an example)
 }}
 
-\item{iter_or_eval}{"iter" for plotting the values for each iteration, "eval" for plotting the values for each evaluation}
+\item{iter_or_eval}{"iter" for plotting the values for each iteration,
+"eval" for plotting the values for each evaluation}
 
-\item{fill}{If "crit", colours the points and lines in function of the minimized criterion value, if "rep"
-colours in function of the repetition number.}
+\item{fill}{If "crit", colours the points and lines in function of the
+minimized criterion value, if "rep" colours in function of the
+repetition number.}
 
 \item{crit_log}{If TRUE, consider criterion values in log scale}
 
 \item{lines}{If TRUE add lines between points of a same repetition}
 
-\item{rep_label}{Indicate if labels for the repetition number must be plotted at both beginning and end of lines ("begin_end"),
-only at the beginning ("begin") or only at the end ("end")}
+\item{rep_label}{Indicate if labels for the repetition number must be plotted
+at both beginning and end of lines ("begin_end"), only at the beginning
+("begin") or only at the end ("end")}
 }
 \value{
 A list containing one plot per parameter pair.
 }
 \description{
-Create 2D plots of parameters values evolution per iteration or evaluation number
+Create 2D plots of parameters values evolution per iteration or
+evaluation number
 }
 \details{
-Evaluation means evaluation of the criterion from proposed values of the parameters
-by the parameter estimation algorithm.
-An iteration is reached when an evaluation lead to a better value of the criterion than the previously obtained values.
+Evaluation means evaluation of the criterion from proposed values of
+the parameters by the parameter estimation algorithm.
+An iteration is reached when an evaluation lead to a better value of the
+criterion than the previously obtained values.
 There are thus more evaluations than iterations. The criterion decreases when
-iteration number increases while it is not the case when evaluation number increases.
+iteration number increases while it is not the case when evaluation number
+increases.
 }
