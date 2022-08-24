@@ -66,8 +66,8 @@ Suggests:
     spelling,
     SticsOnR,
     SticsRFiles,
-    tidyr,
-    testthat (>= 2.1.0)
+    testthat (>= 2.1.0),
+    tidyr
 VignetteBuilder: 
     knitr
 Remotes:
