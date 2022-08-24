@@ -23,8 +23,8 @@ of the variables.
 Provide several likelihoods to estimate parameters using bayesian methods.
 }
 \details{
-The following log-likelihoods are proposed (\link{see html version}
-(https://sticsrpacks.github.io/CroptimizR/reference/likelihood.html)
+The following log-likelihoods are proposed (
+\href{https://sticsrpacks.github.io/CroptimizR/reference/likelihood.html}{see html version}
 for a better rendering of equations):
 \itemize{
 \item \code{likelihood_log_ciidn}: log transformation of concentrated version of iid normal likelihood \cr

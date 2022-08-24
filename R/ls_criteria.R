@@ -11,8 +11,8 @@
 #' @return The value of the criterion given the observed and simulated values of
 #'  the variables.
 #'
-#' @details The following criteria are proposed ([see html version]
-#' (https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html)
+#' @details The following criteria are proposed (
+#' [see html version](https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html)
 #' for a better rendering of equations):
 #' \itemize{
 #'   \item `crit_ols`: ordinary least squares \cr

@@ -102,7 +102,7 @@ select_param_FwdRegAgMIP <- function(oblig_param_list, add_param_list, crt_list,
 #' @return A tibble summarizing the results of the parameter estimation steps
 #'
 #' @importFrom stats setNames
-#'
+#' @importFrom tibble tibble
 #' @keywords internal
 #'
 post_treat_FwdRegAgMIP <- function(optim_results, crit_options, crt_list,

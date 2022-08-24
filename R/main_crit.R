@@ -175,7 +175,7 @@ main_crit <- function(param_values, crit_options) {
       }
     )))
     param_values_df <- sapply(sit_names_param_info,
-      function(x) CroptimizR:::get_params_per_sit(param_info, x, param_values),
+      function(x) get_params_per_sit(param_info, x, param_values),
       simplify = FALSE
     )
     param_values <- dplyr::bind_rows(param_values_df, .id = "situation")
@@ -347,7 +347,7 @@ main_crit <- function(param_values, crit_options) {
   }
 
   # Make observations and simulations consistent if possible
-  obs_sim_list <- CroptimizR:::make_obsSim_consistent(
+  obs_sim_list <- make_obsSim_consistent(
     model_results$sim_list,
     obs_list
   )
@@ -392,7 +392,7 @@ main_crit <- function(param_values, crit_options) {
   )
 
   # Check consistency of observations and simulations
-  CroptimizR:::check_obsSim_consistency(
+  check_obsSim_consistency(
     obs_sim_list$sim_list,
     obs_sim_list$obs_list
   )

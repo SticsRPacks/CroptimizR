@@ -28,8 +28,8 @@ the difference between observed and simulated values of model output
 variables.
 }
 \details{
-The following criteria are proposed (\link{see html version}
-(https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html)
+The following criteria are proposed (
+\href{https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html}{see html version}
 for a better rendering of equations):
 \itemize{
 \item \code{crit_ols}: ordinary least squares \cr

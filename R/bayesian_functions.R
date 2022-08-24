@@ -5,7 +5,6 @@
 #' @param optim_results Results list returned by bayesian method wrappers
 #'
 #' @return Prints results of bayesian methods
-#'
 #' @keywords internal
 #'
 summary_bayesian <- function(optim_options, param_info, optim_results) {

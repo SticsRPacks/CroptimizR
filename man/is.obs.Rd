@@ -27,7 +27,7 @@ obs_list <- list(
     var1 = c(1.3, 2)
   )
 )
-CroptimizR:::is.obs(obs_list)
+# CroptimizR:::is.obs(obs_list)
 
 # Missing Date column
 obs_list <- list(
@@ -37,7 +37,7 @@ obs_list <- list(
     var1 = c(1.3, 2)
   )
 )
-CroptimizR:::is.obs(obs_list)
+# CroptimizR:::is.obs(obs_list)
 
 # Bad Date format
 obs_list <- list(
@@ -47,7 +47,7 @@ obs_list <- list(
   ),
   sit2 = data.frame(Date = c("2009-11-30", "2009-12-5"), var1 = c(1.3, 2))
 )
-CroptimizR:::is.obs(obs_list)
+# CroptimizR:::is.obs(obs_list)
 }
 
 }

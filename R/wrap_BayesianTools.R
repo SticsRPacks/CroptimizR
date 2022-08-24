@@ -5,7 +5,6 @@
 #' @return prints, graphs and a list containing:
 #'
 #' @keywords internal
-#'
 #' @importFrom BayesianTools applySettingsDefault createUniformPrior createBayesianSetup runMCMC marginalPlot correlationPlot gelmanDiagnostics getSample MAP
 #'
 

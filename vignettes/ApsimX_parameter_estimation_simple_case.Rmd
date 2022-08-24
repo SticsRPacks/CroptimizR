@@ -62,6 +62,11 @@ if (!require("gridExtra")) {
   library("gridExtra")
 }
 
+if (!require("tidyr")) {
+  install.packages("tidyr", repos = "http://cran.irsn.fr")
+  library(tidyr)
+}
+
 # DEFINE THE PATH TO THE LOCALLY INSTALLED VERSION OF APSIM (should be something
 # like C:/path/to/apsimx/bin/Models.exe on windows, and /usr/local/bin/Models
 # on linux)

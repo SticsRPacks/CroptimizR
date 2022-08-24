@@ -37,7 +37,7 @@
 #' @keywords internal
 #'
 get_params_per_sit <- function(sit_groups, situation, param_vec) {
-  param_names <- CroptimizR:::get_params_names(sit_groups, short_list = TRUE)
+  param_names <- get_params_names(sit_groups, short_list = TRUE)
   index <- sapply(
     sit_groups,
     function(x1) {

@@ -58,7 +58,7 @@ filter_obs <- function(obs_list, var = NULL, situation = NULL, dates = NULL,
   if (is.null(obs_list)) {
     stop("obs_list is NULL.")
   }
-  if (!CroptimizR:::is.obs(obs_list)) {
+  if (!is.obs(obs_list)) {
     stop("Incorrect format for argument obs_list.")
   }
 
@@ -150,7 +150,6 @@ filter_obs <- function(obs_list, var = NULL, situation = NULL, dates = NULL,
   obs_list <- split(df, df$id)
 
   # Remove column "id" and remove columns with only NAs:
-  # utils::globalVariables("where")
   obs_list <- lapply(
     obs_list,
     function(x) {
@@ -176,3 +175,5 @@ filter_obs <- function(obs_list, var = NULL, situation = NULL, dates = NULL,
   )
   return(obs_list)
 }
+
+utils::globalVariables("where") # Remove when tidyselect exports where() (very soon)

@@ -9,8 +9,8 @@
 #' @return The value of the likelihood given the observed and simulated values
 #'  of the variables.
 #'
-#' @details The following log-likelihoods are proposed ([see html version]
-#' (https://sticsrpacks.github.io/CroptimizR/reference/likelihood.html)
+#' @details The following log-likelihoods are proposed (
+#' [see html version](https://sticsrpacks.github.io/CroptimizR/reference/likelihood.html)
 #' for a better rendering of equations):
 #' \itemize{
 #'   \item `likelihood_log_ciidn`: log transformation of concentrated version of iid normal likelihood \cr

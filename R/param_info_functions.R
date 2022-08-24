@@ -454,7 +454,7 @@ complete_init_values <- function(param_info, nb_values, ranseed = NULL,
       count <- 1
       while (nrow(sampled_values) < nb_values && count < 1000) {
         seed <- sample(1000, 1, replace = FALSE)
-        sampled_tmp <- as.data.frame(CroptimizR:::sample_params(list(lb = lb, ub = ub), nb_values,
+        sampled_tmp <- as.data.frame(sample_params(list(lb = lb, ub = ub), nb_values,
           seed = seed
         ))
         idx <- which(sapply(1:nrow(sampled_tmp), function(x) {
