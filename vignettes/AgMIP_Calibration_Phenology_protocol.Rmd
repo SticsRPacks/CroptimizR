@@ -257,12 +257,14 @@ knitr::include_graphics("ResultsAgmipPhenology/all_situations.png")
 MSE and its components can be calcuted for each variable using the CroPlotR summary function: 
 
 ```{r eval=FALSE, warning=FALSE, message=FALSE}
-summary(sim_after_optim$sim_list, obs=obs_list, stats=c("MSE", "Bias2","SDSD","LCS"))
+summary(sim_after_optim$sim_list, obs=obs_list,
+        stats=c("MSE", "Bias2", "SDSD", "LCS"))
 ```
 
 ```{r eval=params$eval_manual_vignette, warning=FALSE, message=FALSE, echo=FALSE}
-stats <- summary(sim_after_optim$sim_list, obs=obs_list, stats=c("MSE", "Bias2","SDSD","LCS"))
-save(stats,file=file.path(params$result_path,"stats.Rdata"))
+stats <- summary(sim_after_optim$sim_list, obs=obs_list,
+                 stats=c("MSE", "Bias2", "SDSD", "LCS"))
+save(stats, file=file.path(params$result_path, "stats.Rdata"))
 ```
 
 ```{r eval=params$eval_auto_vignette, echo=FALSE, message=FALSE, warning=FALSE}
@@ -273,12 +275,16 @@ print(stats)
 
 ```{r move_results, eval=params$eval_manual_vignette, include=FALSE}
 # Move the files produced since the temp. folder is removed after Rmd execution
-file.copy(file.path(optim_options$out_dir,"param_selection_steps.csv"),params$result_path, overwrite = TRUE)
-file.copy(file.path(optim_options$out_dir,"param_selection_steps.Rdata"),params$result_path, overwrite = TRUE)
-file.copy(file.path(optim_options$out_dir,"optim_results.Rdata"),params$result_path, overwrite = TRUE)
-file.copy(file.path(optim_options$out_dir,"all_situations.png"),params$result_path, overwrite = TRUE)
-dir.create(file.path(params$result_path,"results_all_steps"))
-file.copy(from=file.path(optim_options$out_dir,"results_all_steps"),
-          to=file.path(params$result_path,"results_all_steps"), recursive = TRUE,
+file.copy(file.path(optim_options$out_dir, "param_selection_steps.csv"),
+          params$result_path, overwrite = TRUE)
+file.copy(file.path(optim_options$out_dir, "param_selection_steps.Rdata"),
+          params$result_path, overwrite = TRUE)
+file.copy(file.path(optim_options$out_dir, "optim_results.Rdata"),
+          params$result_path, overwrite = TRUE)
+file.copy(file.path(optim_options$out_dir, "all_situations.png"),
+          params$result_path, overwrite = TRUE)
+dir.create(file.path(params$result_path, "results_all_steps"))
+file.copy(from=file.path(optim_options$out_dir, "results_all_steps"),
+        to=file.path(params$result_path, "results_all_steps"), recursive = TRUE,
           overwrite = TRUE)
 ```

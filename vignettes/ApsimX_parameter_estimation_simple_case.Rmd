@@ -75,7 +75,7 @@ apsimx_path <- "D:\\Home\\sbuis\\Documents\\OUTILS-INFORMATIQUE\\APSIM2021.01.20
 
 ```{r message=FALSE, warning=FALSE}
 
-sit_name <- "GattonRowSpacingRowSpace25cm" 
+sit_name <- "GattonRowSpacingRowSpace25cm"
                                 # among "GattonRowSpacingRowSpace25cm",
                                 # "GattonRowSpacingRowSpace50cm",
                                 # "GattonRowSpacingRowSpaceN0"

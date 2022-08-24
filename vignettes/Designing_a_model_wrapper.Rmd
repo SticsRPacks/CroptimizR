@@ -157,7 +157,6 @@ A typical pseudo-code implementation of a basic wrapper function is thus:
 ```{r eval=FALSE}
 
 model_wrapper <- function(param_values=NULL, situation, model_options, ...) {
-  
   # Initializations
   param_names <- names(param_values)
   results <- list(sim_list = setNames(vector("list", length(situation)),
@@ -220,7 +219,8 @@ model_wrapper <- function(param_values=NULL, situation, model_options, ...) {
 "Test the wrapper gives identical results when running with same inputs ...\n"))
   cat(crayon::green("... OK\n"))
   cat("\n")
-  cat(crayon::green("Test the wrapper gives different results when running with different inputs ...\n"))
+  cat(crayon::green(
+"Test the wrapper gives different results when running with different inputs ...\n"))
   cat(crayon::green("... OK\n"))
   ```
   
@@ -254,7 +254,7 @@ model_wrapper <- function(param_values=NULL, situation, model_options, ...) {
   # convert param_values in a tibble
   param_values <- tibble::tibble(!!!param_values)
   
-  # loop on the situations to simulate 
+  # loop on the situations to simulate
   for (sit in situation_list) {
 
     # extract the parameters values to apply for the given situation
@@ -263,7 +263,7 @@ model_wrapper <- function(param_values=NULL, situation, model_options, ...) {
       if (! "situation" %in% names(param_values)) {
         params <- param_values
       } else {
-        params <- dplyr::filter(param_values, situation == sit) %>% 
+        params <- dplyr::filter(param_values, situation == sit) %>%
           dplyr::select(-situation)
       }
     }
@@ -292,7 +292,8 @@ model_wrapper <- function(param_values=NULL, situation, model_options, ...) {
   test_parallel <- function(cores_nb = 1,
                             pa = FALSE,
                             max_it = 5) {
-  # pa: flag to switch from case with pre-allocated list to case with returned statement
+  # pa: flag to switch from case with pre-allocated list to case
+  # with returned statement
 
     # Launching the cluster
     cl <- makeCluster(cores_nb)
@@ -370,11 +371,11 @@ lai_toymodel <- function(year, max_lai = 8, julday_incslope = 100,
   #   - lai: vector of simulated lai
   #   - dates: vector of dates (POSIXct) for which lai is computed
 
-  end_day <- format(as.Date(paste0(year + 1,"-12-31"), format = "%Y-%m-%d",
+  end_day <- format(as.Date(paste0(year + 1, "-12-31"), format = "%Y-%m-%d",
                             origin = paste0(year, "-01-01")), "%j")
   jul_days <- 1:as.numeric(end_day)
 
-  lai <- max_lai * ( 1 / (1 + exp((julday_incslope - jul_days) / inc_slope)) -
+  lai <- max_lai * (1 / (1 + exp((julday_incslope - jul_days) / inc_slope)) -
                      1 / (1 + exp((julday_decslope - jul_days) / dec_slope)))
   lai[lai < 0] <- 0
 
@@ -420,7 +421,6 @@ laitm_simple_wrapper <- function(param_values=NULL, situation,
   attr(results$sim_list, "class") <- "cropr_simulation"
 
   for (sit in situation) {
-  
     # Retrieve year, emergence and crop_duration from situation name
     tmp <- stringr::str_split(sit, "_")
     year <- as.numeric(tmp[[1]][[1]])
