@@ -176,4 +176,6 @@ filter_obs <- function(obs_list, var = NULL, situation = NULL, dates = NULL,
   return(obs_list)
 }
 
-utils::globalVariables("where") # Remove when tidyselect exports where() (very soon)
+# Remove when tidyselect exports where() (very soon),
+# see https://github.com/r-lib/tidyselect/issues/244
+utils::globalVariables("where")
