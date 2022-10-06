@@ -39,6 +39,7 @@ Depends:
     R (>= 3.6.0)
 Imports:
     BayesianTools,
+    coda,
     crayon,
     dplyr,
     ggplot2,
