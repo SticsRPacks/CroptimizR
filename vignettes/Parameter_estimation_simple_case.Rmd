@@ -376,7 +376,7 @@ ggsave(
   file.path(
     optim_options$out_dir,
     paste0("sim_obs_plots", ".png")
-  ), 
+  ),
   plot = p
 )
 

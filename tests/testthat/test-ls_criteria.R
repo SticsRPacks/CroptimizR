@@ -19,7 +19,7 @@ test_that("crit_ols", {
 test_that("crit_log_cwss", {
   expect_equal(crit_log_cwss(sim_list, sim_list), -Inf)
   expect_equal(crit_log_cwss(obs_list, sim_list), log(2))
-  expect_equal(crit_log_cwss(obs_list2, sim_list2), log((17 / 3)^(3 / 2)))
+  expect_equal(crit_log_cwss(obs_list2, sim_list2), log((17 / 3)^ (3 / 2)))
 })
 test_that("crit_log_cwss_corr", {
   expect_equal(crit_log_cwss_corr(sim_list, sim_list), -Inf)

@@ -64,7 +64,8 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
       warning(
         "Error trying to create ",
         path_results,
-        "/iterAndDensityPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ", filename
+        "/iterAndDensityPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
+        filename
       )
       utils::flush.console()
       grDevices::pdf(
@@ -91,7 +92,8 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
       )
       warning(
         "Error trying to create ", path_results,
-        "/marginalPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ", filename
+        "/marginalPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
+        filename
       )
       utils::flush.console()
       grDevices::pdf(
@@ -119,7 +121,8 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
         )
         warning(
           "Error trying to create ", path_results,
-          "/correlationPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ", filename
+          "/correlationPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
+          filename
         )
         utils::flush.console()
         grDevices::pdf(
@@ -152,7 +155,8 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
           )
           warning(
             "Error trying to create ", path_results,
-            "/gelmanDiagPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ", filename
+            "/gelmanDiagPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
+            filename
           )
           utils::flush.console()
           grDevices::pdf(

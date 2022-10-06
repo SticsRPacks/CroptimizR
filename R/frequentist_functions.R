@@ -115,7 +115,8 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
       filename <- paste0("EstimatedVSinit_new.pdf")
       warning(
         "Error trying to create ", path_results,
-        "/EstimatedVSinit.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ", filename
+        "/EstimatedVSinit.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
+        filename
       )
       grDevices::pdf(
         file = file.path(path_results, filename),
@@ -162,7 +163,8 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
       filename <- paste0("ValuesVSit_new.pdf")
       warning(
         "Error trying to create ", path_results,
-        "/ValuesVSit.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ", filename
+        "/ValuesVSit.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
+        filename
       )
       grDevices::pdf(
         file = file.path(path_results, filename),
@@ -190,7 +192,8 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
       filename <- paste0("ValuesVSit_2D_new.pdf")
       warning(
         "Error trying to create ", path_results,
-        "/ValuesVSit_2D.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ", filename
+        "/ValuesVSit_2D.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
+        filename
       )
       grDevices::pdf(
         file = file.path(path_results, filename),
@@ -432,7 +435,8 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
     color = "rep"
   )) +
     labs(
-      title = paste0("Evolution of the minimized criterion \n in function of the minimization ", lab),
+      title = paste0("Evolution of the minimized criterion \n in function of the minimization ",
+                     lab),
       y = "Minimized criterion",
       x = paste(lab, "number"),
       fill = "Repetition"
