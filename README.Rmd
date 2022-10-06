@@ -1,8 +1,11 @@
 ---
-output:
+title: CroptimizR
+output: 
   github_document:
-   html_preview: false
+   html_preview: true     
+        
 ---
+
 
   <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -17,24 +20,24 @@ options(tibble.print_min = 5, tibble.print_max = 5)
   
 # CroptimizR: A Package to estimate parameters of Crop Models
 
-[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![R build status](https://github.com/SticsRPacks/SticsOptimizR/workflows/R-CMD-check/badge.svg)](https://github.com/SticsRPacks/SticsOptimizR/actions)
 [![Codecov test coverage](https://codecov.io/gh/SticsRPacks/CroptimizR/branch/master/graph/badge.svg)](https://codecov.io/gh/SticsRPacks/CroptimizR?branch=master)
 [![DOI](https://zenodo.org/badge/187874725.svg)](https://zenodo.org/badge/latestdoi/187874725)
 
-The purpose of CroptimizR is to provide functions for estimating parameters of crop models from observations of their simulated variables. 
+The purpose of CroptimizR is to provide functions for estimating crop model parameters from observations of their simulated variables, a process often referred to as calibration. For that, it offers a generic framework for linking crop models with up-to-date and ad-hoc algorithms, as well as a choice of goodness-of-fit criteria and additional features adapted to the problem of crop model calibration. It facilitates the comparison of different types of methods on different models. It is used in this context in the [AgMIP Calibration project](https://agmip.org/crop-model-calibration-3/) on a dozen of crop models.
 
-The main concepts and features of the package are detailed in the [Get started page](https://sticsrpacks.github.io/CroptimizR/articles/CroptimizR.html).
+The [Get started page](https://sticsrpacks.github.io/CroptimizR/articles/CroptimizR.html) describes the main concepts and features of the package and details how to connect its own crop model to CroptimizR.
 
 The list of functions accessible to the users is provided in the [Reference](https://sticsrpacks.github.io/CroptimizR/reference/index.html) tab.
 
-**The package is under intensive development, you can fill an issue or request a feature [here](https://github.com/SticsRPacks/CroptimizR/issues) at any time.** 
+**The package is still under active development, feel free to fill an issue or request a feature [here](https://github.com/SticsRPacks/CroptimizR/issues) at any time.** 
 
 If you want to be notified when a new release of this package is made, you can tick the Releases box in the "Watch / Unwatch => Custom" menu at the top right of [this page](https://github.com/SticsRPacks/CroptimizR).
 
 ## Installation
 
-Before installing the package, it is recommanded to update all already installed R packages. This can be done using the command `update.packages()` or clicking on the Update button of the Packages panel of Rstudio. 
+Before installing the package, it is recommended to update all already installed R packages. This can be done using the command `update.packages()` or clicking on the Update button of the Packages panel of Rstudio. 
 
 The latest released version of the package can be installed from [GitHub](https://github.com/) using:
 
@@ -48,23 +51,18 @@ Or using the lightweight [remotes](https://github.com/r-lib/remotes#readme) pack
 remotes::install_github("SticsRPacks/CroptimizR@*release")
 ```
 
-If an update of the XML package is proposed, answer no, it seems that there is a problem of installation for its latest version. 
-
-If you want to use CroptimizR with the Stics model, facilities for the installation of all the necessary packages are provided (see installation procedure in this [vignette](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html)).
-
-The package is tested routinely to pass all [CRAN](https://CRAN.R-project.org) tests using GitHub-actions, but it is not yet released to the CRAN servers: CroptimizR is still under development and users are not yet widespread enough to bother CRAN people and use their free server time.
-
 ## Examples
 
-* A simple introductory example of model calibration using the Stics model is given in this [vignette](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html).
+* A simple introductory example of model calibration using the Nelder-Mead simplex method on the STICS model is given in this [vignette](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html).
 
 * A more complex one with simultaneous estimation of specific and varietal plant parameters is given  [here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html).
+
+* An example of application of the AgMIP phase III protocol, designed to calibrate phenology of crop models, as described in detail in Wallach et al (2022), is given [here](https://SticsRPacks.github.io/CroptimizR/articles/AgMIP_Calibration_Phenology_protocol.html).
 
 * An example using the ApsimX model is detailed [here](https://SticsRPacks.github.io/CroptimizR/articles/ApsimX_parameter_estimation_simple_case.html).
 
 * An example using the DREAM-zs Bayesian algorithm is detailed [here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html).
 
-* An example of application of the AgMIP phase III protocol, designed to calibrate phenology of crop models, as described in detail in Wallach et al (2022), is given [here](https://SticsRPacks.github.io/CroptimizR/articles/AgMIP_Calibration_Phenology_protocol.html).
 
 See [here](https://sticsrpacks.github.io/CroptimizR/reference/estim_param.html) for a detailed description of the input and output arguments of the estim_param function (or type `? estim_param` in an R console after having installed and loaded the CroptimizR package).
 

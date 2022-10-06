@@ -18,19 +18,7 @@ Authors@R: c(
     person("Julie", "Constantin", role = "rev"),
     person("Benjamin", "Dumont", role = "rev")
   )
-Description: CroptimizR provides functions for estimating crop models
-    parameters using observations and simulations. It offers a generic
-    framework for linking crop models with up-to-date and ad-hoc parameter
-    estimation algorithms implemented in external packages. It proposes a
-    standard interface for crop models, a set of adapted goodness-of-fit
-    criteria and additional functionalities, including: 1/ Fine tuning of
-    the selected optimization algorithm through specific options; 2/
-    specification of initial values and constraints on the estimated
-    parameters; 3/ dynamic execution of user-defined transformations for
-    observed and/or simulated values in case they would not be directly
-    comparable; 4/ forcing of crop model parameters; and 5/ modulating the
-    level of additional information in output of the parameter estimation
-    process.
+Description: The purpose of CroptimizR is to provide functions for estimating crop model parameters from observations of their simulated variables, a process often referred to as calibration. For that, it offers a generic framework for linking crop models with up-to-date and ad-hoc algorithms, as well as a choice of goodness-of-fit criteria and additional features adapted to the problem of crop model calibration. It facilitates the comparison of different types of methods on different models.
 License: file LICENSE
 URL: https://github.com/SticsRPacks/CroptimizR,
     https://doi.org/10.5281/zenodo.4066451
@@ -39,7 +27,6 @@ Depends:
     R (>= 3.6.0)
 Imports:
     BayesianTools,
-    coda,
     crayon,
     dplyr,
     ggplot2,
