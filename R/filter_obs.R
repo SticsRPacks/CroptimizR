@@ -153,7 +153,7 @@ filter_obs <- function(obs_list, var = NULL, situation = NULL, dates = NULL,
   obs_list <- lapply(
     obs_list,
     function(x) {
-      select(x, !.data$id & where(~ !all(is.na(.x))))
+      select(x, !.data$id & tidyselect::where(~ !all(is.na(.x))))
     }
   )
 
@@ -175,5 +175,3 @@ filter_obs <- function(obs_list, var = NULL, situation = NULL, dates = NULL,
   )
   return(obs_list)
 }
-
-utils::globalVariables("where") # Remove when tidyselect exports where() (very soon)
