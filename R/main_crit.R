@@ -58,7 +58,7 @@ main_crit <- function(param_values, crit_options) {
           if (!is.na(crit) && (is.na(.croptEnv$last_crit) ||
             crit < .croptEnv$last_crit)) {
             ## in the if above, is.na(.croptEnv$last_crit) is there in case
-            ## crit==NA at the first evaluation
+            ## is.na(crit) at the first evaluation
             iter <- .croptEnv$last_iter + 1
             .croptEnv$last_iter <- iter
             .croptEnv$last_crit <- crit
@@ -309,7 +309,8 @@ main_crit <- function(param_values, crit_options) {
     sim_transformed <- model_results
   }
   # Check results, return NA if incorrect
-  if (is.null(model_results) || (!is.null(model_results$error) && model_results$error)) {
+  if (is.null(model_results) ||
+      (!is.null(model_results$error) && model_results$error)) {
     warning("Error in transformation of simulation results.")
     return(crit <- NA)
   }
@@ -362,7 +363,8 @@ main_crit <- function(param_values, crit_options) {
     return(crit <- NA)
   }
   if (any(sapply(obs_sim_list$sim_list, function(x) any(sapply(x, is.nan)))) ||
-    any(sapply(obs_sim_list$sim_list, function(x) any(sapply(x, is.infinite))))) {
+    any(sapply(obs_sim_list$sim_list,
+               function(x) any(sapply(x, is.infinite))))) {
     warning(
       "The model wrapper returned NaN or infinite values: \n ",
       obs_sim_list$sim_list, "\n Estimated parameters: ",

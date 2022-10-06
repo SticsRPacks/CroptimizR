@@ -38,14 +38,14 @@ make_obsSim_consistent <- function(sim_list, obs_list) {
 
   if (!all(isPosixObs | isDateObs)) {
     stop(paste(
-      "Error: incorrect format for Date column of observation list for situations",
+  "Error: incorrect format for Date column of observation list for situations",
       paste(names(obs_list)[!(isPosixObs | isDateObs)], collapse = ", "),
       ". \n Date columns should be of type Date or POSIXct."
     ))
   }
   if (!all(isPosixSim | isDateSim)) {
     stop(paste(
-      "Error: incorrect format for Date column of simulation list for situations",
+    "Error: incorrect format for Date column of simulation list for situations",
       paste(names(sim_list)[!(isPosixSim | isDateSim)], collapse = ", "),
       ". \n Date columns should be of type Date or POSIXct."
     ))
@@ -83,7 +83,8 @@ make_obsSim_consistent <- function(sim_list, obs_list) {
     }
   }
 
-  # if types of sim$*$Date are not homogeneous => convert sim$*$Date to the format of obs$*$Date
+  # if types of sim$*$Date are not homogeneous => convert sim$*$Date
+  # to the format of obs$*$Date
   if (!isAllPosixSim && !isAllDateSim) {
     if (isAllPosixObs) {
       sapply(
@@ -165,14 +166,14 @@ check_obsSim_consistency <- function(sim_list, obs_list) {
 
   if (!all(isPosixObs | isDateObs)) {
     stop(paste(
-      "Error: incorrect format for Date column of observation list for situations",
+  "Error: incorrect format for Date column of observation list for situations",
       paste(names(obs_list)[!(isPosixObs | isDateObs)], collapse = ", "),
       ". \n Date columns should be of type Date or POSIXct."
     ))
   }
   if (!all(isPosixSim | isDateSim)) {
     stop(paste(
-      "Error: incorrect format for Date column of simulation list for situations",
+    "Error: incorrect format for Date column of simulation list for situations",
       paste(names(sim_list)[!(isPosixSim | isDateSim)], collapse = ", "),
       ". \n Date columns should be of type Date or POSIXct."
     ))

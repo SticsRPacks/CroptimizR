@@ -68,7 +68,7 @@ dir.create(stics_inputs_path)
 gen_usms_xml2txt(
   javastics = javastics_path,
   workspace = javastics_workspace_path,
-  out_dir = stics_inputs_path, 
+  out_dir = stics_inputs_path,
   verbose = TRUE
 )
 ```

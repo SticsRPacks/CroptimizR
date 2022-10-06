@@ -26,7 +26,8 @@ path_to_JavaStics <- params$path_to_JavaStics
 
 ```{r setup_install_per_package, eval=TRUE, include=FALSE}
 # Install and load the needed libraries
-# This one is adapted for manual or test cases (one can first install the version of the libraries we want to test)
+# This one is adapted for manual or test cases (one can first install the
+# version of the libraries we want to test)
 library(SticsOnR)
 library(SticsRFiles)
 library(CroptimizR)
@@ -50,40 +51,48 @@ The STICS crop model is used in this example. Initialization steps required by t
 ```{r setup_initializations, eval=params$eval_auto_test, message=FALSE, results=FALSE, warning=FALSE, include=FALSE}
 
 # DEFINE THE PATH TO YOUR LOCALLY INSTALLED VERSION OF JAVASTICS
-javastics_path=path_to_JavaStics
+javastics_path <- path_to_JavaStics
 
-# Download the example USMs and define the path to the JavaStics workspace (JavaStics XML input files):
-data_dir= file.path(SticsRFiles::download_data(example_dirs="study_case_1", stics_version = "V9.0"))
+# Download the example USMs and define the path to the JavaStics workspace
+# (JavaStics XML input files):
+data_dir <- file.path(SticsRFiles::download_data(example_dirs = "study_case_1",
+                                               stics_version = "V9.0"))
 
-javastics_workspace_path=file.path(data_dir,"XmlFiles")
+javastics_workspace_path <- file.path(data_dir, "XmlFiles")
 ```
 
 ```{r gen_dirs, eval=params$eval_auto_test, results='hide', message=FALSE, warning=FALSE, include=FALSE}
-stics_inputs_path=file.path(data_dir,"TxtFiles")
+stics_inputs_path <- file.path(data_dir, "TxtFiles")
 dir.create(stics_inputs_path, showWarnings = FALSE)
 
-gen_usms_xml2txt(javastics = javastics_path, workspace = javastics_workspace_path,
+gen_usms_xml2txt(javastics = javastics_path,
+                 workspace = javastics_workspace_path,
   out_dir = stics_inputs_path, verbose = TRUE)
 ```
 ```{r eval=params$eval_auto_test, results='hide', message=FALSE, warning=FALSE, include=FALSE}
 
 # Set the model options (see '? stics_wrapper_options' for details)
-model_options= stics_wrapper_options(javastics=javastics_path, workspace = stics_inputs_path, parallel=TRUE, cores = 4)
+model_options <- stics_wrapper_options(javastics = javastics_path,
+                                     workspace = stics_inputs_path,
+                                     parallel=TRUE, cores = 4)
 
 # Run the model on all situations found in stics_inputs_path
-sim_res <- stics_wrapper(model_options=model_options, param_values=c(stlevamf=350, stamflax=650, tdmin=7, tdmax=26), 
-                         var = c("iamfs","ilaxs"))
+sim_res <- stics_wrapper(model_options= model_options,
+                  param_values = c(stlevamf = 350, stamflax = 650,
+                                 tdmin = 7, tdmax = 26),
+                         var = c("iamfs", "ilaxs"))
 set.seed(1234)
 obs_list <- lapply(sim_res$sim_list, function(x) {
-  tmp <- x[nrow(x),c("Date", "iamfs","ilaxs")]
+  tmp <- x[nrow(x),c("Date", "iamfs", "ilaxs")]
   row.names(tmp) <- NULL
-  tmp[,c("iamfs","ilaxs")] <- tmp[,c("iamfs","ilaxs")] + round(rnorm(2,mean = 0, sd = 3))
+  tmp[, c("iamfs", "ilaxs")] <- tmp[, c("iamfs", "ilaxs")] +
+    round(rnorm(2, mean = 0, sd = 3))
   return(tmp)
 })
 ```
 
 ```{r eval=params$eval_manual_vignette, results='hide', message=FALSE, warning=FALSE, include=FALSE}
-save(obs_list,file = file.path(params$result_path,"obs_list.Rdata"))
+save(obs_list, file = file.path(params$result_path, "obs_list.Rdata"))
 ```
 
 ```{r eval=params$eval_auto_vignette, results='hide', message=FALSE, warning=FALSE, include=FALSE}
@@ -99,8 +108,9 @@ print(obs_list)
 Let's plot the observed values:
 
 ```{r eval=params$eval_auto_vignette, message=FALSE, warning=FALSE}
-obs_df <- dplyr::bind_rows(obs_list) %>% tidyr::pivot_longer(cols=c("iamfs","ilaxs"),names_to="stage")
-ggplot(obs_df, aes(x=stage, y=value)) + geom_boxplot() 
+obs_df <- dplyr::bind_rows(obs_list) %>% tidyr::pivot_longer(
+  cols = c("iamfs", "ilaxs"), names_to = "stage")
+ggplot(obs_df, aes(x = stage, y = value)) + geom_boxplot()
 ```
 
 ## Setting information on the parameters to estimate
@@ -111,8 +121,9 @@ can be used for, resp., lower and upper bounds. In that case, initial values mus
 be provided for the corresponding parameters (see `? estim_param` for more details).
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
-param_info <- list(lb=c(stlevamf=100, stamflax=300, tdmin=4, stressdev=0, tdmax=25),
-                       ub=c(stlevamf=500, stamflax=800, tdmin=8, stressdev=1, tdmax=32))
+param_info <- list(
+  lb = c(stlevamf = 100, stamflax = 300, tdmin = 4, stressdev = 0, tdmax = 25),
+  ub = c(stlevamf = 500, stamflax = 800, tdmin = 8, stressdev = 1, tdmax = 32))
 ```
 
 The list of candidate parameters must be provided in the `candidate_param` argument of  
@@ -136,7 +147,7 @@ Default values for the non-estimated parameters and for the candidate parameters
 can be defined in the `forced_param_values` argument of the `estim_param` function.
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
-forced_param_values <- c(tdmin=5.0, stressdev=0.2, tdmax=30.0)
+forced_param_values <- c(tdmin = 5.0, stressdev = 0.2, tdmax = 30.0)
 ```
 
 ## Setting optimization options
@@ -150,13 +161,15 @@ the relative low precision  of phenology observations and in order to reduce
 computational costs.
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
-optim_options=list(nb_rep=c(10,5), xtol_rel=1e-2, ftol_rel=1e-3)
+optim_options <- list(nb_rep = c(10, 5), xtol_rel = 1e-2, ftol_rel = 1e-3)
 ```
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE, include=FALSE}
-optim_options$out_dir <- data_dir # path where to store the results (graph and Rdata)
-optim_options$ranseed <- 1234 # set random seed so that each execution give the same results
-                              # If you want randomization, don't set it.
+optim_options$out_dir <- data_dir
+# path where to store the results (graph and Rdata)
+optim_options$ranseed <- 1234
+# set random seed so that each execution give the same results
+# If you want randomization, don't set it.
 ```
 
 
@@ -173,14 +186,14 @@ By default, the information criterion used for the parameter selection is the BI
 Note however that other criteria can be used (AIC and AICc) using the `info_crit_func` argument.
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
-res <- estim_param(obs_list=obs_list,
-                crit_function=crit_ols,
-                model_function=stics_wrapper,
-                model_options=model_options,
-                optim_options=optim_options,
+res <- estim_param(obs_list = obs_list,
+                crit_function = crit_ols,
+                model_function = stics_wrapper,
+                model_options = model_options,
+                optim_options = optim_options,
                 forced_param_values = forced_param_values,
                 candidate_param = candidate_param,
-                param_info=param_info)
+                param_info = param_info)
 ```
 
 At the end of the execution, some information such as the selected step number, the list of selected parameters, their estimated values and some stats about the execution time are printed in the R console: 
@@ -232,21 +245,22 @@ load(file.path("ResultsAgmipPhenology", "optim_results.Rdata"))
 ```
 
 ```{r eval=params$eval_manual_vignette, message=FALSE, warning=FALSE}
-param_values <- c(res$final_values, 
-                  forced_param_values[setdiff(names(forced_param_values), 
+param_values <- c(res$final_values,
+                  forced_param_values[setdiff(names(forced_param_values),
                                               names(res$final_values))])
-sim_after_optim=stics_wrapper(param_values=param_values,
-                              model_options=model_options, var=c("iamfs","ilaxs"))
+sim_after_optim <- stics_wrapper(param_values = param_values,
+                              model_options = model_options,
+                              var = c("iamfs", "ilaxs"))
 ```
 
 Then, the simulated versus observed values can be plotted using the CroPlotR plot function:
 
 ```{r eval=FALSE, warning=FALSE, message=FALSE}
-plot(sim_after_optim$sim_list, obs=obs_list, type="scatter")
+plot(sim_after_optim$sim_list, obs = obs_list, type = "scatter")
 ```
 
 ```{r eval=params$eval_manual_vignette, warning=FALSE, message=FALSE, echo=FALSE}
-p <- plot(sim_after_optim$sim_list, obs=obs_list, type="scatter")
+p <- plot(sim_after_optim$sim_list, obs = obs_list, type = "scatter")
 save_plot_png(p, optim_options$out_dir)
 ```
 
@@ -257,14 +271,14 @@ knitr::include_graphics("ResultsAgmipPhenology/all_situations.png")
 MSE and its components can be calcuted for each variable using the CroPlotR summary function: 
 
 ```{r eval=FALSE, warning=FALSE, message=FALSE}
-summary(sim_after_optim$sim_list, obs=obs_list,
-        stats=c("MSE", "Bias2", "SDSD", "LCS"))
+summary(sim_after_optim$sim_list, obs = obs_list,
+        stats = c("MSE", "Bias2", "SDSD", "LCS"))
 ```
 
 ```{r eval=params$eval_manual_vignette, warning=FALSE, message=FALSE, echo=FALSE}
-stats <- summary(sim_after_optim$sim_list, obs=obs_list,
-                 stats=c("MSE", "Bias2", "SDSD", "LCS"))
-save(stats, file=file.path(params$result_path, "stats.Rdata"))
+stats <- summary(sim_after_optim$sim_list, obs = obs_list,
+                 stats = c("MSE", "Bias2", "SDSD", "LCS"))
+save(stats, file = file.path(params$result_path, "stats.Rdata"))
 ```
 
 ```{r eval=params$eval_auto_vignette, echo=FALSE, message=FALSE, warning=FALSE}
@@ -284,7 +298,8 @@ file.copy(file.path(optim_options$out_dir, "optim_results.Rdata"),
 file.copy(file.path(optim_options$out_dir, "all_situations.png"),
           params$result_path, overwrite = TRUE)
 dir.create(file.path(params$result_path, "results_all_steps"))
-file.copy(from=file.path(optim_options$out_dir, "results_all_steps"),
-        to=file.path(params$result_path, "results_all_steps"), recursive = TRUE,
-          overwrite = TRUE)
+file.copy(from = file.path(optim_options$out_dir, "results_all_steps"),
+        to  =file.path(params$result_path, "results_all_steps"),
+        recursive = TRUE,
+        overwrite = TRUE)
 ```
