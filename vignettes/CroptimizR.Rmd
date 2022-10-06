@@ -32,7 +32,7 @@ measured on experimental fields. This process is often called **model calibratio
 Several studies have shown that the way calibration is performed largely impact 
 crop model simulation results (see e.g. Confalonieri et al., 2016; Guillaume et al., 2011; 
 He et al., 2017; Wallach et al., 2021a; 
-Wallach et al., 2021b).
+Wallach et al., 2021b, Wallach et al., 2022).
 
 Mathematical parameter estimation techniques are particularly useful in this case 
 since they can automatically explore the potential values of several parameters and 
@@ -55,15 +55,15 @@ different types of methods on different crop models.
 For that, it offers a generic framework for linking crop models with up-to-date 
 and ad-hoc parameter estimation algorithms implemented in external packages. It 
 proposes a standard interface for crop models, a set of adapted calibration procedures
-and goodness-of-fit criteria as well as additional specific functionalities. 
+and goodness-of-fit criteria as well as additional specific features. 
 
 In particular, calibration procedures defined in the [AgMIP Calibration project](https://agmip.org/crop-model-calibration-3/) are implemented in CroptimizR 
-(see for example [here](LIEN VERS VIGNETTE AGMIP) an application of phenology 
+(see for example [here](https://SticsRPacks.github.io/CroptimizR/articles/AgMIP_Calibration_Phenology_protocol.html) an application of phenology 
 estimation following AgMIP-calibration phase III protocol). Actually CroptimizR 
-has been used by more than a dozen of crop model groups in AgMIP-calibration phase 
+has been used with more than a dozen of crop models in AgMIP-calibration phase 
 III exercise (see Wallach et al, 2022).
 
-Other advanced functionalities include among others: 
+Other advanced features include among others: 
 
   * Fine tuning of the selected optimization algorithm through specific options, 
   * specification of initial values and constraints on the estimated parameters 
@@ -77,43 +77,50 @@ Other advanced functionalities include among others:
   * … 
 
 More details about the list of available methods and goodness-of-fit criteria can be found 
-[here](https://SticsRPacks.github.io/CroptimizR/articles/Available_parameter_estimation_algorithms.html) 
+[here](https://SticsRPacks.github.io/CroptimizR/articles/Available_parameter_estimation_algorithms.html). 
 
-### Principle 
+### Principle of use
 
-Basically, users are asked to provide:
+Basically, to use CroptimizR on their own case, users must provide:
 
    * an R wrapper function for the crop model to use and the associated options, 
    * a list of observed values of model output variables, 
    * a list of parameters to estimate. 
    
-The parameter estimation process automatically runs the chosen crop model on a set of observed situations by forcing the estimated parameters to the values proposed by the selected algorithm. It will then compute the selected goodness-of-fit criterion using the simulated values and corresponding observations of the model output variables.
-   
+The parameter estimation process automatically runs the given crop model on a set of observed situations by forcing the estimated parameters to the values proposed by the selected algorithm. It will then compute the selected goodness-of-fit criterion using the simulated values and corresponding observations of the model output variables (see Figure 1).
+  
+```{r, out.width='85%', echo=FALSE, fig.align='center', fig.cap='Figure 1: Schematic representation of the parameter estimation process.'}
+knitr::include_graphics('GettingStarted/main_scheme.png')
+```
+
 In output, CroptimizR generates specific statistics and graphs depending on the 
-family of the algorithm used (see section “Examples”). 
+family of the algorithm used (see section [Examples](#examples)). 
 
 ### Model wrappers
 
 CroptimizR has been designed to be generic, that is to be used with any crop model for which an R wrapper can be provided.
 
-An R wrapper is basically an R function able to run model simulations for prescribed values of some of its input parameters and to return the values of its simulated outputs. This wrapper must have a specific interface, i.e. a given list and shape of input arguments and returned values. Detailed guidelines on how to implement a crop model wrapper as well as different examples of wrappers are provided in the CroptimizR documentation (see https://sticsrpacks.github.io/CroptimizR/articles/Designing_a_model_wrapper.html). A generic function for testing that model wrappers behave as expected and return values in an adequate form is provided in the package. 
+An R wrapper is basically an R function able to run model simulations for prescribed values of some of its input parameters and to return the values of its simulated outputs. This wrapper must have a specific interface, i.e. a given list and shape of input arguments and returned values. Detailed guidelines on how to implement a crop model wrapper as well as different examples of wrappers are provided in the vignette [Guidelines for implementing a crop model R wrapper for CroptimizR](https://sticsrpacks.github.io/CroptimizR/articles/Designing_a_model_wrapper.html). A generic function for testing that model wrappers behave as expected and return values in an adequate form is provided in the package (see `test_wrapper` function). 
 
-Note that the use of an R wrapper does not imply that the crop model is implemented in R language. Interfaces between R and many computer languages exist (see e.g. the [reticulate package](https://cran.r-project.org/web/packages/reticulate/index.html) for Python, (https://www.r-bloggers.com/2014/04/fortran-and-r-speed-things-up/ ) for Fortran, (**REF**)https://www.r-bloggers.com/2014/02/three-ways-to-call-cc-from-r/) for C and C++ ...). They allow calling functions implemented in these languages within R functions. In case the crop model is available as an executable binary file, a basic solution for running model simulations from an R wrapper consists in using the base R function `system2`  (see `? system2()` within R). 
+Note that the use of an R wrapper does not imply that the crop model is implemented in R language. Interfaces between R and many computer languages exist (see e.g. the [reticulate package](https://cran.r-project.org/web/packages/reticulate/index.html) for Python, [here](https://www.r-bloggers.com/2014/04/fortran-and-r-speed-things-up/) for solutions concerning Fortran, [here](https://www.r-bloggers.com/2014/02/three-ways-to-call-cc-from-r/) for solutions concerning C and C++ ...). These interfaces allow calling functions implemented in these languages within R functions. In case the crop model is available as an executable binary file, a basic solution for running model simulations from an R wrapper consists in using the base R function `system2`  (see `? system2()` within R). 
 
-Simulated results provided by crop model wrappers compatible with CroptimizR can be directly used in CroPlotR functions as illustrated in section [Model Evaluation](#model-evaluation). 
+Simulated results provided by crop model wrappers compatible with CroptimizR can be directly used with [CroPlotR](https://sticsrpacks.github.io/CroPlotR/) package functions as illustrated in section [Model Evaluation](#model-evaluation). 
 
-Model wrappers for CroptimizR have been developed for more than a dozen of crop models among which STICS (see packages [SticsOnR](https://sticsrpacks.github.io/SticsOnR/) and [SticsRFiles](https://sticsrpacks.github.io/SticsRFiles/)), ApsimX (https://github.com/APSIMInitiative/ApsimOnR), DSSAT 4.7 (CERES and CropSim), SiriusQUality2, HERMES, ... 
+Model wrappers for CroptimizR have been developed for more than a dozen of crop models among which STICS (see packages [SticsOnR](https://sticsrpacks.github.io/SticsOnR/) and [SticsRFiles](https://sticsrpacks.github.io/SticsRFiles/)), ApsimX (see [https://github.com/APSIMInitiative/ApsimOnR]), DSSAT 4.7 (CERES and CropSim), SiriusQuality2, HERMES, SIMPLACE, Daisy ... 
 
 ### Observations
 
-Observed values of model output variables have to be provided under the shape of a named list of data frames. For each observed situation (typically a plot-year-treatment) the corresponding data frame must include one column named Date with the dates of the different observations (in Date or POSIXct format) and one column per observed variables, with either the measured values or NA if the variable is not observed at the given date. 
+Observed values of model output variables have to be provided under the shape of a named list of data frames. For each observed situation (typically a plot-year-treatment experiment), the corresponding data frame must include one column named `Date` with the dates of the different observations (in `Date` or `POSIXct` format) and one column per observed variables, with either the measured values or NA if the variable is not observed at the given date. 
 
-Let's consider the observations are, as often, available under the shape of a text file as in the following example.
+Let's consider the observations are, as often, available under the shape of a text file as displayed in Figure 2.
 
-![Figure1.](GettingStarted/obs_file.png){#id .class width=50% height=50%}
-In this example, observations are available for two situations, called here "sit1" and "sit2", three variables for situation "sit1" ("LAI", "Biomass" and "Yield") and two for "sit2" ("Biomass" and "Yield"). Observations of "Yield" where only provided for the last date. 
+```{r, out.width='50%', echo=FALSE, fig.align='center', fig.cap='Figure 2: Example of a text file defining observations.'}
+knitr::include_graphics('GettingStarted/obs_file.png')
+```
 
-The following code allows reading this file and store the observations in R in the expected format:
+In this example, observations are available for two situations, called here `sit1` and `sit2`, three variables for situation `sit1` (`LAI`, `Biomass` and `Yield`) and two for `sit2` (`Biomass` and `Yield`). Observations of `Yield` where only provided for the last date. 
+
+The following R code allows reading this file and store the observations in the expected format:
 
 ```{r}
 obs_df <- read.table("GettingStarted/obs.csv", header = TRUE)
@@ -125,23 +132,25 @@ print(obs_list)
 
 ## Examples 
 
-* A simple introductory example of model calibration using the Stics model is given in this [vignette](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html).
+Several vignettes detail example of use of CroptimizR:
 
-* A more complex one with simultaneous estimation of specific and varietal plant parameters is given  [here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html).
+* a simple introductory example of model calibration using the Stics model is given in this [vignette](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html),
 
-* An example using the ApsimX model is detailed [here](https://SticsRPacks.github.io/CroptimizR/articles/ApsimX_parameter_estimation_simple_case.html).
+* a more complex one with simultaneous estimation of specific and varietal plant parameters is given  [here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html),
 
-* An example using the DREAM-zs Bayesian algorithm is detailed [here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html).
+* an example of application of the AgMIP phase III protocol, designed to calibrate phenology of crop models, as described in detail in Wallach et al (2022), is given [here](https://SticsRPacks.github.io/CroptimizR/articles/AgMIP_Calibration_Phenology_protocol.html),
 
-* An example of application of the AgMIP phase III protocol, designed to calibrate phenology of crop models, as described in detail in Wallach et al (2022), is given [here](https://SticsRPacks.github.io/CroptimizR/articles/AgMIP_Calibration_Phenology_protocol.html).
+* an example using the ApsimX model is detailed [here](https://SticsRPacks.github.io/CroptimizR/articles/ApsimX_parameter_estimation_simple_case.html),
 
-See [here](https://sticsrpacks.github.io/CroptimizR/reference/estim_param.html) for a detailed description of the input and output arguments of the estim_param function (or type `? estim_param` in an R console after having installed and loaded the CroptimizR package).
+* an example using the DREAM-zs Bayesian algorithm is detailed [here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html).
 
-### Model evaluation
+In addition, see [here](https://sticsrpacks.github.io/CroptimizR/reference/estim_param.html) for a detailed description of the input and output arguments of the `estim_param` function (or type `? estim_param` in an R console after having installed and loaded the CroptimizR package).
+
+## Model evaluation
 
 Model results are classically evaluated by comparison to corresponding observations using graphs and statistical criteria. We designed a specific package for this task: [CroPlotR](https://sticsrpacks.github.io/CroPlotR/).
 
-CroPlotR use the same data format for observaitons and simulations than CroptimizR: the results given by model wrappers and observation list adapted to CroptimizR are thus directly compatible with CroPlotR.
+CroPlotR use the same data format for observations and simulations than CroptimizR: the results returned by model wrappers and the observation lists adapted to CroptimizR are thus directly compatible with CroPlotR.
 
 ## References
 
@@ -155,5 +164,5 @@ Wallach, D., Palosuo, T., Thorburn, P., Gourdain, E., Asseng, S., Basso, B., Bui
 
 Wallach, D., Palosuo, T., Thorburn, P., Hochman, Z., Andrianasolo, F., Asseng, S., Basso, B., Buis, S., Crout, N., Dumont, B., Ferrise, R., Gaiser, T., Gayler, S., Hiremath, S., Hoek, S., Horan, H., Hoogenboom, G., Huang, M., Jabloun, M., Jansson, P.E., Jing, Q., Justes, E., Kersebaum, K.C., Launay, M., Lewan, E., Luo, Q., Maestrini, B., Moriondo, M., Olesen, J.E., Padovan, G., Poyda, A., Priesack, E., Pullens, J.W.M., Qian, B., Schütze, N., Shelia, V., Souissi, A., Specka, X., Kumar Srivastava, A., Stella, T., Streck, T., Trombi, G., Wallor, E., Wang, J., Weber, T.K.D., Weihermüller, L., de Wit, A., Wöhling, T., Xiao, L., Zhao, C., Zhu, Y., Seidel, S.J., 2021b. Multi-model evaluation of phenology prediction for wheat in Australia. Agric. For. Meteorol. 298–299, 108289. https://doi.org/10.1016/J.AGRFORMET.2020.108289 
 
-Wallach, D., Palosuo, T., Thorburn, P., Mielenz, H., Buis, S., Hochman, Z., Gourdain, E., Andrianasolo, F., Dumont, B., Ferrise, R., Gaiser, T., Garcia, C., Gayler, S., Hiremath, S., Horan, H., Hoogenboom, G., Jansson, P.-E., Jing, Q., Justes, E., Kersebaum, K.-C., Launay, M., Lewan, E., Mequanint, F., Moriondo, M., Nendel, C., Padovan, G., Qian, B., Schütze, N., Seserman, D.-M., Shelia, V., Souissi, A., Specka, X., Srivastava, A.K., Trombi, G., Weber, T.K.D., Weihermüller, L., Wöhling, T., Seidel, S.J., 2022. Calibration of crop phenology models: Going beyond recommendations. bioRxiv 2022.06.08.495355
+Wallach, D., Palosuo, T., Thorburn, P., Mielenz, H., Buis, S., Hochman, Z., Gourdain, E., Andrianasolo, F., Dumont, B., Ferrise, R., Gaiser, T., Garcia, C., Gayler, S., Hiremath, S., Horan, H., Hoogenboom, G., Jansson, P.-E., Jing, Q., Justes, E., Kersebaum, K.-C., Launay, M., Lewan, E., Mequanint, F., Moriondo, M., Nendel, C., Padovan, G., Qian, B., Schütze, N., Seserman, D.-M., Shelia, V., Souissi, A., Specka, X., Srivastava, A.K., Trombi, G., Weber, T.K.D., Weihermüller, L., Wöhling, T., Seidel, S.J., 2022. Calibration of crop phenology models: Going beyond recommendations. [bioRxiv 2022.06.08.495355](https://www.biorxiv.org/content/10.1101/2022.06.08.495355v1)
 
