@@ -232,7 +232,8 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
 #' criterion over all repetitions is written in white (if bubble is TRUE) or
 #' in red (if bubble is false) while the other ones are written in black.
 #'
-#' @importFrom ggplot2 ggplot theme element_text geom_point geom_text scale_size_binned scale_size
+#' @importFrom ggplot2 ggplot theme element_text geom_point geom_text
+#' scale_size_binned scale_size labs
 #' @importFrom dplyr filter
 #'
 #' @export
@@ -349,7 +350,8 @@ plot_estimVSinit <- function(init_values, est_values, crit, lb, ub,
 #' iteration number increases while it is not the case when evaluation number
 #' increases.
 #'
-#' @importFrom ggplot2 ggplot aes_string theme element_text geom_point scale_color_gradient2 geom_line geom_label aes
+#' @importFrom ggplot2 ggplot aes_string theme element_text geom_point
+#' scale_color_gradient2 geom_line geom_label aes labs
 #' @importFrom dplyr select filter %>%
 #'
 #' @export
@@ -495,7 +497,7 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
 #' iteration number increases while it is not the case when evaluation number
 #' increases.
 #'
-#' @importFrom ggplot2 ggplot aes_string theme element_text geom_point
+#' @importFrom ggplot2 ggplot aes_string theme element_text geom_point labs
 #' @importFrom dplyr select filter %>%
 #'
 #' @export
