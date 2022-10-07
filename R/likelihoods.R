@@ -10,7 +10,7 @@
 #'  of the variables.
 #'
 #' @details The following log-likelihoods are proposed (
-#' [see html version](https://sticsrpacks.github.io/CroptimizR/reference/likelihood.html)
+#' [see html version](https://sticsrpacks.github.io/CroptimizR/reference/Likelihoods.html)
 #' for a better rendering of equations):
 #' \itemize{
 #'   \item `likelihood_log_ciidn`: log transformation of concentrated version of iid normal likelihood \cr

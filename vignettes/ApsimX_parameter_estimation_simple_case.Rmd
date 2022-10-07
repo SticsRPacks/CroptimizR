@@ -167,7 +167,7 @@ param_info <-
 
 `optim_options` should contain the options of the parameter estimation method.
 Here we defined a few options for the simplex method of the `nloptr` package (default method in estim_param).
-The full set of options for the simplex method can be found in the [vignette of nloptr package](https://cran.r-project.org/web/packages/nloptr/vignettes/nloptr.pdf).
+The full set of options for the simplex method can be found in the [vignette of nloptr package](https://cran.r-project.org/web/packages/nloptr/vignettes/nloptr.html).
 
 The number of repetitions `nb_rep` is advised to be set at least to 5, while 10 is a reasonable maximum value.
 `maxeval` should be used to stop the minimization only if results have to be produced within a given duration, otherwise set it to a high value so that the minimization stops when the criterion based on the relative tolerance `xtol_rel` is satisfied.

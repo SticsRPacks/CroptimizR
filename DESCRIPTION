@@ -1,6 +1,6 @@
 Type: Package
 Package: CroptimizR
-Title: A Package to estimate parameters of Crop Models
+Title: A Package to Estimate Parameters of Crop Models
 Version: 0.4.0
 Date: 2021-07-22
 Authors@R: c(

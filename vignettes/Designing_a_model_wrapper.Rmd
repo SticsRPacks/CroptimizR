@@ -89,7 +89,7 @@ A situation corresponds to a simulation (for example a specific treatment on a g
 
 To run your model from R, several technical solutions are possible depending on the language it is implemented with.
 A simple solution (although not the most computationally efficient) is to run its executable using the R function `system2`.
-Otherwise, different languages can be directly interfaced in R: for example Python, using the R package `reticulate`, C and C++ (see e.g.  <https://www.r-bloggers.com/three-ways-to-call-cc-from-r/>), fortran (see e.g. <https://www.r-bloggers.com/fortran-and-r-speed-things-up/>)...
+Otherwise, different languages can be directly interfaced in R: for example Python, using the R package `reticulate`, C and C++ (see e.g.  <https://www.r-bloggers.com/2014/02/three-ways-to-call-cc-from-r/>), fortran (see e.g. <https://www.r-bloggers.com/2014/04/fortran-and-r-speed-things-up/>)...
 
 * Force the model with specified values of its parameters
 
@@ -733,4 +733,4 @@ plot(tmp$sim_list, obs = obs_synth, type = "scatter")
 
 ### Other examples
 
-More complex examples of crop model wrappers for CroptimizR can be found in the SticsOnR package <https://github.com/SticsRPacks/SticsOnR/blob/master/R/stics_wrapper.R> for the Stics model and in the ApsimOnR package <https://github.com/hol430/ApsimOnR/blob/master/R/apsimx_wrapper.R> for ApsimX model.
+More complex examples of crop model wrappers for CroptimizR can be found in the [SticsOnR](https://github.com/SticsRPacks/SticsOnR) and [ApsimOnR](https://github.com/APSIMInitiative/ApsimOnR) packages  for the Stics and Apsim models.
