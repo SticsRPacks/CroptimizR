@@ -81,8 +81,6 @@ crit_ols <- function(sim_list, obs_list) {
     res <- obs - sim
     res <- res[!is.na(res)]
 
-    sz <- length(res)
-
     result <- result + res %*% res
   }
 

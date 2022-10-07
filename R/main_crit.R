@@ -148,9 +148,7 @@ main_crit <- function(param_values, crit_options) {
   param_names <- get_params_names(param_info)
   names(param_values) <- param_names
   situation_names <- names(obs_list)
-  nb_situations <- length(situation_names)
   param_names_sl <- get_params_names(param_info, short_list = TRUE)
-  nb_params_sl <- length(param_names_sl)
   crit <- NA
   model_results <- NA
   obs_sim_list <- NA

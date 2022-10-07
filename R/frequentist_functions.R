@@ -9,11 +9,8 @@
 summary_frequentist <- function(optim_options, param_info, optim_results) {
   param_names <- get_params_names(param_info)
   nb_params <- length(param_names)
-  bounds <- get_params_bounds(param_info)
   path_results <- optim_options$path_results
-  init_values <- optim_results$init_values
   est_values <- optim_results$est_values
-  crit_values <- optim_results$crit_values
   ind_min_crit <- optim_results$ind_min_crit
   min_crit_value <- optim_results$min_crit_value
 
@@ -45,7 +42,7 @@ summary_frequentist <- function(optim_options, param_info, optim_results) {
 #'
 #' @param optim_results Results list returned by frequentist method wrappers
 #' @param crit_options List containing several arguments given to `estim_param`
-#'  function: `param_names`, `obs_list`, `crit_function`, `model_function`,
+#'  function: `param_names`, `obs_list`, `model_function`,
 #'  `model_options`, `param_info`, `transform_obs`, `transform_sim`
 #' that must be passed to main_crit function by the methods wrappers.
 #'
@@ -55,7 +52,6 @@ post_treat_frequentist <- function(optim_options, param_info, optim_results,
                                    crit_options) {
   param_names <- get_params_names(param_info)
   nb_params <- length(param_names)
-  crit_function <- crit_options$crit_function
   info_crit_list <- crit_options$info_crit_list
 
   # Recompute final value of minimized criterion
@@ -240,7 +236,6 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
 #'
 plot_estimVSinit <- function(init_values, est_values, crit, lb, ub,
                              bubble = TRUE) {
-  nb_params <- ncol(init_values)
   param_names <- colnames(init_values)
   nb_rep <- nrow(init_values)
   ind_min_crit <- which.min(crit)
