@@ -346,7 +346,7 @@ plot_estimVSinit <- function(init_values, est_values, crit, lb, ub,
 #' increases.
 #'
 #' @importFrom ggplot2 ggplot aes_string theme element_text geom_point
-#' scale_color_gradient2 geom_line geom_label aes labs
+#' scale_color_gradient2 geom_line geom_label aes labs scale_y_log10
 #' @importFrom dplyr select filter %>%
 #'
 #' @export
@@ -493,7 +493,7 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
 #' increases.
 #'
 #' @importFrom ggplot2 ggplot aes_string theme element_text geom_point labs
-#' xlim ylim
+#' xlim ylim geom_path scale_y_log10
 #' @importFrom dplyr select filter %>%
 #'
 #' @export
