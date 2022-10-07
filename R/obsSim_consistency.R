@@ -147,22 +147,18 @@ check_obsSim_consistency <- function(sim_list, obs_list) {
     obs_list,
     function(x) lubridate::is.POSIXct(x$Date)
   )
-  isAllPosixObs <- all(isPosixObs)
   isDateObs <- sapply(
     obs_list,
     function(x) lubridate::is.Date(x$Date)
   )
-  isAllDateObs <- all(isDateObs)
   isPosixSim <- sapply(
     sim_list,
     function(x) lubridate::is.POSIXct(x$Date)
   )
-  isAllPosixSim <- all(isPosixSim)
   isDateSim <- sapply(
     sim_list,
     function(x) lubridate::is.Date(x$Date)
   )
-  isAllDateSim <- all(isDateSim)
 
   if (!all(isPosixObs | isDateObs)) {
     stop(paste(
