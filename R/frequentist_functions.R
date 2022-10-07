@@ -229,7 +229,7 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
 #' in red (if bubble is false) while the other ones are written in black.
 #'
 #' @importFrom ggplot2 ggplot theme element_text geom_point geom_text
-#' scale_size_binned scale_size labs
+#' scale_size_binned scale_size labs xlim ylim
 #' @importFrom dplyr filter
 #'
 #' @export
@@ -493,6 +493,7 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
 #' increases.
 #'
 #' @importFrom ggplot2 ggplot aes_string theme element_text geom_point labs
+#' xlim ylim
 #' @importFrom dplyr select filter %>%
 #'
 #' @export
