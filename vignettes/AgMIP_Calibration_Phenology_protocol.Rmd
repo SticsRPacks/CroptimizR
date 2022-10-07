@@ -74,16 +74,16 @@ gen_usms_xml2txt(javastics = javastics_path,
 # Set the model options (see '? stics_wrapper_options' for details)
 model_options <- stics_wrapper_options(javastics = javastics_path,
                                      workspace = stics_inputs_path,
-                                     parallel=TRUE, cores = 4)
+                                     parallel = TRUE, cores = 4)
 
 # Run the model on all situations found in stics_inputs_path
-sim_res <- stics_wrapper(model_options= model_options,
+sim_res <- stics_wrapper(model_options = model_options,
                   param_values = c(stlevamf = 350, stamflax = 650,
                                  tdmin = 7, tdmax = 26),
                          var = c("iamfs", "ilaxs"))
 set.seed(1234)
 obs_list <- lapply(sim_res$sim_list, function(x) {
-  tmp <- x[nrow(x),c("Date", "iamfs", "ilaxs")]
+  tmp <- x[nrow(x), c("Date", "iamfs", "ilaxs")]
   row.names(tmp) <- NULL
   tmp[, c("iamfs", "ilaxs")] <- tmp[, c("iamfs", "ilaxs")] +
     round(rnorm(2, mean = 0, sd = 3))
@@ -299,7 +299,7 @@ file.copy(file.path(optim_options$out_dir, "all_situations.png"),
           params$result_path, overwrite = TRUE)
 dir.create(file.path(params$result_path, "results_all_steps"))
 file.copy(from = file.path(optim_options$out_dir, "results_all_steps"),
-        to  =file.path(params$result_path, "results_all_steps"),
+        to = file.path(params$result_path, "results_all_steps"),
         recursive = TRUE,
         overwrite = TRUE)
 ```
