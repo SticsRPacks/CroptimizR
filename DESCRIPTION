@@ -47,13 +47,13 @@ Imports:
     rstudioapi,
     stringr,
     tibble,
-    tictoc
+    tictoc,
+	doParallel
 Suggests:
     ApsimOnR,
     covr,
     CroPlotR,
     devtools,
-    doParallel,
     gridExtra,
     knitr,
     rmarkdown,

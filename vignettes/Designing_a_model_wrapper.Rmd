@@ -291,8 +291,8 @@ test_parallel <- function(cores_nb = 1,
   #returned statement
 
   # Launching the cluster
-  cl <- makeCluster(cores_nb)
-  registerDoParallel(cl)
+  cl <- parallel::makeCluster(cores_nb)
+  doParallel::registerDoParallel(cl)
 
   # List preallocation
   out_pa <- vector(mode = "list", max_it)
@@ -307,7 +307,7 @@ test_parallel <- function(cores_nb = 1,
   }
 
   # Stopping the cluster
-  stopCluster(cl)
+  parallel::stopCluster(cl)
 
   if (pa) {
     return(out_pa)
