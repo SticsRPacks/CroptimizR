@@ -405,3 +405,5 @@ main_crit <- function(param_values, crit_options) {
 
   return(crit)
 }
+
+utils::globalVariables(c(".croptEnv"))

@@ -429,3 +429,5 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
 
   return(res)
 }
+
+utils::globalVariables(c(".croptEnv"))

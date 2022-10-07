@@ -152,3 +152,5 @@ optim_switch <- function(...) {
 
   return(res)
 }
+
+utils::globalVariables(c(".croptEnv"))
