@@ -65,7 +65,7 @@ Suggests:
 VignetteBuilder: 
     knitr
 Remotes:
-    github::florianhartig/BayesianTools/BayesianTools@*release,
+    github::florianhartig/BayesianTools/BayesianTools@v0.1.6,
     github::hol430/ApsimOnR,
     github::SticsRPacks/CroPlotR@*release,
     github::SticsRPacks/SticsOnR@*release,
