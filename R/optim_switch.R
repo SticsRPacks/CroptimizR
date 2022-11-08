@@ -25,6 +25,9 @@ optim_switch <- function(...) {
     flag_error <- FALSE
 
     on.exit({
+
+      res$forced_param_values = crit_options$forced_param_values
+
       if (exists(".croptEnv")) {
         if (arguments$crit_options$info_level >= 1) {
           res$params_and_crit <- dplyr::bind_rows(.croptEnv$params_and_crit)
