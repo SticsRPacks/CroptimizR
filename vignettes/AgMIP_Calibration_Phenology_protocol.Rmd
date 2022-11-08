@@ -4,7 +4,7 @@ output:
   rmarkdown::html_vignette
 author:
 - name: "Samuel Buis"
-affiliation: "INRA - EMMAH"
+affiliation: "INRAE - EMMAH"
 date: "`r Sys.Date()`"
 vignette: >
   %\VignetteIndexEntry{Estimating phenology following AgMIP-calibration phase III protocol}
@@ -38,11 +38,27 @@ library(dplyr)
 library(tidyr)
 ```
 
+## Introduction
+
+This document presents how the AgMIP phase III protocol, designed to calibrate phenology of crop models, can be easily implemented using CroptimizR and CroPlotR packages.
+
+This protocol is described in detail in [Wallach et al (2022)](https://www.biorxiv.org/content/10.1101/2022.06.08.495355v1).
+
+Its objective is to improve crop model parameters values using calibration for prediction of crop phenology.
+
+Here is a brief description of its different steps: 
+
+* Define the default values for all parameters that impact the simulation of phenology in the considered crop model.
+* Identify measured variables (phenological stages) to be fit within the dataset available.
+* Identify the nearly additive, obligatory parameters to be calibrated. The obligatory parameters are parameters that are nearly additive, i.e. such that changing the parameter
+has a similar effect for all environments (typically parameters that control degree days to the measured stages). Ideally, the number of almost additive parameters will be identical to the number of measured variables used. These parameters will be estimated at each stage of the parameter estimation process. Their estimation should lead to the elimination of bias between measured and estimated phenological stages.
+* Identify candidate parameters to be calibrated. The role of the candidate parameters is to reduce the variability between environments that remains after
+estimation of the obligatory parameters. 
+* Calculate the optimal parameter values. A model selection algorithm is used to decide which parameters to estimate. First, all obligatory parameters are estimated. Then, each candidate parameter is added in turn to the list of estimated parameters, and only those that lead to a reduction of a model selection criterion (BIC) are retained for estimation. Otherwise, the parameter is kept at its default value. Each set of parameters are estimated by minimizing an Ordinary Least Square criterion (sum of squared differences between measured and simulated phenological stages considered on all the environments). The minimizations are performed using the Nelder-Mead simplex algorithm and repeated from multiple (randomly chosen or given) starting points. At the end, the parameters values resulting from the calibration process are the estimated and default values of the parameters that lead to the lowest value of the BIC criterion.
+
 ## Study Case
 
-This document presents how the AgMIP phase III protocol designed to calibrate phenology of crop models, as described in detail in Wallach et al (2022), can be easily implemented using CroptimizR and CroPlotR packages.
-
-The crop model input data used in this example comes from a maize crop experiment (see description in Wallach et al., 2011). Observed julian days of two phenological stages are simulated on 8 different environments (also called situations in CroptimizR language) from this dataset and then used as synthetic observations, after adding some random errors, to illustrate the calibration procedure.
+The crop model input data used in this example comes from a maize crop experiment (see description in [Wallach et al., 2011](https://www.sciencedirect.com/science/article/pii/S1364815210002574)). To illustrate the calibration procedure, julian days of two phenological stages were simulated from this dataset on 8 different environments (called situations in CroptimizR language) and then used as observations, after adding some random errors.
 
 The STICS crop model is used in this example. Initialization steps required by the use of this model (definition of the `model_options` argument of the `estim_param` function) are hidden in this example for sake of brevity. They are detailed in the vignette (https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html). 
 
@@ -59,6 +75,8 @@ data_dir <- file.path(SticsRFiles::download_data(example_dirs = "study_case_1",
                                                stics_version = "V9.0"))
 
 javastics_workspace_path <- file.path(data_dir, "XmlFiles")
+
+model_wrapper <- stics_wrapper
 ```
 
 ```{r gen_dirs, eval=params$eval_auto_test, results='hide', message=FALSE, warning=FALSE, include=FALSE}
@@ -99,13 +117,17 @@ save(obs_list, file = file.path(params$result_path, "obs_list.Rdata"))
 load(file.path("ResultsAgmipPhenology", "obs_list.Rdata"))
 ```
 
-The observations are provided here in the `obs_list` object, in the format required by CroptimizR, i.e. a named list of data.frame. In this example, the variables corresponding to the two observed stages are called "iamfs" and "ilaxs". They correspond to the julian days (from the beginning of the sowing year) of "end juvenile" and "maximum LAI" stages as defined in the STICS crop model.  
+The observations are provided here in the `obs_list` object, in the format required by CroptimizR, i.e. a named list of data.frame. 
+
+In this example, the variables corresponding to the two observed stages considered are called "iamfs" and "ilaxs". They correspond to the julian days (from the beginning of the sowing year) of "end juvenile" and "maximum LAI" stages as defined in the STICS crop model.  
 
 ```{r eval=params$eval_auto_vignette, message=FALSE, warning=FALSE}
 print(obs_list)
 ```
 
-Let's plot the observed values:
+The 8 situations are called here `bo96iN+`, `bou00t1`, `bou00t3`, `bou99t1`, `bou99t3`, `lu96iN+`, `lu96iN6` and `lu97iN+`.
+
+Let's plot the values of these observations:
 
 ```{r eval=params$eval_auto_vignette, message=FALSE, warning=FALSE}
 obs_df <- dplyr::bind_rows(obs_list) %>% tidyr::pivot_longer(
@@ -113,25 +135,31 @@ obs_df <- dplyr::bind_rows(obs_list) %>% tidyr::pivot_longer(
 ggplot(obs_df, aes(x = stage, y = value)) + geom_boxplot()
 ```
 
+The "end juvenile" stage occurred around day 180 after sowing, while the "maximum LAI" stage occurred around day 230 after sowing.
+
 ## Setting information on the parameters to estimate
 
-The whole list of parameters to estimate and their bounds must be provided in 
-the `param_info` argument of the `estim_param` function. Note that `-Inf` or `Ìnf`
-can be used for, resp., lower and upper bounds. In that case, initial values must 
-be provided for the corresponding parameters (see `? estim_param` for more details).
+The whole list of parameters to estimate and their lower and upper bounds (noted resp. `lb` and `ub`) must be provided in 
+the `param_info` argument of the `estim_param` function. 
+
+In this example, we will consider 5 parameters of the STICS crop model: `stlevamf`, `stamflax`, `tdmin`, `stressdev` and `tdmax`.
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
 param_info <- list(
   lb = c(stlevamf = 100, stamflax = 300, tdmin = 4, stressdev = 0, tdmax = 25),
-  ub = c(stlevamf = 500, stamflax = 800, tdmin = 8, stressdev = 1, tdmax = 32))
+  ub = c(stlevamf = 500, stamflax = 800, tdmin = 8, stressdev = 1, tdmax = 32)
+  )
 ```
 
+Note that `-Inf` or `Ìnf` can be used for, respectively, lower and upper bounds. In that case, initial values must 
+be provided for the corresponding parameters (see `? estim_param` for more details).
+
 The list of candidate parameters must be provided in the `candidate_param` argument of  
-the `estim_param` function. Note that, as prescribed in the protocol, this list 
+the `estim_param` function. Note that, as prescribed in the AgMIP protocol, this list 
 must be ordered, from those thought to be the most important to those thought to 
 be the least important.
 
-In this example, 3 parameters are selected as candidates.
+In this example, 3 parameters were considered as candidates.
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
 candidate_param <- c("tdmin", "stressdev", "tdmax")
@@ -139,7 +167,7 @@ candidate_param <- c("tdmin", "stressdev", "tdmax")
 
 The parameters not included in `candidate_param` but included in `param_info` will 
 be considered as the nearly additive parameters, as defined in the protocol. 
-In this example, "stlevamf" and "stamflax" are thus the nearly additive parameters that will be estimated at any step.
+In this example, `stlevamf` and `stamflax` are thus the nearly additive parameters that will be estimated at any step.
 
 ## Choosing the default parameters values
 
@@ -150,26 +178,23 @@ can be defined in the `forced_param_values` argument of the `estim_param` functi
 forced_param_values <- c(tdmin = 5.0, stressdev = 0.2, tdmax = 30.0)
 ```
 
+These values will be used at each step for which these parameters are not estimated. 
+
 ## Setting optimization options
 
 Following the AgMIP phase III protocol, different numbers of repetition of the 
-minimization are prescribed (`optim_options$nb_rep`): 10 for the estimation of 
+minimization are prescribed: 10 for the estimation of 
 the nearly additive parameters and 5 for the estimation of the candidate parameters.
 
-`xtol_rel` and `ftol_rel` are set here to higher values than the default one given 
-the relative low precision  of phenology observations and in order to reduce 
-computational costs.
-
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
-optim_options <- list(nb_rep = c(10, 5), xtol_rel = 1e-2, ftol_rel = 1e-3)
+optim_options <- list(nb_rep = c(10, 5))
 ```
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE, include=FALSE}
+optim_options$xtol_rel <- 1e-2
+optim_options$ftol_rel <- 1e-3
 optim_options$out_dir <- data_dir
-# path where to store the results (graph and Rdata)
 optim_options$ranseed <- 1234
-# set random seed so that each execution give the same results
-# If you want randomization, don't set it.
 ```
 
 
@@ -177,18 +202,18 @@ optim_options$ranseed <- 1234
 
 A simple call to the `estim_param` function allows running the whole parameter selection and minimization procedure defined in the AgMIP phase III protocol.
 
-Compared to the simple example presented in (https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html), it is important here to define the `crit_function` argument of the `estim_param` function. 
+Compared to the simple example presented in https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html, it is important here to define the `crit_function` argument of the `estim_param` function. 
 Indeed, the objective function to minimize in AgMIP phase III protocol is the Ordinary Least Squares, implemented in the function `crit_ols`, which is not the default criterion in `estim_param`.
 
 Note also the use of the arguments `forced_param_values` and `candidate_param`.
 
-By default, the information criterion used for the parameter selection is the BIC, as advised by Wallach et al (2022).
-Note however that other criteria can be used (AIC and AICc) using the `info_crit_func` argument.
+By default, the information criterion used for the parameter selection is the BIC, as advised by [Wallach et al (2022)](https://www.biorxiv.org/content/10.1101/2022.06.08.495355v1).
+Note, however, that other criteria can be used (AIC and AICc) using the `info_crit_func` argument.
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
 res <- estim_param(obs_list = obs_list,
                 crit_function = crit_ols,
-                model_function = stics_wrapper,
+                model_function = model_wrapper,
                 model_options = model_options,
                 optim_options = optim_options,
                 forced_param_values = forced_param_values,
@@ -221,7 +246,9 @@ At the end of the execution, some information such as the selected step number, 
 # ----------------------
 ```
 
-The list returned by the `estim_param` function contains the results obtained for the selected step and a data.frame, called `param_selection_steps`, detailing the detailed results of the protocol. The element `param_selection_steps` gives, for each minimization step, the list of candidate parameters, their initial and final values and the values of the Sum of Squares and information criterion. The selected  step is indicated in the last column. It is also stored in csv format for sake of readability (file "param_selection_steps.csv" in `getwd()` folder or in `optim_options$out_dir` folder, if provided to `estim_param`).
+The list returned by the `estim_param` function contains the results obtained for the selected step and a data.frame, called `param_selection_steps`, providing detailed results of the protocol. 
+The element `param_selection_steps` gives, for each minimization step, the list of candidate parameters, their initial and final values and the values of the Sum of Squares and information criteria. 
+The selected  step is indicated in the last column. It is also stored in csv format for sake of readability (file "param_selection_steps.csv" in `getwd()` folder or in `optim_options$out_dir` folder, if provided to `estim_param`).
 
 ```{r eval=params$eval_auto_vignette, message=FALSE, warning=FALSE}
 df <- read.csv("ResultsAgmipPhenology/param_selection_steps.csv", sep = ";")
@@ -230,9 +257,9 @@ knitr::kable(df)
 
 In this example, the selected parameters are "stlevamf", "stamflax" and "tdmin" for which the lowest value of BIC has been obtained.
 
-The list returned by the `estim_param` function is also stored (file "optim_results.Rdata").
+The list returned by the `estim_param` function is also stored in a file ("optim_results.Rdata").
 
-The results and diagnostics plots generated by `estim_param` for all the different steps are stored in the subfolder "results_all_steps".
+The standard results and diagnostics plots generated by `estim_param` for all the different steps are stored in the subfolder "results_all_steps".
 
 
 ## Generating diagnostics using CroPlotR
@@ -245,10 +272,8 @@ load(file.path("ResultsAgmipPhenology", "optim_results.Rdata"))
 ```
 
 ```{r eval=params$eval_manual_vignette, message=FALSE, warning=FALSE}
-param_values <- c(res$final_values,
-                  forced_param_values[setdiff(names(forced_param_values),
-                                              names(res$final_values))])
-sim_after_optim <- stics_wrapper(param_values = param_values,
+param_values <- c(res$final_values, res$forced_param_values)
+sim_after_optim <- model_wrapper(param_values = param_values,
                               model_options = model_options,
                               var = c("iamfs", "ilaxs"))
 ```
