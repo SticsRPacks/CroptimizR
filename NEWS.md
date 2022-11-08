@@ -1,4 +1,30 @@
-# CroptimizR 0.4.0 _2021-07-22_
+# CroptimizR 0.5.0 (2022-11-09)
+
+## Main changes
+
+* A parameter selection procedure following AgMIP Calibration Phase III protocol has been implemented. See this [vignette](https://SticsRPacks.github.io/CroptimizR/articles/AgMIP_Calibration_Phenology_protocol.html) for more details.
+* All frequentist diagnostics plots (estimated vs initial values of the parameters, evolution of the minimized criterion value and parameters values in function of the iterations of the minimization, scatter plots of values for couples of parameters) are now automatically generated.
+* Added computation and display of elapsed time of model simulations.
+* Homogenization of argument names between functions and wrt CroPlotR package.
+
+## Documentation
+
+* Added a vignette on the application of AgMIP Phase III protocol.
+* Added a "Getting Started" vignette and revised README.
+* Revised list of authors and citation file of the package.
+
+## Fixes
+
+* Collection of information (if info_lvel>1) done in case of model and/or method crash.
+* Filter_obs fixed in case no obs found for some situations.
+* Plot of minimized criterion evolution did not work in case of null or negative criterion.
+
+## Misc.
+
+* Code reformatting and R check warnings/notes solved for future submission to CRAN.
+
+
+# CroptimizR 0.4.0 (2021-07-22)
 
 ## Main changes
 
