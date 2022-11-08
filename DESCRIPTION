@@ -35,6 +35,7 @@ Depends:
 Imports:
     BayesianTools,
     crayon,
+    doParallel,
     dplyr,
     ggplot2,
     lhs,
@@ -47,8 +48,7 @@ Imports:
     rstudioapi,
     stringr,
     tibble,
-    tictoc,
-	doParallel
+    tictoc
 Suggests:
     ApsimOnR,
     covr,
