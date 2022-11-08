@@ -3,7 +3,7 @@ title: "Parameter estimation with the Stics crop Model: a case with specific and
 output: rmarkdown::html_vignette
 author:
 - name: "Samuel Buis"
-affiliation: "INRA - EMMAH"
+affiliation: "INRAE - EMMAH"
 date: "`r Sys.Date()`"
 vignette: >
   %\VignetteIndexEntry{Parameter estimation with the Stics crop Model: a case with specific and varietal parameters}
