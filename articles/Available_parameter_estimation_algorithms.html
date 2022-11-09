@@ -26,6 +26,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -38,45 +40,45 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CroptimizR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
+  <a href="../articles/CroptimizR.html">Get started</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/ApsimX_parameter_estimation_simple_case.html">Parameter estimation with the ApsimX crop Model: a simple case</a>
-    </li>
-    <li>
       <a href="../articles/Available_parameter_estimation_algorithms.html">Available parameter estimation algorithms in CroptimizR</a>
     </li>
     <li>
       <a href="../articles/Designing_a_model_wrapper.html">Guidelines for implementing a crop model R wrapper for CroptimizR</a>
     </li>
     <li>
-      <a href="../articles/Parameter_estimation_DREAM.html">Parameter estimation with the DREAM-zs algorithm</a>
+      <a href="../articles/Parameter_estimation_simple_case.html">Parameter estimation with the Stics crop Model: a simple case</a>
+    </li>
+    <li>
+      <a href="../articles/AgMIP_Calibration_Phenology_protocol.html">Estimating phenology following AgMIP-calibration phase III protocol</a>
     </li>
     <li>
       <a href="../articles/Parameter_estimation_Specific_and_Varietal.html">Parameter estimation with the Stics crop Model: a case with specific and varietal parameters</a>
     </li>
     <li>
-      <a href="../articles/Parameter_estimation_simple_case.html">Parameter estimation with the Stics crop Model: a simple case</a>
+      <a href="../articles/ApsimX_parameter_estimation_simple_case.html">Parameter estimation with the ApsimX crop Model: a simple case</a>
+    </li>
+    <li>
+      <a href="../articles/Parameter_estimation_DREAM.html">Parameter estimation with the DREAM-zs algorithm</a>
     </li>
   </ul>
 </li>
@@ -86,7 +88,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/SticsRPacks/CroptimizR/">
+  <a href="https://github.com/SticsRPacks/CroptimizR/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -101,15 +103,17 @@
 
       
 
-      </header><script src="Available_parameter_estimation_algorithms_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Available parameter estimation algorithms in CroptimizR</h1>
-                        <h4 class="author">Samuel Buis</h4>
+      <h1 data-toc-skip>Available parameter estimation algorithms in
+CroptimizR</h1>
+                        <h4 data-toc-skip class="author">Samuel
+Buis</h4>
             <address class="author_afil">
-      INRAE - EMMAH<br><h4 class="date">2021-07-23</h4>
+      INRAE - EMMAH<br><h4 data-toc-skip class="date">2022-11-09</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/master/vignettes/Available_parameter_estimation_algorithms.Rmd"><code>vignettes/Available_parameter_estimation_algorithms.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/HEAD/vignettes/Available_parameter_estimation_algorithms.Rmd" class="external-link"><code>vignettes/Available_parameter_estimation_algorithms.Rmd</code></a></small>
       <div class="hidden name"><code>Available_parameter_estimation_algorithms.Rmd</code></div>
 
     </address>
@@ -117,49 +121,92 @@
 
     
     
-<p>For the moment, CroptimizR includes two parameter estimation algorithms:</p>
+<p>For the moment, CroptimizR includes two parameter estimation
+algorithms:</p>
 <ul>
 <li><p>a Frequentist one: the Nelder-Mead Simplex <span class="citation">(Nelder and Mead 1965)</span>,</p></li>
-<li><p>a Bayesian one: DREAM-zs <span class="citation">(Vrugt 2016)</span>.</p></li>
+<li><p>a Bayesian one: DREAM-zs <span class="citation">(Vrugt
+2016)</span>.</p></li>
 </ul>
-<div id="frequentist-algorithms" class="section level1">
-<h1 class="hasAnchor">
-<a href="#frequentist-algorithms" class="anchor"></a>Frequentist algorithms</h1>
-<p>Frequentist methods involve minimizing a goodness-of-fit criterion. Crop models often have discontinuities that make it difficult to use gradient-based minimization methods such as Gauss–Newton or Levenberg–Marquardt. A common approach, adopted in CroptimizR, is thus to use the Nelder–Mead simplex algorithm, which is adapted to non-smooth functions because the search of the optimum is not based on the computation of the function’s gradient. Although few theoretical results are available <span class="citation">(Lagarias et al. 1998)</span>, this algorithm is very popular because it can be used for multidimensional minimization for essentially any function.</p>
-<p>The simplex algorithm used in CroptimizR is interfaced from the nloptr package <span class="citation">(Johnson, n.d.)</span> but a multi-start feature has been implemented in addition. Indeed, as it is a local optimization method, CroptimizR proposes to repeat automatically the minimization from different starting parameter values to minimize the risk of converging to a local minimum. The user specifies the number of repetitions and possibly the starting parameter values (if not provided, they are sampled within the parameters’ bounds. To help analyze the behavior of the algorithm, CroptimizR generates plots of final estimated parameter values versus initial values.</p>
-<p>A simple example of application of the method is provided in this <a href="https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html">vignette</a>.</p>
+<div class="section level2">
+<h2 id="frequentist-algorithms">Frequentist algorithms<a class="anchor" aria-label="anchor" href="#frequentist-algorithms"></a>
+</h2>
+<p>Frequentist methods involve minimizing a goodness-of-fit criterion.
+Crop models often have discontinuities that make it difficult to use
+gradient-based minimization methods such as Gauss–Newton or
+Levenberg–Marquardt. A common approach, adopted in CroptimizR, is thus
+to use the Nelder–Mead simplex algorithm, which is adapted to non-smooth
+functions because the search of the optimum is not based on the
+computation of the function’s gradient. Although few theoretical results
+are available <span class="citation">(Lagarias et al. 1998)</span>, this
+algorithm is very popular because it can be used for multidimensional
+minimization for essentially any function.</p>
+<p>The simplex algorithm used in CroptimizR is interfaced from the
+nloptr package <span class="citation">(Johnson)</span> but a multi-start
+feature has been implemented in addition. Indeed, as it is a local
+optimization method, CroptimizR proposes to repeat automatically the
+minimization from different starting parameter values to minimize the
+risk of converging to a local minimum. The user specifies the number of
+repetitions and possibly the starting parameter values (if not provided,
+they are sampled within the parameters’ bounds. To help analyze the
+behavior of the algorithm, CroptimizR generates plots of final estimated
+parameter values versus initial values.</p>
+<p>A simple example of application of the method is provided in this <a href="https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html" class="external-link">vignette</a>.</p>
 </div>
-<div id="bayesian-algorithms" class="section level1">
-<h1 class="hasAnchor">
-<a href="#bayesian-algorithms" class="anchor"></a>Bayesian algorithms</h1>
-<p>In a Bayesian approach estimated parameters are treated as random variables and one seeks to determine their joint probability distribution, called the posterior distribution. The uncertainty in the estimated parameters are thus central in this approach. An advantage of the Bayesian approach is that it uses prior information about the parameters values.</p>
-<p>The DREAM-zs algorithm is a multi-chain MCMC method which is recognized has an efficient method for complex, high-dimensional and multi-modal target distributions. It is extensively described in <span class="citation">(Vrugt 2016)</span>. In CroptimizR, it is interfaced from the BayesianTools package <span class="citation">(Hartig, Minunno, and Paul 2019)</span>.</p>
-<p>It provides different types of plots and results including plots of prior and posterior densities, correlation plots, Gelman diagnostic plot, sample of posterior distribution and associated statistics.</p>
-<p>An example of application of the method is provided in this <a href="https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html">vignette</a>.</p>
+<div class="section level2">
+<h2 id="bayesian-algorithms">Bayesian algorithms<a class="anchor" aria-label="anchor" href="#bayesian-algorithms"></a>
+</h2>
+<p>In a Bayesian approach estimated parameters are treated as random
+variables and one seeks to determine their joint probability
+distribution, called the posterior distribution. The uncertainty in the
+estimated parameters are thus central in this approach. An advantage of
+the Bayesian approach is that it uses prior information about the
+parameters values.</p>
+<p>The DREAM-zs algorithm is a multi-chain MCMC method which is
+recognized has an efficient method for complex, high-dimensional and
+multi-modal target distributions. It is extensively described in <span class="citation">(Vrugt 2016)</span>. In CroptimizR, it is interfaced
+from the BayesianTools package <span class="citation">(Hartig, Minunno,
+and Paul)</span>.</p>
+<p>It provides different types of plots and results including plots of
+prior and posterior densities, correlation plots, Gelman diagnostic
+plot, sample of posterior distribution and associated statistics.</p>
+<p>An example of application of the method is provided in this <a href="https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html" class="external-link">vignette</a>.</p>
 </div>
-<div id="criteria-and-likelihoods" class="section level1">
-<h1 class="hasAnchor">
-<a href="#criteria-and-likelihoods" class="anchor"></a>Criteria and likelihoods</h1>
-<p>For both method, multiple <a href="https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html">criteria</a> to minimize (for frequentist methods) and <a href="https://sticsrpacks.github.io/CroptimizR/reference/likelihoods.html">likelihoods</a> (for Bayesian methods) are provided in CroptimizR.</p>
+<div class="section level2">
+<h2 id="criteria-and-likelihoods">Criteria and likelihoods<a class="anchor" aria-label="anchor" href="#criteria-and-likelihoods"></a>
+</h2>
+<p>For both method, multiple <a href="https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html" class="external-link">criteria</a>
+to minimize (for frequentist methods) and <a href="https://sticsrpacks.github.io/CroptimizR/reference/Likelihoods.html" class="external-link">likelihoods</a>
+(for Bayesian methods) are provided in CroptimizR.</p>
 </div>
-<div id="references" class="section level1 unnumbered">
-<h1 class="hasAnchor">
-<a href="#references" class="anchor"></a>References</h1>
-<div id="refs" class="references">
-<div id="ref-BayesianTools">
-<p>Hartig, Florian, Francesco Minunno, and Stefan Paul. 2019. <em>BayesianTools: General-Purpose Mcmc and Smc Samplers and Tools for Bayesian Statistics</em>. <a href="https://CRAN.R-project.org/package=BayesianTools">https://CRAN.R-project.org/package=BayesianTools</a>.</p>
+<div class="section level2">
+<h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-BayesianTools" class="csl-entry">
+Hartig, Florian, Francesco Minunno, and Stefan Paul. <em>BayesianTools:
+General-Purpose MCMC and SMC Samplers and Tools for Bayesian
+Statistics</em>. <a href="https://github.com/florianhartig/BayesianTools" class="external-link">https://github.com/florianhartig/BayesianTools</a>.
 </div>
-<div id="ref-Nlopt">
-<p>Johnson, S. G. n.d. <em>The Nlopt Nonlinear-Optimization Package</em>. <a href="http://ab-initio.mit.edu/nlopt">http://ab-initio.mit.edu/nlopt</a>.</p>
+<div id="ref-Nlopt" class="csl-entry">
+Johnson, S. G. <em>The NLopt Nonlinear-Optimization Package</em>. <a href="https://nlopt.readthedocs.io/en/latest/" class="external-link">https://nlopt.readthedocs.io/en/latest/</a>.
 </div>
-<div id="ref-lagarias1998">
-<p>Lagarias, Jeffrey C, James A Reeds, Margaret H Wright, and Paul E Wright. 1998. “Convergence Properties of the Nelder–Mead Simplex Method in Low Dimensions.” <em>SIAM Journal on Optimization</em> 9 (1): 112–47.</p>
+<div id="ref-lagarias1998" class="csl-entry">
+Lagarias, Jeffrey C, James A Reeds, Margaret H Wright, and Paul E
+Wright. 1998. <span>“Convergence Properties of the Nelder–Mead Simplex
+Method in Low Dimensions.”</span> <em>SIAM Journal on Optimization</em>
+9 (1): 112–47.
 </div>
-<div id="ref-nelder1965">
-<p>Nelder, John A, and Roger Mead. 1965. “A Simplex Method for Function Minimization.” <em>The Computer Journal</em> 7 (4): 308–13.</p>
+<div id="ref-nelder1965" class="csl-entry">
+Nelder, John A, and Roger Mead. 1965. <span>“A Simplex Method for
+Function Minimization.”</span> <em>The Computer Journal</em> 7 (4):
+308–13.
 </div>
-<div id="ref-vrugt2016">
-<p>Vrugt, Jasper A. 2016. “Markov Chain Monte Carlo Simulation Using the Dream Software Package: Theory, Concepts, and Matlab Implementation.” <em>Environmental Modelling &amp; Software</em> 75: 273–316.</p>
+<div id="ref-vrugt2016" class="csl-entry">
+Vrugt, Jasper A. 2016. <span>“Markov Chain Monte Carlo Simulation Using
+the DREAM Software Package: Theory, Concepts, and MATLAB
+Implementation.”</span> <em>Environmental Modelling &amp; Software</em>
+75: 273–316.
 </div>
 </div>
 </div>
@@ -176,11 +223,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Samuel Buis, Michel Giner, Patrice Lecharpentier, SticsRpacks.</p>
+  <p></p>
+<p>Developed by Samuel Buis, Patrice Lecharpentier, Remi Vezy, Michel Giner.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>
@@ -188,6 +237,8 @@
 
   
 
+
+  
 
   </body>
 </html>

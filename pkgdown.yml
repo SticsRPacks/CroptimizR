@@ -1,12 +1,14 @@
-pandoc: 2.7.3
-pkgdown: 1.6.1
+pandoc: 2.19.2
+pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
+  AgMIP_Calibration_Phenology_protocol: AgMIP_Calibration_Phenology_protocol.html
   ApsimX_parameter_estimation_simple_case: ApsimX_parameter_estimation_simple_case.html
   Available_parameter_estimation_algorithms: Available_parameter_estimation_algorithms.html
+  CroptimizR: CroptimizR.html
   Designing_a_model_wrapper: Designing_a_model_wrapper.html
   Parameter_estimation_DREAM: Parameter_estimation_DREAM.html
   Parameter_estimation_Specific_and_Varietal: Parameter_estimation_Specific_and_Varietal.html
   Parameter_estimation_simple_case: Parameter_estimation_simple_case.html
-last_built: 2021-07-23T08:56Z
+last_built: 2022-11-09T14:26Z
 

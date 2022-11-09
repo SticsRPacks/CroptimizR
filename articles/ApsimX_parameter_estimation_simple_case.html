@@ -26,6 +26,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -38,45 +40,45 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CroptimizR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
+  <a href="../articles/CroptimizR.html">Get started</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/ApsimX_parameter_estimation_simple_case.html">Parameter estimation with the ApsimX crop Model: a simple case</a>
-    </li>
-    <li>
       <a href="../articles/Available_parameter_estimation_algorithms.html">Available parameter estimation algorithms in CroptimizR</a>
     </li>
     <li>
       <a href="../articles/Designing_a_model_wrapper.html">Guidelines for implementing a crop model R wrapper for CroptimizR</a>
     </li>
     <li>
-      <a href="../articles/Parameter_estimation_DREAM.html">Parameter estimation with the DREAM-zs algorithm</a>
+      <a href="../articles/Parameter_estimation_simple_case.html">Parameter estimation with the Stics crop Model: a simple case</a>
+    </li>
+    <li>
+      <a href="../articles/AgMIP_Calibration_Phenology_protocol.html">Estimating phenology following AgMIP-calibration phase III protocol</a>
     </li>
     <li>
       <a href="../articles/Parameter_estimation_Specific_and_Varietal.html">Parameter estimation with the Stics crop Model: a case with specific and varietal parameters</a>
     </li>
     <li>
-      <a href="../articles/Parameter_estimation_simple_case.html">Parameter estimation with the Stics crop Model: a simple case</a>
+      <a href="../articles/ApsimX_parameter_estimation_simple_case.html">Parameter estimation with the ApsimX crop Model: a simple case</a>
+    </li>
+    <li>
+      <a href="../articles/Parameter_estimation_DREAM.html">Parameter estimation with the DREAM-zs algorithm</a>
     </li>
   </ul>
 </li>
@@ -86,7 +88,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/SticsRPacks/CroptimizR/">
+  <a href="https://github.com/SticsRPacks/CroptimizR/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -101,19 +103,25 @@
 
       
 
-      </header><script src="ApsimX_parameter_estimation_simple_case_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Parameter estimation with the ApsimX crop Model: a simple case</h1>
-                        <h4 class="author">Patrice Lecharpentier</h4>
+      <h1 data-toc-skip>Parameter estimation with the ApsimX crop Model:
+a simple case</h1>
+                        <h4 data-toc-skip class="author">Patrice
+Lecharpentier</h4>
             <address class="author_afil">
-      INRAE - Agroclim<br><h4 class="author">Samuel Buis</h4>
+      INRAE -
+Agroclim<br><h4 data-toc-skip class="author">Samuel
+Buis</h4>
             <address class="author_afil">
-      INRAE - EMMAH<br><h4 class="author">Drew Holzworth</h4>
+      INRAE -
+EMMAH<br><h4 data-toc-skip class="author">Drew
+Holzworth</h4>
                         
-            <h4 class="date">2021-07-23</h4>
+            <h4 data-toc-skip class="date">2022-11-09</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/master/vignettes/ApsimX_parameter_estimation_simple_case.Rmd"><code>vignettes/ApsimX_parameter_estimation_simple_case.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/HEAD/vignettes/ApsimX_parameter_estimation_simple_case.Rmd" class="external-link"><code>vignettes/ApsimX_parameter_estimation_simple_case.Rmd</code></a></small>
       <div class="hidden name"><code>ApsimX_parameter_estimation_simple_case.Rmd</code></div>
 
     </address>
@@ -122,182 +130,250 @@
 
     
     
-<div id="study-case" class="section level2">
-<h2 class="hasAnchor">
-<a href="#study-case" class="anchor"></a>Study Case</h2>
-<p>A simple parameter estimation with a single situation, a single observed variable and 2 estimated parameters, just to illustrate how to use the package with the ApsimX model.</p>
-<p>The parameter estimation is performed using the Nelder-Mead simplex method implemented in the <code>nloptr</code> package.</p>
+<div class="section level2">
+<h2 id="study-case">Study Case<a class="anchor" aria-label="anchor" href="#study-case"></a>
+</h2>
+<p>A simple parameter estimation with a single situation, a single
+observed variable and 2 estimated parameters, just to illustrate how to
+use the package with the ApsimX model.</p>
+<p>The parameter estimation is performed using the Nelder-Mead simplex
+method implemented in the <code>nloptr</code> package.</p>
 </div>
-<div id="initialisation-step" class="section level2">
-<h2 class="hasAnchor">
-<a href="#initialisation-step" class="anchor"></a>Initialisation step</h2>
+<div class="section level2">
+<h2 id="initialisation-step">Initialisation step<a class="anchor" aria-label="anchor" href="#initialisation-step"></a>
+</h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Install and load the needed libraries</span>
-<span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/SticsRPacks/CroptimizR">"CroptimizR"</a></span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
-  <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"SticsRPacks/CroptimizR@*release"</span><span class="op">)</span>
-  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/SticsRPacks/CroptimizR">"CroptimizR"</a></span><span class="op">)</span>
-<span class="op">}</span>
-<span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/SticsRPacks/CroPlotR">"CroPlotR"</a></span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
-  <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"SticsRPacks/CroPlotR@*release"</span><span class="op">)</span>
-  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/SticsRPacks/CroPlotR">"CroPlotR"</a></span><span class="op">)</span>
-<span class="op">}</span>
-<span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/ApsimOnR">"ApsimOnR"</a></span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
-  <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"hol430/ApsimOnR"</span><span class="op">)</span>
-  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/ApsimOnR">"ApsimOnR"</a></span><span class="op">)</span>
-<span class="op">}</span>
-<span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://dplyr.tidyverse.org">"dplyr"</a></span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"dplyr"</span>,repos<span class="op">=</span><span class="st">"http://cran.irsn.fr"</span><span class="op">)</span>
-  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://dplyr.tidyverse.org">"dplyr"</a></span><span class="op">)</span>
-<span class="op">}</span>
-<span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org">"ggplot2"</a></span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"ggplot2"</span>,repos<span class="op">=</span><span class="st">"http://cran.irsn.fr"</span><span class="op">)</span>
-  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org">"ggplot2"</a></span><span class="op">)</span>
-<span class="op">}</span>
-<span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st">"gridExtra"</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"gridExtra"</span>,repos<span class="op">=</span><span class="st">"http://cran.irsn.fr"</span><span class="op">)</span>
-  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st">"gridExtra"</span><span class="op">)</span>
-<span class="op">}</span>
-
-<span class="co"># DEFINE THE PATH TO THE LOCALLY INSTALLED VERSION OF APSIM (should be something like C:/path/to/apsimx/bin/Models.exe on windows, and /usr/local/bin/Models on linux)</span>
-<span class="va">apsimx_path</span> <span class="op">&lt;-</span> <span class="st">"D:\\Home\\sbuis\\Documents\\OUTILS\\APSIM2021.01.20.5937\\Bin\\Models.exe"</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Install and load the needed libraries</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/SticsRPacks/CroptimizR" class="external-link">"CroptimizR"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"SticsRPacks/CroptimizR@*release"</span><span class="op">)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/SticsRPacks/CroptimizR" class="external-link">"CroptimizR"</a></span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/SticsRPacks/CroPlotR" class="external-link">"CroPlotR"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"SticsRPacks/CroPlotR@*release"</span><span class="op">)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/SticsRPacks/CroPlotR" class="external-link">"CroPlotR"</a></span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/ApsimOnR" class="external-link">"ApsimOnR"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"hol430/ApsimOnR"</span><span class="op">)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/ApsimOnR" class="external-link">"ApsimOnR"</a></span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://dplyr.tidyverse.org" class="external-link">"dplyr"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"dplyr"</span>, repos <span class="op">=</span> <span class="st">"http://cran.irsn.fr"</span><span class="op">)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://dplyr.tidyverse.org" class="external-link">"dplyr"</a></span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"ggplot2"</span>, repos <span class="op">=</span> <span class="st">"http://cran.irsn.fr"</span><span class="op">)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st">"gridExtra"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"gridExtra"</span>, repos <span class="op">=</span> <span class="st">"http://cran.irsn.fr"</span><span class="op">)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st">"gridExtra"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://tidyr.tidyverse.org" class="external-link">"tidyr"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"tidyr"</span>, repos <span class="op">=</span> <span class="st">"http://cran.irsn.fr"</span><span class="op">)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># DEFINE THE PATH TO THE LOCALLY INSTALLED VERSION OF APSIM (should be something</span></span>
+<span><span class="co"># like C:/path/to/apsimx/bin/Models.exe on windows, and /usr/local/bin/Models</span></span>
+<span><span class="co"># on linux)</span></span>
+<span><span class="va">apsimx_path</span> <span class="op">&lt;-</span> <span class="st">"D:\\Home\\sbuis\\Documents\\OUTILS-INFORMATIQUE\\APSIM2021.01.20.5937\\Bin\\Models.exe"</span></span></code></pre></div>
 </div>
-<div id="set-the-list-of-situations-and-variables-to-consider-in-this-example" class="section level2">
-<h2 class="hasAnchor">
-<a href="#set-the-list-of-situations-and-variables-to-consider-in-this-example" class="anchor"></a>Set the list of situations and variables to consider in this example</h2>
+<div class="section level2">
+<h2 id="set-the-list-of-situations-and-variables-to-consider-in-this-example">Set the list of situations and variables to consider in this
+example<a class="anchor" aria-label="anchor" href="#set-the-list-of-situations-and-variables-to-consider-in-this-example"></a>
+</h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sit_name</span><span class="op">=</span><span class="st">"GattonRowSpacingRowSpace25cm"</span>  <span class="co"># among "GattonRowSpacingRowSpace25cm", "GattonRowSpacingRowSpace50cm","GattonRowSpacingRowSpaceN0"</span>
-
-<span class="va">var_name</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Wheat.Leaf.LAI"</span><span class="op">)</span> <span class="co"># or "Wheat.AboveGround.Wt"</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">sit_name</span> <span class="op">&lt;-</span> <span class="st">"GattonRowSpacingRowSpace25cm"</span></span>
+<span>                                <span class="co"># among "GattonRowSpacingRowSpace25cm",</span></span>
+<span>                                <span class="co"># "GattonRowSpacingRowSpace50cm",</span></span>
+<span>                                <span class="co"># "GattonRowSpacingRowSpaceN0"</span></span>
+<span></span>
+<span><span class="va">var_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Wheat.Leaf.LAI"</span><span class="op">)</span> <span class="co"># or "Wheat.AboveGround.Wt"</span></span></code></pre></div>
 </div>
-<div id="run-the-model-before-optimization-for-a-prior-evaluation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#run-the-model-before-optimization-for-a-prior-evaluation" class="anchor"></a>Run the model before optimization for a prior evaluation</h2>
-<p>In this case, the argument <code>param_values</code> of the wrapper is not set: the values of the model input parameters are all read in the model input files.</p>
+<div class="section level2">
+<h2 id="run-the-model-before-optimization-for-a-prior-evaluation">Run the model before optimization for a prior evaluation<a class="anchor" aria-label="anchor" href="#run-the-model-before-optimization-for-a-prior-evaluation"></a>
+</h2>
+<p>In this case, the argument <code>param_values</code> of the wrapper
+is not set: the values of the model input parameters are all read in the
+model input files.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Set the model options (see '? apsimx_wrapper_options' for details)</span>
-<span class="va">files_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="st">"extdata"</span>,<span class="st">"apsimx_files"</span><span class="op">)</span>,package <span class="op">=</span> <span class="st">"ApsimOnR"</span><span class="op">)</span>
-<span class="va">apsimx_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">files_path</span>, <span class="st">"template.apsimx"</span><span class="op">)</span>
-
-<span class="co"># Setting met files path</span>
-<span class="va">met_files_path</span> <span class="op">&lt;-</span> <span class="va">files_path</span>
-
-<span class="co"># Setting observed data files path</span>
-<span class="va">obs_files_path</span> <span class="op">&lt;-</span> <span class="va">files_path</span>
-
-<span class="co"># Setting sqlite db tables names </span>
-<span class="va">predicted_table_name</span> <span class="op">&lt;-</span> <span class="st">"DailyReport"</span>
-<span class="va">observed_table_name</span> <span class="op">&lt;-</span> <span class="st">"Observed"</span>
-
-<span class="va">model_options</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/ApsimOnR/man/apsimx_wrapper_options.html">apsimx_wrapper_options</a></span><span class="op">(</span>apsimx_path <span class="op">=</span> <span class="va">apsimx_path</span>,
-                                     apsimx_file <span class="op">=</span>  <span class="va">apsimx_file</span>,
-                                     variable_names <span class="op">=</span> <span class="va">var_name</span>,
-                                     predicted_table_name <span class="op">=</span> <span class="va">predicted_table_name</span>,
-                                     met_files_path <span class="op">=</span> <span class="va">met_files_path</span>,
-                                     observed_table_name <span class="op">=</span> <span class="va">observed_table_name</span>,
-                                     obs_files_path <span class="op">=</span> <span class="va">obs_files_path</span><span class="op">)</span> 
-
-<span class="co"># Run the model (on all situations found in the apsimx_file)</span>
-<span class="va">sim_before_optim</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/ApsimOnR/man/apsimx_wrapper.html">apsimx_wrapper</a></span><span class="op">(</span>model_options<span class="op">=</span><span class="va">model_options</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Set the model options (see '? apsimx_wrapper_options' for details)</span></span>
+<span><span class="va">files_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"apsimx_files"</span><span class="op">)</span>,</span>
+<span>                          package <span class="op">=</span> <span class="st">"ApsimOnR"</span><span class="op">)</span></span>
+<span><span class="va">apsimx_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">files_path</span>, <span class="st">"template.apsimx"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Setting met files path</span></span>
+<span><span class="va">met_files_path</span> <span class="op">&lt;-</span> <span class="va">files_path</span></span>
+<span></span>
+<span><span class="co"># Setting observed data files path</span></span>
+<span><span class="va">obs_files_path</span> <span class="op">&lt;-</span> <span class="va">files_path</span></span>
+<span></span>
+<span><span class="co"># Setting sqlite db tables names</span></span>
+<span><span class="va">predicted_table_name</span> <span class="op">&lt;-</span> <span class="st">"DailyReport"</span></span>
+<span><span class="va">observed_table_name</span> <span class="op">&lt;-</span> <span class="st">"Observed"</span></span>
+<span></span>
+<span><span class="va">model_options</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ApsimOnR/man/apsimx_wrapper_options.html" class="external-link">apsimx_wrapper_options</a></span><span class="op">(</span>apsimx_path <span class="op">=</span> <span class="va">apsimx_path</span>,</span>
+<span>                                     apsimx_file <span class="op">=</span>  <span class="va">apsimx_file</span>,</span>
+<span>                                     variable_names <span class="op">=</span> <span class="va">var_name</span>,</span>
+<span>                                    predicted_table_name <span class="op">=</span> <span class="va">predicted_table_name</span>,</span>
+<span>                                     met_files_path <span class="op">=</span> <span class="va">met_files_path</span>,</span>
+<span>                                     observed_table_name <span class="op">=</span> <span class="va">observed_table_name</span>,</span>
+<span>                                     obs_files_path <span class="op">=</span> <span class="va">obs_files_path</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Run the model (on all situations found in the apsimx_file)</span></span>
+<span><span class="va">sim_before_optim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ApsimOnR/man/apsimx_wrapper.html" class="external-link">apsimx_wrapper</a></span><span class="op">(</span>model_options <span class="op">=</span> <span class="va">model_options</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="read-and-select-the-corresponding-observations" class="section level2">
-<h2 class="hasAnchor">
-<a href="#read-and-select-the-corresponding-observations" class="anchor"></a>Read and select the corresponding observations</h2>
-<p>We only keep observations for situation <code>sit_name</code> and variable <code>var_name</code> (<code>obs_list</code> defines the list of situations and variables that will be used in the parameter estimation process).</p>
+<div class="section level2">
+<h2 id="read-and-select-the-corresponding-observations">Read and select the corresponding observations<a class="anchor" aria-label="anchor" href="#read-and-select-the-corresponding-observations"></a>
+</h2>
+<p>We only keep observations for situation <code>sit_name</code> and
+variable <code>var_name</code> (<code>obs_list</code> defines the list
+of situations and variables that will be used in the parameter
+estimation process).</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># At the moment, observed data are read from the db file after the first simulation ran before optimization.</span>
-<span class="co">#But they may be loaded using the original xlsx data file (from the files_path)  </span>
-
-<span class="va">obs_list</span> <span class="op">&lt;-</span> <span class="fu">read_apsimx_output</span><span class="op">(</span><span class="va">sim_before_optim</span><span class="op">$</span><span class="va">db_file_name</span>,
-                               <span class="va">model_options</span><span class="op">$</span><span class="va">observed_table_name</span>,
-                               <span class="va">model_options</span><span class="op">$</span><span class="va">variable_names</span>,
-                               <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">sim_before_optim</span><span class="op">$</span><span class="va">sim_list</span><span class="op">)</span><span class="op">)</span>
-<span class="va">obs_list</span><span class="op">=</span><span class="fu"><a href="../reference/filter_obs.html">filter_obs</a></span><span class="op">(</span><span class="va">obs_list</span>, sit_names<span class="op">=</span><span class="va">sit_name</span>,include<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># At the moment, observed data are read from the db file after the first</span></span>
+<span><span class="co"># simulation ran before optimization. But they may be loaded using the original</span></span>
+<span><span class="co"># xlsx data file (from the files_path)</span></span>
+<span></span>
+<span><span class="va">obs_list</span> <span class="op">&lt;-</span> <span class="fu">read_apsimx_output</span><span class="op">(</span><span class="va">sim_before_optim</span><span class="op">$</span><span class="va">db_file_name</span>,</span>
+<span>                               <span class="va">model_options</span><span class="op">$</span><span class="va">observed_table_name</span>,</span>
+<span>                               <span class="va">model_options</span><span class="op">$</span><span class="va">variable_names</span>,</span>
+<span>                               <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">sim_before_optim</span><span class="op">$</span><span class="va">sim_list</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">obs_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_obs.html">filter_obs</a></span><span class="op">(</span><span class="va">obs_list</span>, situation <span class="op">=</span> <span class="va">sit_name</span>, include <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="set-information-on-the-parameters-to-estimate" class="section level2">
-<h2 class="hasAnchor">
-<a href="#set-information-on-the-parameters-to-estimate" class="anchor"></a>Set information on the parameters to estimate</h2>
-<p><strong><code>param_info</code> must contain information about the parameters that will be estimated in the parameter estimation process from the situations, variables and dates defined in <code>obs_list</code></strong>.</p>
-<p>It must include the definition of their upper and lower bounds (-Inf and Inf can be used). This will determine the list of estimated parameters.</p>
-<p>Initial values for the minimization can also be provided in <code>param_info</code> (see <code><a href="../reference/estim_param.html">? estim_param</a></code>).</p>
+<div class="section level2">
+<h2 id="set-information-on-the-parameters-to-estimate">Set information on the parameters to estimate<a class="anchor" aria-label="anchor" href="#set-information-on-the-parameters-to-estimate"></a>
+</h2>
+<p><strong><code>param_info</code> must contain information about the
+parameters that will be estimated in the parameter estimation process
+from the situations, variables and dates defined in
+<code>obs_list</code></strong>.</p>
+<p>It must include the definition of their upper and lower bounds (-Inf
+and Inf can be used). This will determine the list of estimated
+parameters.</p>
+<p>Initial values for the minimization can also be provided in
+<code>param_info</code> (see <code><a href="../reference/estim_param.html">? estim_param</a></code>).</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># 2 parameters here: ExtinctionCoeff and RUE, of bounds [0.4,0.6] and [1.4,1.6]</span>
-<span class="va">param_info</span> <span class="op">&lt;-</span> 
-  <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>lb<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>.Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue<span class="op">=</span><span class="fl">0.4</span>,
-            .Simulations.Replacements.Wheat.Leaf.Photosynthesis.RUE.FixedValue<span class="op">=</span><span class="fl">1.4</span><span class="op">)</span>,
-       ub<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>.Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue<span class="op">=</span><span class="fl">0.6</span>,
-            .Simulations.Replacements.Wheat.Leaf.Photosynthesis.RUE.FixedValue<span class="op">=</span><span class="fl">1.6</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># 2 parameters here: ExtinctionCoeff and RUE, of bounds [0.4,0.6] and [1.4,1.6]</span></span>
+<span><span class="va">param_info</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>lb <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>.Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue <span class="op">=</span> <span class="fl">0.4</span>,</span>
+<span>    .Simulations.Replacements.Wheat.Leaf.Photosynthesis.RUE.FixedValue <span class="op">=</span> <span class="fl">1.4</span><span class="op">)</span>,</span>
+<span>       ub <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>.Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue <span class="op">=</span> <span class="fl">0.6</span>,</span>
+<span>    .Simulations.Replacements.Wheat.Leaf.Photosynthesis.RUE.FixedValue <span class="op">=</span> <span class="fl">1.6</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="set-options-for-the-parameter-estimation-method" class="section level2">
-<h2 class="hasAnchor">
-<a href="#set-options-for-the-parameter-estimation-method" class="anchor"></a>Set options for the parameter estimation method</h2>
-<p><code>optim_options</code> should contain the options of the parameter estimation method. Here we defined a few options for the simplex method of the <code>nloptr</code> package (default method in estim_param). The full set of options for the simplex method can be found in the <a href="https://cran.r-project.org/web/packages/nloptr/vignettes/nloptr.pdf">vignette of nloptr package</a>.</p>
-<p>The number of repetitions <code>nb_rep</code> is advised to be set at least to 5, while 10 is a reasonable maximum value. <code>maxeval</code> should be used to stop the minimization only if results have to be produced within a given duration, otherwise set it to a high value so that the minimization stops when the criterion based on the relative tolerance <code>xtol_rel</code> is satisfied.</p>
+<div class="section level2">
+<h2 id="set-options-for-the-parameter-estimation-method">Set options for the parameter estimation method<a class="anchor" aria-label="anchor" href="#set-options-for-the-parameter-estimation-method"></a>
+</h2>
+<p><code>optim_options</code> should contain the options of the
+parameter estimation method. Here we defined a few options for the
+simplex method of the <code>nloptr</code> package (default method in
+estim_param). The full set of options for the simplex method can be
+found in the <a href="https://cran.r-project.org/web/packages/nloptr/vignettes/nloptr.html" class="external-link">vignette
+of nloptr package</a>.</p>
+<p>The number of repetitions <code>nb_rep</code> is advised to be set at
+least to 5, while 10 is a reasonable maximum value. <code>maxeval</code>
+should be used to stop the minimization only if results have to be
+produced within a given duration, otherwise set it to a high value so
+that the minimization stops when the criterion based on the relative
+tolerance <code>xtol_rel</code> is satisfied.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">optim_options</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span> 
-<span class="va">optim_options</span><span class="op">$</span><span class="va">nb_rep</span> <span class="op">&lt;-</span> <span class="fl">7</span> <span class="co"># Number of repetitions of the minimization </span>
-                          <span class="co"># (each time starting with different initial</span>
-                          <span class="co"># values for the estimated parameters) </span>
-<span class="va">optim_options</span><span class="op">$</span><span class="va">maxeval</span> <span class="op">&lt;-</span> <span class="fl">500</span> <span class="co"># Maximum number of evaluations of the </span>
-                             <span class="co"># minimized criteria </span>
-<span class="va">optim_options</span><span class="op">$</span><span class="va">xtol_rel</span> <span class="op">&lt;-</span> <span class="fl">1e-03</span> <span class="co"># Tolerance criterion between two iterations</span>
-                                <span class="co"># (threshold for the relative difference of </span>
-                                <span class="co"># parameter values between the 2 previous </span>
-                                <span class="co"># iterations)</span>
-
-<span class="va">optim_options</span><span class="op">$</span><span class="va">path_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html">getwd</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># path where to store the results (graph and Rdata)</span>
-
-<span class="va">optim_options</span><span class="op">$</span><span class="va">ranseed</span> <span class="op">&lt;-</span> <span class="fl">1234</span> <span class="co"># set random seed so that each execution give the same results</span>
-                              <span class="co"># If you want randomization, don't set it.</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">optim_options</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">optim_options</span><span class="op">$</span><span class="va">nb_rep</span> <span class="op">&lt;-</span> <span class="fl">7</span> <span class="co"># Number of repetitions of the minimization</span></span>
+<span>                          <span class="co"># (each time starting with different initial</span></span>
+<span>                          <span class="co"># values for the estimated parameters)</span></span>
+<span><span class="va">optim_options</span><span class="op">$</span><span class="va">maxeval</span> <span class="op">&lt;-</span> <span class="fl">500</span> <span class="co"># Maximum number of evaluations of the</span></span>
+<span>                             <span class="co"># minimized criteria</span></span>
+<span><span class="va">optim_options</span><span class="op">$</span><span class="va">xtol_rel</span> <span class="op">&lt;-</span> <span class="fl">1e-03</span> <span class="co"># Tolerance criterion between two iterations</span></span>
+<span>                                <span class="co"># (threshold for the relative difference of</span></span>
+<span>                                <span class="co"># parameter values between the 2 previous</span></span>
+<span>                                <span class="co"># iterations)</span></span>
+<span></span>
+<span><span class="va">optim_options</span><span class="op">$</span><span class="va">out_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># path where to store the results</span></span>
+<span>                                 <span class="co"># (graph and Rdata)</span></span>
+<span></span>
+<span><span class="va">optim_options</span><span class="op">$</span><span class="va">ranseed</span> <span class="op">&lt;-</span> <span class="fl">1234</span> <span class="co"># set random seed so that each execution give the</span></span>
+<span>                              <span class="co">#  same results. If you want randomization,</span></span>
+<span>                              <span class="co"># don't set it.</span></span></code></pre></div>
 </div>
-<div id="run-the-optimization" class="section level2">
-<h2 class="hasAnchor">
-<a href="#run-the-optimization" class="anchor"></a>Run the optimization</h2>
-<p>The Nelder-Mead simplex is the default method =&gt; no need to set the optim_method argument if you want to use it. The list of available methods is detailed <a href="https://sticsrpacks.github.io/CroptimizR/articles/Available_parameter_estimation_algorithms.html">here</a>. Same for crit_function: a value is set by default (<code>crit_log_cwss</code>, see <code><a href="../reference/ls_criteria.html">? crit_log_cwss</a></code> or <a href="https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html">here</a> for more details and list of available criteria). Others will be proposed in next versions of CroptimizR. The user can implement and give in argument its own criterion (see inputs and outputs required in the <code>crit_log_cwss</code> function).</p>
+<div class="section level2">
+<h2 id="run-the-optimization">Run the optimization<a class="anchor" aria-label="anchor" href="#run-the-optimization"></a>
+</h2>
+<p>The Nelder-Mead simplex is the default method =&gt; no need to set
+the optim_method argument if you want to use it. The list of available
+methods is detailed <a href="https://sticsrpacks.github.io/CroptimizR/articles/Available_parameter_estimation_algorithms.html" class="external-link">here</a>.
+Same for crit_function: a value is set by default
+(<code>crit_log_cwss</code>, see <code><a href="../reference/ls_criteria.html">? crit_log_cwss</a></code> or <a href="https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html" class="external-link">here</a>
+for more details and list of available criteria). Others will be
+proposed in next versions of CroptimizR. The user can implement and give
+in argument its own criterion (see inputs and outputs required in the
+<code>crit_log_cwss</code> function).</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">res</span><span class="op">=</span><span class="fu"><a href="../reference/estim_param.html">estim_param</a></span><span class="op">(</span>obs_list<span class="op">=</span><span class="va">obs_list</span>,
-                            model_function<span class="op">=</span><span class="va">apsimx_wrapper</span>,
-                            model_options<span class="op">=</span><span class="va">model_options</span>,
-                            optim_options<span class="op">=</span><span class="va">optim_options</span>,
-                            param_info<span class="op">=</span><span class="va">param_info</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estim_param.html">estim_param</a></span><span class="op">(</span>obs_list <span class="op">=</span> <span class="va">obs_list</span>,</span>
+<span>                            model_function <span class="op">=</span> <span class="va">apsimx_wrapper</span>,</span>
+<span>                            model_options <span class="op">=</span> <span class="va">model_options</span>,</span>
+<span>                            optim_options <span class="op">=</span> <span class="va">optim_options</span>,</span>
+<span>                            param_info <span class="op">=</span> <span class="va">param_info</span><span class="op">)</span></span></code></pre></div>
 <p>The estimated values of the parameters are the following:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">res</span><span class="op">$</span><span class="va">final_values</span></code></pre></div>
-<pre><code>## .Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue 
-##                                                                       0.4321273 
-##              .Simulations.Replacements.Wheat.Leaf.Photosynthesis.RUE.FixedValue 
-##                                                                       1.6000000</code></pre>
-<p>Complementary graphs and data are stored in the folder which path is given in <code>optim_options$path_results</code>. Among them, the <code>EstimatedVSinit.pdf</code> file contains the following figures:</p>
+<code class="sourceCode R"><span><span class="va">res</span><span class="op">$</span><span class="va">final_values</span></span></code></pre></div>
+<pre><code><span><span class="co">## .Simulations.Replacements.Wheat.Leaf.ExtinctionCoeff.VegetativePhase.FixedValue </span></span>
+<span><span class="co">##                                                                       0.4321273 </span></span>
+<span><span class="co">##              .Simulations.Replacements.Wheat.Leaf.Photosynthesis.RUE.FixedValue </span></span>
+<span><span class="co">##                                                                       1.6000000</span></span></code></pre>
+<p>Complementary graphs and data are stored in the folder which path is
+given in <code>optim_options$out_dir</code>. Among them, the
+<code>EstimatedVSinit.pdf</code> file contains the following
+figures:</p>
 <p><img src="ResultsSimpleCaseApsim/estimInit_ExtinctionCoeff.png" width="45%"><img src="ResultsSimpleCaseApsim/estimInit_RUE.png" width="45%"></p>
-<p>Figure 1: plots of estimated vs initial values of parameters <em>ExtinctionCoeff</em> and <em>RUE</em>. Numbers represent the repetition number of the minimization and the size of the bubbles the final value of the minimized criterion. The number in white, 2 in this case, is the minimization that lead to the minimal value of the criterion among all repetitions. In this case, minimizations converge towards different values for the parameters (3 for <em>ExtinctionCoeff</em> and 2 for <em>RUE</em>), which indicates the presence of local minima. Values of <em>RUE</em> are very close to the upper bound value. In realistic calibration cases this may indicate the presence of a large error in the observation values or in the simulated output values (this simple case with only one situation does not allow to derive such conclusion).</p>
+<p>Figure 1: plots of estimated vs initial values of parameters
+<em>ExtinctionCoeff</em> and <em>RUE</em>. Numbers represent the
+repetition number of the minimization and the size of the bubbles the
+final value of the minimized criterion. The number in white, 2 in this
+case, is the minimization that lead to the minimal value of the
+criterion among all repetitions. In this case, minimizations converge
+towards different values for the parameters (3 for
+<em>ExtinctionCoeff</em> and 2 for <em>RUE</em>), which indicates the
+presence of local minima. Values of <em>RUE</em> are very close to the
+upper bound value. In realistic calibration cases this may indicate the
+presence of a large error in the observation values or in the simulated
+output values (this simple case with only one situation does not allow
+to derive such conclusion).</p>
 </div>
-<div id="run-the-model-after-optimization" class="section level2">
-<h2 class="hasAnchor">
-<a href="#run-the-model-after-optimization" class="anchor"></a>Run the model after optimization</h2>
-<p>In this case, the <code>param_values</code> argument is set so that estimated values of the parameters overwrite the values defined in the model input file (’.apsimx`).</p>
+<div class="section level2">
+<h2 id="run-the-model-after-optimization">Run the model after optimization<a class="anchor" aria-label="anchor" href="#run-the-model-after-optimization"></a>
+</h2>
+<p>In this case, the <code>param_values</code> argument is set so that
+estimated values of the parameters overwrite the values defined in the
+model input file (’.apsimx`).</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sim_after_optim</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/ApsimOnR/man/apsimx_wrapper.html">apsimx_wrapper</a></span><span class="op">(</span>param_values<span class="op">=</span><span class="va">res</span><span class="op">$</span><span class="va">final_values</span>,
-                               model_options<span class="op">=</span><span class="va">model_options</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">sim_after_optim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ApsimOnR/man/apsimx_wrapper.html" class="external-link">apsimx_wrapper</a></span><span class="op">(</span>param_values <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">final_values</span>,</span>
+<span>                               model_options <span class="op">=</span> <span class="va">model_options</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="plot-the-results" class="section level2">
-<h2 class="hasAnchor">
-<a href="#plot-the-results" class="anchor"></a>Plot the results</h2>
-<p>Here we use the <a href="https://github.com/SticsRPacks/CroPlotR">CroPlotR</a> package for comparing simulations and observations. As CroptimizR, CroPlotR can be used with any crop model.</p>
+<div class="section level2">
+<h2 id="plot-the-results">Plot the results<a class="anchor" aria-label="anchor" href="#plot-the-results"></a>
+</h2>
+<p>Here we use the <a href="https://github.com/SticsRPacks/CroPlotR" class="external-link">CroPlotR</a> package for
+comparing simulations and observations. As CroptimizR, CroPlotR can be
+used with any crop model.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">sim_before_optim</span><span class="op">$</span><span class="va">sim_list</span>, obs<span class="op">=</span><span class="va">obs_list</span>, select_dyn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"common"</span><span class="op">)</span><span class="op">)</span>
-<span class="va">p1</span> <span class="op">&lt;-</span> <span class="va">p</span><span class="op">[[</span><span class="va">sit_name</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"Before Optimization"</span><span class="op">)</span>
-
-<span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">sim_after_optim</span><span class="op">$</span><span class="va">sim_list</span>, obs<span class="op">=</span><span class="va">obs_list</span>, select_dyn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"common"</span><span class="op">)</span><span class="op">)</span>
-<span class="va">p2</span> <span class="op">&lt;-</span> <span class="va">p</span><span class="op">[[</span><span class="va">sit_name</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"After Optimization"</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">ylim</a></span><span class="op">(</span><span class="cn">NA</span>,<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot_build.html">ggplot_build</a></span><span class="op">(</span><span class="va">p1</span><span class="op">)</span><span class="op">$</span><span class="va">layout</span><span class="op">$</span><span class="va">panel_params</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">y.range</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span>
-
-<span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html">grid.arrange</a></span><span class="op">(</span>grobs<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">p1</span>,<span class="va">p2</span><span class="op">)</span>, nrow<span class="op">=</span><span class="fl">1</span>, ncol<span class="op">=</span><span class="fl">2</span><span class="op">)</span>
-<span class="co"># Save the graph</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">optim_options</span><span class="op">$</span><span class="va">path_results</span>,
-                 <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"sim_obs_plots"</span>,<span class="st">".png"</span><span class="op">)</span><span class="op">)</span>, plot<span class="op">=</span><span class="va">p</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">sim_before_optim</span><span class="op">$</span><span class="va">sim_list</span>, obs <span class="op">=</span> <span class="va">obs_list</span>, select_dyn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"common"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="va">p</span><span class="op">[[</span><span class="va">sit_name</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Before Optimization"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">sim_after_optim</span><span class="op">$</span><span class="va">sim_list</span>, obs <span class="op">=</span> <span class="va">obs_list</span>, select_dyn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"common"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="va">p</span><span class="op">[[</span><span class="va">sit_name</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"After Optimization"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">ylim</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot_build.html" class="external-link">ggplot_build</a></span><span class="op">(</span><span class="va">p1</span><span class="op">)</span><span class="op">$</span><span class="va">layout</span><span class="op">$</span><span class="va">panel_params</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">y.range</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html" class="external-link">grid.arrange</a></span><span class="op">(</span>grobs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">p1</span>, <span class="va">p2</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">1</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="co"># Save the graph</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">optim_options</span><span class="op">$</span><span class="va">out_dir</span>,</span>
+<span>                 <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"sim_obs_plots"</span>, <span class="st">".png"</span><span class="op">)</span><span class="op">)</span>, plot <span class="op">=</span> <span class="va">p</span><span class="op">)</span></span></code></pre></div>
 <p>this gives:</p>
 <div class="figure">
 <img src="ResultsSimpleCaseApsim/sim_obs_plots.png" alt="Figure 2: plots of simulated and observed target variable before and after optimization. The gap between simulated and observed values has been drastically reduced: the minimizer has done its job!" width="80%"><p class="caption">
-Figure 2: plots of simulated and observed target variable before and after optimization. The gap between simulated and observed values has been drastically reduced: the minimizer has done its job!
+Figure 2: plots of simulated and observed target variable before and
+after optimization. The gap between simulated and observed values has
+been drastically reduced: the minimizer has done its job!
 </p>
 </div>
 </div>
@@ -314,11 +390,13 @@ Figure 2: plots of simulated and observed target variable before and after optim
 
 
       <footer><div class="copyright">
-  <p>Developed by Samuel Buis, Michel Giner, Patrice Lecharpentier, SticsRpacks.</p>
+  <p></p>
+<p>Developed by Samuel Buis, Patrice Lecharpentier, Remi Vezy, Michel Giner.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>
@@ -326,6 +404,8 @@ Figure 2: plots of simulated and observed target variable before and after optim
 
   
 
+
+  
 
   </body>
 </html>

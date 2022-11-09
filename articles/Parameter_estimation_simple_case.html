@@ -26,6 +26,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -38,45 +40,45 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CroptimizR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
+  <a href="../articles/CroptimizR.html">Get started</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/ApsimX_parameter_estimation_simple_case.html">Parameter estimation with the ApsimX crop Model: a simple case</a>
-    </li>
-    <li>
       <a href="../articles/Available_parameter_estimation_algorithms.html">Available parameter estimation algorithms in CroptimizR</a>
     </li>
     <li>
       <a href="../articles/Designing_a_model_wrapper.html">Guidelines for implementing a crop model R wrapper for CroptimizR</a>
     </li>
     <li>
-      <a href="../articles/Parameter_estimation_DREAM.html">Parameter estimation with the DREAM-zs algorithm</a>
+      <a href="../articles/Parameter_estimation_simple_case.html">Parameter estimation with the Stics crop Model: a simple case</a>
+    </li>
+    <li>
+      <a href="../articles/AgMIP_Calibration_Phenology_protocol.html">Estimating phenology following AgMIP-calibration phase III protocol</a>
     </li>
     <li>
       <a href="../articles/Parameter_estimation_Specific_and_Varietal.html">Parameter estimation with the Stics crop Model: a case with specific and varietal parameters</a>
     </li>
     <li>
-      <a href="../articles/Parameter_estimation_simple_case.html">Parameter estimation with the Stics crop Model: a simple case</a>
+      <a href="../articles/ApsimX_parameter_estimation_simple_case.html">Parameter estimation with the ApsimX crop Model: a simple case</a>
+    </li>
+    <li>
+      <a href="../articles/Parameter_estimation_DREAM.html">Parameter estimation with the DREAM-zs algorithm</a>
     </li>
   </ul>
 </li>
@@ -86,7 +88,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/SticsRPacks/CroptimizR/">
+  <a href="https://github.com/SticsRPacks/CroptimizR/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -101,237 +103,397 @@
 
       
 
-      </header><script src="Parameter_estimation_simple_case_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Parameter estimation with the Stics crop Model: a simple case</h1>
-                        <h4 class="author">Samuel Buis</h4>
+      <h1 data-toc-skip>Parameter estimation with the Stics crop Model:
+a simple case</h1>
+                        <h4 data-toc-skip class="author">Samuel
+Buis</h4>
                         
-            <h4 class="date">2021-07-23</h4>
+            <h4 data-toc-skip class="date">2022-11-09</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/master/vignettes/Parameter_estimation_simple_case.Rmd"><code>vignettes/Parameter_estimation_simple_case.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/HEAD/vignettes/Parameter_estimation_simple_case.Rmd" class="external-link"><code>vignettes/Parameter_estimation_simple_case.Rmd</code></a></small>
       <div class="hidden name"><code>Parameter_estimation_simple_case.Rmd</code></div>
 
     </div>
 
     
     
-<div id="study-case" class="section level2">
-<h2 class="hasAnchor">
-<a href="#study-case" class="anchor"></a>Study Case</h2>
-<p>This document presents an example of a simple parameter estimation using the Stics model with a single situation, a single observed variable and 2 estimated parameters, just to illustrate how to use the package. A more complex example with simultaneous estimation of specific and varietal plant parameters from a multi-varietal dataset is presented in another <a href="https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html">vignette</a>. Parameter estimation on chained situations (e.g. rotations) is also possible with the Stics model (see <code>successive_usms</code> in argument <code>model_options</code> of <code>stics_wrapper</code>). A vignette will be provided in next versions.</p>
-<p>Data for the following example comes from a maize crop experiment (see description in Wallach et al., 2011).</p>
-<p>The parameter estimation is performed using the Nelder-Mead simplex method implemented in the nloptr package.</p>
+<div class="section level2">
+<h2 id="study-case">Study Case<a class="anchor" aria-label="anchor" href="#study-case"></a>
+</h2>
+<p>This document presents an example of a simple parameter estimation
+using the Stics model with a single situation, a single observed
+variable and 2 estimated parameters, just to illustrate how to use the
+package. A more complex example with simultaneous estimation of specific
+and varietal plant parameters from a multi-varietal dataset is presented
+in another <a href="https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html" class="external-link">vignette</a>.
+Parameter estimation on chained situations (e.g. rotations) is also
+possible with the Stics model (see <code>successive_usms</code> in
+argument <code>model_options</code> of <code>stics_wrapper</code>). A
+vignette will be provided in next versions.</p>
+<p>Data for the following example comes from a maize crop experiment
+(see description in Wallach et al., 2011).</p>
+<p>The parameter estimation is performed using the Nelder-Mead simplex
+method implemented in the nloptr package.</p>
 </div>
-<div id="initialisation-step" class="section level2">
-<h2 class="hasAnchor">
-<a href="#initialisation-step" class="anchor"></a>Initialisation step</h2>
+<div class="section level2">
+<h2 id="initialisation-step">Initialisation step<a class="anchor" aria-label="anchor" href="#initialisation-step"></a>
+</h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Install and load the needed libraries</span>
-<span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st">"SticsRPacks"</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
-  <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"SticsRPacks/SticsRPacks"</span><span class="op">)</span>
-  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st">"SticsRPacks"</span><span class="op">)</span>
-<span class="op">}</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Install and load the needed libraries</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st">"SticsRPacks"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"SticsRPacks/SticsRPacks"</span><span class="op">)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st">"SticsRPacks"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># DEFINE THE PATH TO YOUR LOCALLY INSTALLED VERSION OF JAVASTICS</span>
-<span class="va">javastics_path</span><span class="op">=</span><span class="va">path_to_JavaStics</span>
-
-<span class="co"># Download the example USMs and define the path to the JavaStics workspace (JavaStics XML input files):</span>
-<span class="va">data_dir</span><span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="fu">SticsRFiles</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/SticsRFiles/man/download_data.html">download_data</a></span><span class="op">(</span>example_dirs<span class="op">=</span><span class="st">"study_case_1"</span>, version_name <span class="op">=</span> <span class="st">"V9.0"</span><span class="op">)</span><span class="op">)</span>
-
-<span class="va">javastics_workspace_path</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">data_dir</span>,<span class="st">"XmlFiles"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># DEFINE THE PATH TO YOUR LOCALLY INSTALLED VERSION OF JAVASTICS</span></span>
+<span><span class="va">javastics_path</span> <span class="op">&lt;-</span> <span class="va">path_to_JavaStics</span></span>
+<span></span>
+<span><span class="co"># Download the example USMs and define the path to the JavaStics workspace</span></span>
+<span><span class="co"># (JavaStics XML input files):</span></span>
+<span><span class="va">data_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span></span>
+<span>  <span class="fu">SticsRFiles</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/SticsRFiles/man/download_data.html" class="external-link">download_data</a></span><span class="op">(</span></span>
+<span>    example_dirs <span class="op">=</span> <span class="st">"study_case_1"</span>,</span>
+<span>    stics_version <span class="op">=</span> <span class="st">"V9.0"</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">javastics_workspace_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">data_dir</span>, <span class="st">"XmlFiles"</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="generate-stics-input-files-from-javastics-input-files" class="section level2">
-<h2 class="hasAnchor">
-<a href="#generate-stics-input-files-from-javastics-input-files" class="anchor"></a>Generate Stics input files from JavaStics input files</h2>
-<p>The Stics wrapper function used in CroptimizR works on Stics input files (text formatted files new_travail.usm, climat.txt, …) stored per USMs in different directories (which names must be the USM names). <code>stics_inputs_path</code> is here the path of the directory that will contain these USMs folders.</p>
-<p>If you start from xml formatted input files (JavaStics format: usms.xml, sols.xml, …) the following lines allow generating txt files from xml files. In this example, xml files are stored in <code>javastics_workspace_path</code> and the Stics input files (test format) will be stored in <code>stics_inputs_path=file.path(data_dir,"TxtFiles")</code></p>
+<div class="section level2">
+<h2 id="generate-stics-input-files-from-javastics-input-files">Generate Stics input files from JavaStics input files<a class="anchor" aria-label="anchor" href="#generate-stics-input-files-from-javastics-input-files"></a>
+</h2>
+<p>The Stics wrapper function used in CroptimizR works on Stics input
+files (text formatted files new_travail.usm, climat.txt, …) stored per
+USMs in different directories (which names must be the USM names).
+<code>stics_inputs_path</code> is here the path of the directory that
+will contain these USMs folders.</p>
+<p>If you start from xml formatted input files (JavaStics format:
+usms.xml, sols.xml, …) the following lines allow generating txt files
+from xml files. In this example, xml files are stored in
+<code>javastics_workspace_path</code> and the Stics input files (test
+format) will be stored in
+<code>stics_inputs_path=file.path(data_dir,"TxtFiles")</code></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">stics_inputs_path</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">data_dir</span>,<span class="st">"TxtFiles"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span><span class="op">(</span><span class="va">stics_inputs_path</span><span class="op">)</span>
-
-<span class="fu">gen_usms_xml2txt</span><span class="op">(</span>javastics_path <span class="op">=</span> <span class="va">javastics_path</span>, workspace_path <span class="op">=</span> <span class="va">javastics_workspace_path</span>,
-  target_path <span class="op">=</span> <span class="va">stics_inputs_path</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">stics_inputs_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">data_dir</span>, <span class="st">"TxtFiles"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">stics_inputs_path</span>, showWarnings <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">gen_usms_xml2txt</span><span class="op">(</span></span>
+<span>  javastics <span class="op">=</span> <span class="va">javastics_path</span>,</span>
+<span>  workspace <span class="op">=</span> <span class="va">javastics_workspace_path</span>,</span>
+<span>  out_dir <span class="op">=</span> <span class="va">stics_inputs_path</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="run-the-model-before-optimization-for-a-prior-evaluation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#run-the-model-before-optimization-for-a-prior-evaluation" class="anchor"></a>Run the model before optimization for a prior evaluation</h2>
+<div class="section level2">
+<h2 id="run-the-model-before-optimization-for-a-prior-evaluation">Run the model before optimization for a prior evaluation<a class="anchor" aria-label="anchor" href="#run-the-model-before-optimization-for-a-prior-evaluation"></a>
+</h2>
 <p>Here model parameters values are read in the model input files.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Set the model options (see '? stics_wrapper_options' for details)</span>
-<span class="va">model_options</span><span class="op">=</span> <span class="fu">stics_wrapper_options</span><span class="op">(</span><span class="va">javastics_path</span>, data_dir <span class="op">=</span> <span class="va">stics_inputs_path</span>, parallel<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>
-
-<span class="co"># Run the model on all situations found in stics_inputs_path</span>
-<span class="va">sim_before_optim</span><span class="op">=</span><span class="fu">stics_wrapper</span><span class="op">(</span>model_options<span class="op">=</span><span class="va">model_options</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Set the model options (see '? stics_wrapper_options' for details)</span></span>
+<span><span class="va">model_options</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu">stics_wrapper_options</span><span class="op">(</span></span>
+<span>    javastics <span class="op">=</span> <span class="va">javastics_path</span>,</span>
+<span>    workspace <span class="op">=</span> <span class="va">stics_inputs_path</span>,</span>
+<span>    parallel <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Run the model on all situations found in stics_inputs_path</span></span>
+<span><span class="va">sim_before_optim</span> <span class="op">&lt;-</span> <span class="fu">stics_wrapper</span><span class="op">(</span>model_options <span class="op">=</span> <span class="va">model_options</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="read-and-select-the-observations-for-the-parameter-estimation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#read-and-select-the-observations-for-the-parameter-estimation" class="anchor"></a>Read and select the observations for the parameter estimation</h2>
-<p>For Stics, observation files must for the moment have exactly the same names as the corresponding USMs and be stored in a unique folder to be read by the get_obs function. This will be improved in next versions.</p>
-<p>In this example, we only keep observations for situation (i.e. USM for Stics) <code>sit_name</code> and variable <code>var_name</code>.</p>
-<p><strong><code>obs_list</code> defines the list of situations, variables and dates that will be used to estimate the parameters. Use the function <code>filter_obs</code> (see <code><a href="../reference/filter_obs.html">? filter_obs</a></code>) for removing situations, variables and/or dates from an observation list.</strong></p>
-<p>In variables and parameters names, “(*)” must be replaced by "_*" to be handled by R (e.g. lai(n) is denoted here lai_n).</p>
+<div class="section level2">
+<h2 id="read-and-select-the-observations-for-the-parameter-estimation">Read and select the observations for the parameter estimation<a class="anchor" aria-label="anchor" href="#read-and-select-the-observations-for-the-parameter-estimation"></a>
+</h2>
+<p>For Stics, observation files must for the moment have exactly the
+same names as the corresponding USMs and be stored in a unique folder to
+be read by the get_obs function. This will be improved in next
+versions.</p>
+<p>In this example, we only keep observations for situation (i.e. USM
+for Stics) <code>sit_name</code> and variable <code>var_name</code>.</p>
+<p><strong><code>obs_list</code> defines the list of situations,
+variables and dates that will be used to estimate the parameters. Use
+the function <code>filter_obs</code> (see <code><a href="../reference/filter_obs.html">? filter_obs</a></code>) for
+removing situations, variables and/or dates from an observation
+list.</strong></p>
+<p>In variables and parameters names, “(*)” must be replaced by “_*” to
+be handled by R (e.g. lai(n) is denoted here lai_n).</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sit_name</span><span class="op">=</span><span class="st">"bo96iN+"</span>  <span class="co"># can be a vector of situation names if you want to consider several, e.g. c("bo96iN+","bou00t1")</span>
-<span class="va">var_name</span><span class="op">=</span><span class="st">"lai_n"</span>    <span class="co"># can be a vector of variable names if you want to consider several, e.g. c("lai_n","masec_n")</span>
-<span class="va">obs_list</span><span class="op">=</span> <span class="fu">get_obs</span><span class="op">(</span><span class="va">javastics_workspace_path</span>, usm_name <span class="op">=</span> <span class="va">sit_name</span><span class="op">)</span>
-<span class="va">obs_list</span><span class="op">=</span> <span class="fu"><a href="../reference/filter_obs.html">filter_obs</a></span><span class="op">(</span><span class="va">obs_list</span>, var_names<span class="op">=</span> <span class="va">var_name</span>, include<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">sit_name</span> <span class="op">&lt;-</span> <span class="st">"bo96iN+"</span>  <span class="co"># can be a vector of situation names if you want to</span></span>
+<span>                       <span class="co"># consider several, e.g. c("bo96iN+","bou00t1")</span></span>
+<span><span class="va">var_name</span> <span class="op">&lt;-</span> <span class="st">"lai_n"</span>    <span class="co"># can be a vector of variable names if you want to</span></span>
+<span>                       <span class="co"># consider several, e.g. c("lai_n","masec_n")</span></span>
+<span><span class="va">obs_list</span> <span class="op">&lt;-</span> <span class="fu">get_obs</span><span class="op">(</span><span class="va">javastics_workspace_path</span>, usm <span class="op">=</span> <span class="va">sit_name</span><span class="op">)</span></span>
+<span><span class="va">obs_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_obs.html">filter_obs</a></span><span class="op">(</span><span class="va">obs_list</span>, var <span class="op">=</span> <span class="va">var_name</span>, include <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="set-information-on-the-parameters-to-estimate" class="section level2">
-<h2 class="hasAnchor">
-<a href="#set-information-on-the-parameters-to-estimate" class="anchor"></a>Set information on the parameters to estimate</h2>
-<p><strong><code>param_info</code> must contain information about the parameters that will be estimated in the parameter estimation process from the situations, variables and dates defined in <code>obs_list</code></strong>.</p>
-<p>It must include the definition of their upper and lower bounds (-Inf and Inf can be used). This will determine the list of estimated parameters.</p>
-<p>All the numerical parameters which values can be provided to the model through its R wrapper can be estimated using the provided parameter estimation methods (although it may not work well for integer parameters).</p>
-<p>Initial values for the minimization can also be provided in <code>param_info</code> (see <code><a href="../reference/estim_param.html">? estim_param</a></code>).</p>
+<div class="section level2">
+<h2 id="set-information-on-the-parameters-to-estimate">Set information on the parameters to estimate<a class="anchor" aria-label="anchor" href="#set-information-on-the-parameters-to-estimate"></a>
+</h2>
+<p><strong><code>param_info</code> must contain information about the
+parameters that will be estimated in the parameter estimation process
+from the situations, variables and dates defined in
+<code>obs_list</code></strong>.</p>
+<p>It must include the definition of their upper and lower bounds (-Inf
+and Inf can be used). This will determine the list of estimated
+parameters.</p>
+<p>All the numerical parameters which values can be provided to the
+model through its R wrapper can be estimated using the provided
+parameter estimation methods (although it may not work well for integer
+parameters).</p>
+<p>Initial values for the minimization can also be provided in
+<code>param_info</code> (see <code><a href="../reference/estim_param.html">? estim_param</a></code>).</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># 2 parameters here: dlaimax and durvieF, of bounds [0.0005,0.0025] and [50,400].</span>
-<span class="va">param_info</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>lb<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>dlaimax<span class="op">=</span><span class="fl">0.0005</span>, durvieF<span class="op">=</span><span class="fl">50</span><span class="op">)</span>,
-                       ub<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>dlaimax<span class="op">=</span><span class="fl">0.0025</span>, durvieF<span class="op">=</span><span class="fl">400</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># 2 parameters here: dlaimax and durvieF, of bounds [0.0005,0.0025] and [50,400]</span></span>
+<span><span class="va">param_info</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  lb <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>dlaimax <span class="op">=</span> <span class="fl">0.0005</span>, durvieF <span class="op">=</span> <span class="fl">50</span><span class="op">)</span>,</span>
+<span>  ub <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>dlaimax <span class="op">=</span> <span class="fl">0.0025</span>, durvieF <span class="op">=</span> <span class="fl">400</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="set-options-for-the-parameter-estimation-method" class="section level2">
-<h2 class="hasAnchor">
-<a href="#set-options-for-the-parameter-estimation-method" class="anchor"></a>Set options for the parameter estimation method</h2>
-<p><code>optim_options</code> must contain the options of the parameter estimation method. Here we defined a few important options for the simplex method of the nloptr package (default method in estim_param). To see the full set of options available for the simplex method, type <code>? nl.opts</code></p>
-<p>The number of repetitions is advised to be set to at least 5, while 10 is a reasonable maximum value. <code>maxeval</code> should be used to stop the minimization only if results have to be produced within a given duration, otherwise set it to a high value so that the minimization stops when the criterion based on <code>xtol_rel</code> is satisfied.</p>
+<div class="section level2">
+<h2 id="set-options-for-the-parameter-estimation-method">Set options for the parameter estimation method<a class="anchor" aria-label="anchor" href="#set-options-for-the-parameter-estimation-method"></a>
+</h2>
+<p><code>optim_options</code> must contain the options of the parameter
+estimation method. Here we defined a few important options for the
+simplex method of the nloptr package (default method in estim_param). To
+see the full set of options available for the simplex method, type
+<code>? nl.opts</code></p>
+<p>The number of repetitions is advised to be set to at least 5, while
+10 is a reasonable maximum value. <code>maxeval</code> should be used to
+stop the minimization only if results have to be produced within a given
+duration, otherwise set it to a high value so that the minimization
+stops when the criterion based on <code>xtol_rel</code> is
+satisfied.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">optim_options</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span>
-<span class="va">optim_options</span><span class="op">$</span><span class="va">nb_rep</span> <span class="op">&lt;-</span> <span class="fl">7</span> <span class="co"># Number of repetitions of the minimization</span>
-                          <span class="co"># (each time starting with different initial</span>
-                          <span class="co"># values for the estimated parameters)</span>
-<span class="va">optim_options</span><span class="op">$</span><span class="va">maxeval</span> <span class="op">&lt;-</span> <span class="fl">500</span> <span class="co"># Maximum number of evaluations of the</span>
-                             <span class="co"># minimized criteria</span>
-<span class="va">optim_options</span><span class="op">$</span><span class="va">xtol_rel</span> <span class="op">&lt;-</span> <span class="fl">1e-03</span> <span class="co"># Tolerance criterion between two iterations</span>
-                                <span class="co"># (threshold for the relative difference of</span>
-                                <span class="co"># parameter values between the 2 previous</span>
-                                <span class="co"># iterations)</span>
-<span class="va">optim_options</span><span class="op">$</span><span class="va">path_results</span> <span class="op">&lt;-</span> <span class="va">data_dir</span> <span class="co"># path where to store the results (graph and Rdata)</span>
-<span class="va">optim_options</span><span class="op">$</span><span class="va">ranseed</span> <span class="op">&lt;-</span> <span class="fl">1234</span> <span class="co"># set random seed so that each execution give the same results</span>
-                              <span class="co"># If you want randomization, don't set it.</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">optim_options</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">optim_options</span><span class="op">$</span><span class="va">nb_rep</span> <span class="op">&lt;-</span> <span class="fl">7</span> <span class="co"># Number of repetitions of the minimization</span></span>
+<span>                          <span class="co"># (each time starting with different initial</span></span>
+<span>                          <span class="co"># values for the estimated parameters)</span></span>
+<span><span class="va">optim_options</span><span class="op">$</span><span class="va">maxeval</span> <span class="op">&lt;-</span> <span class="fl">500</span> <span class="co"># Maximum number of evaluations of the</span></span>
+<span>                             <span class="co"># minimized criteria</span></span>
+<span><span class="va">optim_options</span><span class="op">$</span><span class="va">xtol_rel</span> <span class="op">&lt;-</span> <span class="fl">1e-03</span> <span class="co"># Tolerance criterion between two iterations</span></span>
+<span>                                <span class="co"># (threshold for the relative difference of</span></span>
+<span>                                <span class="co"># parameter values between the 2 previous</span></span>
+<span>                                <span class="co"># iterations)</span></span>
+<span><span class="va">optim_options</span><span class="op">$</span><span class="va">out_dir</span> <span class="op">&lt;-</span> <span class="va">data_dir</span> <span class="co"># path where to store the results</span></span>
+<span>                                  <span class="co"># (graph and Rdata)</span></span>
+<span><span class="va">optim_options</span><span class="op">$</span><span class="va">ranseed</span> <span class="op">&lt;-</span> <span class="fl">1234</span> <span class="co"># set random seed so that each execution give the</span></span>
+<span>                              <span class="co"># same results</span></span>
+<span>                              <span class="co"># If you want randomization, don't set it.</span></span></code></pre></div>
 </div>
-<div id="run-the-optimization" class="section level2">
-<h2 class="hasAnchor">
-<a href="#run-the-optimization" class="anchor"></a>Run the optimization</h2>
-<p>The Nelder-Mead simplex is the default method =&gt; no need to set the optim_method argument if you want to use it. The list of available methods is detailed <a href="https://sticsrpacks.github.io/CroptimizR/articles/Available_parameter_estimation_algorithms.html">here</a>. Same for crit_function: a value is set by default (<code>crit_log_cwss</code>, see <code><a href="../reference/ls_criteria.html">? crit_log_cwss</a></code> or <a href="https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html">here</a> for more details and list of available criteria). Others will be proposed in next versions of CroptimizR. The user can implement and give in argument its own criterion (see inputs and outputs required in the <code>crit_log_cwss</code> function).</p>
+<div class="section level2">
+<h2 id="run-the-optimization">Run the optimization<a class="anchor" aria-label="anchor" href="#run-the-optimization"></a>
+</h2>
+<p>The Nelder-Mead simplex is the default method =&gt; no need to set
+the optim_method argument if you want to use it. The list of available
+methods is detailed <a href="https://sticsrpacks.github.io/CroptimizR/articles/Available_parameter_estimation_algorithms.html" class="external-link">here</a>.
+Same for crit_function: a value is set by default
+(<code>crit_log_cwss</code>, see <code><a href="../reference/ls_criteria.html">? crit_log_cwss</a></code> or <a href="https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html" class="external-link">here</a>
+for more details and list of available criteria). Others will be
+proposed in next versions of CroptimizR. The user can implement and give
+in argument its own criterion (see inputs and outputs required in the
+<code>crit_log_cwss</code> function).</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">res</span><span class="op">=</span><span class="fu"><a href="../reference/estim_param.html">estim_param</a></span><span class="op">(</span>obs_list<span class="op">=</span><span class="va">obs_list</span>,
-                            model_function<span class="op">=</span><span class="va">stics_wrapper</span>,
-                            model_options<span class="op">=</span><span class="va">model_options</span>,
-                            optim_options<span class="op">=</span><span class="va">optim_options</span>,
-                            param_info<span class="op">=</span><span class="va">param_info</span><span class="op">)</span></code></pre></div>
-<p>The <code>estim_param</code> function returns a list which is also stored in the optim_results.Rdata file of the <code>optim_options$path_results</code> folder. This list contains different information depending on the method used.</p>
-<p>For the Nelder-Mead simplex method it includes among others:</p>
+<code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estim_param.html">estim_param</a></span><span class="op">(</span></span>
+<span>  obs_list <span class="op">=</span> <span class="va">obs_list</span>,</span>
+<span>  model_function <span class="op">=</span> <span class="va">stics_wrapper</span>,</span>
+<span>  model_options <span class="op">=</span> <span class="va">model_options</span>,</span>
+<span>  optim_options <span class="op">=</span> <span class="va">optim_options</span>,</span>
+<span>  param_info <span class="op">=</span> <span class="va">param_info</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>The <code>estim_param</code> function returns a list which is also
+stored in the optim_results.Rdata file of the
+<code>optim_options$out_dir</code> folder.</p>
+<p>This list contains different information depending on the method
+used. For the Nelder-Mead simplex method it includes among others:</p>
 <ul>
 <li>the final values estimated for the parameters</li>
 </ul>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">res</span><span class="op">$</span><span class="va">final_values</span></code></pre></div>
-<pre><code>##      dlaimax      durvieF 
-##  0.001614435 50.000000000</code></pre>
+<code class="sourceCode R"><span><span class="va">res</span><span class="op">$</span><span class="va">final_values</span></span></code></pre></div>
+<pre><code><span><span class="co">##      dlaimax      durvieF </span></span>
+<span><span class="co">##  0.001614435 50.000000000</span></span></code></pre>
 <ul>
-<li>the initial and final values of the estimated parameters for each repetition of the minimization:</li>
+<li>the initial and final values of the estimated parameters for each
+repetition of the minimization:</li>
 </ul>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">res</span><span class="op">$</span><span class="va">init_values</span></code></pre></div>
-<pre><code>##        dlaimax   durvieF
-## 1 0.0010614022 101.05543
-## 2 0.0016225903 228.02236
-## 3 0.0019301103 343.82293
-## 4 0.0011393688 365.02290
-## 5 0.0007499945 278.11596
-## 6 0.0023386301 156.76596
-## 7 0.0018972162  95.83214</code></pre>
+<code class="sourceCode R"><span><span class="va">res</span><span class="op">$</span><span class="va">init_values</span></span></code></pre></div>
+<pre><code><span><span class="co">##        dlaimax   durvieF</span></span>
+<span><span class="co">## 1 0.0010614022 101.05543</span></span>
+<span><span class="co">## 2 0.0016225903 228.02236</span></span>
+<span><span class="co">## 3 0.0019301103 343.82293</span></span>
+<span><span class="co">## 4 0.0011393688 365.02290</span></span>
+<span><span class="co">## 5 0.0007499945 278.11596</span></span>
+<span><span class="co">## 6 0.0023386301 156.76596</span></span>
+<span><span class="co">## 7 0.0018972162  95.83214</span></span></code></pre>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">res</span><span class="op">$</span><span class="va">est_values</span></code></pre></div>
-<pre><code>##          dlaimax  durvieF
-## [1,] 0.001604844 130.9555
-## [2,] 0.001223672 382.3685
-## [3,] 0.001224056 399.1707
-## [4,] 0.001223849 362.6018
-## [5,] 0.001223128 391.8069
-## [6,] 0.001614435  50.0000
-## [7,] 0.001223580 338.6791</code></pre>
+<code class="sourceCode R"><span><span class="va">res</span><span class="op">$</span><span class="va">est_values</span></span></code></pre></div>
+<pre><code><span><span class="co">##          dlaimax  durvieF</span></span>
+<span><span class="co">## [1,] 0.001604844 130.9555</span></span>
+<span><span class="co">## [2,] 0.001223672 382.3685</span></span>
+<span><span class="co">## [3,] 0.001224056 399.1707</span></span>
+<span><span class="co">## [4,] 0.001223849 362.6018</span></span>
+<span><span class="co">## [5,] 0.001223128 391.8069</span></span>
+<span><span class="co">## [6,] 0.001614435  50.0000</span></span>
+<span><span class="co">## [7,] 0.001223580 338.6791</span></span></code></pre>
 <ul>
-<li>the minimum value of the criterion among all repetitions and for all repetitions:</li>
+<li>the minimum value of the criterion among all repetitions and for all
+repetitions:</li>
 </ul>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">res</span><span class="op">$</span><span class="va">min_crit_value</span></code></pre></div>
-<pre><code>## [1] 4.915215</code></pre>
+<code class="sourceCode R"><span><span class="va">res</span><span class="op">$</span><span class="va">min_crit_value</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] 4.915215</span></span></code></pre>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">res</span><span class="op">$</span><span class="va">crit_values</span></code></pre></div>
-<pre><code>## [1] 5.146571 5.096751 5.096751 5.096751 5.096783 4.915215 5.096751</code></pre>
+<code class="sourceCode R"><span><span class="va">res</span><span class="op">$</span><span class="va">crit_values</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] 5.146571 5.096751 5.096751 5.096751 5.096783 4.915215 5.096751</span></span></code></pre>
 <ul>
-<li>the <code>nlo</code> variable, a list returned by the nloptr function that contains detailed information on the results of the minimization for each repetition.</li>
+<li><p>the plots automatically generated (see their description
+here-after) in ggplot format (=&gt; can be modified using standard
+ggplot commands)</p></li>
+<li><p>elapsed time measurements (total time, total time of model
+simulations, average time of model simulations)</p></li>
+<li><p>the list of values of the parameters and of the criterion for
+each evaluation during the minimization (<code>params_and_crit</code>),
+if <code>info_level&gt;=1</code></p></li>
+<li><p>the <code>nlo</code> variable, a list returned by the nloptr
+function that contains detailed information on the results of the
+minimization for each repetition.</p></li>
 </ul>
-<p><code>nlo</code> is a list of size the number of repetitions. Each element stores many information about the corresponding minimization, including the number of iterations performed (field <code>iterations</code>) and a message indicating why the minimization stopped (field <code>message</code>).</p>
-<p>Let’s print it for the repetition that leads to the minimum value of the criterion over all repetitions:</p>
+<p><code>nlo</code> is a list of size the number of repetitions. Each
+element stores many information about the corresponding minimization,
+including the number of iterations performed (field
+<code>iterations</code>) and a message indicating why the minimization
+stopped (field <code>message</code>).</p>
+<p>Let’s print it for the repetition that leads to the minimum value of
+the criterion over all repetitions:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">res</span><span class="op">$</span><span class="va">nlo</span><span class="op">[[</span><span class="va">res</span><span class="op">$</span><span class="va">ind_min_crit</span><span class="op">]</span><span class="op">]</span></code></pre></div>
-<pre><code>## 
-## Call:
-## nloptr::nloptr(x0 = as.numeric(init_values[irep, ]), eval_f = main_crit, 
-##     lb = bounds$lb, ub = bounds$ub, opts = list(algorithm = "NLOPT_LN_NELDERMEAD", 
-##         xtol_rel = xtol_rel, maxeval = maxeval, ranseed = ranseed), 
-##     crit_options = crit_options)
-## 
-## 
-## Minimization using NLopt version 2.4.2 
-## 
-## NLopt solver status: 4 ( NLOPT_XTOL_REACHED: Optimization stopped because 
-## xtol_rel or xtol_abs (above) was reached. )
-## 
-## Number of Iterations....: 55 
-## Termination conditions:  xtol_rel: 0.001 maxeval: 500 
-## Number of inequality constraints:  0 
-## Number of equality constraints:    0 
-## Optimal value of objective function:  4.91521542817615 
-## Optimal value of controls: 0.001614435 50</code></pre>
-<p>Complementary graphs and data are stored in the <code>optim_options$path_results</code> folder. Among them, the EstimatedVSinit.pdf file containing the following figures:</p>
+<code class="sourceCode R"><span><span class="va">res</span><span class="op">$</span><span class="va">nlo</span><span class="op">[[</span><span class="va">res</span><span class="op">$</span><span class="va">ind_min_crit</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## Call:</span></span>
+<span><span class="co">## nloptr::nloptr(x0 = as.numeric(init_values[irep, ]), eval_f = main_crit, </span></span>
+<span><span class="co">##     lb = bounds$lb, ub = bounds$ub, opts = list(algorithm = "NLOPT_LN_NELDERMEAD", </span></span>
+<span><span class="co">##         xtol_rel = xtol_rel, maxeval = maxeval, ranseed = ranseed), </span></span>
+<span><span class="co">##     crit_options = crit_options)</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Minimization using NLopt version 2.4.2 </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## NLopt solver status: 4 ( NLOPT_XTOL_REACHED: Optimization stopped because </span></span>
+<span><span class="co">## xtol_rel or xtol_abs (above) was reached. )</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Number of Iterations....: 55 </span></span>
+<span><span class="co">## Termination conditions:  xtol_rel: 0.001 maxeval: 500 </span></span>
+<span><span class="co">## Number of inequality constraints:  0 </span></span>
+<span><span class="co">## Number of equality constraints:    0 </span></span>
+<span><span class="co">## Optimal value of objective function:  4.91521542817615 </span></span>
+<span><span class="co">## Optimal value of controls: 0.001614435 50</span></span></code></pre>
+<p>This data is also stored in the <code>optim_options$out_dir</code>
+folder (file optim_results.Rdata) along with a set of pdf files:</p>
+<ul>
+<li>the EstimatedVSinit.pdf file contains the following figures:</li>
+</ul>
 <p><img src="ResultsSimpleCase/estimInit_dlaimax.PNG" width="45%"><img src="ResultsSimpleCase/estimInit_durvieF.PNG" width="45%"></p>
-<p>Figure 1: plots of estimated vs initial values of parameters dlaimax and durvieF. Numbers represent the repetition number of the minimization and the size of the bubbles the final value of the minimized criterion. The number in white, 6 in this case, is the minimization that leads to the minimal value of the criterion among all repetitions. In this case, the minimizations converge towards different values for the parameters, which indicates the presence of local minima. Values of durvieF are close to the bounds. In realistic calibration cases with many observed situations / variables / dates this may indicate the presence of biases in the observation values or in the model output values simulated (this simple case with only one situation does not allow to derive such conclusion).</p>
-<p>Additional plots for inspecting the variations of parameters and criterion values over the iterations or evaluations can be obtained using the <code>plot_valuesVSit</code> and <code>plot_valuesVSit_2D</code> functions.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plot_valuesVSit.html">plot_valuesVSit</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">params_and_crit</span>, <span class="va">param_info</span><span class="op">)</span></code></pre></div>
+<p>Figure 1: plots of estimated vs initial values of parameters dlaimax
+and durvieF. Numbers represent the repetition number of the minimization
+and the size of the bubbles the final value of the minimized criterion.
+The number in white, 6 in this case, is the minimization that leads to
+the minimal value of the criterion among all repetitions. In this case,
+the minimizations converge towards different values for the parameters,
+which indicates the presence of local minima. Values of durvieF are
+close to the bounds. In realistic calibration cases with many observed
+situations / variables / dates this may indicate the presence of biases
+in the observation values or in the model output values simulated (this
+simple case with only one situation does not allow to derive such
+conclusion).</p>
+<ul>
+<li>the ValuesVSit.pdf file contains:</li>
+</ul>
 <p><img src="ResultsSimpleCase/critVSit.PNG" width="45%"><img src="ResultsSimpleCase/dlaimaxVSit.PNG" width="45%"><img src="ResultsSimpleCase/durvieFVSit.PNG" width="45%"></p>
-<p>Figure 2: The top left figure displays the evolution of the minimized criterion value in function of the iterations of the minimization. Colors and labels represent the repetition number. The top right figure displays the evolution of the value of the dlaimax parameter in function of the iterations of the minimization. Labels represent the repetition number and colors the value of the minimized criterion. The figure at the bottom is the same but for the durvieF parameter.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plot_valuesVSit_2D.html">plot_valuesVSit_2D</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">params_and_crit</span>, <span class="va">param_info</span>, iter_or_eval<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"eval"</span><span class="op">)</span>, lines<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+<p>Figure 2: The top left figure displays the evolution of the minimized
+criterion value in function of the iterations of the minimization.
+Colors and labels represent the repetition number. The top right figure
+displays the evolution of the value of the dlaimax parameter in function
+of the iterations of the minimization. Labels represent the repetition
+number and colors the value of the minimized criterion. The figure at
+the bottom is the same but for the durvieF parameter.</p>
+<ul>
+<li>the ValuesVSit_2D.pdf file contains:</li>
+</ul>
 <div class="figure">
 <img src="ResultsSimpleCase/dlaimaxVSdurvieF.PNG" alt="Figure 3: This figure displays all the values proposed by the minimizer for the durvieF (Y axis) and dlaimax (X-axis) parameters and the associated values of the minimized criterion (dot colors)." width="60%"><p class="caption">
-Figure 3: This figure displays all the values proposed by the minimizer for the durvieF (Y axis) and dlaimax (X-axis) parameters and the associated values of the minimized criterion (dot colors).
+Figure 3: This figure displays all the values proposed by the minimizer
+for the durvieF (Y axis) and dlaimax (X-axis) parameters and the
+associated values of the minimized criterion (dot colors).
 </p>
 </div>
 </div>
-<div id="run-the-model-after-optimization" class="section level2">
-<h2 class="hasAnchor">
-<a href="#run-the-model-after-optimization" class="anchor"></a>Run the model after optimization</h2>
-<p>We run here the Stics model using the estimated values of the parameters. In this case, the <code>param_values</code> argument of the stics_wrapper function is thus set so that estimated values of the parameters overwrite the values defined in the model input files.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sim_after_optim</span><span class="op">=</span><span class="fu">stics_wrapper</span><span class="op">(</span>param_values<span class="op">=</span><span class="va">res</span><span class="op">$</span><span class="va">final_values</span>,
-                              model_options<span class="op">=</span><span class="va">model_options</span><span class="op">)</span></code></pre></div>
+<div class="section level2">
+<h2 id="run-the-model-after-optimization">Run the model after optimization<a class="anchor" aria-label="anchor" href="#run-the-model-after-optimization"></a>
+</h2>
+<p>We run here the Stics model using the estimated values of the
+parameters. In this case, the <code>param_values</code> argument of the
+stics_wrapper function is thus set so that estimated values of the
+parameters overwrite the values defined in the model input files.</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">sim_after_optim</span> <span class="op">&lt;-</span> <span class="fu">stics_wrapper</span><span class="op">(</span></span>
+<span>  param_values <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">final_values</span>,</span>
+<span>  model_options <span class="op">=</span> <span class="va">model_options</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="plot-the-results" class="section level2">
-<h2 class="hasAnchor">
-<a href="#plot-the-results" class="anchor"></a>Plot the results</h2>
-<p>Here we use the <a href="https://github.com/SticsRPacks/CroPlotR">CroPlotR</a> package for comparing simulations and observations. As CroptimizR, CroPlotR can be used with any crop model.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">sim_before_optim</span><span class="op">$</span><span class="va">sim_list</span>, obs<span class="op">=</span><span class="va">obs_list</span>, select_dyn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"common"</span><span class="op">)</span><span class="op">)</span>
-<span class="va">p1</span> <span class="op">&lt;-</span> <span class="va">p</span><span class="op">[[</span><span class="va">sit_name</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"Before Optimization"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">9</span>, hjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span>
-  
-<span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">sim_after_optim</span><span class="op">$</span><span class="va">sim_list</span>, obs<span class="op">=</span><span class="va">obs_list</span>, select_dyn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"common"</span><span class="op">)</span><span class="op">)</span>
-<span class="va">p2</span> <span class="op">&lt;-</span> <span class="va">p</span><span class="op">[[</span><span class="va">sit_name</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"After Optimization"</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">ylim</a></span><span class="op">(</span><span class="cn">NA</span>,<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot_build.html">ggplot_build</a></span><span class="op">(</span><span class="va">p1</span><span class="op">)</span><span class="op">$</span><span class="va">layout</span><span class="op">$</span><span class="va">panel_params</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">y.range</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">9</span>, hjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span>
-
-<span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html">grid.arrange</a></span><span class="op">(</span>grobs<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">p1</span>,<span class="va">p2</span><span class="op">)</span>, nrow<span class="op">=</span><span class="fl">1</span>, ncol<span class="op">=</span><span class="fl">2</span>, widths<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span><span class="op">)</span>
-<span class="co"># Save the graph</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">optim_options</span><span class="op">$</span><span class="va">path_results</span>,
-                 <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"sim_obs_plots"</span>,<span class="st">".png"</span><span class="op">)</span><span class="op">)</span>, plot<span class="op">=</span><span class="va">p</span><span class="op">)</span></code></pre></div>
+<div class="section level2">
+<h2 id="plot-the-results">Plot the results<a class="anchor" aria-label="anchor" href="#plot-the-results"></a>
+</h2>
+<p>Here we use the <a href="https://github.com/SticsRPacks/CroPlotR" class="external-link">CroPlotR</a> package for
+comparing simulations and observations. As CroptimizR, CroPlotR can be
+used with any crop model.</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
+<span>  <span class="va">sim_before_optim</span><span class="op">$</span><span class="va">sim_list</span>,</span>
+<span>  obs <span class="op">=</span> <span class="va">obs_list</span>,</span>
+<span>  select_dyn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"common"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p1</span> <span class="op">&lt;-</span></span>
+<span>  <span class="va">p</span><span class="op">[[</span><span class="va">sit_name</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Before Optimization"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">9</span>, hjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
+<span>    <span class="va">sim_after_optim</span><span class="op">$</span><span class="va">sim_list</span>,</span>
+<span>    obs <span class="op">=</span> <span class="va">obs_list</span>,</span>
+<span>    select_dyn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"common"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="va">p</span><span class="op">[[</span><span class="va">sit_name</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"After Optimization"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">ylim</a></span><span class="op">(</span></span>
+<span>    <span class="cn">NA</span>,</span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot_build.html" class="external-link">ggplot_build</a></span><span class="op">(</span><span class="va">p1</span><span class="op">)</span><span class="op">$</span><span class="va">layout</span><span class="op">$</span><span class="va">panel_params</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">y.range</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">9</span>, hjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html" class="external-link">grid.arrange</a></span><span class="op">(</span></span>
+<span>  grobs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">p1</span>, <span class="va">p2</span><span class="op">)</span>,</span>
+<span>  nrow <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  ncol <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co"># Save the graph</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span></span>
+<span>    <span class="va">optim_options</span><span class="op">$</span><span class="va">out_dir</span>,</span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"sim_obs_plots"</span>, <span class="st">".png"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  plot <span class="op">=</span> <span class="va">p</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>This gives:</p>
 <div class="figure">
 <img src="ResultsSimpleCase/sim_obs_plots.png" alt="Figure 4: plots of simulated and observed target variable before and after optimization. The gap between simulated and observed values has been drastically reduced: the minimizer has done its job!" width="60%"><p class="caption">
-Figure 4: plots of simulated and observed target variable before and after optimization. The gap between simulated and observed values has been drastically reduced: the minimizer has done its job!
+Figure 4: plots of simulated and observed target variable before and
+after optimization. The gap between simulated and observed values has
+been drastically reduced: the minimizer has done its job!
 </p>
 </div>
 </div>
@@ -348,11 +510,13 @@ Figure 4: plots of simulated and observed target variable before and after optim
 
 
       <footer><div class="copyright">
-  <p>Developed by Samuel Buis, Michel Giner, Patrice Lecharpentier, SticsRpacks.</p>
+  <p></p>
+<p>Developed by Samuel Buis, Patrice Lecharpentier, Remi Vezy, Michel Giner.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>
@@ -360,6 +524,8 @@ Figure 4: plots of simulated and observed target variable before and after optim
 
   
 
+
+  
 
   </body>
 </html>
