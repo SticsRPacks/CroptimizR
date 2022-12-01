@@ -68,7 +68,7 @@ Here's a header for a basic version of a model wrapper:
 #'     o `error`: an error code indicating if at least one simulation ended
 #'     with an error.
 
-model_wrapper <- function(param_values=NULL, situation, model_options, ...) {
+model_wrapper <- function(param_values = NULL, situation, model_options, ...) {
 
 }
 
@@ -155,9 +155,9 @@ A typical pseudo-code implementation of a basic wrapper function is thus:
 
 ```{r eval=FALSE}
 
-model_wrapper <- function(param_values=NULL, situation, model_options, ...) {
+model_wrapper <- function(param_values = NULL, situation, model_options, ...) {
   # Initializations
-  param_names <- names(param_values)
+  # param_names <- names(param_values)
   results <- list(sim_list = setNames(vector("list", length(situation)),
                                       nm = situation),
                   error = FALSE)
@@ -385,7 +385,7 @@ lai_toymodel <- function(year, max_lai = 8, julday_incslope = 100,
 }
 
 
-laitm_simple_wrapper <- function(param_values=NULL, situation,
+laitm_simple_wrapper <- function(param_values = NULL, situation,
                                  model_options, ...) {
 
   # A basic wrapper for lai_toymodel
@@ -541,7 +541,7 @@ plot(tmp$sim_list, obs = obs_synth, type = "scatter")
 This one can be used to perform simultaneous estimation of specific and varietal parameters on a dataset including several cultivars.
 
 ```{r, eval=TRUE}
-laitm_simple_wrapper_v2 <- function(param_values=NULL, situation,
+laitm_simple_wrapper_v2 <- function(param_values = NULL, situation,
                                     model_options, ...) {
 
   # A basic wrapper for lai_toymodel
