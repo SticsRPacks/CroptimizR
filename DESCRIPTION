@@ -20,7 +20,7 @@ Authors@R: c(
   )
 Description: The purpose of CroptimizR is to provide functions for
     estimating crop model parameters from observations of their simulated
-    variables, a process often referred to as calibration. For that, it
+    variables. This process is often referred to as calibration. For that, it
     offers a generic framework for linking crop models with up-to-date and
     ad-hoc algorithms, as well as a choice of goodness-of-fit criteria and
     additional features adapted to the problem of crop model calibration.
