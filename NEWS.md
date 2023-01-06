@@ -1,3 +1,9 @@
+# CroptimizR 0.5.1 (2023-01-06)
+
+* Fixed cff file generation using github action. Now generated on each commit that modifies the Description file + on release.
+
+* Minor changes to clean the code following CRAN checks procedure application.
+
 # CroptimizR 0.5.0 (2022-11-09)
 
 ## Main changes
