@@ -115,7 +115,7 @@ Buis</h4>
 EMMAH<br><h4 data-toc-skip class="author">Patrice
 Lecharpentier</h4>
             <address class="author_afil">
-      INRAE - Agroclim<br><h4 data-toc-skip class="date">2022-11-09</h4>
+      INRAE - Agroclim<br><h4 data-toc-skip class="date">2023-01-06</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/HEAD/vignettes/Designing_a_model_wrapper.Rmd" class="external-link"><code>vignettes/Designing_a_model_wrapper.Rmd</code></a></small>
       <div class="hidden name"><code>Designing_a_model_wrapper.Rmd</code></div>
@@ -184,7 +184,7 @@ Additional functionnalities are needed for that, as detailed in section
 <span><span class="co">#'     o `error`: an error code indicating if at least one simulation ended</span></span>
 <span><span class="co">#'     with an error.</span></span>
 <span></span>
-<span><span class="va">model_wrapper</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">param_values</span><span class="op">=</span><span class="cn">NULL</span>, <span class="va">situation</span>, <span class="va">model_options</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="va">model_wrapper</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">param_values</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">situation</span>, <span class="va">model_options</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
 <span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p><strong>Each argument detailed here must be defined for any
@@ -293,9 +293,9 @@ set the variable <code>results$error</code> to <code>TRUE</code> (and to
 <p>A typical pseudo-code implementation of a basic wrapper function is
 thus:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">model_wrapper</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">param_values</span><span class="op">=</span><span class="cn">NULL</span>, <span class="va">situation</span>, <span class="va">model_options</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<code class="sourceCode R"><span><span class="va">model_wrapper</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">param_values</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">situation</span>, <span class="va">model_options</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="co"># Initializations</span></span>
-<span>  <span class="va">param_names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">param_values</span><span class="op">)</span></span>
+<span>  <span class="co"># param_names &lt;- names(param_values)</span></span>
 <span>  <span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>sim_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">vector</a></span><span class="op">(</span><span class="st">"list"</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">situation</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>                                      nm <span class="op">=</span> <span class="va">situation</span><span class="op">)</span>,</span>
 <span>                  error <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -596,7 +596,7 @@ since it is more detailed.</p>
 <span><span class="op">}</span></span>
 <span></span>
 <span></span>
-<span><span class="va">laitm_simple_wrapper</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">param_values</span><span class="op">=</span><span class="cn">NULL</span>, <span class="va">situation</span>,</span>
+<span><span class="va">laitm_simple_wrapper</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">param_values</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">situation</span>,</span>
 <span>                                 <span class="va">model_options</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
 <span></span>
 <span>  <span class="co"># A basic wrapper for lai_toymodel</span></span>
@@ -740,10 +740,10 @@ estimation using this wrapper:</p>
 <span><span class="co">## ---------------------</span></span>
 <span><span class="co">## Estimated parameters: inc_slope dec_slope </span></span>
 <span><span class="co">## ---------------------</span></span>
-<span><span class="co">## Working: 20.00%. Estimated remaining time: 1.63 secs</span></span>
-<span><span class="co">## Working: 40.00%. Estimated remaining time: 1.58 secs</span></span>
-<span><span class="co">## Working: 60.00%. Estimated remaining time: 0.97 secs</span></span>
-<span><span class="co">## Working: 80.00%. Estimated remaining time: 0.50 secs</span></span>
+<span><span class="co">## Working: 20.00%. Estimated remaining time: 2.36 secs</span></span>
+<span><span class="co">## Working: 40.00%. Estimated remaining time: 1.97 secs</span></span>
+<span><span class="co">## Working: 60.00%. Estimated remaining time: 1.30 secs</span></span>
+<span><span class="co">## Working: 80.00%. Estimated remaining time: 0.70 secs</span></span>
 <span><span class="co">## Working: 100.00%. Estimated remaining time: 0.00 secs</span></span>
 <span><span class="co">## $inc_slope</span></span></code></pre>
 <pre><code><span><span class="co">## </span></span>
@@ -761,18 +761,18 @@ estimation using this wrapper:</p>
 <span><span class="co">## Estimated value for inc_slope :  25 </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Estimated value for dec_slope :  10 </span></span>
-<span><span class="co">## Minimum value of the criterion: 0.00043 </span></span>
+<span><span class="co">## Minimum value of the criterion: 0.00031 </span></span>
 <span><span class="co">## Complementary graphs and results can be found in  /Users/runner/work/CroptimizR/CroptimizR/vignettes </span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## Average time for the model to simulate all required situations: 0.0034 sec elapsed</span></span>
-<span><span class="co">## Total number of criterion evaluation: 207 </span></span>
-<span><span class="co">## Total time of model simulations: 0.7 sec elapsed</span></span>
-<span><span class="co">## Total time of parameter estimation process: 6 sec elapsed</span></span>
+<span><span class="co">## Average time for the model to simulate all required situations: 0.0047 sec elapsed</span></span>
+<span><span class="co">## Total number of criterion evaluation: 197 </span></span>
+<span><span class="co">## Total time of model simulations: 0.9 sec elapsed</span></span>
+<span><span class="co">## Total time of parameter estimation process: 8 sec elapsed</span></span>
 <span><span class="co">## ----------------------</span></span></code></pre>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res</span><span class="op">$</span><span class="va">final_values</span></span></code></pre></div>
 <pre><code><span><span class="co">## inc_slope dec_slope </span></span>
-<span><span class="co">##  24.93242  10.03152</span></span></code></pre>
+<span><span class="co">## 25.065509  9.998373</span></span></code></pre>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the simulations obtained with the optimized values of the parameters VS</span></span>
 <span><span class="co"># the observed ones using the CroPlotR package.</span></span>
@@ -793,7 +793,7 @@ param_values can take<a class="anchor" aria-label="anchor" href="#another-versio
 <p>This one can be used to perform simultaneous estimation of specific
 and varietal parameters on a dataset including several cultivars.</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">laitm_simple_wrapper_v2</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">param_values</span><span class="op">=</span><span class="cn">NULL</span>, <span class="va">situation</span>,</span>
+<code class="sourceCode R"><span><span class="va">laitm_simple_wrapper_v2</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">param_values</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">situation</span>,</span>
 <span>                                    <span class="va">model_options</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
 <span></span>
 <span>  <span class="co"># A basic wrapper for lai_toymodel</span></span>
@@ -969,10 +969,10 @@ wrapper:</p>
 <span><span class="co">## ---------------------</span></span>
 <span><span class="co">## Estimated parameters: inc_slope dec_slope </span></span>
 <span><span class="co">## ---------------------</span></span>
-<span><span class="co">## Working: 20.00%. Estimated remaining time: 15.33 secs</span></span>
-<span><span class="co">## Working: 40.00%. Estimated remaining time: 11.45 secs</span></span>
-<span><span class="co">## Working: 60.00%. Estimated remaining time: 8.92 secs</span></span>
-<span><span class="co">## Working: 80.00%. Estimated remaining time: 4.29 secs</span></span>
+<span><span class="co">## Working: 20.00%. Estimated remaining time: 36.15 secs</span></span>
+<span><span class="co">## Working: 40.00%. Estimated remaining time: 18.46 secs</span></span>
+<span><span class="co">## Working: 60.00%. Estimated remaining time: 10.27 secs</span></span>
+<span><span class="co">## Working: 80.00%. Estimated remaining time: 5.33 secs</span></span>
 <span><span class="co">## Working: 100.00%. Estimated remaining time: 0.00 secs</span></span>
 <span><span class="co">## $inc_slope1</span></span></code></pre>
 <pre><code><span><span class="co">## </span></span>
@@ -1000,18 +1000,18 @@ wrapper:</p>
 <span><span class="co">## Estimated value for inc_slope2 :  50 </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Estimated value for dec_slope :  9.9 </span></span>
-<span><span class="co">## Minimum value of the criterion: 0.0039 </span></span>
+<span><span class="co">## Minimum value of the criterion: 0.0063 </span></span>
 <span><span class="co">## Complementary graphs and results can be found in  /Users/runner/work/CroptimizR/CroptimizR/vignettes </span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## Average time for the model to simulate all required situations: 0.036 sec elapsed</span></span>
-<span><span class="co">## Total number of criterion evaluation: 404 </span></span>
-<span><span class="co">## Total time of model simulations: 15 sec elapsed</span></span>
-<span><span class="co">## Total time of parameter estimation process: 27 sec elapsed</span></span>
+<span><span class="co">## Average time for the model to simulate all required situations: 0.045 sec elapsed</span></span>
+<span><span class="co">## Total number of criterion evaluation: 359 </span></span>
+<span><span class="co">## Total time of model simulations: 16 sec elapsed</span></span>
+<span><span class="co">## Total time of parameter estimation process: 30 sec elapsed</span></span>
 <span><span class="co">## ----------------------</span></span></code></pre>
 <div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res</span><span class="op">$</span><span class="va">final_values</span></span></code></pre></div>
 <pre><code><span><span class="co">## inc_slope1 inc_slope2  dec_slope </span></span>
-<span><span class="co">##  25.041866  50.170994   9.944943</span></span></code></pre>
+<span><span class="co">##  24.915848  49.877054   9.939862</span></span></code></pre>
 <div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the simulations obtained with the optimized values of the parameters VS</span></span>
 <span><span class="co"># the observed ones using the CroPlotR package.</span></span>
@@ -1061,7 +1061,7 @@ for the Stics and Apsim models.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
