@@ -149,6 +149,8 @@ sim_list$situation3
 
 If any simulation failed for any reason, use the R function `warning` to print any useful information about the error and set the variable `results$error` to `TRUE` (and to `FALSE` otherwise).
 
+**In CroptimizR, parameter estimation is based on the comparison between the values of the observed and simulated variables at corresponding dates. Only the situations, variables and dates common to both observations provided to the `estim_param` function, and simulations returned by the wrapper used, will be taken into account in the parameter estimation process. In case where the value of an observed variable is NA for a given situation and date, it will not be taken into account. In case where the value of a simulated variable is NA (or Inf) for a given situation and date for which there is an observation, the optimized criterion will take the NA value, which may stop the process, and the user will be warned.**
+
 ### Implementation
 
 A typical pseudo-code implementation of a basic wrapper function is thus:

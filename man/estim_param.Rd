@@ -24,7 +24,7 @@ estim_param(
 )
 }
 \arguments{
-\item{obs_list}{List of observed values to use for parameter estimation
+\item{obs_list}{List of observed values to use for parameter estimation.
 A \verb{named list} (names = situations names) of data.frame containing
 one column named Date with the dates (Date or POSIXct format) of the different observations
 and one column per observed variables with either the measured values or NA, if
@@ -136,6 +136,17 @@ All results are saved in the folder \code{optim_options$out_dir}.
 main function for parameter estimation
 }
 \details{
+In CroptimizR, parameter estimation is based on the comparison between the values
+of the observed and simulated variables at corresponding dates. Only the situations,
+variables and dates common to both observations (provided in \code{obs_list} argument),
+and simulations returned by the wrapper used, will be taken into account in
+the parameter estimation process.
+In case where the value of an observed variable is NA for a given situation and
+date, it will not be taken into account. In case where the value of a simulated
+variable is NA (or Inf) for a given situation and date for which there is an
+observation, the optimized criterion will take the NA value, which may stop the
+process, and the user will be warned.
+
 If the candidate_param argument is given, a parameter selection procedure following
 the AgMIP calibration phaseIII protocol will be performed:
 The candidate parameters are added one by one (in the given order) to the parameters
