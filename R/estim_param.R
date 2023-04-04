@@ -140,6 +140,7 @@
 #'   - param_values: a named vector containing the current parameters values proposed
 #'      by the estimation algorithm
 #'   - model_options: the list of model options as given to estim_param function
+#'
 #'   It must return a logical indicating if the parameters values satisfies the constraints
 #'   (freely defined by the user in the function body) or not.
 #'
