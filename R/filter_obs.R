@@ -141,7 +141,7 @@ filter_obs <- function(obs_list, var = NULL, situation = NULL, dates = NULL,
 
   if (!all(names(obs_list) %in% unique(df$id))) {
     warning(
-      "No observations found in USM(s) ",
+      "No observations found in situation(s) ",
       paste(names(obs_list)[!(names(obs_list) %in% unique(df$id))], collapse = ", ")
     )
   }
@@ -157,22 +157,6 @@ filter_obs <- function(obs_list, var = NULL, situation = NULL, dates = NULL,
     }
   )
 
-  # Add warning when variable is remove from a situation:
-  mapply(
-    function(x, y) {
-      var_not_in_sit <- var_names[!var_names %in% colnames(x)]
-      if (length(var_not_in_sit) > 0) {
-        warning(
-          "No observations found for variable(s) ",
-          var_not_in_sit,
-          " in USM ",
-          y
-        )
-      }
-      return()
-    },
-    obs_list, names(obs_list)
-  )
   return(obs_list)
 }
 
