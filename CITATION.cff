@@ -1,5 +1,5 @@
 # -----------------------------------------------------------
-# CITATION file created with {cffr} R package, v0.4.0
+# CITATION file created with {cffr} R package, v0.5.0
 # See also: https://docs.ropensci.org/cffr/
 # -----------------------------------------------------------
  
@@ -56,13 +56,14 @@ references:
   year: '2023'
   institution:
     name: R Foundation for Statistical Computing
-  version: '>= 3.6.0'
+  version: '>= 4.0.0'
 - type: software
   title: BayesianTools
   abstract: 'BayesianTools: General-Purpose MCMC and SMC Samplers and Tools for Bayesian
     Statistics'
   notes: Imports
   url: https://github.com/florianhartig/BayesianTools
+  repository: https://CRAN.R-project.org/package=BayesianTools
   authors:
   - family-names: Hartig
     given-names: Florian
@@ -105,7 +106,7 @@ references:
   authors:
   - family-names: Wickham
     given-names: Hadley
-    email: hadley@rstudio.com
+    email: hadley@posit.co
     orcid: https://orcid.org/0000-0003-4757-117X
   - family-names: François
     given-names: Romain
@@ -115,6 +116,10 @@ references:
   - family-names: Müller
     given-names: Kirill
     orcid: https://orcid.org/0000-0002-1416-3412
+  - family-names: Vaughan
+    given-names: Davis
+    email: davis@posit.co
+    orcid: https://orcid.org/0000-0003-4777-038X
   year: '2023'
 - type: software
   title: ggplot2
@@ -125,7 +130,7 @@ references:
   authors:
   - family-names: Wickham
     given-names: Hadley
-    email: hadley@rstudio.com
+    email: hadley@posit.co
     orcid: https://orcid.org/0000-0003-4757-117X
   - family-names: Chang
     given-names: Winston
@@ -134,7 +139,7 @@ references:
     given-names: Lionel
   - family-names: Pedersen
     given-names: Thomas Lin
-    email: thomas.pedersen@rstudio.com
+    email: thomas.pedersen@posit.co
     orcid: https://orcid.org/0000-0002-5147-4711
   - family-names: Takahashi
     given-names: Kohske
@@ -240,10 +245,10 @@ references:
   authors:
   - family-names: Henry
     given-names: Lionel
-    email: lionel@rstudio.com
+    email: lionel@posit.co
   - family-names: Wickham
     given-names: Hadley
-    email: hadley@rstudio.com
+    email: hadley@posit.co
   year: '2023'
 - type: software
   title: rstudioapi
@@ -285,7 +290,8 @@ references:
   authors:
   - family-names: Müller
     given-names: Kirill
-    email: krlmlr+r@mailbox.org
+    email: kirill@cynkra.com
+    orcid: https://orcid.org/0000-0002-1416-3412
   - family-names: Wickham
     given-names: Hadley
     email: hadley@rstudio.com
@@ -293,7 +299,7 @@ references:
 - type: software
   title: tictoc
   abstract: 'tictoc: Functions for Timing R Scripts, as Well as Implementations of
-    "Stack" and "List" Structures'
+    "Stack" and "StackList" Structures'
   notes: Imports
   url: https://github.com/jabiru/tictoc
   repository: https://CRAN.R-project.org/package=tictoc
@@ -395,35 +401,38 @@ references:
   authors:
   - family-names: Allaire
     given-names: JJ
-    email: jj@rstudio.com
+    email: jj@posit.co
   - family-names: Xie
     given-names: Yihui
     email: xie@yihui.name
     orcid: https://orcid.org/0000-0003-0645-5666
+  - family-names: Dervieux
+    given-names: Christophe
+    email: cderv@posit.co
+    orcid: https://orcid.org/0000-0003-4474-2498
   - family-names: McPherson
     given-names: Jonathan
-    email: jonathan@rstudio.com
+    email: jonathan@posit.co
   - family-names: Luraschi
     given-names: Javier
-    email: javier@rstudio.com
   - family-names: Ushey
     given-names: Kevin
-    email: kevin@rstudio.com
+    email: kevin@posit.co
   - family-names: Atkins
     given-names: Aron
-    email: aron@rstudio.com
+    email: aron@posit.co
   - family-names: Wickham
     given-names: Hadley
-    email: hadley@rstudio.com
+    email: hadley@posit.co
   - family-names: Cheng
     given-names: Joe
-    email: joe@rstudio.com
+    email: joe@posit.co
   - family-names: Chang
     given-names: Winston
-    email: winston@rstudio.com
+    email: winston@posit.co
   - family-names: Iannone
     given-names: Richard
-    email: rich@rstudio.com
+    email: rich@posit.co
     orcid: https://orcid.org/0000-0003-3925-190X
   year: '2023'
 - type: software
@@ -466,7 +475,7 @@ references:
   year: '2023'
 - type: software
   title: SticsRFiles
-  abstract: 'SticsRFiles: Read And Modify STICS Input/Output Files'
+  abstract: 'SticsRFiles: Read and Modify STICS Input/Output Files'
   notes: Suggests
   url: https://doi.org/10.5281/zenodo.4443206
   authors:
@@ -496,7 +505,7 @@ references:
   authors:
   - family-names: Wickham
     given-names: Hadley
-    email: hadley@rstudio.com
+    email: hadley@posit.co
   year: '2023'
   version: '>= 2.1.0'
 - type: software
@@ -508,7 +517,10 @@ references:
   authors:
   - family-names: Wickham
     given-names: Hadley
-    email: hadley@rstudio.com
+    email: hadley@posit.co
+  - family-names: Vaughan
+    given-names: Davis
+    email: davis@posit.co
   - family-names: Girlich
     given-names: Maximilian
   year: '2023'
