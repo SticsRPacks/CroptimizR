@@ -2,9 +2,9 @@
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
   push:
-    branches: [main, master]
+    #branches: [main, master]
   pull_request:
-    branches: [main, master]
+    #branches: [main, master]
 
 name: R-CMD-check
 
@@ -60,17 +60,17 @@ jobs:
           # see also: https://stackoverflow.com/questions/73243945/pkgdown-action-failing-at-build-xml
           extra-packages: |
             any::rcmdcheck
-            SticsRPacks/SticsRFiles@master
+            SticsRPacks/SticsRFiles@main
           needs: check
           exclude: ape
-          
+
       - name: Install ape 5.6
         run: Rscript -e "install.packages('https://cran.r-project.org/src/contrib/Archive/ape/ape_5.6.tar.gz', repos = NULL, type = 'source')"
-      
+
       - name: Install custom R dependencies
         run: |
           # Install dev version of SticsRFiles to be in sync for tests (packages are developed synchronously):
-          remotes::install_github("SticsRPacks/SticsRFiles@master", dependencies = FALSE, upgrade = "never")
+          remotes::install_github("SticsRPacks/SticsRFiles@main", dependencies = FALSE, upgrade = "never")
         shell: Rscript {0}
 
       - uses: r-lib/actions/check-r-package@v2
