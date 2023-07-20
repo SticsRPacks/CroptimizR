@@ -95,11 +95,15 @@ evaluation  (optional), see details section for more information.}
 \item{satisfy_par_const}{User function for including constraints on estimated
 parameters (optional), see details section for more information.}
 
-\item{var}{(optional) List of variables for which the wrapper must return results.
+\item{var}{(optional) List of variables for which the model wrapper must return
+results.
 By default the wrapper is asked to simulate only the observed variables. However,
 it may be useful to simulate also other variables, typically when transform_sim
 and/or transform_obs functions are used. Note however that it is
-active only if the model_function used handles this argument.}
+active only if the model_function used handles this argument.
+If it is the case, and if the var argument is provided, then the list of observations
+used will be restricted to the list of variables given in the var argument,
+plus the ones possibly computed by the transform_sim function.}
 
 \item{info_level}{(optional) Integer that controls the level of information returned and stored
 by estim_param (in addition to the results automatically provided that depends on the method used).
@@ -186,9 +190,10 @@ The optional argument \code{satisfy_par_const} must be a function with 2 argumen
 \item param_values: a named vector containing the current parameters values proposed
 by the estimation algorithm
 \item model_options: the list of model options as given to estim_param function
+}
+
 It must return a logical indicating if the parameters values satisfies the constraints
 (freely defined by the user in the function body) or not.
-}
 }
 \seealso{
 For more details and examples, see the different vignettes in
