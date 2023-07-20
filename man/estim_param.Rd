@@ -28,7 +28,9 @@ estim_param(
 A \verb{named list} (names = situations names) of data.frame containing
 one column named Date with the dates (Date or POSIXct format) of the different observations
 and one column per observed variables with either the measured values or NA, if
-the variable is not observed at the given date.}
+the variable is not observed at the given date.
+See details section for more information on the list of observations actually
+used during the parameter estimation process.}
 
 \item{crit_function}{Function implementing the criterion to optimize
 (optional, see default value in the function signature). See
@@ -70,11 +72,11 @@ parameter bounds).
 
 or a named list containing for each parameter:
 \itemize{
-\item \code{sit_list}, the list of situations per group,
+\item \code{sit_list}, list the groups of situations for which the current estimated
+parameter must take different values (see \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html}{here}
+for an example),
 \item \code{ub} and \code{lb}, vectors of upper and lower bounds (one value per group),
 \item \code{init_values}, the list of initial values per group  (data.frame, one column per group, optional).
-(see \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html}{here}
-for an example)
 }}
 
 \item{forced_param_values}{Named vector, must contain the values for the model parameters
@@ -160,8 +162,9 @@ Each time a new candidate is added:
 \item the parameter estimation is performed and an information criterion is computed (see argument info_crit_func)
 \item if the information criterion is inferior to all the ones obtained before,
 then the current candidate parameter is added to the list of parameters to estimate
-The result includes a summary of all the steps (data.frame param_selection_steps).
 }
+
+The result includes a summary of all the steps (data.frame param_selection_steps).
 
 The optional argument \code{transform_obs} must be a function with 4 arguments:
 \itemize{
@@ -170,9 +173,10 @@ The optional argument \code{transform_obs} must be a function with 4 arguments:
 \item param_values: a named vector containing the current parameters values proposed
 by the estimation algorithm
 \item model_options: the list of model options as given to estim_param function
+}
+
 It must return a list of observations (same format as \code{obs_list} argument) that
 will be used to compute the criterion to optimize.
-}
 
 The optional argument \code{transform_sim} must be a function with 4 arguments:
 \itemize{
@@ -181,9 +185,10 @@ The optional argument \code{transform_sim} must be a function with 4 arguments:
 \item param_values: a named vector containing the current parameters values proposed
 by the estimation algorithm
 \item model_options: the list of model options as given to estim_param function
+}
+
 It must return a list of simulated results (same format as this returned by the model wrapper used)
 that will be used to compute the criterion to optimize.
-}
 
 The optional argument \code{satisfy_par_const} must be a function with 2 arguments:
 \itemize{
