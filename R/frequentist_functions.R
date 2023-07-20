@@ -14,6 +14,11 @@ summary_frequentist <- function(optim_options, param_info, optim_results) {
   ind_min_crit <- optim_results$ind_min_crit
   min_crit_value <- optim_results$min_crit_value
 
+  cat(paste(
+    "\nList of observed variables used:",
+    paste(optim_results$obs_var_list, collapse = ", "), "\n"
+  ))
+
   # Display of parameters values for the repetition which has the
   # smallest criterion
   for (ipar in 1:nb_params) {

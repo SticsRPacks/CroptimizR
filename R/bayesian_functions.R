@@ -13,6 +13,11 @@ summary_bayesian <- function(optim_options, param_info, optim_results) {
   path_results <- optim_options$path_results
   out <- optim_results$out
 
+  cat(paste(
+    "\nList of observed variables used:",
+    paste(optim_results$obs_var_list, collapse = ", "), "\n"
+  ))
+
   ## Print results
   codaObject <- getSample(out, start = 1, coda = TRUE)
   tmp <- summary(codaObject)

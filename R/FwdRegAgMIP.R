@@ -152,19 +152,26 @@ param_selection_steps <- dplyr::bind_rows(param_selection_steps, info_new_step)
 #'
 #' @inheritParams optim_switch
 #'
-#' @param param_selection_steps A tibble summarizing the results of the previous
-#' parameter estimation steps as returned by the previous call to this function,
-#' NULL if it is the first step.
+#' @param param_selection_steps A tibble summarizing the results of the
+#' parameter estimation steps, as returned by the post_treat_FwdRegAgMIP function.
+#'
+#' @param optim_results Results list returned by the parameter estimation method
+#' wrapper used
 #'
 #' @return Print the results in standard output.
 #'
 #' @keywords internal
 #'
 summary_FwdRegAgMIP <- function(param_selection_steps,
-                                info_crit_list, path_results) {
+                                info_crit_list, path_results, optim_results) {
   cat("----------------------\n")
   cat("End of parameter selection process\n")
   cat("----------------------\n\n")
+
+  cat(paste(
+    "\nList of observed variables used:",
+    paste(optim_results$obs_var_list, collapse = ", "), "\n"
+  ))
 
   ind_min_infocrit <-
     which.min(param_selection_steps[[info_crit_list[[1]]()$name]])

@@ -424,7 +424,8 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
 
   # Print and store results of parameter estimation steps if parameter selection was activated
   if (!is.null(candidate_param)) {
-    summary_FwdRegAgMIP(param_selection_steps, info_crit_list, path_results_ORI)
+    summary_FwdRegAgMIP(param_selection_steps, info_crit_list, path_results_ORI,
+                        res)
     save_results_FwdRegAgMIP(param_selection_steps, path_results_ORI)
     res$param_selection_steps <- param_selection_steps
   }

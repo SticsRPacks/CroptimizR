@@ -21,6 +21,13 @@
 #'
 main_crit <- function(param_values, crit_options) {
   on.exit({
+
+    if (exists("obs_sim_list") && !is.null(obs_sim_list$obs_list)) {
+      .croptEnv$obs_var_list <- unique(
+        unlist(lapply(obs_sim_list$obs_list,
+                      function(x) setdiff(names(x),c("Date")))))
+    }
+
     if (crit_options$info_level >= 1 && !is.null(crit_options$tot_max_eval)) {
       satisfy_const <- TRUE
       if (exists("flag_const")) satisfy_const <- flag_const
