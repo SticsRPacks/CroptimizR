@@ -5,12 +5,19 @@
 \title{Summarize the results of the Forward Selection algorithm proposed in
 AgMIP calibration phaseIII protocol}
 \usage{
-summary_FwdRegAgMIP(param_selection_steps, info_crit_list, path_results)
+summary_FwdRegAgMIP(
+  param_selection_steps,
+  info_crit_list,
+  path_results,
+  optim_results
+)
 }
 \arguments{
-\item{param_selection_steps}{A tibble summarizing the results of the previous
-parameter estimation steps as returned by the previous call to this function,
-NULL if it is the first step.}
+\item{param_selection_steps}{A tibble summarizing the results of the
+parameter estimation steps, as returned by the post_treat_FwdRegAgMIP function.}
+
+\item{optim_results}{Results list returned by the parameter estimation method
+wrapper used}
 }
 \value{
 Print the results in standard output.

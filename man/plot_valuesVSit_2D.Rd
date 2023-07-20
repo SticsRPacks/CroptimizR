@@ -37,11 +37,11 @@ parameter bounds).
 
 or a named list containing for each parameter:
 \itemize{
-\item \code{sit_list}, the list of situations per group,
+\item \code{sit_list}, list the groups of situations for which the current estimated
+parameter must take different values (see \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html}{here}
+for an example),
 \item \code{ub} and \code{lb}, vectors of upper and lower bounds (one value per group),
 \item \code{init_values}, the list of initial values per group  (data.frame, one column per group, optional).
-(see \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html}{here}
-for an example)
 }}
 
 \item{iter_or_eval}{"iter" for plotting the values for each iteration,
