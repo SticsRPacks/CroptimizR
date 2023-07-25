@@ -143,6 +143,7 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
     # seems that it does not work for a single parameter
     # also, Nbiteration must be > thin+50 otherwise coda::gelman.plot end with
     # an error
+    if (is.null(optim_options$thin)) optim_options$thin <- 1
     if (nb_iterations >= (optim_options$thin + 50)) {
       tryCatch({
           grDevices::pdf(
