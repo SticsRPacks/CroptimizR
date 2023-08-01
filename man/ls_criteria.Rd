@@ -8,13 +8,13 @@
 \alias{crit_log_cwss_corr}
 \title{Criteria to optimize}
 \usage{
-crit_ols(sim_list, obs_list)
+crit_ols(sim_list, obs_list, ...)
 
 crit_wls(sim_list, obs_list, weight, alpha = 1)
 
-crit_log_cwss(sim_list, obs_list)
+crit_log_cwss(sim_list, obs_list, ...)
 
-crit_log_cwss_corr(sim_list, obs_list)
+crit_log_cwss_corr(sim_list, obs_list, ...)
 }
 \arguments{
 \item{sim_list}{List of simulated variables}

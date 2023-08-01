@@ -105,6 +105,10 @@
 #' is defined (see details section)), the first information criterion given will be used.
 #' ONLY AVAILABLE FOR THE MOMENT FOR crit_function==crit_ols.
 #'
+#' @param weight Weights to use in the criterion to optimize. A function that takes in input a vector
+#' of observed values and the name of the corresponding variable and that must return either a single value
+#' for the weights for the given variable or a vector of values of length the length of the observed values given in input.
+#'
 #' @param var_names `r lifecycle::badge("deprecated")` `var_names` is no
 #'   longer supported, use `var` instead.
 #'
@@ -194,6 +198,7 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
                           CroptimizR::BIC, CroptimizR::AICc,
                           CroptimizR::AIC
                         ),
+                        weight=NULL,
                         var_names = lifecycle::deprecated()) {
 
   # Managing parameter names changes between versions:
@@ -335,6 +340,12 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
     stop("Parameters included in argument candidate_param must be defined in param_info argument.")
   }
 
+  ## weight
+  if (!is.function(weight) && !is.null(weight)) {
+    stop("Incorrect format for argument weight Should be a function or NULL.")
+  }
+
+
   # Create an environment accessible by all functions for storing information during the estimation process
   parent <- eval(parse(text = ".GlobalEnv"))
   .croptEnv <- new.env(parent)
@@ -411,7 +422,8 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
       var_names = var_names,
       forced_param_values = forced_param_values_tmp,
       info_level = info_level,
-      info_crit_list = info_crit_list
+      info_crit_list = info_crit_list,
+      weight=weight
     )
 
     ## Run the estimation

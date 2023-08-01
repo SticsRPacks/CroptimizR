@@ -49,7 +49,55 @@ NULL
 
 #' @export
 #' @rdname Likelihoods
-likelihood_log_ciidn <- function(sim_list, obs_list) {
+likelihood_log_iidn <- function(sim_list,obs_list, weight) {
+  #'
+  #' @description
+  #' log-likelihood for heteroscedastic and independant normal errors, errors are defined in a user function
+  #'
+  #' @param sim_list List of simulated variables
+  #' @param obs_list List of observed variables
+  #' @param weight function that takes in input a vector of observed values and the name of the correpsonding variable and that returns the corresponding error standard deviations
+  #'
+  #' @return The value of the likelihood given the observed and simulated values of the variables.
+  #'
+  #' @details
+  #'           \deqn{ \sum_{j} {\left[ \sum_{i} \left(-\frac{n_{ij}.log(2pi)}{2} -  \sum_{k} \left[log(\sigma_{ijt}) + \frac{1}{2} \left(\frac{Y_{ijk}-f_{jk}(X_i;\theta)}{\sigma_{ijt}}\right)^2 \right] \right) \right] }}
+  #'           where \eqn{ Y_{ijk} } is the observed value for the \eqn{k^{th}} time point of the \eqn{j^{th}} variable in the \eqn{i^{th}}
+  #'           situation,
+  #'           \eqn{ f_{jk}(X_i;\theta) } the corresponding model prediction, and \eqn{n_{ij}} the number of measurements of variable \eqn{j} for situation \eqn{i}. \cr
+  #'
+  #' `sim_list` and `obs_list` must have the same structure (i.e. same number of variables, dates, situations, ... use internal function
+  #' intersect_sim_obs before calling the criterion functions).
+
+  var_list=unique(unlist(lapply(obs_list,function (x) colnames(x))))
+  var_list=setdiff(var_list,"Date")
+
+  result=0
+
+  for (var in var_list) {
+    for (i in 1:length(obs_list)) {
+      obs=obs_list[[i]][[var]]
+      if (length(obs)!=0) {
+        sim=sim_list[[i]][[var]]
+        res=obs-sim
+        res=res[!is.na(res)]
+        sz=length(res)
+        sigma <- weight(obs, var)
+
+        result=result - 0.5*sz*log(2*pi)-sum(log(sigma))-0.5*((res/sigma)%*%(res/sigma))
+
+      }
+    }
+
+  }
+
+  return(as.numeric(result))
+}
+
+
+#' @export
+#' @rdname Likelihoods
+likelihood_log_ciidn <- function(sim_list, obs_list, ...) {
   # return criterion type (ls, log-ls, likelihood, log-likelihood)
   # if no argument given
 
@@ -77,7 +125,7 @@ likelihood_log_ciidn <- function(sim_list, obs_list) {
 
 #' @export
 #' @rdname Likelihoods
-likelihood_log_ciidn_corr <- function(sim_list, obs_list) {
+likelihood_log_ciidn_corr <- function(sim_list, obs_list, ...) {
   # return criterion type (ls, log-ls, likelihood, log-likelihood)
   # if no argument given
   if (!nargs()) {

@@ -432,7 +432,7 @@ main_crit <- function(param_values, crit_options) {
   )
 
   # Compute criterion value
-  crit <- crit_function(obs_sim_list$sim_list, obs_sim_list$obs_list)
+  crit <- crit_function(obs_sim_list$sim_list, obs_sim_list$obs_list, crit_options$weight)
   if (is.nan(crit)) {
     warning(paste0("Optimized criterion returned NaN value. \n Estimated parameters: ", paste(param_names, collapse = " "), ", values: ", paste(param_values, collapse = " ")))
   }
