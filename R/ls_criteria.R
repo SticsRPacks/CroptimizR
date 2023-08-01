@@ -63,7 +63,7 @@ NULL
 
 #' @export
 #' @rdname ls_criteria
-crit_ols <- function(sim_list, obs_list) {
+crit_ols <- function(sim_list, obs_list, ...) {
   # return criterion type (ls, log-ls, likelihood, log-likelihood)
   # if no argument given
 
@@ -90,7 +90,7 @@ crit_ols <- function(sim_list, obs_list) {
 
 #' @export
 #' @rdname ls_criteria
-crit_log_cwss <- function(sim_list, obs_list) {
+crit_log_cwss <- function(sim_list, obs_list, ...) {
   # return criterion type (ls, log-ls, likelihood, log-likelihood) #
   # if no argument given
 
@@ -118,7 +118,7 @@ crit_log_cwss <- function(sim_list, obs_list) {
 
 #' @export
 #' @rdname ls_criteria
-crit_log_cwss_corr <- function(sim_list, obs_list) {
+crit_log_cwss_corr <- function(sim_list, obs_list, ...) {
   # return criterion type (ls, log-ls, likelihood, log-likelihood)
   # if no argument given
   if (!nargs()) {
