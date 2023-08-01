@@ -170,7 +170,9 @@ filter_param_info <- function(param_info, param_names) {
         "not included in param_info."
       ))
     }
+    prior <- param_info$prior
     param_info <- lapply(param_info, function(x) x[param_names])
+    param_info$prior <- prior
   } else {
     if (!all(param_names %in% names(param_info))) {
       stop(paste(
@@ -445,7 +447,12 @@ complete_init_values <- function(param_info, nb_values, ranseed = NULL,
 
   if (!is.null(lb) && !is.null(ub)) {
     param_names <- names(lb)
-    sampled_values <- as.data.frame(sample_params(list(lb = lb, ub = ub), nb_values, ranseed))
+    if (is.null(param_info$prior)) {
+      sampled_values <- as.data.frame(sample_params(list(lb = lb, ub = ub), nb_values, ranseed))
+    } else {
+      sampled_values <- as.data.frame(param_info$prior$sampler(nb_values))
+      names(sampled_values)<-param_names
+    }
     if (!is.null(satisfy_par_const)) {
       idx <- which(sapply(1:nrow(sampled_values), function(x) {
         satisfy_par_const(sampled_values[x, ])

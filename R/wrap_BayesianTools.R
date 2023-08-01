@@ -87,11 +87,18 @@ wrap_BayesianTools <- function(optim_options, param_info, crit_options) {
   # Create the Bayesian setup if it is an initial run of the method
   bayesianSetup <- optim_options$PreviousResults
   if (is.null(bayesianSetup)) {
-    prior <- createUniformPrior(lower = bounds$lb, upper = bounds$ub)
-    bayesianSetup <- createBayesianSetup(
-      likelihood = likelihood, prior = prior,
-      names = param_names
-    )
+    if (is.null(param_info$prior)) {
+      prior <- createUniformPrior(lower = bounds$lb, upper = bounds$ub)
+      bayesianSetup <- createBayesianSetup(
+        likelihood = likelihood, prior = prior,
+        names = param_names
+      )
+    } else {
+      bayesianSetup <- createBayesianSetup(
+        likelihood = likelihood, prior = param_info$prior,
+        names = param_names
+      )
+    }
   } else {
     optim_options_BT <- within(optim_options_BT, rm("PreviousResults"))
   }
