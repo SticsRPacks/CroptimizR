@@ -367,17 +367,17 @@ main_crit <- function(param_values, crit_options) {
     warning("Intersection of simulations and observations is empty (no date and/or variable in common)!")
     return(crit <- NA)
   }
-  if (any(sapply(obs_sim_list$sim_list, function(x) any(sapply(x, is.nan)))) ||
-    any(sapply(obs_sim_list$sim_list,
-               function(x) any(sapply(x, is.infinite))))) {
-    warning(
-      "The model wrapper returned NaN or infinite values: \n ",
-      obs_sim_list$sim_list, "\n Estimated parameters: ",
-      paste(param_names, collapse = " "), ", values: ",
-      paste(param_values, collapse = " ")
-    )
-    return(crit <- NA)
-  }
+  # if (any(sapply(obs_sim_list$sim_list, function(x) any(sapply(x, is.nan)))) ||
+  #   any(sapply(obs_sim_list$sim_list,
+  #              function(x) any(sapply(x, is.infinite))))) {
+  #   warning(
+  #     "The model wrapper returned NaN or infinite values: \n ",
+  #     obs_sim_list$sim_list, "\n Estimated parameters: ",
+  #     paste(param_names, collapse = " "), ", values: ",
+  #     paste(param_values, collapse = " ")
+  #   )
+  #   return(crit <- NA)
+  # }
 
 
   # Filter reserved columns that should not be taken into account in the computation of the criterion
