@@ -69,25 +69,26 @@ likelihood_log_iidn <- function(sim_list,obs_list, weight) {
   #' `sim_list` and `obs_list` must have the same structure (i.e. same number of variables, dates, situations, ... use internal function
   #' intersect_sim_obs before calling the criterion functions).
 
+  if (!nargs()) {
+    return("log-likelihood")
+  }
+
   var_list=unique(unlist(lapply(obs_list,function (x) colnames(x))))
   var_list=setdiff(var_list,"Date")
 
   result=0
 
   for (var in var_list) {
-    for (i in 1:length(obs_list)) {
-      obs=obs_list[[i]][[var]]
-      if (length(obs)!=0) {
-        sim=sim_list[[i]][[var]]
-        res=obs-sim
-        res=res[!is.na(res)]
-        sz=length(res)
-        sigma <- weight(obs, var)
+    obs <- unlist(sapply(obs_list, function(x) x[is.element(colnames(x), var)]))
+    sim <- unlist(sapply(sim_list, function(x) x[is.element(colnames(x), var)]))
+    res <- obs - sim
+    id_not_na <- !is.na(res)
+    res <- res[id_not_na]
+    sigma <- weight(obs[id_not_na], var)
 
-        result=result - 0.5*sz*log(2*pi)-sum(log(sigma))-0.5*((res/sigma)%*%(res/sigma))
+    sz <- length(res)
 
-      }
-    }
+    result=result - 0.5*sz*log(2*pi)-sum(log(sigma))-0.5*((res/sigma)%*%(res/sigma))
 
   }
 
