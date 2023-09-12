@@ -169,7 +169,9 @@
 #'
 #'   will pass to the model wrapper the value 5 for parameter p1, 7 for parameter p2,
 #'   and will dynamically compute the value of p3 in function of the values of parameters
-#'   p5 and p6 iteratively provided by the parameter estimation algorithm.
+#'   p5 and p6 iteratively provided by the parameter estimation algorithm. In this example,
+#'   the parameters p5 and p6 must thus be part of the list of parameters to estimate, i.e.
+#'   described in the `param_info` argument.
 #'
 #' @return prints, graphs and a list containing the results of the parameter estimation,
 #' which content depends on the method used and on the values of the `info_level` argument.
