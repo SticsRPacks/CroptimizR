@@ -59,7 +59,7 @@ An example of application of the method is provided in this [vignette](https://S
 
 # Criteria and likelihoods
 
-For both method, multiple [criteria](https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html) to minimize (for frequentist methods) and [likelihoods](https://sticsrpacks.github.io/CroptimizR/reference/likelihoods.html) (for Bayesian methods) are provided in CroptimizR.
+For both method, multiple [criteria](https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html) to minimize (for frequentist methods) and [likelihoods](https://sticsrpacks.github.io/CroptimizR/reference/Likelihoods.html) (for Bayesian methods) are provided in CroptimizR.
 
 
 # References

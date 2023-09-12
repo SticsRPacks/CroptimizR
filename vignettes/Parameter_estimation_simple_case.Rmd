@@ -4,7 +4,7 @@ output:
   rmarkdown::html_vignette
 author:
 - name: "Samuel Buis"
-affiliation: "INRA - EMMAH"
+affiliation: "INRAE - EMMAH"
 date: "`r Sys.Date()`"
 vignette: >
   %\VignetteIndexEntry{Parameter estimation with the Stics crop Model: a simple case}
@@ -48,7 +48,7 @@ library(CroptimizR)
 library(CroPlotR)
 library(ggplot2)
 library(gridExtra)
-
+library(tidyr)
 ```
 
 ```{r setup_install, eval=FALSE, message=FALSE, results=FALSE, warning=FALSE}
@@ -66,8 +66,12 @@ javastics_path <- path_to_JavaStics
 
 # Download the example USMs and define the path to the JavaStics workspace
 # (JavaStics XML input files):
-data_dir <- file.path(SticsRFiles::download_data(example_dirs = "study_case_1",
-                                                 stics_version = "V9.0"))
+data_dir <- file.path(
+  SticsRFiles::download_data(
+    example_dirs = "study_case_1",
+    stics_version = "V9.0"
+  )
+)
 
 javastics_workspace_path <- file.path(data_dir, "XmlFiles")
 ```
@@ -89,9 +93,12 @@ In this example, xml files are stored in `javastics_workspace_path` and the Stic
 stics_inputs_path <- file.path(data_dir, "TxtFiles")
 dir.create(stics_inputs_path, showWarnings = FALSE)
 
-gen_usms_xml2txt(javastics = javastics_path,
-                 workspace = javastics_workspace_path,
-  out_dir = stics_inputs_path, verbose = TRUE)
+gen_usms_xml2txt(
+  javastics = javastics_path,
+  workspace = javastics_workspace_path,
+  out_dir = stics_inputs_path,
+  verbose = TRUE
+)
 ```
 
 
@@ -104,9 +111,12 @@ Here model parameters values are read in the model input files.
 ```{r eval=params$eval_auto_test, results='hide', message=FALSE, warning=FALSE}
 
 # Set the model options (see '? stics_wrapper_options' for details)
-model_options <- stics_wrapper_options(javastics = javastics_path,
-                                       workspace = stics_inputs_path,
-                                       parallel = FALSE)
+model_options <-
+  stics_wrapper_options(
+    javastics = javastics_path,
+    workspace = stics_inputs_path,
+    parallel = FALSE
+  )
 
 # Run the model on all situations found in stics_inputs_path
 sim_before_optim <- stics_wrapper(model_options = model_options)
@@ -148,8 +158,10 @@ Initial values for the minimization can also be provided in `param_info` (see `?
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
 # 2 parameters here: dlaimax and durvieF, of bounds [0.0005,0.0025] and [50,400]
-param_info <- list(lb = c(dlaimax = 0.0005, durvieF = 50),
-                       ub = c(dlaimax = 0.0025, durvieF = 400))
+param_info <- list(
+  lb = c(dlaimax = 0.0005, durvieF = 50),
+  ub = c(dlaimax = 0.0025, durvieF = 400)
+)
 ```
 
 
@@ -190,11 +202,13 @@ Same for crit_function: a value is set by default (`crit_log_cwss`, see `? crit_
 
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
-res <- estim_param(obs_list = obs_list,
-                            model_function = stics_wrapper,
-                            model_options = model_options,
-                            optim_options = optim_options,
-                            param_info = param_info)
+res <- estim_param(
+  obs_list = obs_list,
+  model_function = stics_wrapper,
+  model_options = model_options,
+  optim_options = optim_options,
+  param_info = param_info
+)
 ```
 
 The `estim_param` function returns a list which is also stored in the optim_results.Rdata file of the `optim_options$out_dir` folder. 
@@ -313,8 +327,10 @@ In this case, the `param_values` argument of the stics_wrapper function is thus 
 
 
 ```{r eval=params$eval_manual_vignette, message=FALSE, warning=FALSE}
-sim_after_optim <- stics_wrapper(param_values = res$final_values,
-                              model_options = model_options)
+sim_after_optim <- stics_wrapper(
+  param_values = res$final_values,
+  model_options = model_options
+)
 ```
 
 
@@ -323,19 +339,46 @@ sim_after_optim <- stics_wrapper(param_values = res$final_values,
 Here we use the [CroPlotR](https://github.com/SticsRPacks/CroPlotR) package for comparing simulations and observations. As CroptimizR, CroPlotR can be used with any crop model.
 
 ```{r eval=params$eval_manual_vignette, warning=FALSE, message=FALSE}
-p <- plot(sim_before_optim$sim_list, obs = obs_list, select_dyn = c("common"))
-p1 <- p[[sit_name]] + labs(title = "Before Optimization") +
+p <- plot(
+  sim_before_optim$sim_list,
+  obs = obs_list,
+  select_dyn = c("common")
+)
+
+p1 <-
+  p[[sit_name]] +
+  labs(title = "Before Optimization") +
   theme(plot.title = element_text(size = 9, hjust = 0.5))
 
-p <- plot(sim_after_optim$sim_list, obs = obs_list, select_dyn = c("common"))
-p2 <- p[[sit_name]] + labs(title = "After Optimization") +
-  ylim(NA, ggplot_build(p1)$layout$panel_params[[1]]$y.range[2]) +
+p <-
+  plot(
+    sim_after_optim$sim_list,
+    obs = obs_list,
+    select_dyn = c("common")
+  )
+
+p2 <- p[[sit_name]] +
+  labs(title = "After Optimization") +
+  ylim(
+    NA,
+    ggplot_build(p1)$layout$panel_params[[1]]$y.range[2]
+  ) +
   theme(plot.title = element_text(size = 9, hjust = 0.5))
 
-p <- grid.arrange(grobs = list(p1, p2), nrow = 1, ncol = 2, widths = c(5, 5))
+p <- grid.arrange(
+  grobs = list(p1, p2),
+  nrow = 1,
+  ncol = 2,
+  widths = c(5, 5)
+)
 # Save the graph
-ggsave(file.path(optim_options$out_dir,
-                 paste0("sim_obs_plots", ".png")), plot = p)
+ggsave(
+  file.path(
+    optim_options$out_dir,
+    paste0("sim_obs_plots", ".png")
+  ),
+  plot = p
+)
 
 ```
 
@@ -350,10 +393,19 @@ knitr::include_graphics("ResultsSimpleCase/sim_obs_plots.png")
 
 ```{r move_results, eval=params$eval_manual_vignette, include=FALSE}
 # Move the files produced since the temp. folder is removed after Rmd execution
-file.copy(file.path(optim_options$out_dir, "EstimatedVSinit.pdf"),
-          params$result_path, overwrite = TRUE)
-file.copy(file.path(optim_options$out_dir, "optim_results.Rdata"),
-          params$result_path, overwrite = TRUE)
-file.copy(file.path(optim_options$out_dir, "sim_obs_plots.png"),
-          params$result_path, overwrite = TRUE)
+file.copy(
+  file.path(optim_options$out_dir, "EstimatedVSinit.pdf"),
+  params$result_path,
+  overwrite = TRUE
+)
+file.copy(
+  file.path(optim_options$out_dir, "optim_results.Rdata"),
+  params$result_path,
+  overwrite = TRUE
+)
+file.copy(
+  file.path(optim_options$out_dir, "sim_obs_plots.png"),
+  params$result_path,
+  overwrite = TRUE
+)
 ```

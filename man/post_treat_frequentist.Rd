@@ -32,17 +32,17 @@ parameter bounds).
 
 or a named list containing for each parameter:
 \itemize{
-\item \code{sit_list}, the list of situations per group,
+\item \code{sit_list}, list the groups of situations for which the current estimated
+parameter must take different values (see \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html}{here}
+for an example),
 \item \code{ub} and \code{lb}, vectors of upper and lower bounds (one value per group),
 \item \code{init_values}, the list of initial values per group  (data.frame, one column per group, optional).
-(see \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html}{here}
-for an example)
 }}
 
 \item{optim_results}{Results list returned by frequentist method wrappers}
 
 \item{crit_options}{List containing several arguments given to \code{estim_param}
-function: \code{param_names}, \code{obs_list}, \code{crit_function}, \code{model_function},
+function: \code{param_names}, \code{obs_list}, \code{model_function},
 \code{model_options}, \code{param_info}, \code{transform_obs}, \code{transform_sim}
 that must be passed to main_crit function by the methods wrappers.}
 }

@@ -20,6 +20,13 @@
 #'
 main_crit <- function(param_values, crit_options) {
   on.exit({
+
+    if (exists("obs_sim_list") && !is.null(obs_sim_list$obs_list)) {
+      .croptEnv$obs_var_list <- unique(
+        unlist(lapply(obs_sim_list$obs_list,
+                      function(x) setdiff(names(x),c("Date")))))
+    }
+
     if (crit_options$info_level >= 1 && !is.null(crit_options$tot_max_eval)) {
       satisfy_const <- TRUE
       if (exists("flag_const")) satisfy_const <- flag_const
@@ -64,7 +71,7 @@ main_crit <- function(param_values, crit_options) {
           if (!is.na(crit) && (is.na(.croptEnv$last_crit) ||
             crit < .croptEnv$last_crit)) {
             ## in the if above, is.na(.croptEnv$last_crit) is there in case
-            ## crit==NA at the first evaluation
+            ## is.na(crit) at the first evaluation
             iter <- .croptEnv$last_iter + 1
             .croptEnv$last_iter <- iter
             .croptEnv$last_crit <- crit
@@ -156,9 +163,7 @@ main_crit <- function(param_values, crit_options) {
   param_names <- get_params_names(param_info)
   names(param_values) <- param_names
   situation_names <- names(obs_list)
-  nb_situations <- length(situation_names)
   param_names_sl <- get_params_names(param_info, short_list = TRUE)
-  nb_params_sl <- length(param_names_sl)
   crit <- NA
   model_results <- NA
   obs_sim_list <- NA
@@ -183,7 +188,7 @@ main_crit <- function(param_values, crit_options) {
       }
     )))
     param_values_df <- sapply(sit_names_param_info,
-      function(x) CroptimizR:::get_params_per_sit(param_info, x, param_values),
+      function(x) get_params_per_sit(param_info, x, param_values),
       simplify = FALSE
     )
     param_values <- dplyr::bind_rows(param_values_df, .id = "situation")
@@ -327,7 +332,8 @@ main_crit <- function(param_values, crit_options) {
     sim_transformed <- model_results
   }
   # Check results, return NA if incorrect
-  if (is.null(model_results) || (!is.null(model_results$error) && model_results$error)) {
+  if (is.null(model_results) ||
+      (!is.null(model_results$error) && model_results$error)) {
     warning("Error in transformation of simulation results.")
     return(crit <- NA)
   }
@@ -373,7 +379,7 @@ main_crit <- function(param_values, crit_options) {
   }
 
   # Make observations and simulations consistent if possible
-  obs_sim_list <- CroptimizR:::make_obsSim_consistent(
+  obs_sim_list <- make_obsSim_consistent(
     model_results$sim_list,
     obs_list
   )
@@ -388,7 +394,8 @@ main_crit <- function(param_values, crit_options) {
     return(crit <- NA)
   }
   if (any(sapply(obs_sim_list$sim_list, function(x) any(sapply(x, is.nan)))) ||
-    any(sapply(obs_sim_list$sim_list, function(x) any(sapply(x, is.infinite))))) {
+    any(sapply(obs_sim_list$sim_list,
+               function(x) any(sapply(x, is.infinite))))) {
     warning(
       "The model wrapper returned NaN or infinite values: \n ",
       obs_sim_list$sim_list, "\n Estimated parameters: ",
@@ -419,7 +426,7 @@ main_crit <- function(param_values, crit_options) {
   )
 
   # Check consistency of observations and simulations
-  CroptimizR:::check_obsSim_consistency(
+  check_obsSim_consistency(
     obs_sim_list$sim_list,
     obs_sim_list$obs_list
   )
@@ -432,3 +439,5 @@ main_crit <- function(param_values, crit_options) {
 
   return(crit)
 }
+
+utils::globalVariables(c(".croptEnv"))

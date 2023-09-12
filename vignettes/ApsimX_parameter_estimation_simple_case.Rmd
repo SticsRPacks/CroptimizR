@@ -62,6 +62,11 @@ if (!require("gridExtra")) {
   library("gridExtra")
 }
 
+if (!require("tidyr")) {
+  install.packages("tidyr", repos = "http://cran.irsn.fr")
+  library(tidyr)
+}
+
 # DEFINE THE PATH TO THE LOCALLY INSTALLED VERSION OF APSIM (should be something
 # like C:/path/to/apsimx/bin/Models.exe on windows, and /usr/local/bin/Models
 # on linux)
@@ -75,7 +80,7 @@ apsimx_path <- "D:\\Home\\sbuis\\Documents\\OUTILS-INFORMATIQUE\\APSIM2021.01.20
 
 ```{r message=FALSE, warning=FALSE}
 
-sit_name <- "GattonRowSpacingRowSpace25cm" 
+sit_name <- "GattonRowSpacingRowSpace25cm"
                                 # among "GattonRowSpacingRowSpace25cm",
                                 # "GattonRowSpacingRowSpace50cm",
                                 # "GattonRowSpacingRowSpaceN0"
@@ -162,7 +167,7 @@ param_info <-
 
 `optim_options` should contain the options of the parameter estimation method.
 Here we defined a few options for the simplex method of the `nloptr` package (default method in estim_param).
-The full set of options for the simplex method can be found in the [vignette of nloptr package](https://cran.r-project.org/web/packages/nloptr/vignettes/nloptr.pdf).
+The full set of options for the simplex method can be found in the [vignette of nloptr package](https://cran.r-project.org/web/packages/nloptr/vignettes/nloptr.html).
 
 The number of repetitions `nb_rep` is advised to be set at least to 5, while 10 is a reasonable maximum value.
 `maxeval` should be used to stop the minimization only if results have to be produced within a given duration, otherwise set it to a high value so that the minimization stops when the criterion based on the relative tolerance `xtol_rel` is satisfied.

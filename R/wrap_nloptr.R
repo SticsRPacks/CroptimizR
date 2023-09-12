@@ -26,7 +26,7 @@ wrap_nloptr <- function(optim_options, param_info, crit_options) {
     ftol_rel <- 1e-10
   }
   if (is.null((maxeval <- optim_options$maxeval))) {
-    maxeval <- 500
+    maxeval <- 50000
   }
   if (is.null((ranseed <- optim_options$ranseed))) {
     ranseed <- NULL

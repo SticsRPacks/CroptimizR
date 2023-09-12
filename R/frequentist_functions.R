@@ -9,13 +9,15 @@
 summary_frequentist <- function(optim_options, param_info, optim_results) {
   param_names <- get_params_names(param_info)
   nb_params <- length(param_names)
-  bounds <- get_params_bounds(param_info)
   path_results <- optim_options$path_results
-  init_values <- optim_results$init_values
   est_values <- optim_results$est_values
-  crit_values <- optim_results$crit_values
   ind_min_crit <- optim_results$ind_min_crit
   min_crit_value <- optim_results$min_crit_value
+
+  cat(paste(
+    "\nList of observed variables used:",
+    paste(optim_results$obs_var_list, collapse = ", "), "\n"
+  ))
 
   # Display of parameters values for the repetition which has the
   # smallest criterion
@@ -45,7 +47,7 @@ summary_frequentist <- function(optim_options, param_info, optim_results) {
 #'
 #' @param optim_results Results list returned by frequentist method wrappers
 #' @param crit_options List containing several arguments given to `estim_param`
-#'  function: `param_names`, `obs_list`, `crit_function`, `model_function`,
+#'  function: `param_names`, `obs_list`, `model_function`,
 #'  `model_options`, `param_info`, `transform_obs`, `transform_sim`
 #' that must be passed to main_crit function by the methods wrappers.
 #'
@@ -55,7 +57,6 @@ post_treat_frequentist <- function(optim_options, param_info, optim_results,
                                    crit_options) {
   param_names <- get_params_names(param_info)
   nb_params <- length(param_names)
-  crit_function <- crit_options$crit_function
   info_crit_list <- crit_options$info_crit_list
 
   # Recompute final value of minimized criterion
@@ -116,7 +117,8 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
       filename <- paste0("EstimatedVSinit_new.pdf")
       warning(
         "Error trying to create ", path_results,
-        "/EstimatedVSinit.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ", filename
+        "/EstimatedVSinit.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
+        filename
       )
       grDevices::pdf(
         file = file.path(path_results, filename),
@@ -163,7 +165,8 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
       filename <- paste0("ValuesVSit_new.pdf")
       warning(
         "Error trying to create ", path_results,
-        "/ValuesVSit.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ", filename
+        "/ValuesVSit.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
+        filename
       )
       grDevices::pdf(
         file = file.path(path_results, filename),
@@ -191,7 +194,8 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
       filename <- paste0("ValuesVSit_2D_new.pdf")
       warning(
         "Error trying to create ", path_results,
-        "/ValuesVSit_2D.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ", filename
+        "/ValuesVSit_2D.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
+        filename
       )
       grDevices::pdf(
         file = file.path(path_results, filename),
@@ -230,14 +234,14 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
 #' criterion over all repetitions is written in white (if bubble is TRUE) or
 #' in red (if bubble is false) while the other ones are written in black.
 #'
-#' @import ggplot2
+#' @importFrom ggplot2 ggplot theme element_text geom_point geom_text
+#' scale_size_binned scale_size labs xlim ylim
 #' @importFrom dplyr filter
 #'
 #' @export
 #'
 plot_estimVSinit <- function(init_values, est_values, crit, lb, ub,
                              bubble = TRUE) {
-  nb_params <- ncol(init_values)
   param_names <- colnames(init_values)
   nb_rep <- nrow(init_values)
   ind_min_crit <- which.min(crit)
@@ -280,7 +284,7 @@ plot_estimVSinit <- function(init_values, est_values, crit, lb, ub,
       theme(plot.title = element_text(hjust = 0.5))
 
     if (bubble) {
-      p[[param_name]] <- p[[param_name]] + geom_point(alpha = 0.5, color = "red")
+    p[[param_name]] <- p[[param_name]] + geom_point(alpha = 0.5, color = "red")
     }
 
     p[[param_name]] <- p[[param_name]] +
@@ -347,13 +351,15 @@ plot_estimVSinit <- function(init_values, est_values, crit, lb, ub,
 #' iteration number increases while it is not the case when evaluation number
 #' increases.
 #'
-#' @import ggplot2
+#' @importFrom ggplot2 ggplot aes_string theme element_text geom_point
+#' scale_color_gradient2 geom_line geom_label aes labs scale_y_log10
 #' @importFrom dplyr select filter %>%
 #'
 #' @export
 #'
 plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
-                            crit_log = TRUE, rep_label = c("begin_end", "begin", "end")) {
+                            crit_log = TRUE,
+                            rep_label = c("begin_end", "begin", "end")) {
   param_names <- get_params_names(param_info)
   bounds <- get_params_bounds(param_info)
 
@@ -367,7 +373,8 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
   if (crit_log) {
     if (all(df$crit > 0)) {
       trans <- "log10"
-      mid <- (max(log10(df$crit)) - min(log10(df$crit))) / 2 + min(log10(df$crit))
+      mid <- (max(log10(df$crit)) -
+                min(log10(df$crit))) / 2 + min(log10(df$crit))
     } else {
       warning("The criterion takes negative values, log transformation will not be done.")
       crit_log <- FALSE
@@ -431,7 +438,8 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
     color = "rep"
   )) +
     labs(
-      title = paste0("Evolution of the minimized criterion \n in function of the minimization ", lab),
+      title = paste0("Evolution of the minimized criterion \n in function of the minimization ",
+                     lab),
       y = "Minimized criterion",
       x = paste(lab, "number"),
       fill = "Repetition"
@@ -490,13 +498,15 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
 #' iteration number increases while it is not the case when evaluation number
 #' increases.
 #'
-#' @import ggplot2
+#' @importFrom ggplot2 ggplot aes_string theme element_text geom_point labs
+#' xlim ylim geom_path scale_y_log10
 #' @importFrom dplyr select filter %>%
 #'
 #' @export
 #'
 plot_valuesVSit_2D <- function(df, param_info, iter_or_eval = c("eval", "iter"),
-                               fill = c("crit", "rep"), crit_log = TRUE, lines = FALSE,
+                               fill = c("crit", "rep"), crit_log = TRUE,
+                               lines = FALSE,
                                rep_label = c("begin_end", "begin", "end")) {
   param_names <- get_params_names(param_info)
   if (length(param_names) <= 1) {
@@ -515,7 +525,8 @@ plot_valuesVSit_2D <- function(df, param_info, iter_or_eval = c("eval", "iter"),
   if (crit_log) {
     if (all(df$crit > 0)) {
       trans <- "log10"
-      mid <- (max(log10(df$crit)) - min(log10(df$crit))) / 2 + min(log10(df$crit))
+      mid <- (max(log10(df$crit)) -
+                min(log10(df$crit))) / 2 + min(log10(df$crit))
     } else {
       warning("The criterion takes negative values, log transformation will not be done.")
       crit_log <- FALSE
@@ -567,14 +578,14 @@ plot_valuesVSit_2D <- function(df, param_info, iter_or_eval = c("eval", "iter"),
         if (rep_label[1] == "begin_end" || rep_label[1] == "begin") {
           p[[ipair]] <- p[[ipair]] +
             geom_label(aes(label = rep),
-              data = filter(df, rep == irep) %>% filter(eval == min(.data$eval)),
+             data = filter(df, rep == irep) %>% filter(eval == min(.data$eval)),
               size = 3
             )
         }
         if (rep_label[1] == "begin_end" || rep_label[1] == "end") {
           p[[ipair]] <- p[[ipair]] +
             geom_label(aes(label = rep),
-              data = filter(df, rep == irep) %>% filter(eval == max(.data$eval)),
+            data = filter(df, rep == irep) %>% filter(eval == max(.data$eval)),
               size = 3
             )
         }

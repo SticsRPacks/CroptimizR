@@ -5,7 +5,6 @@
 #' @param optim_results Results list returned by bayesian method wrappers
 #'
 #' @return Prints results of bayesian methods
-#'
 #' @keywords internal
 #'
 summary_bayesian <- function(optim_options, param_info, optim_results) {
@@ -13,6 +12,11 @@ summary_bayesian <- function(optim_options, param_info, optim_results) {
   nb_params <- length(param_names)
   path_results <- optim_options$path_results
   out <- optim_results$out
+
+  cat(paste(
+    "\nList of observed variables used:",
+    paste(optim_results$obs_var_list, collapse = ", "), "\n"
+  ))
 
   ## Print results
   codaObject <- getSample(out, start = 1, coda = TRUE)
@@ -43,7 +47,6 @@ summary_bayesian <- function(optim_options, param_info, optim_results) {
 plot_bayesian <- function(optim_options, param_info, optim_results) {
   param_names <- get_params_names(param_info)
   nb_params <- length(param_names)
-  bounds <- get_params_bounds(param_info)
   path_results <- optim_options$path_results
   out <- optim_results$out
   nb_chains <- length(out$chain)
@@ -65,7 +68,8 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
       warning(
         "Error trying to create ",
         path_results,
-        "/iterAndDensityPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ", filename
+        "/iterAndDensityPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
+        filename
       )
       utils::flush.console()
       grDevices::pdf(
@@ -92,7 +96,8 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
       )
       warning(
         "Error trying to create ", path_results,
-        "/marginalPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ", filename
+        "/marginalPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
+        filename
       )
       utils::flush.console()
       grDevices::pdf(
@@ -120,7 +125,8 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
         )
         warning(
           "Error trying to create ", path_results,
-          "/correlationPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ", filename
+          "/correlationPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
+          filename
         )
         utils::flush.console()
         grDevices::pdf(
@@ -137,6 +143,7 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
     # seems that it does not work for a single parameter
     # also, Nbiteration must be > thin+50 otherwise coda::gelman.plot end with
     # an error
+    if (is.null(optim_options$thin)) optim_options$thin <- 1
     if (nb_iterations >= (optim_options$thin + 50)) {
       tryCatch({
           grDevices::pdf(
@@ -153,7 +160,8 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
           )
           warning(
             "Error trying to create ", path_results,
-            "/gelmanDiagPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ", filename
+            "/gelmanDiagPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
+            filename
           )
           utils::flush.console()
           grDevices::pdf(

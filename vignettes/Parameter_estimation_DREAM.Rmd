@@ -54,16 +54,23 @@ javastics_path <- path_to_JavaStics
 
 # Download the example USMs and define the path to the JavaStics workspace
 # (JavaStics XML input files):
-data_dir <- file.path(SticsRFiles::download_data(example_dirs = "study_case_1",
-                                                 stics_version = "V9.0"))
+data_dir <- file.path(
+  SticsRFiles::download_data(
+    example_dirs = "study_case_1",
+    stics_version = "V9.0"
+  )
+)
 javastics_workspace_path <- file.path(data_dir, "XmlFiles")
 stics_inputs_path <- file.path(data_dir, "TxtFiles")
 
 # Generate Stics input files from JavaStics input files
 dir.create(stics_inputs_path)
-gen_usms_xml2txt(javastics = javastics_path,
-                 workspace = javastics_workspace_path,
-  out_dir = stics_inputs_path, verbose = TRUE)
+gen_usms_xml2txt(
+  javastics = javastics_path,
+  workspace = javastics_workspace_path,
+  out_dir = stics_inputs_path,
+  verbose = TRUE
+)
 ```
 
 
@@ -75,7 +82,11 @@ This part is not shown here, it is the same as this of the [specific and varieta
 ```{r eval=params$eval_auto_test, echo=FALSE, message=FALSE, warning=FALSE}
 # Read observation files
 obs_list <- get_obs(javastics_workspace_path)
-obs_list <- filter_obs(obs_list, var = c("lai_n"), include = TRUE)
+obs_list <- filter_obs(
+  obs_list,
+  var = c("lai_n"),
+  include = TRUE
+)
 ```
 
 
@@ -83,24 +94,44 @@ obs_list <- filter_obs(obs_list, var = c("lai_n"), include = TRUE)
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
 param_info <- list()
-param_info$dlaimax <- list(sit_list = list(c("bou99t3", "bou00t3", "bou99t1",
-                                        "bou00t1", "bo96iN+", "lu96iN+",
-                                        "lu96iN6", "lu97iN+")),
-                        lb = 0.0005, ub = 0.0025)
-param_info$durvieF <- list(sit_list = list(c("bo96iN+", "lu96iN+", "lu96iN6",
-                                          "lu97iN+"),
-                                      c("bou99t3", "bou00t3", "bou99t1",
-                                        "bou00t1")),
-                        lb = c(50, 100), ub = c(400, 450))
+param_info$dlaimax <-
+  list(
+    sit_list = list(
+      c(
+        "bou99t3",
+        "bou00t3",
+        "bou99t1",
+        "bou00t1",
+        "bo96iN+",
+        "lu96iN+",
+        "lu96iN6",
+        "lu97iN+"
+      )
+    ),
+    lb = 0.0005,
+    ub = 0.0025
+  )
+param_info$durvieF <-
+  list(
+    sit_list =
+      list(
+        c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
+        c("bou99t3", "bou00t3", "bou99t1", "bou00t1")
+      ),
+    lb = c(50, 100),
+    ub = c(400, 450)
+  )
 ```
 
 
 ## Set options for the model
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
-model_options <- stics_wrapper_options(javastics = javastics_path,
-                                       workspace = stics_inputs_path,
-                                       parallel = TRUE)
+model_options <- stics_wrapper_options(
+  javastics = javastics_path,
+  workspace = stics_inputs_path,
+  parallel = TRUE
+)
 ```
 
 ## Set options for the DREAM method
@@ -133,13 +164,15 @@ The `param_info` argument has the same content as in the [specific and varietal 
 
 
 ```{r eval=params$eval_auto_test, results='hide', message=FALSE, warning=FALSE}
-optim_results <- estim_param(obs_list = obs_list,
-                          crit_function = likelihood_log_ciidn,
-                          model_function = stics_wrapper,
-                          model_options = model_options,
-                          optim_options = optim_options,
-                          optim_method = "BayesianTools.dreamzs",
-                          param_info = param_info)
+optim_results <- estim_param(
+  obs_list = obs_list,
+  crit_function = likelihood_log_ciidn,
+  model_function = stics_wrapper,
+  model_options = model_options,
+  optim_options = optim_options,
+  optim_method = "BayesianTools.dreamzs",
+  param_info = param_info
+)
 ```
 
 
@@ -244,26 +277,39 @@ In case one wants to increase the number of iterations, because the algorithm ha
 ```{r eval=params$eval_auto_test, results='hide', message=FALSE, warning=FALSE}
 optim_options$PreviousResults <- optim_results$out
 optim_options$iterations <- 1000 # Total number of new iterations
-optim_results <- estim_param(obs_list = obs_list,
-                          crit_function = likelihood_log_ciidn,
-                          model_function = stics_wrapper,
-                          model_options = model_options,
-                          optim_options = optim_options,
-                          optim_method = "BayesianTools.dreamzs",
-                          param_info = param_info)
+optim_results <- estim_param(
+  obs_list = obs_list,
+  crit_function = likelihood_log_ciidn,
+  model_function = stics_wrapper,
+  model_options = model_options,
+  optim_options = optim_options,
+  optim_method = "BayesianTools.dreamzs",
+  param_info = param_info
+)
 ```
 
 
 ```{r move_results, eval=params$eval_manual_vignette, include=FALSE}
 # Move the files produced since the temp. folder is removed after Rmd execution
-file.copy(file.path(optim_options$out_dir, "correlationPlots.pdf"),
-          params$result_path)
-file.copy(file.path(optim_options$out_dir, "gelmanDiagPlots.pdf"),
-          params$result_path)
-file.copy(file.path(optim_options$out_dir, "iterAndDensityPlots.pdf"),
-          params$result_path)
-file.copy(file.path(optim_options$out_dir, "marginalPlots.pdf"),
-          params$result_path)
-file.copy(file.path(optim_options$out_dir, "optim_results.Rdata"),
-          params$result_path)
+file.copy(
+  file.path(optim_options$out_dir, "correlationPlots.pdf"),
+  params$result_path
+)
+
+file.copy(
+  file.path(optim_options$out_dir, "gelmanDiagPlots.pdf"),
+  params$result_path
+)
+file.copy(
+  file.path(optim_options$out_dir, "iterAndDensityPlots.pdf"),
+  params$result_path
+)
+file.copy(
+  file.path(optim_options$out_dir, "marginalPlots.pdf"),
+  params$result_path
+)
+file.copy(
+  file.path(optim_options$out_dir, "optim_results.Rdata"),
+  params$result_path
+)
 ```

@@ -7,11 +7,13 @@
 AICc(obs_list, crit_value, param_nb)
 }
 \arguments{
-\item{obs_list}{List of observed values to use for parameter estimation
+\item{obs_list}{List of observed values to use for parameter estimation.
 A \verb{named list} (names = situations names) of data.frame containing
 one column named Date with the dates (Date or POSIXct format) of the different observations
 and one column per observed variables with either the measured values or NA, if
-the variable is not observed at the given date.}
+the variable is not observed at the given date.
+See details section for more information on the list of observations actually
+used during the parameter estimation process.}
 
 \item{crit_value}{Final value of the estimated criterion}
 

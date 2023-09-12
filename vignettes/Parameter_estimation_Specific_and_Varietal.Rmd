@@ -3,7 +3,7 @@ title: "Parameter estimation with the Stics crop Model: a case with specific and
 output: rmarkdown::html_vignette
 author:
 - name: "Samuel Buis"
-affiliation: "INRA - EMMAH"
+affiliation: "INRAE - EMMAH"
 date: "`r Sys.Date()`"
 vignette: >
   %\VignetteIndexEntry{Parameter estimation with the Stics crop Model: a case with specific and varietal parameters}
@@ -59,16 +59,23 @@ javastics_path <- path_to_JavaStics
 
 # Download the example USMs and define the path to the JavaStics workspace
 # (JavaStics XML input files):
-data_dir <- file.path(SticsRFiles::download_data(example_dirs = "study_case_1",
-                                                 stics_version = "V9.0"))
+data_dir <- file.path(
+  SticsRFiles::download_data(
+    example_dirs = "study_case_1",
+    stics_version = "V9.0"
+  )
+)
 javastics_workspace_path <- file.path(data_dir, "XmlFiles")
 stics_inputs_path <- file.path(data_dir, "TxtFiles")
 
 # Generate Stics input files from JavaStics input files
 dir.create(stics_inputs_path, showWarnings = FALSE)
-gen_usms_xml2txt(javastics = javastics_path,
-                 workspace = javastics_workspace_path,
-  out_dir = stics_inputs_path, verbose = TRUE)
+gen_usms_xml2txt(
+  javastics = javastics_path,
+  workspace = javastics_workspace_path,
+  out_dir = stics_inputs_path,
+  verbose = TRUE
+)
 ```
 
 
@@ -80,7 +87,12 @@ In this example, observed LAI are used for all USMs for which there is an observ
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
 # Read observation files
 obs_list <- get_obs(javastics_workspace_path)
-obs_list <- filter_obs(obs_list, var = c("lai_n"), include = TRUE)
+obs_list <-
+  filter_obs(
+    obs_list,
+    var = c("lai_n"),
+    include = TRUE
+  )
 ```
 
 
@@ -92,15 +104,34 @@ Please note that bounds can take different values for the different groups of si
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
 param_info <- list()
-param_info$dlaimax <- list(sit_list = list(c("bou99t3", "bou00t3", "bou99t1",
-                                             "bou00t1", "bo96iN+", "lu96iN+",
-                                             "lu96iN6", "lu97iN+")),
-                        lb = 0.0005, ub = 0.0025)
-param_info$durvieF <- list(sit_list = list(c("bo96iN+", "lu96iN+", "lu96iN6",
-                                             "lu97iN+"),
-                                      c("bou99t3", "bou00t3", "bou99t1",
-                                        "bou00t1")),
-                        lb = c(50, 100), ub = c(400, 450))
+param_info$dlaimax <-
+  list(
+    sit_list =
+      list(
+        c(
+          "bou99t3",
+          "bou00t3",
+          "bou99t1",
+          "bou00t1",
+          "bo96iN+",
+          "lu96iN+",
+          "lu96iN6",
+          "lu97iN+"
+        )
+      ),
+    lb = 0.0005,
+    ub = 0.0025
+  )
+
+param_info$durvieF <- list(
+  sit_list =
+    list(
+      c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
+      c("bou99t3", "bou00t3", "bou99t1", "bou00t1")
+    ),
+  lb = c(50, 100),
+  ub = c(400, 450)
+)
 ```
 
 
@@ -108,9 +139,12 @@ param_info$durvieF <- list(sit_list = list(c("bo96iN+", "lu96iN+", "lu96iN6",
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
 
-model_options <- stics_wrapper_options(javastics = javastics_path,
-                                     workspace = stics_inputs_path,
-                                     parallel = TRUE)
+model_options <-
+  stics_wrapper_options(
+    javastics = javastics_path,
+    workspace = stics_inputs_path,
+    parallel = TRUE
+  )
 ```
 
 
@@ -120,16 +154,16 @@ model_options <- stics_wrapper_options(javastics = javastics_path,
 
 optim_options <- list()
 optim_options$nb_rep <- 7 # Number of repetitions of the minimization
-                          # (each time starting with different initial
-                          # values for the estimated parameters)
+# (each time starting with different initial
+# values for the estimated parameters)
 optim_options$maxeval <- 1000 # Maximum number of evaluations of the
-                            # minimized criteria
+# minimized criteria
 optim_options$xtol_rel <- 1e-04 # Tolerance criterion between two iterations
-                                # (threshold for the relative difference of
-                                # parameter values between the 2 previous
-                                # iterations)
+# (threshold for the relative difference of
+# parameter values between the 2 previous
+# iterations)
 optim_options$out_dir <- data_dir # path where to store the results
-                                  # (graph and Rdata)
+# (graph and Rdata)
 optim_options$ranseed <- 1234 # random seed
 ```
 
@@ -140,11 +174,13 @@ The optimization is performed here with the Nelder-Mead simplex method and `crit
 
 
 ```{r eval=params$eval_auto_test, results='hide', message=FALSE, warning=FALSE}
-res <- estim_param(obs_list = obs_list,
-                            model_function = stics_wrapper,
-                            model_options = model_options,
-                            optim_options = optim_options,
-                            param_info = param_info)
+res <- estim_param(
+  obs_list = obs_list,
+  model_function = stics_wrapper,
+  model_options = model_options,
+  optim_options = optim_options,
+  param_info = param_info
+)
 ```
 
 The estimated values of the parameters are the following:
@@ -179,27 +215,57 @@ A piece of code to run the model with the values of the parameters before and af
 
 # Run the model without and with forcing the optimized values of the parameters
 sim_before_optim <- stics_wrapper(model_options = model_options)
-sim_after_optim <- stics_wrapper(param_values = res$final_values,
-                              model_options = model_options)
+sim_after_optim <- stics_wrapper(
+  param_values = res$final_values,
+  model_options = model_options
+)
 
 stats <- summary(sim_before_optim$sim_list, obs = obs_list)
-p <- plot(sim_before_optim$sim_list, obs = obs_list, type = "scatter",
-          all_situations = TRUE)
-p1 <- p[[1]] + labs(title = paste("Before Optimization, \n RMSE=",
-                                  round(stats$RMSE, digits = 2))) +
+p <- plot(
+  sim_before_optim$sim_list,
+  obs = obs_list,
+  type = "scatter",
+  all_situations = TRUE
+)
+
+p1 <-
+  p[[1]] +
+  labs(title =
+         paste(
+           "Before Optimization, \n RMSE=",
+           round(stats$RMSE, digits = 2)
+         )
+  ) +
   theme(plot.title = element_text(size = 9, hjust = 0.5))
 
 stats <- summary(sim_after_optim$sim_list, obs = obs_list)
-p <- plot(sim_after_optim$sim_list, obs = obs_list, type = "scatter",
-          all_situations = TRUE)
-p2 <- p[[1]] + labs(title = paste("After Optimization, \n RMSE=",
-                                round(stats$RMSE, digits = 2))) +
+p <-
+  plot(
+    sim_after_optim$sim_list,
+    obs = obs_list,
+    type = "scatter",
+    all_situations = TRUE
+  )
+
+p2 <-
+  p[[1]] +
+  labs(title =
+         paste(
+           "After Optimization, \n RMSE=",
+           round(stats$RMSE, digits = 2)
+         )
+  ) +
   theme(plot.title = element_text(size = 9, hjust = 0.5))
 
 p <- grid.arrange(grobs = list(p1, p2), nrow = 1, ncol = 2)
 # Save the graph
-ggsave(file.path(optim_options$out_dir,
-                 paste0("sim_obs", ".png")), plot = p)
+ggsave(
+  file.path(
+    optim_options$out_dir,
+    paste0("sim_obs", ".png")
+  ),
+  plot = p
+)
 
 ```
 
@@ -213,10 +279,19 @@ knitr::include_graphics("ResultsSpecificVarietal/sim_obs.png")
 
 ```{r move_results, eval=params$eval_manual_vignette, include=FALSE}
 # Move the files produced since the temp. folder is removed after Rmd execution
-file.copy(file.path(optim_options$out_dir, "EstimatedVSinit.pdf"),
-          params$result_path, overwrite = TRUE)
-file.copy(file.path(optim_options$out_dir, "optim_results.Rdata"),
-          params$result_path, overwrite = TRUE)
-file.copy(file.path(optim_options$out_dir, "sim_obs.png"),
-          params$result_path, overwrite = TRUE)
+file.copy(
+  file.path(optim_options$out_dir, "EstimatedVSinit.pdf"),
+  params$result_path,
+  overwrite = TRUE
+)
+file.copy(
+  file.path(optim_options$out_dir, "optim_results.Rdata"),
+  params$result_path,
+  overwrite = TRUE
+)
+file.copy(
+  file.path(optim_options$out_dir, "sim_obs.png"),
+  params$result_path,
+  overwrite = TRUE
+)
 ```

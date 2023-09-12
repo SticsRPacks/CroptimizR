@@ -1,1 +1,13 @@
 destination: docs
+articles:
+- title: Articles
+  navbar: ~
+  contents:
+  - CroptimizR
+  - Available_parameter_estimation_algorithms
+  - Designing_a_model_wrapper
+  - Parameter_estimation_simple_case
+  - AgMIP_Calibration_Phenology_protocol
+  - Parameter_estimation_Specific_and_Varietal
+  - ApsimX_parameter_estimation_simple_case
+  - Parameter_estimation_DREAM

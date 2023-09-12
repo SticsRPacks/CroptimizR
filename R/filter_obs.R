@@ -58,7 +58,7 @@ filter_obs <- function(obs_list, var = NULL, situation = NULL, dates = NULL,
   if (is.null(obs_list)) {
     stop("obs_list is NULL.")
   }
-  if (!CroptimizR:::is.obs(obs_list)) {
+  if (!is.obs(obs_list)) {
     stop("Incorrect format for argument obs_list.")
   }
 
@@ -141,7 +141,7 @@ filter_obs <- function(obs_list, var = NULL, situation = NULL, dates = NULL,
 
   if (!all(names(obs_list) %in% unique(df$id))) {
     warning(
-      "No observations found in USM(s) ",
+      "No observations found in situation(s) ",
       paste(names(obs_list)[!(names(obs_list) %in% unique(df$id))], collapse = ", ")
     )
   }
@@ -150,7 +150,6 @@ filter_obs <- function(obs_list, var = NULL, situation = NULL, dates = NULL,
   obs_list <- split(df, df$id)
 
   # Remove column "id" and remove columns with only NAs:
-  # utils::globalVariables("where")
   obs_list <- lapply(
     obs_list,
     function(x) {
@@ -158,21 +157,9 @@ filter_obs <- function(obs_list, var = NULL, situation = NULL, dates = NULL,
     }
   )
 
-  # Add warning when variable is remove from a situation:
-  mapply(
-    function(x, y) {
-      var_not_in_sit <- var_names[!var_names %in% colnames(x)]
-      if (length(var_not_in_sit) > 0) {
-        warning(
-          "No observations found for variable(s) ",
-          var_not_in_sit,
-          " in USM ",
-          y
-        )
-      }
-      return()
-    },
-    obs_list, names(obs_list)
-  )
   return(obs_list)
 }
+
+# Remove when tidyselect exports where() (very soon),
+# see https://github.com/r-lib/tidyselect/issues/244
+utils::globalVariables("where")

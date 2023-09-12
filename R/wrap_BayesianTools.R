@@ -5,7 +5,6 @@
 #' @return prints, graphs and a list containing:
 #'
 #' @keywords internal
-#'
 #' @importFrom BayesianTools applySettingsDefault createUniformPrior createBayesianSetup runMCMC marginalPlot correlationPlot gelmanDiagnostics getSample MAP
 #'
 
@@ -46,7 +45,6 @@ wrap_BayesianTools <- function(optim_options, param_info, crit_options) {
     optim_options$startValue -
     optim_options$iterations %% optim_options$startValue
   param_names <- get_params_names(param_info)
-  nb_params <- length(param_names)
   bounds <- get_params_bounds(param_info)
   init_values <- get_init_values(param_info)
 

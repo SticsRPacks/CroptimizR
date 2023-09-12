@@ -1,10 +1,12 @@
 #' @title main function for parameter estimation
 #'
-#' @param obs_list List of observed values to use for parameter estimation
+#' @param obs_list List of observed values to use for parameter estimation.
 #' A `named list` (names = situations names) of data.frame containing
 #' one column named Date with the dates (Date or POSIXct format) of the different observations
 #' and one column per observed variables with either the measured values or NA, if
 #' the variable is not observed at the given date.
+#' See details section for more information on the list of observations actually
+#' used during the parameter estimation process.
 #'
 #' @param crit_function Function implementing the criterion to optimize
 #' (optional, see default value in the function signature). See
@@ -41,11 +43,11 @@
 #' parameter bounds).
 #'
 #' or a named list containing for each parameter:
-#'   - `sit_list`, the list of situations per group,
+#'   - `sit_list`, list the groups of situations for which the current estimated
+#'   parameter must take different values (see [here](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html)
+#' for an example),
 #'   - `ub` and `lb`, vectors of upper and lower bounds (one value per group),
 #'   - `init_values`, the list of initial values per group  (data.frame, one column per group, optional).
-#' (see [here](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html)
-#' for an example)
 #'
 #' @param forced_param_values Named vector or list, must contain the values (or
 #' arithmetic expression, see details section) for the model parameters to force. The corresponding
@@ -72,11 +74,15 @@
 #' @param satisfy_par_const User function for including constraints on estimated
 #' parameters (optional), see details section for more information.
 #'
-#' @param var (optional) List of variables for which the wrapper must return results.
+#' @param var (optional) List of variables for which the model wrapper must return
+#' results.
 #' By default the wrapper is asked to simulate only the observed variables. However,
 #' it may be useful to simulate also other variables, typically when transform_sim
 #' and/or transform_obs functions are used. Note however that it is
 #' active only if the model_function used handles this argument.
+#' If it is the case, and if the var argument is provided, then the list of observations
+#' used will be restricted to the list of variables given in the var argument,
+#' plus the ones possibly computed by the transform_sim function.
 #'
 #' @param info_level (optional) Integer that controls the level of information returned and stored
 #' by estim_param (in addition to the results automatically provided that depends on the method used).
@@ -103,7 +109,18 @@
 #'   longer supported, use `var` instead.
 #'
 #' @details
-#'   If the `candidate_param` argument is given, a parameter selection procedure following
+#'   In CroptimizR, parameter estimation is based on the comparison between the values
+#'   of the observed and simulated variables at corresponding dates. Only the situations,
+#'   variables and dates common to both observations (provided in `obs_list` argument),
+#'   and simulations returned by the wrapper used, will be taken into account in
+#'   the parameter estimation process.
+#'   In case where the value of an observed variable is NA for a given situation and
+#'   date, it will not be taken into account. In case where the value of a simulated
+#'   variable is NA (or Inf) for a given situation and date for which there is an
+#'   observation, the optimized criterion will take the NA value, which may stop the
+#'   process, and the user will be warned.
+#'
+#'   If the candidate_param argument is given, a parameter selection procedure following
 #'   the AgMIP calibration phaseIII protocol will be performed:
 #'   The candidate parameters are added one by one (in the given order) to the parameters
 #'   that MUST be estimated (i.e. the one defined in param_info but not in candidate_param).
@@ -111,6 +128,7 @@
 #'    - the parameter estimation is performed and an information criterion is computed (see argument info_crit_func)
 #'    - if the information criterion is inferior to all the ones obtained before,
 #'      then the current candidate parameter is added to the list of parameters to estimate
+#'
 #'   The result includes a summary of all the steps (data.frame param_selection_steps).
 #'
 #'   The optional argument `transform_obs` must be a function with 4 arguments:
@@ -119,6 +137,7 @@
 #'   - param_values: a named vector containing the current parameters values proposed
 #'      by the estimation algorithm
 #'   - model_options: the list of model options as given to estim_param function
+#'
 #'   It must return a list of observations (same format as `obs_list` argument) that
 #'   will be used to compute the criterion to optimize.
 #'
@@ -128,6 +147,7 @@
 #'   - param_values: a named vector containing the current parameters values proposed
 #'      by the estimation algorithm
 #'   - model_options: the list of model options as given to estim_param function
+#'
 #'   It must return a list of simulated results (same format as this returned by the model wrapper used)
 #'   that will be used to compute the criterion to optimize.
 #'
@@ -135,6 +155,7 @@
 #'   - param_values: a named vector containing the current parameters values proposed
 #'      by the estimation algorithm
 #'   - model_options: the list of model options as given to estim_param function
+#'
 #'   It must return a logical indicating if the parameters values satisfies the constraints
 #'   (freely defined by the user in the function body) or not.
 #'
@@ -218,7 +239,7 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
   path_results_ORI <- optim_options$path_results
 
   ## obs_list
-  if (!CroptimizR:::is.obs(obs_list)) {
+  if (!is.obs(obs_list)) {
     stop("Incorrect format for argument obs_list.")
   }
   ## crit_function
@@ -425,7 +446,8 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
 
   # Print and store results of parameter estimation steps if parameter selection was activated
   if (!is.null(candidate_param)) {
-    summary_FwdRegAgMIP(param_selection_steps, info_crit_list, path_results_ORI)
+    summary_FwdRegAgMIP(param_selection_steps, info_crit_list, path_results_ORI,
+                        res)
     save_results_FwdRegAgMIP(param_selection_steps, path_results_ORI)
     res$param_selection_steps <- param_selection_steps
   }
@@ -452,3 +474,5 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
 
   return(res)
 }
+
+utils::globalVariables(c(".croptEnv"))

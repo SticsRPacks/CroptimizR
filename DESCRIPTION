@@ -1,8 +1,8 @@
 Type: Package
 Package: CroptimizR
-Title: A Package to estimate parameters of Crop Models
-Version: 0.4.0
-Date: 2021-07-22
+Title: A Package to Estimate Parameters of Crop Models
+Version: 0.5.1
+Date: 2023-01-06
 Authors@R: c(
     person("Samuel", "Buis", , "samuel.buis@inrae.fr", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-8676-5447")),
@@ -18,29 +18,24 @@ Authors@R: c(
     person("Julie", "Constantin", role = "rev"),
     person("Benjamin", "Dumont", role = "rev")
   )
-Description: CroptimizR provides functions for estimating crop models
-    parameters using observations and simulations. It offers a generic
-    framework for linking crop models with up-to-date and ad-hoc parameter
-    estimation algorithms implemented in external packages. It proposes a
-    standard interface for crop models, a set of adapted goodness-of-fit
-    criteria and additional functionalities, including: 1/ Fine tuning of
-    the selected optimization algorithm through specific options; 2/
-    specification of initial values and constraints on the estimated
-    parameters; 3/ dynamic execution of user-defined transformations for
-    observed and/or simulated values in case they would not be directly
-    comparable; 4/ forcing of crop model parameters; and 5/ modulating the
-    level of additional information in output of the parameter estimation
-    process.
+Description: The purpose of CroptimizR is to provide functions for
+    estimating crop model parameters from observations of their simulated
+    variables. This process is often referred to as calibration. For that, it
+    offers a generic framework for linking crop models with up-to-date and
+    ad-hoc algorithms, as well as a choice of goodness-of-fit criteria and
+    additional features adapted to the problem of crop model calibration.
+    It facilitates the comparison of different types of methods on
+    different models.
 License: file LICENSE
 URL: https://github.com/SticsRPacks/CroptimizR,
     https://doi.org/10.5281/zenodo.4066451
 BugReports: https://github.com/SticsRPacks/CroptimizR/issues
 Depends:
-    R (>= 3.6.0)
+    R (>= 4.0.0)
 Imports:
     BayesianTools,
-    coda,
     crayon,
+    doParallel,
     dplyr,
     ggplot2,
     lhs,
@@ -59,17 +54,18 @@ Suggests:
     covr,
     CroPlotR,
     devtools,
-    doParallel,
     gridExtra,
     knitr,
     rmarkdown,
     spelling,
     SticsOnR,
     SticsRFiles,
-    testthat (>= 2.1.0)
+    testthat (>= 2.1.0),
+    tidyr
 VignetteBuilder: 
     knitr
 Remotes:
+    github::florianhartig/BayesianTools/BayesianTools@c953ae2bf8c112f95fdda1a35b2ff33a1f00c208,
     github::hol430/ApsimOnR,
     github::SticsRPacks/CroPlotR@*release,
     github::SticsRPacks/SticsOnR@*release,
@@ -79,4 +75,4 @@ Encoding: UTF-8
 Language: en-US
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.1

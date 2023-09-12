@@ -9,13 +9,13 @@
 #' @return The value of the likelihood given the observed and simulated values
 #'  of the variables.
 #'
-#' @details The following log-likelihoods are proposed ([see html version]
-#' (https://sticsrpacks.github.io/CroptimizR/reference/likelihood.html)
+#' @details The following log-likelihoods are proposed (
+#' [see html version](https://sticsrpacks.github.io/CroptimizR/reference/Likelihoods.html)
 #' for a better rendering of equations):
 #' \itemize{
 #'   \item `likelihood_log_ciidn`: log transformation of concentrated version of iid normal likelihood \cr
 #'           The concentrated version of iid normal likelihood is:
-#'           \deqn{ \prod_{j} {\sum_{i,k} [Y_{ijk}-f_{jk}(X_i;\theta)]^2 )}^{-(n_j/2+2)} }
+#'           \deqn{ \prod_{j} ({\sum_{i,k} [Y_{ijk}-f_{jk}(X_i;\theta)]^2 )}^{-(n_j/2+2)} }
 #'           where \eqn{ Y_{ijk} } is the observed value for the \eqn{k^{th}} time point of the \eqn{j^{th}} variable in the \eqn{i^{th}}
 #'           situation,
 #'           \eqn{ f_{jk}(X_i;\theta) } the corresponding model prediction, and \eqn{n_j} the number of measurements of variable \eqn{j}. \cr

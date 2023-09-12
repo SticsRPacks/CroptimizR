@@ -25,7 +25,15 @@ optim_switch <- function(...) {
     flag_error <- FALSE
 
     on.exit({
+
+      res$forced_param_values = crit_options$forced_param_values
+
       if (exists(".croptEnv")) {
+
+        # Save results even in case parameter estimation crash
+        res$obs_var_list <- .croptEnv$obs_var_list
+        rm("obs_var_list", envir = .croptEnv)
+
         if (arguments$crit_options$info_level >= 1) {
           res$params_and_crit <- dplyr::bind_rows(.croptEnv$params_and_crit)
           rm("params_and_crit", envir = .croptEnv)
@@ -41,7 +49,9 @@ optim_switch <- function(...) {
         if (arguments$crit_options$info_level >= 4) {
           res$sim <- .croptEnv$sim
           res$sim_transformed <- .croptEnv$sim_transformed
-          rm("sim_transformed", envir = .croptEnv)
+          if (!is.null(res$sim_transformed)) {
+            rm("sim_transformed", envir = .croptEnv)
+          }
         }
       }
 
@@ -78,6 +88,7 @@ optim_switch <- function(...) {
     if (optim_method == "nloptr.simplex" || optim_method == "simplex") {
       res <- do.call(wrap_nloptr, wrap_args)
       if (nargs() > 2) {
+        res$obs_var_list <- .croptEnv$obs_var_list
         if (arguments$crit_options$info_level >= 1) {
           res$params_and_crit <- dplyr::bind_rows(.croptEnv$params_and_crit)
         }
@@ -101,6 +112,7 @@ optim_switch <- function(...) {
       optim_method == "dreamzs") {
       res <- do.call(wrap_BayesianTools, wrap_args)
       if (nargs() > 2) {
+        res$obs_var_list <- .croptEnv$obs_var_list
         res$plots <- plot_bayesian(
           optim_options = optim_options,
           param_info = param_info, optim_results = res
@@ -113,6 +125,7 @@ optim_switch <- function(...) {
     } else if (optim_method == "optim") {
       res <- do.call(wrap_optim, wrap_args)
       if (nargs() > 2) {
+        res$obs_var_list <- .croptEnv$obs_var_list
         if (arguments$crit_options$info_level >= 1) {
           res$params_and_crit <- dplyr::bind_rows(.croptEnv$params_and_crit)
         }
@@ -150,3 +163,5 @@ optim_switch <- function(...) {
 
   return(res)
 }
+
+utils::globalVariables(c(".croptEnv"))

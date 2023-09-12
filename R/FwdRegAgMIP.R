@@ -102,7 +102,7 @@ select_param_FwdRegAgMIP <- function(oblig_param_list, add_param_list, crt_list,
 #' @return A tibble summarizing the results of the parameter estimation steps
 #'
 #' @importFrom stats setNames
-#'
+#' @importFrom tibble tibble
 #' @keywords internal
 #'
 post_treat_FwdRegAgMIP <- function(optim_results, crit_options, crt_list,
@@ -117,11 +117,11 @@ post_treat_FwdRegAgMIP <- function(optim_results, crit_options, crt_list,
   )
 
   ## Store the results per step
-  digits <- 2
-  v_init <- as.vector(t(optim_results$init_values[optim_results$ind_min_crit, ]))
+  v_init <- as.vector(
+    t(optim_results$init_values[optim_results$ind_min_crit, ]))
   names(v_init) <- names(optim_results$init_values)
   info_new_step <- setNames(
-    tibble(
+    tibble::tibble(
       list(crt_list),
       list(v_init),
       list(optim_results$final_values),
@@ -138,7 +138,7 @@ post_treat_FwdRegAgMIP <- function(optim_results, crit_options, crt_list,
       info_crit_func()$name, "Selected step"
     )
   )
-  param_selection_steps <- dplyr::bind_rows(param_selection_steps, info_new_step)
+param_selection_steps <- dplyr::bind_rows(param_selection_steps, info_new_step)
   ind_min_infocrit <- which.min(param_selection_steps[[info_crit_func()$name]])
   param_selection_steps[, "Selected step"] <- ""
   param_selection_steps[ind_min_infocrit, "Selected step"] <- "X"
@@ -152,19 +152,26 @@ post_treat_FwdRegAgMIP <- function(optim_results, crit_options, crt_list,
 #'
 #' @inheritParams optim_switch
 #'
-#' @param param_selection_steps A tibble summarizing the results of the previous
-#' parameter estimation steps as returned by the previous call to this function,
-#' NULL if it is the first step.
+#' @param param_selection_steps A tibble summarizing the results of the
+#' parameter estimation steps, as returned by the post_treat_FwdRegAgMIP function.
+#'
+#' @param optim_results Results list returned by the parameter estimation method
+#' wrapper used
 #'
 #' @return Print the results in standard output.
 #'
 #' @keywords internal
 #'
 summary_FwdRegAgMIP <- function(param_selection_steps,
-                                info_crit_list, path_results) {
+                                info_crit_list, path_results, optim_results) {
   cat("----------------------\n")
   cat("End of parameter selection process\n")
   cat("----------------------\n\n")
+
+  cat(paste(
+    "\nList of observed variables used:",
+    paste(optim_results$obs_var_list, collapse = ", "), "\n"
+  ))
 
   ind_min_infocrit <-
     which.min(param_selection_steps[[info_crit_list[[1]]()$name]])

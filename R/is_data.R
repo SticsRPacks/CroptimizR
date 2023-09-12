@@ -132,7 +132,7 @@ is.data <- function(data_list) {
 #' @keywords internal
 #'
 is.sim <- function(sim_list) {
-  if (!CroptimizR:::is.data(sim_list)) {
+  if (!is.data(sim_list)) {
     warning("Variable storing simulated data has an incorrect format.")
     return(FALSE)
   }
@@ -159,7 +159,7 @@ is.sim <- function(sim_list) {
 #'     var1 = c(1.3, 2)
 #'   )
 #' )
-#' CroptimizR:::is.obs(obs_list)
+#' # CroptimizR:::is.obs(obs_list)
 #'
 #' # Missing Date column
 #' obs_list <- list(
@@ -169,7 +169,7 @@ is.sim <- function(sim_list) {
 #'     var1 = c(1.3, 2)
 #'   )
 #' )
-#' CroptimizR:::is.obs(obs_list)
+#' # CroptimizR:::is.obs(obs_list)
 #'
 #' # Bad Date format
 #' obs_list <- list(
@@ -179,13 +179,13 @@ is.sim <- function(sim_list) {
 #'   ),
 #'   sit2 = data.frame(Date = c("2009-11-30", "2009-12-5"), var1 = c(1.3, 2))
 #' )
-#' CroptimizR:::is.obs(obs_list)
+#' # CroptimizR:::is.obs(obs_list)
 #' }
 #'
 #' @keywords internal
 #'
 is.obs <- function(obs_list) {
-  if (!CroptimizR:::is.data(obs_list)) {
+  if (!is.data(obs_list)) {
     warning("Variable storing observed data has an incorrect format.")
     return(FALSE)
   }
