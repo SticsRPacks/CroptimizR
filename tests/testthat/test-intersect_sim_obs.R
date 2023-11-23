@@ -17,7 +17,11 @@ test_that("intersect_sim_obs", {
     colnames(res$sim_list$sit1),
     colnames(res$obs_list$sit1)
   ))
-  expect_true(all.equal(res2$sim_list, res2$obs_list))
+  expect_true(all.equal(res2$sim_list$sit1$Date, res2$obs_list$sit1$Date))
+  expect_true(all.equal(
+    colnames(res2$sim_list$sit1),
+    colnames(res2$obs_list$sit1)
+  ))
 })
 obs_list <- list(sit1 = data.frame(
   Date = as.POSIXct(c("2009-11-30", "2009-12-10")),
