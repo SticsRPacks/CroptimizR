@@ -141,7 +141,7 @@ ONLY AVAILABLE FOR THE MOMENT FOR crit_function==crit_ols.}
 
 \item{weight}{Weights to use in the criterion to optimize. A function that takes in input a vector
 of observed values and the name of the corresponding variable and that must return either a single value
-for the weights for the given variable or a vector of values of length the length of the observed values given in input.}
+for the weights for the given variable or a vector of values of length the length of the vector of observed values given in input.}
 
 \item{var_names}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} \code{var_names} is no
 longer supported, use \code{var} instead.}

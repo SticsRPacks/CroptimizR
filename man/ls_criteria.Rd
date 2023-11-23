@@ -8,18 +8,22 @@
 \alias{crit_log_cwss_corr}
 \title{Criteria to optimize}
 \usage{
-crit_ols(sim_list, obs_list, ...)
+crit_ols(sim_list, obs_list)
 
-crit_wls(sim_list, obs_list, weight, alpha = 1)
+crit_wls(sim_list, obs_list, weight)
 
-crit_log_cwss(sim_list, obs_list, ...)
+crit_log_cwss(sim_list, obs_list)
 
-crit_log_cwss_corr(sim_list, obs_list, ...)
+crit_log_cwss_corr(sim_list, obs_list)
 }
 \arguments{
 \item{sim_list}{List of simulated variables}
 
 \item{obs_list}{List of observed variables}
+
+\item{weight}{Weights to use in the criterion to optimize. A function that takes in input a vector
+of observed values and the name of the corresponding variable and that must return either a single value
+for the weights for the given variable or a vector of values of length the length of the vector of observed values given in input.}
 }
 \value{
 The value of the criterion given the observed and simulated values of
@@ -40,8 +44,16 @@ The sum of squared residues for each variable: \cr
 \deqn{ \sum_{i,j,k} [Y_{ijk}-f_{jk}(X_i;\theta)]^2 }
 where \eqn{ Y_{ijk} } is the observed value for the \eqn{k^{th}} time point of the \eqn{j^{th}} variable in the \eqn{i^{th}}
 situation,
-\eqn{ f_{jk}(X_i;\theta) } the corresponding model prediction, and \eqn{n_j} the number of measurements of variable \eqn{j}. \cr
-In this criterion, one assume that all errors (model and observations errors for all variables, dates and situations) are independent, and that the error variance is constant over time and equal for the different variables \eqn{j}.
+\eqn{ f_{jk}(X_i;\theta) } the corresponding model prediction. \cr
+Using this criterion, one assume that all errors (model and observations errors for all variables, dates and situations) are independent, and that the error variance is constant over time and equal for the different variables \eqn{j}.
+\item \code{crit_wls}: weighted least squares \cr
+The weighted sum of squared residues for each variable: \cr
+\deqn{ \sum_{i,j,k} [\frac{Y_{ijk}-f_{jk}(X_i;\theta)}{w_{i,j,k}}]^2 }
+where \eqn{ Y_{ijk} } is the observed value for the \eqn{k^{th}} time point of the \eqn{j^{th}} variable in the \eqn{i^{th}}
+situation,
+\eqn{ f_{jk}(X_i;\theta) } the corresponding model prediction, \cr
+and \eqn{w_{i,j,k}} a weight. \cr
+Using this criterion, one assume that all errors (model and observations errors for all variables, dates and situations) are independent, and that the error variances are equal to \eqn{w_{i,j,k}^2}  \eqn{j}.
 \item \code{crit_log_cwss}: log transformation of concentrated version of weighted sum of squares \cr
 The concentrated version of weighted sum of squares is: \cr
 \deqn{ \prod_{j} {(\frac{1}{n_j} \sum_{i,k} [Y_{ijk}-f_{jk}(X_i;\theta)]^2 )} ^{n_j/2} }
@@ -49,7 +61,7 @@ where \eqn{ Y_{ijk} } is the observed value for the \eqn{k^{th}} time point of t
 situation,
 \eqn{ f_{jk}(X_i;\theta) } the corresponding model prediction, and \eqn{n_j} the number of measurements of variable \eqn{j}. \cr
 \code{crit_log_cwss} computes the log of this equation. \cr
-In this criterion, one assume that all errors (model and observations errors for all variables, dates and situations) are independent, and that the error variance is constant over time but may be different between variables \eqn{j}.
+Using this criterion, one assume that all errors (model and observations errors for all variables, dates and situations) are independent, and that the error variance is constant over time but may be different between variables \eqn{j}.
 These error variances are automatically estimated.
 More details about this criterion are given in Wallach et al. (2011), equation 5.
 \item \code{crit_log_cwss_corr}: log transformation of concentrated version of weighted sum of squares with hypothesis of high correlation between errors for different measurements over time \cr
@@ -59,15 +71,15 @@ where \eqn{ Y_{ijk} } is the observed value for the \eqn{k^{th}} time point of t
 situation,
 \eqn{ f_{jk}(X_i;\theta) } the corresponding model prediction, \eqn{N_j} the number of situations including at least one observation of variable \eqn{j}, and \eqn{n_{ij}} the number of observation of variable \eqn{j} on situation \eqn{i}. . \cr
 \code{crit_log_cwss_corr} computes the log of this equation. \cr
-In this criterion, one still assume that errors in different
+Using this criterion, one still assume that errors in different
 situations or for different variables in the same situation are
 independent.
 However, errors for different observations over time of the same
 variable in the same situation are assumed to be highly correlated.
 In this way, each situation contributes a single term to the
 overall sum of squared errors regardless of the number of
-observations which may be usefull in case one have situations with
-very heterogenous number of dates of observations.
+observations which may be useful in case one have situations with
+very heterogeneous number of dates of observations.
 More details about this criterion are given in Wallach et al.
 (2011), equation 8.
 }

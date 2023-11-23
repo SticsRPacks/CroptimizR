@@ -107,7 +107,7 @@
 #'
 #' @param weight Weights to use in the criterion to optimize. A function that takes in input a vector
 #' of observed values and the name of the corresponding variable and that must return either a single value
-#' for the weights for the given variable or a vector of values of length the length of the observed values given in input.
+#' for the weights for the given variable or a vector of values of length the length of the vector of observed values given in input.
 #'
 #' @param var_names `r lifecycle::badge("deprecated")` `var_names` is no
 #'   longer supported, use `var` instead.
@@ -214,6 +214,19 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
     var_names <- var # to remove when we update inside the function
   }
 
+  # Initialize res
+  res <- list()
+
+  # Create an environment accessible by all functions for storing information during the estimation process
+  parent <- eval(parse(text = ".GlobalEnv"))
+  .croptEnv <- new.env(parent)
+  assign(
+    x = ".croptEnv",
+    value = .croptEnv,
+    pos = parent
+  )
+  .croptEnv$total_eval_count <- 0
+
   # Remove CroptimizR environment before exiting and save stored results (even if the process crashes)
   on.exit({
     if (exists(".croptEnv")) {
@@ -221,16 +234,6 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
     }
     save(res, file = file.path(path_results_ORI, "optim_results.Rdata"))
   })
-
-  # Initialize res
-  res <- list()
-
-  # Measured elapse time
-  tictoc::tic.clearlog()
-  tictoc::tic(quiet = TRUE)
-
-  # set seed
-  set.seed(optim_options$ranseed)
 
   # Check inputs
 
@@ -342,19 +345,37 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
 
   ## weight
   if (!is.function(weight) && !is.null(weight)) {
-    stop("Incorrect format for argument weight Should be a function or NULL.")
+    stop("Incorrect format for argument weight: should be a function or NULL.")
+  }
+  if (is.function(weight)) {
+    tryCatch(
+      weight(c(1,2,3), "var1"),
+      error = function(cond) {
+        message(paste("Caught an error while testing argument weight: \n
+                 it must be a function that takes 2 input arguments (vector of observed
+                      values and name of corresponding variable)"))
+        print(cond)
+        stop()
+      }
+    )
+    w <- weight(c(1,2,3), "var1")
+    if (!is.numeric(w)) {
+      stop("Caught an error while testing argument weight: \n
+        it must be  function that returns a numeric value (or vector of).")
+    }
+    if (length(w)!=1 & length(w)!=length(c(1,2,3))) {
+      stop("Caught an error while testing argument weight: \n
+        it must be a function that returns a single value or a vector of values of size the size of
+             the vector of observed values given as first argument.")
+    }
   }
 
+  # Measured elapse time
+  tictoc::tic.clearlog()
+  tictoc::tic(quiet = TRUE)
 
-  # Create an environment accessible by all functions for storing information during the estimation process
-  parent <- eval(parse(text = ".GlobalEnv"))
-  .croptEnv <- new.env(parent)
-  assign(
-    x = ".croptEnv",
-    value = .croptEnv,
-    pos = parent
-  )
-  .croptEnv$total_eval_count <- 0
+  # set seed
+  set.seed(optim_options$ranseed)
 
   # Initializations before parameter selection loop
   oblig_param_list <- setdiff(param_names, candidate_param)
