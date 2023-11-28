@@ -60,7 +60,6 @@ jobs:
           # see also: https://stackoverflow.com/questions/73243945/pkgdown-action-failing-at-build-xml
           extra-packages: |
             any::rcmdcheck
-            SticsRPacks/SticsRFiles@main
           needs: check
           exclude: ape
 
@@ -70,7 +69,7 @@ jobs:
       - name: Install custom R dependencies
         run: |
           # Install dev version of SticsRFiles to be in sync for tests (packages are developed synchronously):
-          remotes::install_github("SticsRPacks/SticsRFiles@main", dependencies = FALSE, upgrade = "never")
+          remotes::install_github("SticsRPacks/SticsRFiles@main", dependencies = FALSE, upgrade = "never", force=TRUE)
         shell: Rscript {0}
 
       - uses: r-lib/actions/check-r-package@v2
