@@ -49,8 +49,8 @@ However, errors for different observations over time of the same
 variable in the same situation are assumed to be highly correlated.
 In this way, each situation contributes a single term to the
 overall sum of squared errors regardless of the number of
-observations which may be usefull in case one have situations with
-very heterogenous number of dates of observations.
+observations which may be useful in case one have situations with
+very heterogeneous number of dates of observations.
 }
 \code{sim_list} and \code{obs_list} must have the same structure
 (i.e. same number of variables, dates, situations, ... use internal function

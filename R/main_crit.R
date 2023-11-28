@@ -1,5 +1,4 @@
 #' @title main function for criterion to optimize
-#'
 #' @param param_values Value(s) of the parameters
 #' @param crit_options A list containing the following elements:
 #' `param_names` Name(s) of parameters
@@ -44,6 +43,13 @@ main_crit <- function(param_values, crit_options) {
           crit = crit, tibble::tibble(!!!param_values_ori),
           satisfy_const = satisfy_const
         )
+      if (!is.null(forced_param_values)) {
+        .croptEnv$params_and_crit[[.croptEnv$eval_count]] <-
+          dplyr::bind_cols(
+            .croptEnv$params_and_crit[[.croptEnv$eval_count]],
+            forced_param_values=tibble::tibble(!!!forced_param_values)
+          )
+      }
 
       if (!is.null(crit_options$irep)) {
         ## this condition is there to detect frequentist methods ...
@@ -130,12 +136,13 @@ main_crit <- function(param_values, crit_options) {
       save(param_values, obs_list, model_results, file = filename)
     }
 
-    if (!is.null(crit_options$return_obs_sim) && crit_options$return_obs_sim) {
+    if (!is.null(crit_options$return_detailed_info) && crit_options$return_detailed_info) {
       return(res <- list(
         crit = crit, obs_list = obs_list, sim = sim,
         sim_transformed = sim_transformed,
         sim_intersect = obs_sim_list$sim_list,
-        obs_intersect = obs_sim_list$obs_list
+        obs_intersect = obs_sim_list$obs_list,
+        forced_param_values = forced_param_values
       ))
     }
   })
@@ -146,6 +153,7 @@ main_crit <- function(param_values, crit_options) {
   model_function <- crit_options$model_function
   model_options <- crit_options$model_options
   param_info <- crit_options$param_info
+  transform_var <- crit_options$transform_var
   transform_obs <- crit_options$transform_obs
   transform_sim <- crit_options$transform_sim
   satisfy_par_const <- crit_options$satisfy_par_const
@@ -187,11 +195,12 @@ main_crit <- function(param_values, crit_options) {
   }
 
   # Handle the parameters to force
-  if (is.vector(param_values) | is.list(param_values)) {
-    param_values <- c(forced_param_values, param_values)
-  } else if (!is.null(forced_param_values) & length(forced_param_values) > 0) {
+  forced_param_values <- compute_eq_const(forced_param_values, param_values)
+  if (tibble::is_tibble(param_values)) {
     param_values <-
-      dplyr::bind_cols(tibble::tibble(!!!forced_param_values), param_values)
+      dplyr::bind_cols(forced_param_values, param_values)
+  } else if (!is.null(forced_param_values) & length(forced_param_values) > 0) {
+    param_values <- c(forced_param_values, param_values)
   }
 
   # Apply constraints on the parameters
@@ -219,7 +228,6 @@ main_crit <- function(param_values, crit_options) {
       }
     }
   }
-
 
   sit_names <- situation_names
   if (is.null(var_names)) {
@@ -313,6 +321,16 @@ main_crit <- function(param_values, crit_options) {
     )
     sim_transformed <- model_results
   }
+  if (!is.null(transform_var)) {
+    model_results$sim_list <- lapply(model_results$sim_list, function(x) {
+      for (var in intersect(names(x),names(transform_var))) {
+        x[var] <- transform_var[[var]](x[var])
+      }
+      return(x)
+    })
+    attr(model_results$sim_list, "class") <- "cropr_simulation"
+    sim_transformed <- model_results
+  }
   # Check results, return NA if incorrect
   if (is.null(model_results) ||
       (!is.null(model_results$error) && model_results$error)) {
@@ -345,6 +363,14 @@ main_crit <- function(param_values, crit_options) {
         stop()
       }
     )
+  }
+  if (!is.null(transform_var)) {
+    obs_list <- lapply(obs_list, function(x) {
+      for (var in intersect(names(x),names(transform_var))) {
+        x[var] <- transform_var[[var]](x[var])
+      }
+      return(x)
+    })
   }
   # Check results, return NA if incorrect
   if (is.null(obs_list) || !is.obs(obs_list)) {
@@ -404,6 +430,7 @@ main_crit <- function(param_values, crit_options) {
     },
     simplify = F
   )
+  attr(obs_sim_list$sim_list, "class") <- "cropr_simulation"
   obs_sim_list$obs_list <- sapply(obs_sim_list$obs_list,
     function(x) {
       x[, !(names(x) %in% "Plant"),
@@ -420,7 +447,10 @@ main_crit <- function(param_values, crit_options) {
   )
 
   # Compute criterion value
-  crit <- crit_function(obs_sim_list$sim_list, obs_sim_list$obs_list)
+  potential_arglist <- list(sim_list=obs_sim_list$sim_list,
+                            obs_list=obs_sim_list$obs_list,
+                            weight=crit_options$weight)
+  crit <- do.call(crit_function, args = potential_arglist[names(formals(crit_function))])
   if (is.nan(crit)) {
     warning(paste0("Optimized criterion returned NaN value. \n Estimated parameters: ", paste(param_names, collapse = " "), ", values: ", paste(param_values, collapse = " ")))
   }

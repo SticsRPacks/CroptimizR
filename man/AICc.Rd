@@ -22,7 +22,7 @@ used during the parameter estimation process.}
 \value{
 Value of the AICc criterion for ordinary least squares.
 If called without arguments, returns a named list with element "name"
-containingthe name of the function and "species" containing
+containing the name of the function and "species" containing
 "Information criterion"
 }
 \description{

@@ -113,7 +113,7 @@ post_treat_FwdRegAgMIP <- function(optim_results, crit_options, crt_list,
   ## RE-compute main_crit with the initial values of the parameters
   init_crit <- main_crit(
     param_values = optim_results$init_values[optim_results$ind_min_crit, ],
-    crit_options = c(crit_options, return_obs_sim = FALSE)
+    crit_options = c(crit_options, return_detailed_info = FALSE)
   )
 
   ## Store the results per step
