@@ -34,7 +34,7 @@ AIC <- function(obs_list, crit_value, param_nb) {
 #'
 #' @return Value of the AICc criterion for ordinary least squares.
 #' If called without arguments, returns a named list with element "name"
-#' containingthe name of the function and "species" containing
+#' containing the name of the function and "species" containing
 #' "Information criterion"
 #'
 #' @export
