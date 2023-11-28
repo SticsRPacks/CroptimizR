@@ -394,6 +394,7 @@ main_crit <- function(param_values, crit_options) {
     return(crit <- NA)
   }
 
+  # check presence of Inf/NA in simulated results where obs is not NA
   for (sit in names(obs_sim_list$sim_list)) {
     var_list <- lapply(names(obs_sim_list$sim_list[[sit]]), function(x) {
       if (any(is.infinite(obs_sim_list$sim_list[[sit]][!is.na(obs_sim_list$obs_list[[sit]][,x]),x])) ||
