@@ -2,13 +2,10 @@
 % Please edit documentation in R/likelihoods.R
 \name{Likelihoods}
 \alias{Likelihoods}
-\alias{likelihood_log_iidn}
 \alias{likelihood_log_ciidn}
 \alias{likelihood_log_ciidn_corr}
 \title{Likelihoods}
 \usage{
-likelihood_log_iidn(sim_list, obs_list, weight)
-
 likelihood_log_ciidn(sim_list, obs_list, ...)
 
 likelihood_log_ciidn_corr(sim_list, obs_list, ...)
@@ -17,19 +14,13 @@ likelihood_log_ciidn_corr(sim_list, obs_list, ...)
 \item{sim_list}{List of simulated variables}
 
 \item{obs_list}{List of observed variables}
-
-\item{weight}{function that takes in input a vector of observed values and the name of the correpsonding variable and that returns the corresponding error standard deviations}
 }
 \value{
 The value of the likelihood given the observed and simulated values
 of the variables.
-
-The value of the likelihood given the observed and simulated values of the variables.
 }
 \description{
 Provide several likelihoods to estimate parameters using bayesian methods.
-
-log-likelihood for heteroscedastic and independant normal errors, errors are defined in a user function
 }
 \details{
 The following log-likelihoods are proposed (
@@ -58,19 +49,10 @@ However, errors for different observations over time of the same
 variable in the same situation are assumed to be highly correlated.
 In this way, each situation contributes a single term to the
 overall sum of squared errors regardless of the number of
-observations which may be usefull in case one have situations with
-very heterogenous number of dates of observations.
+observations which may be useful in case one have situations with
+very heterogeneous number of dates of observations.
 }
 \code{sim_list} and \code{obs_list} must have the same structure
 (i.e. same number of variables, dates, situations, ... use internal function
-intersect_sim_obs before calling the criterion functions).
-
-\if{html}{\out{<div class="sourceCode">}}\preformatted{      \deqn{ \sum_{j} {\left[ \sum_{i} \left(-\frac{n_{ij}.log(2pi)}{2} -  \sum_{k} \left[log(\sigma_{ijt}) + \frac{1}{2} \left(\frac{Y_{ijk}-f_{jk}(X_i;\theta)}{\sigma_{ijt}}\right)^2 \right] \right) \right] }}
-      where \eqn{ Y_{ijk} } is the observed value for the \eqn{k^{th}} time point of the \eqn{j^{th}} variable in the \eqn{i^{th}}
-      situation,
-      \eqn{ f_{jk}(X_i;\theta) } the corresponding model prediction, and \eqn{n_{ij}} the number of measurements of variable \eqn{j} for situation \eqn{i}. \\cr
-}\if{html}{\out{</div>}}
-
-\code{sim_list} and \code{obs_list} must have the same structure (i.e. same number of variables, dates, situations, ... use internal function
 intersect_sim_obs before calling the criterion functions).
 }
