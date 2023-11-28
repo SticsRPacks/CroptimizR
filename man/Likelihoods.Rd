@@ -6,9 +6,9 @@
 \alias{likelihood_log_ciidn_corr}
 \title{Likelihoods}
 \usage{
-likelihood_log_ciidn(sim_list, obs_list, ...)
+likelihood_log_ciidn(sim_list, obs_list)
 
-likelihood_log_ciidn_corr(sim_list, obs_list, ...)
+likelihood_log_ciidn_corr(sim_list, obs_list)
 }
 \arguments{
 \item{sim_list}{List of simulated variables}

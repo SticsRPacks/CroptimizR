@@ -49,7 +49,7 @@ NULL
 
 #' @export
 #' @rdname Likelihoods
-likelihood_log_ciidn <- function(sim_list, obs_list, ...) {
+likelihood_log_ciidn <- function(sim_list, obs_list) {
   # return criterion type (ls, log-ls, likelihood, log-likelihood)
   # if no argument given
 
@@ -77,7 +77,7 @@ likelihood_log_ciidn <- function(sim_list, obs_list, ...) {
 
 #' @export
 #' @rdname Likelihoods
-likelihood_log_ciidn_corr <- function(sim_list, obs_list, ...) {
+likelihood_log_ciidn_corr <- function(sim_list, obs_list) {
   # return criterion type (ls, log-ls, likelihood, log-likelihood)
   # if no argument given
   if (!nargs()) {
