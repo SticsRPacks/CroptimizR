@@ -393,18 +393,34 @@ main_crit <- function(param_values, crit_options) {
     warning("Intersection of simulations and observations is empty (no date and/or variable in common)!")
     return(crit <- NA)
   }
-  if (any(sapply(obs_sim_list$sim_list, function(x) any(sapply(x, is.nan)))) ||
-    any(sapply(obs_sim_list$sim_list,
-               function(x) any(sapply(x, is.infinite))))) {
-    warning(
-      "The model wrapper returned NaN or infinite values: \n ",
-      obs_sim_list$sim_list, "\n Estimated parameters: ",
-      paste(param_names, collapse = " "), ", values: ",
-      paste(param_values, collapse = " ")
-    )
-    return(crit <- NA)
-  }
 
+  # check presence of Inf/NA in simulated results where obs is not NA
+  for (sit in names(obs_sim_list$sim_list)) {
+    var_list <- lapply(names(obs_sim_list$sim_list[[sit]]), function(x) {
+      if (any(is.infinite(obs_sim_list$sim_list[[sit]][!is.na(obs_sim_list$obs_list[[sit]][,x]),x])) ||
+          any(is.na(obs_sim_list$sim_list[[sit]][!is.na(obs_sim_list$obs_list[[sit]][,x]),x]))) {
+        return(list(obs_sim_list$sim_list[[sit]]$Date[is.infinite(obs_sim_list$sim_list[[sit]][!is.na(obs_sim_list$obs_list[[sit]][,x]),x]) |
+                                                        is.na(obs_sim_list$sim_list[[sit]][!is.na(obs_sim_list$obs_list[[sit]][,x]),x])]))
+      }  else {
+        return(NULL)
+      }
+    })
+    names(var_list) <- names(obs_sim_list$sim_list[[sit]])
+    if (!is.null(unlist(var_list))) {
+      warning(
+        "The model wrapper returned NA or infinite values for situation ",sit,
+        paste(sapply(names(var_list), function(x) {
+          if (!is.null(var_list[x])) paste(" \n variable ",x," at date(s) ",
+                                          paste(var_list[x], collapse = " "))
+          })),
+        "\n for estimated parameters: ",
+        paste(param_names, collapse = " "), ", and values: ",
+        paste(param_values, collapse = " "),
+        "\n The optimized criterion is set to NA."
+      )
+      return(crit <- NA)
+    }
+  }
 
   # Filter reserved columns that should not be taken into account in the computation of the criterion
   obs_sim_list$sim_list <- sapply(obs_sim_list$sim_list,
