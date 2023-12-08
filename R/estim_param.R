@@ -27,7 +27,7 @@
 #'   - `out_dir` Directory path where to write the optimization results (optional, default to `getwd()`)
 #'   - `ranseed` Set random seed so that each execution of estim_param give the same
 #'   results when using the same seed. If you want randomization, set it to NULL,
-#'   otherwise set it to a number of your choice (e.g. 1234) (optional, default to `getwd()`)
+#'   otherwise set it to a number of your choice (e.g. 1234) (optional, default to NULL, which means random seed)
 #'   - specific options depending on the method used. Click on the links to see examples with the [simplex](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html)
 #' and [DreamZS](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html) methods.
 #'   - `path_results` `r lifecycle::badge("deprecated")` `path_results` is no longer supported, use `out_dir` instead.
