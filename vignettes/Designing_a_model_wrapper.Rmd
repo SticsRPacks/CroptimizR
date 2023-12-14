@@ -104,9 +104,9 @@ You can initialize it like this:
 
 `attr(results$sim_list, "class") <- "cropr_simulation"`
 
-Each element of the list should contains a data.frame (or a tibble) with the results obtained for all simulated variables and dates for the given situation.
+Each element of the list should be a data.frame (or a tibble) with the results obtained for all simulated variables and dates for the given situation.
 
-The data.frames must have one column called `Date` containing the simulations dates, in Date or POSIXct format (see R function `base::as.Date` or `base::as.POSIXct`). The other columns contains the values of the simulated variables, and their names must be put as column names.
+The data.frames must have one column called `Date` containing the simulations dates, in Date or POSIXct format (see R function `base::as.Date` or `base::as.POSIXct`). The other columns contain the values of the simulated variables, and the names of the columns must be the simulated variables names. 
 
 For example, if `situation` is `c("situation1","situation2","situation3"), sim_list should look like:
 
@@ -115,35 +115,38 @@ For example, if `situation` is `c("situation1","situation2","situation3"), sim_l
 sim_list$situation1
 
 #> A tibble: *** x ***
-#>   Date         var1    var2    var3  ...
-#>   <dttm>     <dbl>   <dbl>   <dbl>
-#> 1 1994-10-17   0      2.53    4.80
-#> 2 1994-10-18   0      2.31    4.66
-#> 3 1994-10-19   0      4.55    4.44
+#>   Date         var1    var2    var3    var4 ...
+#>   <dttm>     <dbl>   <dbl>   <dbl>   <dbl>
+#> 1 1994-10-17   0      2.53    4.80   150 
+#> 2 1994-10-18   0      2.31    4.66   150
+#> 3 1994-10-19   0      4.55    4.44   150
 #>
 #>
 
 sim_list$situation2
 
 #> A tibble: *** x ***
-#>   Date         var1    var2    var3  ...
-#>   <dttm>     <dbl>   <dbl>   <dbl>
-#> 1 1995-10-17   0      2.60    4.80
-#> 2 1995-10-18   0      3.42    4.70
-#> 3 1995-10-19   0      5.25    4.45
+#>   Date         var1    var2    var3    var4...
+#>   <dttm>     <dbl>   <dbl>   <dbl>   <dbl>
+#> 1 1995-10-17   0      2.60    4.80   138
+#> 2 1995-10-18   0      3.42    4.70   138
+#> 3 1995-10-19   0      5.25    4.45   138
 
 
 sim_list$situation3
 
 #> A tibble: *** x ***
-#>   Date         var1    var2    var3  ...
-#>   <dttm>     <dbl>   <dbl>   <dbl>
-#> 1 1996-10-17   0      2.41    4.81
-#> 2 1996-10-18   0      3.03    4.71
-#> 3 1996-10-19   0      5.10    4.47
+#>   Date         var1    var2    var3    var4  ...
+#>   <dttm>     <dbl>   <dbl>   <dbl>   <dbl>
+#> 1 1996-10-17   0      2.41    4.81   142
+#> 2 1996-10-18   0      3.03    4.71   142
+#> 3 1996-10-19   0      5.10    4.47   142
 
 
 ```
+
+** Note that there is not for the moment any dedicated data structure handled in CroptimizR and CroPlotR for storing simulated variables that do no depend on time (e.g. such as the julian day of a given phenological stage). You must thus include them in the data.frames described here-before. For this variables, it is strongly advised to replicate their (unique) values for all rows of the data.frames (see e.g. var4 in the data.frames described here-before). This makes it possible to compare these simulated values to the corresponding observed values regardless of the dates with which they are associated in the data.frames including the observations.**
+
 
 * Return an error code if any simulation failed
 
