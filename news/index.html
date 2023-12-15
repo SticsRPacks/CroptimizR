@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CroptimizR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.0</span>
       </span>
     </div>
 
@@ -78,6 +78,32 @@
       <small>Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.6.0" id="croptimizr-060-2023-12-15">CroptimizR 0.6.0 (2023-12-15)<a class="anchor" aria-label="anchor" href="#croptimizr-060-2023-12-15"></a></h2>
+<div class="section level3">
+<h3 id="main-changes-0-6-0">Main changes<a class="anchor" aria-label="anchor" href="#main-changes-0-6-0"></a></h3>
+<ul><li>Added Weighted Least Squares in the list of available least squares criteria, and weight argument in the estim_param function to provide the weights to use,</li>
+<li>added the possibility to transform simulated and observed variables (e.g. log transformation), using a new argument transform_var,</li>
+<li>added the possibility to introduce equality constraints in argument forced_param_values of the estim_param function. This allows to dynamically compute the values of some parameters in function of others that are estimated.</li>
+<li>License changed for LGPL (CeCILL-C not recognized by CRAN :-( )</li>
+</ul></div>
+<div class="section level3">
+<h3 id="documentation-0-6-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-6-0"></a></h3>
+<ul><li>Added comments to explain how to handle in model wrappers the simulated variables that do not depend on date,</li>
+<li>add information in estim_param function documentation on the way simulated and observed variables are compared in the parameter estimation process.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="fixes-0-6-0">Fixes<a class="anchor" aria-label="anchor" href="#fixes-0-6-0"></a></h3>
+<ul><li>Fixed test on presence of NA in model results within parameter estimation process (now test Inf or NA values only for variables and dates included in observations, no more in all model results),</li>
+<li>fixed generation of gelman plot (when using Bayesian methods) in case of more than 2 parameters estimated and thin not initialized in optim_options (crashed).</li>
+</ul></div>
+<div class="section level3">
+<h3 id="misc-0-6-0">Misc.<a class="anchor" aria-label="anchor" href="#misc-0-6-0"></a></h3>
+<ul><li>Names of observed variables used are now stored and printed at the end of the parameter estimation process,</li>
+<li>shortened paths of stored results to solve warning at check,</li>
+<li>increase default value for maxeval so that nloptr never stop on maximum number of evaluation (simplex method).</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.5.1" id="croptimizr-051-2023-01-06">CroptimizR 0.5.1 (2023-01-06)<a class="anchor" aria-label="anchor" href="#croptimizr-051-2023-01-06"></a></h2>
 <ul><li><p>Fixed cff file generation using github action. Now generated on each commit that modifies the Description file + on release.</p></li>

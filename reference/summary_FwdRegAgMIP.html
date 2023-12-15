@@ -20,7 +20,7 @@ AgMIP calibration phaseIII protocol"><meta property="og:image" content="/logo.pn
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CroptimizR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.0</span>
       </span>
     </div>
 
@@ -89,15 +89,24 @@ AgMIP calibration phaseIII protocol</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">summary_FwdRegAgMIP</span><span class="op">(</span><span class="va">param_selection_steps</span>, <span class="va">info_crit_list</span>, <span class="va">path_results</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">summary_FwdRegAgMIP</span><span class="op">(</span></span>
+<span>  <span class="va">param_selection_steps</span>,</span>
+<span>  <span class="va">info_crit_list</span>,</span>
+<span>  <span class="va">path_results</span>,</span>
+<span>  <span class="va">optim_results</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>param_selection_steps</dt>
-<dd><p>A tibble summarizing the results of the previous
-parameter estimation steps as returned by the previous call to this function,
-NULL if it is the first step.</p></dd>
+<dd><p>A tibble summarizing the results of the
+parameter estimation steps, as returned by the post_treat_FwdRegAgMIP function.</p></dd>
+
+
+<dt>optim_results</dt>
+<dd><p>Results list returned by the parameter estimation method
+wrapper used</p></dd>
 
 </dl></div>
     <div id="value">

@@ -7,9 +7,6 @@
     <loc>/CODE_OF_CONDUCT.html</loc>
   </url>
   <url>
-    <loc>/LICENSE-text.html</loc>
-  </url>
-  <url>
     <loc>/articles/AgMIP_Calibration_Phenology_protocol.html</loc>
   </url>
   <url>
@@ -62,6 +59,9 @@
   </url>
   <url>
     <loc>/reference/complete_init_values.html</loc>
+  </url>
+  <url>
+    <loc>/reference/compute_eq_const.html</loc>
   </url>
   <url>
     <loc>/reference/estim_param.html</loc>

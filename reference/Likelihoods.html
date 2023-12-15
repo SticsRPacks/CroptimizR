@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CroptimizR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.0</span>
       </span>
     </div>
 
@@ -112,7 +112,7 @@ of the variables.</p>
 <a href="https://sticsrpacks.github.io/CroptimizR/reference/Likelihoods.html" class="external-link">see html version</a>
 for a better rendering of equations):</p><ul><li><p><code>likelihood_log_ciidn</code>: log transformation of concentrated version of iid normal likelihood <br>
 The concentrated version of iid normal likelihood is:
-$$ \prod_{j} {\sum_{i,k} [Y_{ijk}-f_{jk}(X_i;\theta)]^2 )}^{-(n_j/2+2)} $$
+$$ \prod_{j} ({\sum_{i,k} [Y_{ijk}-f_{jk}(X_i;\theta)]^2 )}^{-(n_j/2+2)} $$
 where \( Y_{ijk} \) is the observed value for the \(k^{th}\) time point of the \(j^{th}\) variable in the \(i^{th}\)
 situation,
 \( f_{jk}(X_i;\theta) \) the corresponding model prediction, and \(n_j\) the number of measurements of variable \(j\). <br><code>likelihood_log_ciidn</code> computes the log of this equation. <br>
@@ -130,8 +130,8 @@ However, errors for different observations over time of the same
 variable in the same situation are assumed to be highly correlated.
 In this way, each situation contributes a single term to the
 overall sum of squared errors regardless of the number of
-observations which may be usefull in case one have situations with
-very heterogenous number of dates of observations.</p></li>
+observations which may be useful in case one have situations with
+very heterogeneous number of dates of observations.</p></li>
 </ul><p><code>sim_list</code> and <code>obs_list</code> must have the same structure
 (i.e. same number of variables, dates, situations, ... use internal function
 intersect_sim_obs before calling the criterion functions).</p>

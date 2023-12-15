@@ -20,7 +20,7 @@ evaluation number"><meta property="og:image" content="/logo.png"><!-- mathjax --
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CroptimizR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.0</span>
       </span>
     </div>
 
@@ -120,11 +120,11 @@ values to test for the parameters (optional, if not provided, or if less values
 than number of repetitions of the minimization are provided, the, or part
 of the, initial values will be randomly generated using LHS sampling within
 parameter bounds).</p></li>
-</ul><p>or a named list containing for each parameter:</p><ul><li><p><code>sit_list</code>, the list of situations per group,</p></li>
+</ul><p>or a named list containing for each parameter:</p><ul><li><p><code>sit_list</code>, list the groups of situations for which the current estimated
+parameter must take different values (see <a href="https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html" class="external-link">here</a>
+for an example),</p></li>
 <li><p><code>ub</code> and <code>lb</code>, vectors of upper and lower bounds (one value per group),</p></li>
-<li><p><code>init_values</code>, the list of initial values per group  (data.frame, one column per group, optional).
-(see <a href="https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html" class="external-link">here</a>
-for an example)</p></li>
+<li><p><code>init_values</code>, the list of initial values per group  (data.frame, one column per group, optional).</p></li>
 </ul></dd>
 
 

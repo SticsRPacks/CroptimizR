@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CroptimizR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.0</span>
       </span>
     </div>
 
@@ -115,7 +115,7 @@ Buis</h4>
 EMMAH<br><h4 data-toc-skip class="author">Patrice
 Lecharpentier</h4>
             <address class="author_afil">
-      INRAE - Agroclim<br><h4 data-toc-skip class="date">2023-01-06</h4>
+      INRAE - Agroclim<br><h4 data-toc-skip class="date">2023-12-15</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/HEAD/vignettes/Designing_a_model_wrapper.Rmd" class="external-link"><code>vignettes/Designing_a_model_wrapper.Rmd</code></a></small>
       <div class="hidden name"><code>Designing_a_model_wrapper.Rmd</code></div>
@@ -238,14 +238,14 @@ and having the attribute “cropr_simulation” (to use the <a href="https://git
 You can initialize it like this:</p>
 <p><code>results$sim_list &lt;- setNames(vector("list",length(situation)), nm = situation)</code></p>
 <p><code>attr(results$sim_list, "class") &lt;- "cropr_simulation"</code></p>
-<p>Each element of the list should contains a data.frame (or a tibble)
-with the results obtained for all simulated variables and dates for the
-given situation.</p>
+<p>Each element of the list should be a data.frame (or a tibble) with
+the results obtained for all simulated variables and dates for the given
+situation.</p>
 <p>The data.frames must have one column called <code>Date</code>
 containing the simulations dates, in Date or POSIXct format (see R
 function <code><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">base::as.Date</a></code> or <code><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">base::as.POSIXct</a></code>).
-The other columns contains the values of the simulated variables, and
-their names must be put as column names.</p>
+The other columns contain the values of the simulated variables, and the
+names of the columns must be the simulated variables names.</p>
 <p>For example, if <code>situation</code> is
 `c(“situation1”,“situation2”,“situation3”), sim_list should look
 like:</p>
@@ -253,32 +253,42 @@ like:</p>
 <code class="sourceCode R"><span><span class="va">sim_list</span><span class="op">$</span><span class="va">situation1</span></span>
 <span></span>
 <span><span class="co">#&gt; A tibble: *** x ***</span></span>
-<span><span class="co">#&gt;   Date         var1    var2    var3  ...</span></span>
-<span><span class="co">#&gt;   &lt;dttm&gt;     &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1 1994-10-17   0      2.53    4.80</span></span>
-<span><span class="co">#&gt; 2 1994-10-18   0      2.31    4.66</span></span>
-<span><span class="co">#&gt; 3 1994-10-19   0      4.55    4.44</span></span>
+<span><span class="co">#&gt;   Date         var1    var2    var3    var4 ...</span></span>
+<span><span class="co">#&gt;   &lt;dttm&gt;     &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 1994-10-17   0      2.53    4.80   150 </span></span>
+<span><span class="co">#&gt; 2 1994-10-18   0      2.31    4.66   150</span></span>
+<span><span class="co">#&gt; 3 1994-10-19   0      4.55    4.44   150</span></span>
 <span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt;</span></span>
 <span></span>
 <span><span class="va">sim_list</span><span class="op">$</span><span class="va">situation2</span></span>
 <span></span>
 <span><span class="co">#&gt; A tibble: *** x ***</span></span>
-<span><span class="co">#&gt;   Date         var1    var2    var3  ...</span></span>
-<span><span class="co">#&gt;   &lt;dttm&gt;     &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1 1995-10-17   0      2.60    4.80</span></span>
-<span><span class="co">#&gt; 2 1995-10-18   0      3.42    4.70</span></span>
-<span><span class="co">#&gt; 3 1995-10-19   0      5.25    4.45</span></span>
+<span><span class="co">#&gt;   Date         var1    var2    var3    var4...</span></span>
+<span><span class="co">#&gt;   &lt;dttm&gt;     &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 1995-10-17   0      2.60    4.80   138</span></span>
+<span><span class="co">#&gt; 2 1995-10-18   0      3.42    4.70   138</span></span>
+<span><span class="co">#&gt; 3 1995-10-19   0      5.25    4.45   138</span></span>
 <span></span>
 <span></span>
 <span><span class="va">sim_list</span><span class="op">$</span><span class="va">situation3</span></span>
 <span></span>
 <span><span class="co">#&gt; A tibble: *** x ***</span></span>
-<span><span class="co">#&gt;   Date         var1    var2    var3  ...</span></span>
-<span><span class="co">#&gt;   &lt;dttm&gt;     &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1 1996-10-17   0      2.41    4.81</span></span>
-<span><span class="co">#&gt; 2 1996-10-18   0      3.03    4.71</span></span>
-<span><span class="co">#&gt; 3 1996-10-19   0      5.10    4.47</span></span></code></pre></div>
+<span><span class="co">#&gt;   Date         var1    var2    var3    var4  ...</span></span>
+<span><span class="co">#&gt;   &lt;dttm&gt;     &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 1996-10-17   0      2.41    4.81   142</span></span>
+<span><span class="co">#&gt; 2 1996-10-18   0      3.03    4.71   142</span></span>
+<span><span class="co">#&gt; 3 1996-10-19   0      5.10    4.47   142</span></span></code></pre></div>
+<p>** Note that there is not for the moment any dedicated data structure
+handled in CroptimizR and CroPlotR for storing simulated variables that
+do no depend on time (e.g. such as the julian day of a given
+phenological stage). You must thus include them in the data.frames
+described here-before. For this variables, it is strongly advised to
+replicate their (unique) values for all rows of the data.frames (see
+e.g. var4 in the data.frames described here-before). This makes it
+possible to compare these simulated values to the corresponding observed
+values regardless of the dates with which they are associated in the
+data.frames including the observations.**</p>
 <ul>
 <li>Return an error code if any simulation failed</li>
 </ul>
@@ -286,6 +296,17 @@ like:</p>
 <code>warning</code> to print any useful information about the error and
 set the variable <code>results$error</code> to <code>TRUE</code> (and to
 <code>FALSE</code> otherwise).</p>
+<p><strong>In CroptimizR, parameter estimation is based on the
+comparison between the values of the observed and simulated variables at
+corresponding dates. Only the situations, variables and dates common to
+both observations provided to the <code>estim_param</code> function, and
+simulations returned by the wrapper used, will be taken into account in
+the parameter estimation process. In case where the value of an observed
+variable is NA for a given situation and date, it will not be taken into
+account. In case where the value of a simulated variable is NA (or Inf)
+for a given situation and date for which there is an observation, the
+optimized criterion will take the NA value, which may stop the process,
+and the user will be warned.</strong></p>
 </div>
 <div class="section level3">
 <h3 id="implementation">Implementation<a class="anchor" aria-label="anchor" href="#implementation"></a>
@@ -740,10 +761,10 @@ estimation using this wrapper:</p>
 <span><span class="co">## ---------------------</span></span>
 <span><span class="co">## Estimated parameters: inc_slope dec_slope </span></span>
 <span><span class="co">## ---------------------</span></span>
-<span><span class="co">## Working: 20.00%. Estimated remaining time: 4.37 secs</span></span>
-<span><span class="co">## Working: 40.00%. Estimated remaining time: 1.99 secs</span></span>
-<span><span class="co">## Working: 60.00%. Estimated remaining time: 1.53 secs</span></span>
-<span><span class="co">## Working: 80.00%. Estimated remaining time: 0.86 secs</span></span>
+<span><span class="co">## Working: 20.00%. Estimated remaining time: 2.04 secs</span></span>
+<span><span class="co">## Working: 40.00%. Estimated remaining time: 1.39 secs</span></span>
+<span><span class="co">## Working: 60.00%. Estimated remaining time: 1.07 secs</span></span>
+<span><span class="co">## Working: 80.00%. Estimated remaining time: 0.53 secs</span></span>
 <span><span class="co">## Working: 100.00%. Estimated remaining time: 0.00 secs</span></span>
 <span><span class="co">## $inc_slope</span></span></code></pre>
 <pre><code><span><span class="co">## </span></span>
@@ -758,21 +779,23 @@ estimation using this wrapper:</p>
 <span><span class="co">## [[1]]</span></span></code></pre>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
+<span><span class="co">## List of observed variables used: lai </span></span>
+<span><span class="co">## </span></span>
 <span><span class="co">## Estimated value for inc_slope :  25 </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Estimated value for dec_slope :  10 </span></span>
-<span><span class="co">## Minimum value of the criterion: 0.00014 </span></span>
+<span><span class="co">## Minimum value of the criterion: 0.00055 </span></span>
 <span><span class="co">## Complementary graphs and results can be found in  /Users/runner/work/CroptimizR/CroptimizR/vignettes </span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## Average time for the model to simulate all required situations: 0.0073 sec elapsed</span></span>
-<span><span class="co">## Total number of criterion evaluation: 179 </span></span>
-<span><span class="co">## Total time of model simulations: 1 sec elapsed</span></span>
-<span><span class="co">## Total time of parameter estimation process: 12 sec elapsed</span></span>
+<span><span class="co">## Average time for the model to simulate all required situations: 0.004 sec elapsed</span></span>
+<span><span class="co">## Total number of criterion evaluation: 175 </span></span>
+<span><span class="co">## Total time of model simulations: 0.7 sec elapsed</span></span>
+<span><span class="co">## Total time of parameter estimation process: 5 sec elapsed</span></span>
 <span><span class="co">## ----------------------</span></span></code></pre>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res</span><span class="op">$</span><span class="va">final_values</span></span></code></pre></div>
 <pre><code><span><span class="co">## inc_slope dec_slope </span></span>
-<span><span class="co">##  25.01516  10.02313</span></span></code></pre>
+<span><span class="co">##  24.90021  10.00476</span></span></code></pre>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the simulations obtained with the optimized values of the parameters VS</span></span>
 <span><span class="co"># the observed ones using the CroPlotR package.</span></span>
@@ -969,10 +992,10 @@ wrapper:</p>
 <span><span class="co">## ---------------------</span></span>
 <span><span class="co">## Estimated parameters: inc_slope dec_slope </span></span>
 <span><span class="co">## ---------------------</span></span>
-<span><span class="co">## Working: 20.00%. Estimated remaining time: 21.96 secs</span></span>
-<span><span class="co">## Working: 40.00%. Estimated remaining time: 16.96 secs</span></span>
-<span><span class="co">## Working: 60.00%. Estimated remaining time: 10.54 secs</span></span>
-<span><span class="co">## Working: 80.00%. Estimated remaining time: 4.70 secs</span></span>
+<span><span class="co">## Working: 20.00%. Estimated remaining time: 15.60 secs</span></span>
+<span><span class="co">## Working: 40.00%. Estimated remaining time: 11.10 secs</span></span>
+<span><span class="co">## Working: 60.00%. Estimated remaining time: 6.42 secs</span></span>
+<span><span class="co">## Working: 80.00%. Estimated remaining time: 2.95 secs</span></span>
 <span><span class="co">## Working: 100.00%. Estimated remaining time: 0.00 secs</span></span>
 <span><span class="co">## $inc_slope1</span></span></code></pre>
 <pre><code><span><span class="co">## </span></span>
@@ -995,23 +1018,25 @@ wrapper:</p>
 <span><span class="co">## [[3]]</span></span></code></pre>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
+<span><span class="co">## List of observed variables used: lai </span></span>
+<span><span class="co">## </span></span>
 <span><span class="co">## Estimated value for inc_slope1 :  25 </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Estimated value for inc_slope2 :  50 </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Estimated value for dec_slope :  10 </span></span>
-<span><span class="co">## Minimum value of the criterion: 0.0052 </span></span>
+<span><span class="co">## Minimum value of the criterion: 0.0024 </span></span>
 <span><span class="co">## Complementary graphs and results can be found in  /Users/runner/work/CroptimizR/CroptimizR/vignettes </span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## Average time for the model to simulate all required situations: 0.044 sec elapsed</span></span>
-<span><span class="co">## Total number of criterion evaluation: 357 </span></span>
-<span><span class="co">## Total time of model simulations: 16 sec elapsed</span></span>
-<span><span class="co">## Total time of parameter estimation process: 31 sec elapsed</span></span>
+<span><span class="co">## Average time for the model to simulate all required situations: 0.018 sec elapsed</span></span>
+<span><span class="co">## Total number of criterion evaluation: 366 </span></span>
+<span><span class="co">## Total time of model simulations: 7 sec elapsed</span></span>
+<span><span class="co">## Total time of parameter estimation process: 18 sec elapsed</span></span>
 <span><span class="co">## ----------------------</span></span></code></pre>
 <div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res</span><span class="op">$</span><span class="va">final_values</span></span></code></pre></div>
 <pre><code><span><span class="co">## inc_slope1 inc_slope2  dec_slope </span></span>
-<span><span class="co">##  25.167003  49.945666   9.995697</span></span></code></pre>
+<span><span class="co">##  25.071888  49.877067   9.975051</span></span></code></pre>
 <div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the simulations obtained with the optimized values of the parameters VS</span></span>
 <span><span class="co"># the observed ones using the CroPlotR package.</span></span>

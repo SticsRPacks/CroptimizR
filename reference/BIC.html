@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CroptimizR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.0</span>
       </span>
     </div>
 
@@ -90,11 +90,13 @@
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>obs_list</dt>
-<dd><p>List of observed values to use for parameter estimation
+<dd><p>List of observed values to use for parameter estimation.
 A <code>named list</code> (names = situations names) of data.frame containing
 one column named Date with the dates (Date or POSIXct format) of the different observations
 and one column per observed variables with either the measured values or NA, if
-the variable is not observed at the given date.</p></dd>
+the variable is not observed at the given date.
+See details section for more information on the list of observations actually
+used during the parameter estimation process.</p></dd>
 
 
 <dt>crit_value</dt>
