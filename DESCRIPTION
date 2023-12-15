@@ -26,7 +26,7 @@ Description: The purpose of CroptimizR is to provide functions for
     additional features adapted to the problem of crop model calibration.
     It facilitates the comparison of different types of methods on
     different models.
-License: file LICENSE
+License: LGPL (>= 3)
 URL: https://github.com/SticsRPacks/CroptimizR,
     https://doi.org/10.5281/zenodo.4066451
 BugReports: https://github.com/SticsRPacks/CroptimizR/issues
