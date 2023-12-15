@@ -5,12 +5,12 @@
 * Added Weighted Least Squares in the list of available least squares criteria, and weight argument in the estim_param function to provide the weights to use,
 * added the possibility to transform simulated and observed variables (e.g. log transformation), using a new argument transform_var,
 * added the possibility to introduce equality constraints in argument forced_param_values of the estim_param function. This allows to dynamically compute the values of some parameters in function of others that are estimated.
+* License changed for LGPL (CeCILL-C not recognized by CRAN :-( )
 
 ## Documentation
 
 * Added comments to explain how to handle in model wrappers the simulated variables that do not depend on date,
 * add information in estim_param function documentation on the way simulated and observed variables are compared in the parameter estimation process.
-
 
 ## Fixes
 
