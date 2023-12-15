@@ -347,28 +347,6 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
   if (!is.function(weight) && !is.null(weight)) {
     stop("Incorrect format for argument weight: should be a function or NULL.")
   }
-  if (is.function(weight)) {
-    tryCatch(
-      weight(c(1,2,3), "var1"),
-      error = function(cond) {
-        message(paste("Caught an error while testing argument weight: \n
-                 it must be a function that takes 2 input arguments (vector of observed
-                      values and name of corresponding variable)"))
-        print(cond)
-        stop()
-      }
-    )
-    w <- weight(c(1,2,3), "var1")
-    if (!is.numeric(w)) {
-      stop("Caught an error while testing argument weight: \n
-        it must be  function that returns a numeric value (or vector of).")
-    }
-    if (length(w)!=1 & length(w)!=length(c(1,2,3))) {
-      stop("Caught an error while testing argument weight: \n
-        it must be a function that returns a single value or a vector of values of size the size of
-             the vector of observed values given as first argument.")
-    }
-  }
 
   # Measured elapse time
   tictoc::tic.clearlog()

@@ -118,6 +118,12 @@ crit_wls <- function(sim_list, obs_list, weight) {
     res <- res[id_not_na]
     sigma <- weight(obs[id_not_na], var)
 
+    if (any(sigma==0)) {
+      stop(paste("Error in crit_wls: weight is zero for variable",var,
+                 ". The wls criterion takes Inf value.",
+                 "Please handle this case in the weight argument of estim_param."))
+    }
+
     sz <- length(res)
 
     result <- result + (res/sigma) %*% (res/sigma)

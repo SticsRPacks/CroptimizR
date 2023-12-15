@@ -451,9 +451,38 @@ main_crit <- function(param_values, crit_options) {
   potential_arglist <- list(sim_list=obs_sim_list$sim_list,
                             obs_list=obs_sim_list$obs_list,
                             weight=crit_options$weight)
+
+  # Test weight function is well defined
+  if (!is.null(crit_options$weight)) {
+
+    var_list_tmp <- names(obs_sim_list$sim_list[[1]])
+    var_tmp <- setdiff(var_list_tmp, "Date")[1]
+    simvec_tmp <- obs_sim_list$sim_list[[1]][,var_tmp]
+    tryCatch(
+      w <- crit_options$weight(simvec_tmp, var_tmp),
+      error = function(cond) {
+        message(paste("Caught an error while testing argument weight: \n
+                 it must be a function that takes 2 input arguments (vector of observed
+                      values and name of corresponding variable)"))
+        print(cond)
+        stop()
+      }
+    )
+    if (!is.numeric(w)) {
+      stop("Caught an error while testing argument weight: \n
+        it must be  function that returns a numeric value (or vector of).")
+    }
+    if (length(w)!=1 & length(w)!=length(simvec_tmp)) {
+      stop("Caught an error while testing argument weight: \n
+        it must be a function that returns a single value or a vector of values of size the size of
+             the vector of observed values given as first argument.")
+    }
+
+  }
+
   crit <- do.call(crit_function, args = potential_arglist[names(formals(crit_function))])
   if (is.nan(crit)) {
-    warning(paste0("Optimized criterion returned NaN value. \n Estimated parameters: ", paste(param_names, collapse = " "), ", values: ", paste(param_values, collapse = " ")))
+    warning(paste0("Optimized criterion returned NaN value for parameters: ", paste(names(param_values), collapse = " "), ", values: ", paste(param_values, collapse = " ")))
   }
 
   return(crit)
