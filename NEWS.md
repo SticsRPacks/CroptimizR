@@ -1,3 +1,8 @@
+# CroptimizR 0.6.1  (2023-12-22)
+
+* Fixed check of NA/Inf in simulated results
+* Made estim_param stop properly in case of error during the estimation process
+
 # CroptimizR 0.6.0  (2023-12-15)
 
 ## Main changes

@@ -1,8 +1,8 @@
 Type: Package
 Package: CroptimizR
 Title: A Package to Estimate Parameters of Crop Models
-Version: 0.6.0
-Date: 2023-12-15
+Version: 0.6.1
+Date: 2023-12-22
 Authors@R: c(
     person("Samuel", "Buis", , "samuel.buis@inrae.fr", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-8676-5447")),
