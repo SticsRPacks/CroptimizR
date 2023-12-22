@@ -54,3 +54,47 @@ test_that("Check correction of dates types", {
   expect_true(lubridate::is.POSIXct(res$sim_list[[1]]$Date))
   expect_true(lubridate::is.POSIXct(res$sim_list[[3]]$Date))
 })
+
+
+# Check if is_sim_inf_or_na return FALSE when it must
+sim_list <- obs_list
+param_values <- c(p1=1.0, p2=2.0)
+res <- eval(parse(
+  text = "CroptimizR:::is_sim_inf_or_na(sim_list, obs_list, param_values)"))
+test_that("Check is_sim_inf_or_na return FALSE when sim is not Inf neither NA when there is a corresponding observed value", {
+  expect_false(res)
+})
+
+# Check if is_sim_inf_or_na return TRUE when it must, missing value for one variable, one situation and one date
+sim_list <- obs_list
+sim_list$sit1$var1[[1]] <- Inf
+param_values <- c(p1=1.0, p2=2.0)
+res <- eval(parse(
+  text = "CroptimizR:::is_sim_inf_or_na(sim_list, obs_list, param_values)"))
+test_that("Check is_sim_inf_or_na return TRUE when sim is Inf or NA when there is a corresponding observed value, case 1", {
+  expect_true(res)
+})
+
+# Check if is_sim_inf_or_na return TRUE when it must, missing values for several dates
+sim_list <- obs_list
+sim_list$sit3$var2 <- NA
+param_values <- c(p1=1.0, p2=2.0)
+res <- eval(parse(
+  text = "CroptimizR:::is_sim_inf_or_na(sim_list, obs_list, param_values)"))
+test_that("Check is_sim_inf_or_na return TRUE when sim is Inf or NA when there is a corresponding observed value, case 2", {
+  expect_true(res)
+})
+
+
+# Check if is_sim_inf_or_na return TRUE when it must, missing values for several situations, variables and dates
+sim_list <- obs_list
+sim_list$sit1$var1[[1]] <- Inf
+sim_list$sit3$var1[[2]] <- NA
+sim_list$sit3$var2 <- NA
+param_values <- c(p1=1.0, p2=2.0)
+res <- eval(parse(
+  text = "CroptimizR:::is_sim_inf_or_na(sim_list, obs_list, param_values)"))
+test_that("Check is_sim_inf_or_na return TRUE when sim is Inf or NA when there is a corresponding observed value, case 3", {
+  expect_true(res)
+})
+
