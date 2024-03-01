@@ -452,6 +452,7 @@ complete_init_values <- function(param_info, nb_values, ranseed = NULL,
       }))
       sampled_values <- sampled_values[idx, ]
       count <- 1
+      # sample values until the number of required values satisfying the constraints are reached
       while (nrow(sampled_values) < nb_values && count < 1000) {
         seed <- sample(1000, 1, replace = FALSE)
         sampled_tmp <- as.data.frame(sample_params(list(lb = lb, ub = ub), nb_values,

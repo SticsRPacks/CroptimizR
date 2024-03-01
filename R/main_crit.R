@@ -56,7 +56,7 @@ main_crit <- function(param_values, crit_options) {
         ## should be changed for more robust test later ...
 
         if ((.croptEnv$eval_count == 1) ||
-          (crit_options$irep > .croptEnv$params_and_crit[[.croptEnv$eval_count - 1]]$rep)) {
+          (crit_options$irep > tail(.croptEnv$params_and_crit[[.croptEnv$eval_count - 1]]$rep,1))) {
           eval <- 1
           iter <- NA
           .croptEnv$last_iter <- 0
@@ -66,7 +66,7 @@ main_crit <- function(param_values, crit_options) {
             .croptEnv$last_iter <- iter
           }
         } else {
-          eval <- .croptEnv$params_and_crit[[.croptEnv$eval_count - 1]]$eval + 1
+          eval <- tail(.croptEnv$params_and_crit[[.croptEnv$eval_count - 1]]$eval,1) + 1
           iter <- NA
           if (!is.na(crit) && (is.na(.croptEnv$last_crit) ||
             crit < .croptEnv$last_crit)) {
@@ -165,8 +165,7 @@ main_crit <- function(param_values, crit_options) {
   situation_names <- names(obs_list)
   param_names_sl <- get_params_names(param_info, short_list = TRUE)
   crit <- NA
-  model_results <- NA
-  obs_sim_list <- NA
+  obs_sim_list <- NULL
   sim_transformed <- NULL
   model_results <- NULL
   sim <- NULL
