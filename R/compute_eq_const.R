@@ -22,7 +22,7 @@ compute_eq_const <- function(forced_param_values, param_values) {
                                                 nrow = nrows)
     colnames(comp_forced_values) <- names(forced_param_values)
 
-    for (irow in nrows) {
+    for (irow in 1:nrows) {
 
       expr_ls <-
         lapply(names(forced_param_values), function(x) paste(x,"<-",forced_param_values[[x]]))
