@@ -236,8 +236,10 @@ is_sim_inf_or_na <- function(sim_list, obs_list, param_values) {
     var_list <- lapply(names(sim_list[[sit]]), function(x) {
       if (any(is.infinite(sim_list[[sit]][!is.na(obs_list[[sit]][,x]),][[x]])) ||
           any(is.na(sim_list[[sit]][!is.na(obs_list[[sit]][,x]),][[x]]))) {
-        return(list(sim_list[[sit]]$Date[is.infinite(sim_list[[sit]][!is.na(obs_list[[sit]][,x]),][[x]]) |
-                                                        is.na(sim_list[[sit]][!is.na(obs_list[[sit]][,x]),][[x]])]))
+        return(list(sim_list[[sit]]$Date[(is.infinite(sim_list[[sit]][[x]]) &
+                                                        !is.na(obs_list[[sit]][,x])) |
+                                           (is.na(sim_list[[sit]][[x]]) &
+                                                    !is.na(obs_list[[sit]][,x]))]))
       }  else {
         return(NULL)
       }

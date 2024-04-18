@@ -69,20 +69,43 @@ test_that("Check is_sim_inf_or_na return FALSE when sim is not Inf neither NA wh
 sim_list <- obs_list
 sim_list$sit1$var1[[1]] <- Inf
 param_values <- c(p1=1.0, p2=2.0)
-res <- eval(parse(
-  text = "CroptimizR:::is_sim_inf_or_na(sim_list, obs_list, param_values)"))
 test_that("Check is_sim_inf_or_na return TRUE when sim is Inf or NA when there is a corresponding observed value, case 1", {
-  expect_true(res)
+  expect_warning(eval(parse(
+    text = "CroptimizR:::is_sim_inf_or_na(sim_list, obs_list, param_values)")))
+
+  withCallingHandlers(eval(parse(
+    text = "CroptimizR:::is_sim_inf_or_na(sim_list, obs_list, param_values)")),
+    warning = function(w) {
+      # Check if the warning message contains all expected substrings
+
+      expected_substrings <- c("var1", "2009-11-30", "sit1")
+
+      expect_true(all(stringr::str_detect(w$message,expected_substrings)),
+                  info = paste("Not all expected substrings found in the warning message:", w$message))
+    }
+  )
 })
 
 # Check if is_sim_inf_or_na return TRUE when it must, missing values for several dates
 sim_list <- obs_list
 sim_list$sit3$var2 <- NA
 param_values <- c(p1=1.0, p2=2.0)
-res <- eval(parse(
-  text = "CroptimizR:::is_sim_inf_or_na(sim_list, obs_list, param_values)"))
-test_that("Check is_sim_inf_or_na return TRUE when sim is Inf or NA when there is a corresponding observed value, case 2", {
-  expect_true(res)
+test_that("Check is_sim_inf_or_na return TRUE when sim is Inf or NA when there is a corresponding observed value, case 1", {
+  expect_warning(eval(parse(
+    text = "CroptimizR:::is_sim_inf_or_na(sim_list, obs_list, param_values)")))
+
+  withCallingHandlers(eval(parse(
+    text = "CroptimizR:::is_sim_inf_or_na(sim_list, obs_list, param_values)")),
+    warning = function(w) {
+      # Check if the warning message contains all expected substrings
+
+      expected_substrings <- c("var2", "2010-10-03",
+                               "2010-10-04", "sit3")
+
+      expect_true(all(stringr::str_detect(w$message,expected_substrings)),
+                  info = paste("Not all expected substrings found in the warning message:", w$message))
+    }
+  )
 })
 
 
@@ -92,9 +115,22 @@ sim_list$sit1$var1[[1]] <- Inf
 sim_list$sit3$var1[[2]] <- NA
 sim_list$sit3$var2 <- NA
 param_values <- c(p1=1.0, p2=2.0)
-res <- eval(parse(
-  text = "CroptimizR:::is_sim_inf_or_na(sim_list, obs_list, param_values)"))
-test_that("Check is_sim_inf_or_na return TRUE when sim is Inf or NA when there is a corresponding observed value, case 3", {
-  expect_true(res)
+test_that("Check is_sim_inf_or_na return TRUE when sim is Inf or NA when there is a corresponding observed value, case 1", {
+  expect_warning(eval(parse(
+    text = "CroptimizR:::is_sim_inf_or_na(sim_list, obs_list, param_values)")))
+
+  withCallingHandlers(eval(parse(
+    text = "CroptimizR:::is_sim_inf_or_na(sim_list, obs_list, param_values)")),
+    warning = function(w) {
+      # Check if the warning message contains all expected substrings
+
+      expected_substrings <- c("var1", "2009-11-30", "sit1",
+                               "var2", "2010-10-03",
+                               "2010-10-04", "sit3")
+
+      expect_true(all(stringr::str_detect(w$message,expected_substrings)),
+                  info = paste("Not all expected substrings found in the warning message:", w$message))
+    }
+  )
 })
 
