@@ -12,7 +12,7 @@ summary_frequentist(optim_options, param_info, optim_results)
 \item \code{out_dir} Directory path where to write the optimization results (optional, default to \code{getwd()})
 \item \code{ranseed} Set random seed so that each execution of estim_param give the same
 results when using the same seed. If you want randomization, set it to NULL,
-otherwise set it to a number of your choice (e.g. 1234) (optional, default to \code{getwd()})
+otherwise set it to a number of your choice (e.g. 1234) (optional, default to NULL, which means random seed)
 \item specific options depending on the method used. Click on the links to see examples with the \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html}{simplex}
 and \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html}{DreamZS} methods.
 \item \code{path_results} \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} \code{path_results} is no longer supported, use \code{out_dir} instead.

@@ -215,3 +215,58 @@ check_obsSim_consistency <- function(sim_list, obs_list) {
     ))
   }
 }
+
+
+#' @title Check if sim contains inf/na values when there are observations
+#'
+#' @param sim_list List of simulated values
+#' @param obs_list List of observed values
+#' @param param_values vector of input parameters used in the simulations
+#'
+#' @keywords internal
+#'
+is_sim_inf_or_na <- function(sim_list, obs_list, param_values) {
+
+  res <- FALSE
+  mess <- ""
+
+  # check presence of Inf/NA in simulated results where obs is not NA
+  for (sit in names(sim_list)) {
+
+    var_list <- lapply(names(sim_list[[sit]]), function(x) {
+      if (any(is.infinite(sim_list[[sit]][!is.na(obs_list[[sit]][,x]),][[x]])) ||
+          any(is.na(sim_list[[sit]][!is.na(obs_list[[sit]][,x]),][[x]]))) {
+        return(list(sim_list[[sit]]$Date[is.infinite(sim_list[[sit]][!is.na(obs_list[[sit]][,x]),][[x]]) |
+                                                        is.na(sim_list[[sit]][!is.na(obs_list[[sit]][,x]),][[x]])]))
+      }  else {
+        return(NULL)
+      }
+    })
+
+    names(var_list) <- names(sim_list[[sit]])
+
+    if (!is.null(unlist(var_list))) {
+      mess <- paste(mess,
+        paste("\n  for situation ",sit,
+        ", variable(s):",
+        paste(sapply(names(var_list), function(x) {
+          if (!is.null(var_list[[x]])) {
+            paste("\n    o",x," at date(s) ",
+                  paste(var_list[[x]][[1]], collapse = ", "))
+          } else {
+            return("")
+          }
+        }),collapse="")
+      ))
+      res <- TRUE
+    }
+
+  }
+  if (res) {
+    warning("\n\nSimulated values are NA or Inf," ,mess, ",\nwhen using input parameters: ",
+            paste(names(param_values), collapse = ", "), ", with values: ",
+            paste(param_values, collapse = ", "))
+  }
+  return(res)
+
+}

@@ -27,7 +27,7 @@
 #'   - `out_dir` Directory path where to write the optimization results (optional, default to `getwd()`)
 #'   - `ranseed` Set random seed so that each execution of estim_param give the same
 #'   results when using the same seed. If you want randomization, set it to NULL,
-#'   otherwise set it to a number of your choice (e.g. 1234) (optional, default to `getwd()`)
+#'   otherwise set it to a number of your choice (e.g. 1234) (optional, default to NULL, which means random seed)
 #'   - specific options depending on the method used. Click on the links to see examples with the [simplex](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html)
 #' and [DreamZS](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html) methods.
 #'   - `path_results` `r lifecycle::badge("deprecated")` `path_results` is no longer supported, use `out_dir` instead.
@@ -49,14 +49,21 @@
 #'   - `ub` and `lb`, vectors of upper and lower bounds (one value per group),
 #'   - `init_values`, the list of initial values per group  (data.frame, one column per group, optional).
 #'
-#' @param forced_param_values Named vector, must contain the values for the model parameters
-#' to force (optional, NULL by default). These values will be transferred to the
-#' model wrapper through its param_values argument so that the given parameters
-#' always take the same values for each model simulation. Should not include values
-#' for estimated parameters (i.e. parameters defined in `param_info` argument).
+#' @param forced_param_values Named vector or list, must contain the values (or
+#' arithmetic expression, see details section) for the model parameters to force. The corresponding
+#' values will be transferred to the model wrapper through its param_values argument
+#' during the estimation process.
+#' Should not include values for estimated parameters (i.e. parameters defined in
+#' `param_info` argument), except if they are listed as candidate parameters (see
+#' argument `candidate_param`).
 #'
 #' @param candidate_param Names of the parameters, among those defined in the argument param_info,
 #' that must only be considered as candidate for parameter estimation (see details section).
+#'
+#' @param transform_var Named vector of functions to apply both on simulated and
+#' observed variables. `transform_var=c(var1=log, var2=sqrt)` will for example
+#' apply log-transformation on simulated and observed values of variable var1,
+#' and square-root transformation on values of variable var2.
 #'
 #' @param transform_obs User function for transforming observations before each criterion
 #' evaluation (optional), see details section for more information.
@@ -100,13 +107,12 @@
 #'
 #' @param weight Weights to use in the criterion to optimize. A function that takes in input a vector
 #' of observed values and the name of the corresponding variable and that must return either a single value
-#' for the weights for the given variable or a vector of values of length the length of the observed values given in input.
+#' for the weights for the given variable or a vector of values of length the length of the vector of observed values given in input.
 #'
 #' @param var_names `r lifecycle::badge("deprecated")` `var_names` is no
 #'   longer supported, use `var` instead.
 #'
 #' @details
-#'
 #'   In CroptimizR, parameter estimation is based on the comparison between the values
 #'   of the observed and simulated variables at corresponding dates. Only the situations,
 #'   variables and dates common to both observations (provided in `obs_list` argument),
@@ -157,6 +163,20 @@
 #'   It must return a logical indicating if the parameters values satisfies the constraints
 #'   (freely defined by the user in the function body) or not.
 #'
+#'   The optional argument `forced_param_values` may contain arithmetic expressions to
+#'   automatically compute the values of some parameters in function of the values of
+#'   parameters that are estimated (equality constraints). For that, `forced_param_values`
+#'   must be a named list. Arithmetic expressions must be R expressions given under the
+#'   shape of character strings. For example:
+#'
+#'   forced_param_values = list(p1=5, p2=7, p3="5*p5+p6")
+#'
+#'   will pass to the model wrapper the value 5 for parameter p1, 7 for parameter p2,
+#'   and will dynamically compute the value of p3 in function of the values of parameters
+#'   p5 and p6 iteratively provided by the parameter estimation algorithm. In this example,
+#'   the parameters p5 and p6 must thus be part of the list of parameters to estimate, i.e.
+#'   described in the `param_info` argument.
+#'
 #' @return prints, graphs and a list containing the results of the parameter estimation,
 #' which content depends on the method used and on the values of the `info_level` argument.
 #' All results are saved in the folder `optim_options$out_dir`.
@@ -171,7 +191,7 @@
 estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
                         model_options = NULL, optim_method = "nloptr.simplex",
                         optim_options = NULL, param_info, forced_param_values = NULL,
-                        candidate_param = NULL, transform_obs = NULL,
+                        candidate_param = NULL, transform_var = NULL, transform_obs = NULL,
                         transform_sim = NULL, satisfy_par_const = NULL,
                         var = NULL, info_level = 1,
                         info_crit_func = list(
@@ -194,6 +214,19 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
     var_names <- var # to remove when we update inside the function
   }
 
+  # Initialize res
+  res <- list()
+
+  # Create an environment accessible by all functions for storing information during the estimation process
+  parent <- eval(parse(text = ".GlobalEnv"))
+  .croptEnv <- new.env(parent)
+  assign(
+    x = ".croptEnv",
+    value = .croptEnv,
+    pos = parent
+  )
+  .croptEnv$total_eval_count <- 0
+
   # Remove CroptimizR environment before exiting and save stored results (even if the process crashes)
   on.exit({
     if (exists(".croptEnv")) {
@@ -201,16 +234,6 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
     }
     save(res, file = file.path(path_results_ORI, "optim_results.Rdata"))
   })
-
-  # Initialize res
-  res <- list()
-
-  # Measured elapse time
-  tictoc::tic.clearlog()
-  tictoc::tic(quiet = TRUE)
-
-  # set seed
-  set.seed(optim_options$ranseed)
 
   # Check inputs
 
@@ -271,14 +294,17 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
       stop("Incorrect format for argument forced_param_values, should be a vector.")
     }
     if (any(names(forced_param_values) %in% setdiff(param_names, candidate_param))) {
-      stop(
+      tmp <- intersect(names(forced_param_values), setdiff(param_names, candidate_param))
+      warning(
         "The following parameters are defined both in forced_param_values and param_info
            arguments of estim_param function while they should not (a parameter cannot
            be both forced and estimated except if it is part of the `candidate` parameters):",
-        paste(intersect(names(forced_param_values), setdiff(param_names, candidate_param)),
-          collapse = ","
-        )
+        paste(tmp,collapse = ","),
+        "\n They will be removed from forced_param_values."
       )
+      forced_param_values <-
+        forced_param_values[setdiff(names(forced_param_values),
+                                    setdiff(param_names, candidate_param))]
     }
   }
 
@@ -301,9 +327,9 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
       }
     })
     # set to NULL the info_crit that are not compatible with the crit_function used
-    info_crit_list[sapply(info_crit_list, function(x) {
-      (x()$name == "AIC" || x()$name == "AICc" || x()$name == "BIC") && !identical(crit_function, crit_ols)
-    })] <- NULL
+    # info_crit_list[sapply(info_crit_list, function(x) {
+    #   (x()$name == "AIC" || x()$name == "AICc" || x()$name == "BIC") && !identical(crit_function, crit_ols)
+    # })] <- NULL
   }
   if (length(info_crit_list) == 0) info_crit_list <- NULL
 
@@ -319,19 +345,15 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
 
   ## weight
   if (!is.function(weight) && !is.null(weight)) {
-    stop("Incorrect format for argument weight Should be a function or NULL.")
+    stop("Incorrect format for argument weight: should be a function or NULL.")
   }
 
+  # Measured elapse time
+  tictoc::tic.clearlog()
+  tictoc::tic(quiet = TRUE)
 
-  # Create an environment accessible by all functions for storing information during the estimation process
-  parent <- eval(parse(text = ".GlobalEnv"))
-  .croptEnv <- new.env(parent)
-  assign(
-    x = ".croptEnv",
-    value = .croptEnv,
-    pos = parent
-  )
-  .croptEnv$total_eval_count <- 0
+  # set seed
+  set.seed(optim_options$ranseed)
 
   # Initializations before parameter selection loop
   oblig_param_list <- setdiff(param_names, candidate_param)
@@ -392,6 +414,7 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
       param_names = crt_candidates, obs_list = obs_list,
       crit_function = crit_function, model_function = model_function,
       model_options = model_options, param_info = param_info_tmp,
+      transform_var = transform_var,
       transform_obs = transform_obs, transform_sim = transform_sim,
       satisfy_par_const = satisfy_par_const,
       path_results = optim_options$path_results,
@@ -407,6 +430,12 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
       optim_method = optim_method, optim_options = optim_options,
       param_info = param_info_tmp, crit_options = crit_options
     )
+
+    ## In case no results, there was an error during the estimation process => stop
+    if (length(res_tmp)==0) {
+      stop("There was an error during the parameter estimation process.
+           Please check warnings and messages displayed above and/or by running warnings().")
+    }
 
     ## The following is done only if parameter selection is activated
     if (!is.null(candidate_param)) {

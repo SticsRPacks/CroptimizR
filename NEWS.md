@@ -1,3 +1,33 @@
+# CroptimizR 0.6.1  (2023-12-22)
+
+* Fixed check of NA/Inf in simulated results
+* Made estim_param stop properly in case of error during the estimation process
+
+# CroptimizR 0.6.0  (2023-12-15)
+
+## Main changes
+
+* Added Weighted Least Squares in the list of available least squares criteria, and weight argument in the estim_param function to provide the weights to use,
+* added the possibility to transform simulated and observed variables (e.g. log transformation), using a new argument transform_var,
+* added the possibility to introduce equality constraints in argument forced_param_values of the estim_param function. This allows to dynamically compute the values of some parameters in function of others that are estimated.
+* License changed for LGPL (CeCILL-C not recognized by CRAN :-( )
+
+## Documentation
+
+* Added comments to explain how to handle in model wrappers the simulated variables that do not depend on date,
+* add information in estim_param function documentation on the way simulated and observed variables are compared in the parameter estimation process.
+
+## Fixes
+
+* Fixed test on presence of NA in model results within parameter estimation process (now test Inf or NA values only for variables and dates included in observations, no more in all model results),
+* fixed generation of gelman plot (when using Bayesian methods) in case of more than 2 parameters estimated and thin not initialized in optim_options (crashed).
+
+## Misc.
+
+* Names of observed variables used are now stored and printed at the end of the parameter estimation process,
+* shortened paths of stored results to solve warning at check,
+* increase default value for maxeval so that nloptr never stop on maximum number of evaluation (simplex method).
+
 # CroptimizR 0.5.1 (2023-01-06)
 
 * Fixed cff file generation using github action. Now generated on each commit that modifies the Description file + on release.

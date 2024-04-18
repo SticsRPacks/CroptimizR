@@ -63,7 +63,7 @@ post_treat_frequentist <- function(optim_options, param_info, optim_results,
   # (just to check it is correct and to get the observation list used)
   info_final <- main_crit(
     param_values = optim_results$final_values,
-    crit_options = c(crit_options, return_obs_sim = TRUE)
+    crit_options = c(crit_options, return_detailed_info = TRUE)
   )
   if (info_final$crit != optim_results$min_crit_value) {
     stop(paste(
@@ -72,6 +72,7 @@ post_treat_frequentist <- function(optim_options, param_info, optim_results,
       info_final$crit
     ))
   }
+  optim_results$forced_param_values <- info_final$forced_param_values
 
   sapply(info_crit_list, function(x) {
     final_info_crit <- x(
