@@ -9,9 +9,9 @@
 \usage{
 likelihood_log_iidn(sim_list, obs_list, weight)
 
-likelihood_log_ciidn(sim_list, obs_list, ...)
+likelihood_log_ciidn(sim_list, obs_list)
 
-likelihood_log_ciidn_corr(sim_list, obs_list, ...)
+likelihood_log_ciidn_corr(sim_list, obs_list)
 }
 \arguments{
 \item{sim_list}{List of simulated variables}
