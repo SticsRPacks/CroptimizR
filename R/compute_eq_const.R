@@ -24,16 +24,20 @@ compute_eq_const <- function(forced_param_values, param_values) {
 
     for (irow in 1:nrows) {
 
+      # Backticks are added here and in the following to handle parameters names
+      # including special characters
       expr_ls <-
-        lapply(names(forced_param_values), function(x) paste(x,"<-",forced_param_values[[x]]))
+        lapply(names(forced_param_values), function(x) paste0("`",x,"`","<-",
+                                                              forced_param_values[[x]]))
       names(expr_ls) <- names(forced_param_values)
 
       for (par in names(param_values)) {
-        eval(parse(text = paste(par,"<-",param_values[[irow, par]])))
+        eval(parse(text = paste0("`",par,"`","<-",param_values[[irow, par]])))
       }
       for (par in names(forced_param_values)) {
         eval(parse(text = expr_ls[[par]]))
-        eval(parse(text = paste0("comp_forced_values[irow,\"",par,"\"] <- ",par)))
+        eval(parse(text = paste0("comp_forced_values[irow,\"",par,"\"] <- ",
+                                 "`",par,"`")))
       }
 
     }
