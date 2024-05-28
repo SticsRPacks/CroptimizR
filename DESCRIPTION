@@ -41,7 +41,7 @@ Imports:
     lhs,
     lifecycle,
     lubridate,
-    Matrix (= 1.6.5)
+    Matrix (== 1.6.5),
     methods,
     nloptr,
     purrr,
