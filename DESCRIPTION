@@ -33,6 +33,7 @@ BugReports: https://github.com/SticsRPacks/CroptimizR/issues
 Depends:
     R (>= 4.0.0)
 Imports:
+    Matrix,
     BayesianTools,
     crayon,
     doParallel,
@@ -66,7 +67,7 @@ Suggests:
 VignetteBuilder: 
     knitr
 Remotes:
-    github::florianhartig/BayesianTools/BayesianTools@c953ae2bf8c112f95fdda1a35b2ff33a1f00c208,
+    github::cran/Matrix@1.6-5,
     github::hol430/ApsimOnR,
     github::SticsRPacks/CroPlotR@*release,
     github::SticsRPacks/SticsOnR@*release,
