@@ -39,6 +39,14 @@ test_that("filter_obs filters-out correctly", {
     filter_obs(obs_list, var = c("var2")),
     "No observations found in situation\\(s\\) sit2, sit3",
   )
+  expect_equivalent(
+    suppressWarnings(filter_obs(obs_list, dates = c(as.POSIXct(c("2009-12-10", "2010-10-04"))))),
+    list(sit1 = obs_list[[1]][1, 1:2], sit3 = obs_list[[3]][1, c(1,3)])
+  )
+  expect_warning(
+    filter_obs(obs_list, dates = c(as.POSIXct(c("2009-12-10", "2010-10-04")))),
+    "No observations found in situation\\(s\\) sit2",
+  )
 
 })
 
@@ -64,6 +72,19 @@ test_that("filter_obs filters-in correctly", {
 
   expect_warning(
     filter_obs(obs_list, var = c("var2"), include = TRUE),
+    "No observations found in situation\\(s\\) sit2",
+  )
+
+  expect_equivalent(
+    suppressWarnings(filter_obs(obs_list,
+                                dates = c(as.POSIXct(c("2009-12-10", "2010-10-04"))),
+                                include = TRUE)),
+    list(sit1 = obs_list[[1]][2, ], sit3 = obs_list[[3]][2, c(1,3)])
+  )
+  expect_warning(
+    filter_obs(obs_list,
+               dates = c(as.POSIXct(c("2009-12-10", "2010-10-04"))),
+               include = TRUE),
     "No observations found in situation\\(s\\) sit2",
   )
 })
