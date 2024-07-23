@@ -49,7 +49,7 @@
 is.data <- function(data_list) {
 
   # Check data_list format
-  if (!is.list(data_list) || !all(sapply(
+  if (length(data_list)==0 || !is.list(data_list) || !all(sapply(
     data_list,
     function(x) is.data.frame(x)
   ))) {
