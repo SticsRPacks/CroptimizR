@@ -16,20 +16,21 @@ test_that("crit_ols", {
   expect_equal(crit_ols(sim_list, obs_list), 8)
   expect_equal(crit_ols(sim_list2, obs_list2), 21)
 })
-w_inf <- function(...) {
-  return(Inf)
-}
-w_1 <- function(...) {
-  return(1)
-}
-w_obs <- function(obs, ...) {
-  return(obs)
-}
+
 test_that("crit_wls", {
-  expect_equal(crit_wls(sim_list, sim_list, w_1), 0)
-  expect_equal(crit_wls(sim_list2, obs_list2, w_1), crit_ols(obs_list2, sim_list2))
-  expect_equal(crit_wls(sim_list2, obs_list2, w_inf), 0)
-  expect_equal(crit_wls(sim_list2, obs_list2, w_obs), 10)
+  expect_equal(crit_wls(sim_list, sim_list,
+                        function(...) { return(Inf) }), 0)
+  expect_equal(crit_wls(sim_list2, obs_list2,
+                        function(...) { return(1) }),
+               crit_ols(obs_list2, sim_list2))
+  expect_equal(crit_wls(sim_list2, obs_list2,
+                        function(...) { return(Inf) }), 0)
+  expect_equal(crit_wls(sim_list2, obs_list2,
+                        function(obs, ...) { return(obs) }), 10)
+  expect_error(crit_wls(sim_list2, obs_list2,
+                        function(obs, ...) { return(0) }))
+  expect_error(crit_wls(sim_list2, obs_list2,
+                        function(obs, ...) { return(NA) }))
 })
 test_that("crit_log_cwss", {
   expect_equal(crit_log_cwss(sim_list, sim_list), -Inf)
