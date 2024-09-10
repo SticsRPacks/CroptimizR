@@ -125,7 +125,7 @@ optim_switch <- function(...) {
           optim_options = optim_options,
           param_info = param_info, optim_results = res
         )
-        summary_bayesian(
+        res$gelman_diags <- summary_bayesian(
           optim_options = optim_options, param_info = param_info,
           optim_results = res
         )

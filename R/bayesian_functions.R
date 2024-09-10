@@ -4,7 +4,7 @@
 #'
 #' @param optim_results Results list returned by bayesian method wrappers
 #'
-#' @return Prints results of bayesian methods
+#' @return Prints results of bayesian methods and return Gelman diagnostics
 #' @keywords internal
 #'
 summary_bayesian <- function(optim_options, param_info, optim_results) {
@@ -30,6 +30,13 @@ summary_bayesian <- function(optim_options, param_info, optim_results) {
     "Complementary graphs and results can be found in ",
     path_results, "\n\n"
   ))
+
+  ## Compute Gelman Diagnostics
+  if (is.null(optim_options$thin)) optim_options$thin <- 1
+  gelman_diags <- gelmanDiagnostics(out, thin = optim_options$thin, plot = F)
+
+  return(gelman_diags)
+
 }
 
 
@@ -40,7 +47,7 @@ summary_bayesian <- function(optim_options, param_info, optim_results) {
 #'
 #' @param optim_results Results list returned by bayesian method wrappers
 #'
-#' @return Save plots in optim_options$path_results.
+#' @return List of plot objects
 #'
 #' @keywords internal
 #'
