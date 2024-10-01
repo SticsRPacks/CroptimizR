@@ -5,7 +5,7 @@
 #' as provided by the parameter estimation algorithm (and possibly transformed in
 #' main_crit function)
 #'
-#' @return Named vector or tibble (same shape as param_values) containing the values
+#' @return Named vector or tibble (same type as param_values) containing the values
 #' for the model parameters to force.
 #'
 #' @keywords internal
@@ -13,6 +13,7 @@
 compute_eq_const <- function(forced_param_values, param_values) {
 
   comp_forced_values <- NULL
+  is_vector <- is.vector(param_values)
   if (!is.null(forced_param_values)) {
 
     param_values <- tibble::tibble(!!!param_values)
@@ -22,14 +23,14 @@ compute_eq_const <- function(forced_param_values, param_values) {
                                                 nrow = nrows)
     colnames(comp_forced_values) <- names(forced_param_values)
 
-    for (irow in 1:nrows) {
+    # Backticks are added here and in the following to handle parameters names
+    # including special characters
+    expr_ls <-
+      lapply(names(forced_param_values), function(x) paste0("`",x,"`","<-",
+                                                            forced_param_values[[x]]))
+    names(expr_ls) <- names(forced_param_values)
 
-      # Backticks are added here and in the following to handle parameters names
-      # including special characters
-      expr_ls <-
-        lapply(names(forced_param_values), function(x) paste0("`",x,"`","<-",
-                                                              forced_param_values[[x]]))
-      names(expr_ls) <- names(forced_param_values)
+    for (irow in 1:nrows) {
 
       for (par in names(param_values)) {
         eval(parse(text = paste0("`",par,"`","<-",param_values[[irow, par]])))
@@ -42,7 +43,7 @@ compute_eq_const <- function(forced_param_values, param_values) {
 
     }
 
-    if (nrows==1) {
+    if (is_vector) {
       comp_forced_values <- comp_forced_values[1,]
     } else {
       comp_forced_values <- tibble::as_tibble(comp_forced_values)
