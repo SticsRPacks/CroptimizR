@@ -20,7 +20,7 @@ as provided by the parameter estimation algorithm (and possibly transformed in
 main_crit function)}
 }
 \value{
-Named vector or tibble (same shape as param_values) containing the values
+Named vector or tibble (same type as param_values) containing the values
 for the model parameters to force.
 }
 \description{
