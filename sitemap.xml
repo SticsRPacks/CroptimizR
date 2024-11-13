@@ -1,177 +1,62 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>/404.html</loc>
-  </url>
-  <url>
-    <loc>/CODE_OF_CONDUCT.html</loc>
-  </url>
-  <url>
-    <loc>/articles/AgMIP_Calibration_Phenology_protocol.html</loc>
-  </url>
-  <url>
-    <loc>/articles/ApsimX_parameter_estimation_simple_case.html</loc>
-  </url>
-  <url>
-    <loc>/articles/Available_parameter_estimation_algorithms.html</loc>
-  </url>
-  <url>
-    <loc>/articles/CroptimizR.html</loc>
-  </url>
-  <url>
-    <loc>/articles/Designing_a_model_wrapper.html</loc>
-  </url>
-  <url>
-    <loc>/articles/Parameter_estimation_DREAM.html</loc>
-  </url>
-  <url>
-    <loc>/articles/Parameter_estimation_Specific_and_Varietal.html</loc>
-  </url>
-  <url>
-    <loc>/articles/Parameter_estimation_simple_case.html</loc>
-  </url>
-  <url>
-    <loc>/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>/authors.html</loc>
-  </url>
-  <url>
-    <loc>/index.html</loc>
-  </url>
-  <url>
-    <loc>/news/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/AIC.html</loc>
-  </url>
-  <url>
-    <loc>/reference/AICc.html</loc>
-  </url>
-  <url>
-    <loc>/reference/BIC.html</loc>
-  </url>
-  <url>
-    <loc>/reference/Likelihoods.html</loc>
-  </url>
-  <url>
-    <loc>/reference/check_obsSim_consistency.html</loc>
-  </url>
-  <url>
-    <loc>/reference/complete_init_values.html</loc>
-  </url>
-  <url>
-    <loc>/reference/compute_eq_const.html</loc>
-  </url>
-  <url>
-    <loc>/reference/estim_param.html</loc>
-  </url>
-  <url>
-    <loc>/reference/filter_obs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/filter_param_info.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_init_values.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_params_bounds.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_params_init_values.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_params_names.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_params_per_sit.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_reserved_keywords.html</loc>
-  </url>
-  <url>
-    <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/intersect_sim_obs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/is.data.html</loc>
-  </url>
-  <url>
-    <loc>/reference/is.obs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/is.sim.html</loc>
-  </url>
-  <url>
-    <loc>/reference/is_sim_inf_or_na.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ls_criteria.html</loc>
-  </url>
-  <url>
-    <loc>/reference/main_crit.html</loc>
-  </url>
-  <url>
-    <loc>/reference/make_obsSim_consistent.html</loc>
-  </url>
-  <url>
-    <loc>/reference/optim_switch.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_bayesian.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_estimVSinit.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_frequentist.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_valuesVSit.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_valuesVSit_2D.html</loc>
-  </url>
-  <url>
-    <loc>/reference/post_treat_FwdRegAgMIP.html</loc>
-  </url>
-  <url>
-    <loc>/reference/post_treat_frequentist.html</loc>
-  </url>
-  <url>
-    <loc>/reference/sample_params.html</loc>
-  </url>
-  <url>
-    <loc>/reference/save_results_FwdRegAgMIP.html</loc>
-  </url>
-  <url>
-    <loc>/reference/select_param_FwdRegAgMIP.html</loc>
-  </url>
-  <url>
-    <loc>/reference/set_init_values.html</loc>
-  </url>
-  <url>
-    <loc>/reference/summary_FwdRegAgMIP.html</loc>
-  </url>
-  <url>
-    <loc>/reference/summary_bayesian.html</loc>
-  </url>
-  <url>
-    <loc>/reference/summary_frequentist.html</loc>
-  </url>
-  <url>
-    <loc>/reference/test_wrapper.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrap_BayesianTools.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrap_nloptr.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrap_optim.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>/LICENSE-text.html</loc></url>
+<url><loc>/articles/AgMIP_Calibration_Phenology_protocol.html</loc></url>
+<url><loc>/articles/ApsimX_parameter_estimation_simple_case.html</loc></url>
+<url><loc>/articles/Available_parameter_estimation_algorithms.html</loc></url>
+<url><loc>/articles/CroptimizR.html</loc></url>
+<url><loc>/articles/Designing_a_model_wrapper.html</loc></url>
+<url><loc>/articles/Parameter_estimation_DREAM.html</loc></url>
+<url><loc>/articles/Parameter_estimation_Specific_and_Varietal.html</loc></url>
+<url><loc>/articles/Parameter_estimation_simple_case.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/news/index.html</loc></url>
+<url><loc>/reference/AIC.html</loc></url>
+<url><loc>/reference/AICc.html</loc></url>
+<url><loc>/reference/BIC.html</loc></url>
+<url><loc>/reference/Likelihoods.html</loc></url>
+<url><loc>/reference/check_obsSim_consistency.html</loc></url>
+<url><loc>/reference/complete_init_values.html</loc></url>
+<url><loc>/reference/compute_eq_const.html</loc></url>
+<url><loc>/reference/estim_param.html</loc></url>
+<url><loc>/reference/filter_obs.html</loc></url>
+<url><loc>/reference/filter_param_info.html</loc></url>
+<url><loc>/reference/get_init_values.html</loc></url>
+<url><loc>/reference/get_params_bounds.html</loc></url>
+<url><loc>/reference/get_params_init_values.html</loc></url>
+<url><loc>/reference/get_params_names.html</loc></url>
+<url><loc>/reference/get_params_per_sit.html</loc></url>
+<url><loc>/reference/get_reserved_keywords.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/intersect_sim_obs.html</loc></url>
+<url><loc>/reference/is.data.html</loc></url>
+<url><loc>/reference/is.obs.html</loc></url>
+<url><loc>/reference/is.sim.html</loc></url>
+<url><loc>/reference/is_sim_inf_or_na.html</loc></url>
+<url><loc>/reference/ls_criteria.html</loc></url>
+<url><loc>/reference/main_crit.html</loc></url>
+<url><loc>/reference/make_obsSim_consistent.html</loc></url>
+<url><loc>/reference/optim_switch.html</loc></url>
+<url><loc>/reference/plot_bayesian.html</loc></url>
+<url><loc>/reference/plot_estimVSinit.html</loc></url>
+<url><loc>/reference/plot_frequentist.html</loc></url>
+<url><loc>/reference/plot_valuesVSit.html</loc></url>
+<url><loc>/reference/plot_valuesVSit_2D.html</loc></url>
+<url><loc>/reference/post_treat_FwdRegAgMIP.html</loc></url>
+<url><loc>/reference/post_treat_frequentist.html</loc></url>
+<url><loc>/reference/sample_params.html</loc></url>
+<url><loc>/reference/save_results_FwdRegAgMIP.html</loc></url>
+<url><loc>/reference/select_param_FwdRegAgMIP.html</loc></url>
+<url><loc>/reference/set_init_values.html</loc></url>
+<url><loc>/reference/summary_FwdRegAgMIP.html</loc></url>
+<url><loc>/reference/summary_bayesian.html</loc></url>
+<url><loc>/reference/summary_frequentist.html</loc></url>
+<url><loc>/reference/test_wrapper.html</loc></url>
+<url><loc>/reference/wrap_BayesianTools.html</loc></url>
+<url><loc>/reference/wrap_nloptr.html</loc></url>
+<url><loc>/reference/wrap_optim.html</loc></url>
 </urlset>
+
