@@ -1,3 +1,28 @@
+# CroptimizR 0.7.0(2024-11-13)
+
+## Main Changes
+
+* Enabled support for special characters in parameter names (#18).
+* Updated the bundled version of the **BayesianTools** package (#19).
+* Enhanced `is_data` function to verify that the tested data structure is not empty (#21).
+* Improved validation checks for the `weight` argument (#22).
+
+## Documentation
+
+* Added a LICENSE file (#15).
+
+## Fixes
+
+* Resolved an incompatibility between `forced_param_values` and `param_info$sit_list` (#14).
+* Fixed error message when `NA` values are detected in simulated results (#16).
+* Corrected the calculation of equality constraints when only one situation exists in `param_values` (#24).
+* Addressed various warnings (#14).
+
+## Miscellaneous
+
+* Added a unit test for `crit_wls` (#22).
+
+
 # CroptimizR 0.6.1  (2023-12-22)
 
 * Fixed check of NA/Inf in simulated results
