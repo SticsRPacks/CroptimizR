@@ -7,7 +7,7 @@ cff-version: 1.2.0
 message: 'To cite package "CroptimizR" in publications use:'
 type: software
 title: 'CroptimizR: A Package to Estimate Parameters of Crop Models'
-version: 0.5.1
+version: 0.7.0
 abstract: The purpose of CroptimizR is to provide functions for estimating crop model
   parameters from observations of their simulated variables. This process is often
   referred to as calibration. For that, it offers a generic framework for linking
