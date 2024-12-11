@@ -13,20 +13,24 @@ sim_list2 <- list(
 
 test_that("likelihood_log_ciidn", {
   expect_equal(likelihood_log_ciidn(sim_list, sim_list), Inf)
-  expect_equal(likelihood_log_ciidn(obs_list, sim_list),
-               log((4^ (-4) * 4^ (-2.5))))
+  expect_equal(
+    likelihood_log_ciidn(obs_list, sim_list),
+    log((4^(-4) * 4^(-2.5)))
+  )
   expect_equal(
     likelihood_log_ciidn(obs_list2, sim_list2),
-    log((4^ (-4) * 17^ (-7 / 2)))
+    log((4^(-4) * 17^(-7 / 2)))
   )
 })
 
 test_that("likelihood_log_ciidn_corr", {
   expect_equal(likelihood_log_ciidn_corr(sim_list, sim_list), Inf)
-  expect_equal(likelihood_log_ciidn_corr(obs_list, sim_list),
-               log((4^ (-5 / 2))))
+  expect_equal(
+    likelihood_log_ciidn_corr(obs_list, sim_list),
+    log((4^(-5 / 2)))
+  )
   expect_equal(
     likelihood_log_ciidn_corr(obs_list2, sim_list2),
-    log(((4 + 13 / 2)^ (-3)))
+    log(((4 + 13 / 2)^(-3)))
   )
 })

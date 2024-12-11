@@ -64,14 +64,13 @@ Here's a header for a basic version of a model wrapper:
 #' @return A list containing:
 #'     o `sim_list`: a `named list` (names = situations names) of data.frames
 #'     (or tibbles) of simulated output values (one element of the list per
-#`      simulated situation)
+# `      simulated situation)
 #'     o `error`: an error code indicating if at least one simulation ended
 #'     with an error.
 
 model_wrapper <- function(param_values = NULL, situation, model_options, ...) {
 
 }
-
 ```
 
 **Each argument detailed here must be defined for any CroptimizR model wrapper. You can use this header to develop yours.
@@ -111,13 +110,12 @@ The data.frames must have one column called `Date` containing the simulations da
 For example, if `situation` is `c("situation1","situation2","situation3"), sim_list should look like:
 
 ```{r eval=FALSE}
-
 sim_list$situation1
 
 #> A tibble: *** x ***
 #>   Date         var1    var2    var3    var4 ...
 #>   <dttm>     <dbl>   <dbl>   <dbl>   <dbl>
-#> 1 1994-10-17   0      2.53    4.80   150 
+#> 1 1994-10-17   0      2.53    4.80   150
 #> 2 1994-10-18   0      2.31    4.66   150
 #> 3 1994-10-19   0      4.55    4.44   150
 #>
@@ -141,8 +139,6 @@ sim_list$situation3
 #> 1 1996-10-17   0      2.41    4.81   142
 #> 2 1996-10-18   0      3.03    4.71   142
 #> 3 1996-10-19   0      5.10    4.47   142
-
-
 ```
 
 ** Note that there is not for the moment any dedicated data structure handled in CroptimizR and CroPlotR for storing simulated variables that do no depend on time (e.g. such as the julian day of a given phenological stage). You must thus include them in the data.frames described here-before. For this variables, it is strongly advised to replicate their (unique) values for all rows of the data.frames (see e.g. var4 in the data.frames described here-before). This makes it possible to compare these simulated values to the corresponding observed values regardless of the dates with which they are associated in the data.frames including the observations.**
@@ -159,13 +155,15 @@ If any simulation failed for any reason, use the R function `warning` to print a
 A typical pseudo-code implementation of a basic wrapper function is thus:
 
 ```{r eval=FALSE}
-
 model_wrapper <- function(param_values = NULL, situation, model_options, ...) {
   # Initializations
   # param_names <- names(param_values)
-  results <- list(sim_list = setNames(vector("list", length(situation)),
-                                      nm = situation),
-                  error = FALSE)
+  results <- list(
+    sim_list = setNames(vector("list", length(situation)),
+      nm = situation
+    ),
+    error = FALSE
+  )
   attr(results$sim_list, "class") <- "cropr_simulation"
 
   for (situation in situation) {
@@ -181,7 +179,6 @@ model_wrapper <- function(param_values = NULL, situation, model_options, ...) {
   }
   return(results)
 }
-
 ```
 
 ### Test your wrapper
@@ -214,15 +211,18 @@ If all tests succeed, it returns:
 
 ```{r eval=TRUE, echo=FALSE}
 cat(crayon::green(
-  "Test the wrapper returns outputs in expected format ...\n"))
+  "Test the wrapper returns outputs in expected format ...\n"
+))
 cat(crayon::green("... OK\n"))
 cat("\n")
 cat(crayon::green(
-"Test the wrapper gives identical results when running with same inputs ...\n"))
+  "Test the wrapper gives identical results when running with same inputs ...\n"
+))
 cat(crayon::green("... OK\n"))
 cat("\n")
 cat(crayon::green(
-"Test the wrapper gives different results when running with different inputs ...\n"))
+  "Test the wrapper gives different results when running with different inputs ...\n"
+))
 cat(crayon::green("... OK\n"))
 ```
 
@@ -251,17 +251,15 @@ If you want your model wrapper to be used for simultaneous estimation of specifi
 Depending on the application (simple case or simultaneous specific and varietal parameters estimation), the `estim_param` function will thus pass to the model wrapper either a named vector or a data.frame, including or not the `situation` column. Both shapes have thus to be handled in the model wrapper in this case. This may be done as in the following piece of code:
 
 ```{r, eval=FALSE}
-
 # convert param_values in a tibble
 param_values <- tibble::tibble(!!!param_values)
 
 # loop on the situations to simulate
 for (sit in situation_list) {
-
   # extract the parameters values to apply for the given situation
   params <- NULL
   if (!is.null(param_values)) {
-    if (! "situation" %in% names(param_values)) {
+    if (!"situation" %in% names(param_values)) {
       params <- param_values
     } else {
       params <- dplyr::filter(param_values, situation == sit) %>%
@@ -270,7 +268,6 @@ for (sit in situation_list) {
   }
 
   # run the model with parameters values defined by params
-
 }
 ```
 
@@ -293,7 +290,7 @@ test_parallel <- function(cores_nb = 1,
                           pa = FALSE,
                           max_it = 5) {
   # pa: flag to switch from case with pre-allocated list to case with
-  #returned statement
+  # returned statement
 
   # Launching the cluster
   cl <- parallel::makeCluster(cores_nb)
@@ -305,9 +302,9 @@ test_parallel <- function(cores_nb = 1,
   # Parallel loop
   out <- foreach(i = 1:max_it) %dopar% {
     if (pa) {
-      out_pa[[i]] <- i  # store results in a pre-allocted list
+      out_pa[[i]] <- i # store results in a pre-allocted list
     } else {
-      return(i)         # return the results
+      return(i) # return the results
     }
   }
 
@@ -332,7 +329,6 @@ out_pa <- test_parallel(cores_nb, TRUE)
 out
 
 out_pa
-
 ```
 
 * Outputs selection
@@ -351,7 +347,6 @@ It is advised to define them as optionnal arguments with default value equal to 
 ### Example of a basic wrapper for an LAI toy model
 
 ```{r, eval=TRUE}
-
 lai_toymodel <- function(year, max_lai = 8, julday_incslope = 100,
                          inc_slope = 5, julday_decslope = 200, dec_slope = 2) {
   # Simulate lai for a single crop over 2 years
@@ -368,12 +363,14 @@ lai_toymodel <- function(year, max_lai = 8, julday_incslope = 100,
   #   - lai: vector of simulated lai
   #   - dates: vector of dates (POSIXct) for which lai is computed
 
-  end_day <- format(as.Date(paste0(year + 1, "-12-31"), format = "%Y-%m-%d",
-                            origin = paste0(year, "-01-01")), "%j")
+  end_day <- format(as.Date(paste0(year + 1, "-12-31"),
+    format = "%Y-%m-%d",
+    origin = paste0(year, "-01-01")
+  ), "%j")
   jul_days <- 1:as.numeric(end_day)
 
   lai <- max_lai * (1 / (1 + exp((julday_incslope - jul_days) / inc_slope)) -
-                       1 / (1 + exp((julday_decslope - jul_days) / dec_slope)))
+    1 / (1 + exp((julday_decslope - jul_days) / dec_slope)))
   lai[lai < 0] <- 0
 
   dates <-
@@ -381,7 +378,8 @@ lai_toymodel <- function(year, max_lai = 8, julday_incslope = 100,
       as.character(
         as.Date(
           jul_days,
-          origin = paste0(year, "-01-01"))
+          origin = paste0(year, "-01-01")
+        )
       ),
       format = "%Y-%m-%d", tz = "UTC"
     )
@@ -392,7 +390,6 @@ lai_toymodel <- function(year, max_lai = 8, julday_incslope = 100,
 
 laitm_simple_wrapper <- function(param_values = NULL, situation,
                                  model_options, ...) {
-
   # A basic wrapper for lai_toymodel
   #
   # Arguments
@@ -430,7 +427,6 @@ laitm_simple_wrapper <- function(param_values = NULL, situation,
   attr(results$sim_list, "class") <- "cropr_simulation"
 
   for (sit in situation) {
-
     # Retrieve year, emergence and crop_duration from situation name
     tmp <- stringr::str_split(sit, "_")
     year <- as.numeric(tmp[[1]][[1]])
@@ -453,8 +449,7 @@ laitm_simple_wrapper <- function(param_values = NULL, situation,
       "dec_slope",
       "julday_incslope",
       "julday_decslope"
-    )
-    )) {
+    ))) {
       warning(
         paste(
           "Unknown parameters in param_values:",
@@ -535,10 +530,11 @@ if (!require("CroPlotR")) {
   devtools::install_github("SticsRPacks/CroPlotR@*release")
   library("CroPlotR")
 }
-tmp <- laitm_simple_wrapper(situation = c("2005_a", "2006_b"),
-                            param_values = res$final_values)
+tmp <- laitm_simple_wrapper(
+  situation = c("2005_a", "2006_b"),
+  param_values = res$final_values
+)
 plot(tmp$sim_list, obs = obs_synth, type = "scatter")
-
 ```
 
 ### Another version taking into account the different shapes param_values can take
@@ -548,7 +544,6 @@ This one can be used to perform simultaneous estimation of specific and varietal
 ```{r, eval=TRUE}
 laitm_simple_wrapper_v2 <- function(param_values = NULL, situation,
                                     model_options, ...) {
-
   # A basic wrapper for lai_toymodel
   #
   # Arguments
@@ -586,7 +581,7 @@ laitm_simple_wrapper_v2 <- function(param_values = NULL, situation,
   )
   attr(results$sim_list, "class") <- "cropr_simulation"
 
-  param_values <- tibble::tibble(!!!param_values)  # convert param_values
+  param_values <- tibble::tibble(!!!param_values) # convert param_values
   # in a tibble
 
   for (sit in situation) {
@@ -609,7 +604,7 @@ laitm_simple_wrapper_v2 <- function(param_values = NULL, situation,
     # extract the parameters values to apply for the given situation
     params <- NULL
     if (!is.null(param_values)) {
-      if (! "situation" %in% names(param_values)) {
+      if (!"situation" %in% names(param_values)) {
         params <- param_values
       } else {
         params <-
@@ -623,8 +618,7 @@ laitm_simple_wrapper_v2 <- function(param_values = NULL, situation,
       "dec_slope",
       "julday_incslope",
       "julday_decslope"
-    )
-    )) {
+    ))) {
       warning(
         paste(
           "Unknown parameters in param_values:",
@@ -710,10 +704,12 @@ param_info <- list(
 )
 
 optim_options <- list(nb_rep = 5, maxeval = 100, xtol_rel = 1e-2)
-res <- estim_param(obs_synth, crit_function = crit_ols,
-                   model_function = laitm_simple_wrapper_v2,
-                   optim_options = optim_options,
-                   param_info = param_info)
+res <- estim_param(obs_synth,
+  crit_function = crit_ols,
+  model_function = laitm_simple_wrapper_v2,
+  optim_options = optim_options,
+  param_info = param_info
+)
 res$final_values
 
 # Plot the simulations obtained with the optimized values of the parameters VS

@@ -47,7 +47,6 @@ select_param_FwdRegAgMIP <- function(oblig_param_list, add_param_list, crt_list,
     return(res)
   } else if (crt_list[length(crt_list)] ==
     add_param_list[length(add_param_list)]) {
-
     # we tested all parameters
     if (crt_info_crit < min(prev_info_crit)) {
       res$selected <- TRUE
@@ -56,7 +55,6 @@ select_param_FwdRegAgMIP <- function(oblig_param_list, add_param_list, crt_list,
     }
     return(res)
   } else if (length(crt_list) == length(oblig_param_list)) {
-
     # we only tested so far the obligatory parameters
     res$selected <- TRUE
     res$next_candidates <- c(oblig_param_list, add_param_list[1])
@@ -69,7 +67,6 @@ select_param_FwdRegAgMIP <- function(oblig_param_list, add_param_list, crt_list,
         add_param_list[which(add_param_list == crt_list[length(crt_list)]) + 1]
       )
     } else {
-
       # Replace the last candidate parameter by the next candidate
       res$selected <- FALSE
       res$next_candidates <- c(
@@ -118,7 +115,8 @@ post_treat_FwdRegAgMIP <- function(optim_results, crit_options, crt_list,
 
   ## Store the results per step
   v_init <- as.vector(
-    t(optim_results$init_values[optim_results$ind_min_crit, ]))
+    t(optim_results$init_values[optim_results$ind_min_crit, ])
+  )
   names(v_init) <- names(optim_results$init_values)
   info_new_step <- setNames(
     tibble::tibble(
@@ -138,7 +136,7 @@ post_treat_FwdRegAgMIP <- function(optim_results, crit_options, crt_list,
       info_crit_func()$name, "Selected step"
     )
   )
-param_selection_steps <- dplyr::bind_rows(param_selection_steps, info_new_step)
+  param_selection_steps <- dplyr::bind_rows(param_selection_steps, info_new_step)
   ind_min_infocrit <- which.min(param_selection_steps[[info_crit_func()$name]])
   param_selection_steps[, "Selected step"] <- ""
   param_selection_steps[ind_min_infocrit, "Selected step"] <- "X"

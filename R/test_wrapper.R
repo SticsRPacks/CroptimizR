@@ -40,7 +40,6 @@
 test_wrapper <- function(model_function, model_options, param_values, situation,
                          var = NULL, sit_names = lifecycle::deprecated(),
                          var_names = lifecycle::deprecated()) {
-
   # Managing parameter names changes between versions:
   if (lifecycle::is_present(sit_names)) {
     lifecycle::deprecate_warn("0.5.0", "test_wrapper(sit_names)", "test_wrapper(situation)")

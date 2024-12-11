@@ -90,7 +90,7 @@ Basically, to use CroptimizR on their own case, users must provide:
 The parameter estimation process automatically runs the given crop model on a set of observed situations by forcing the estimated parameters to the values proposed by the selected algorithm. It will then compute the selected goodness-of-fit criterion using the simulated values and corresponding observations of the model output variables (see Figure 1).
   
 ```{r, out.width='85%', echo=FALSE, fig.align='center', fig.cap='Figure 1: Schematic representation of the parameter estimation process.'}
-knitr::include_graphics('GettingStarted/main_scheme.png')
+knitr::include_graphics("GettingStarted/main_scheme.png")
 ```
 
 In output, CroptimizR generates specific statistics and graphs depending on the 
@@ -115,7 +115,7 @@ Observed values of model output variables have to be provided under the shape of
 Let's consider the observations are, as often, available under the shape of a text file as displayed in Figure 2.
 
 ```{r, out.width='50%', echo=FALSE, fig.align='center', fig.cap='Figure 2: Example of a text file defining observations.'}
-knitr::include_graphics('GettingStarted/obs_file.png')
+knitr::include_graphics("GettingStarted/obs_file.png")
 ```
 
 In this example, observations are available for two situations, called here `sit1` and `sit2`, three variables for situation `sit1` (`LAI`, `Biomass` and `Yield`) and two for `sit2` (`Biomass` and `Yield`). Observations of `Yield` where only provided for the last date. 

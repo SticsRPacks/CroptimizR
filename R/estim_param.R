@@ -198,9 +198,8 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
                           CroptimizR::BIC, CroptimizR::AICc,
                           CroptimizR::AIC
                         ),
-                        weight=NULL,
+                        weight = NULL,
                         var_names = lifecycle::deprecated()) {
-
   # Managing parameter names changes between versions:
   if (rlang::has_name(optim_options, "path_results")) {
     lifecycle::deprecate_warn("0.5.0", "estim_param(optim_options = 'is deprecated, use `out_dir` instead of `path_results`')")
@@ -299,12 +298,14 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
         "The following parameters are defined both in forced_param_values and param_info
            arguments of estim_param function while they should not (a parameter cannot
            be both forced and estimated except if it is part of the `candidate` parameters):",
-        paste(tmp,collapse = ","),
+        paste(tmp, collapse = ","),
         "\n They will be removed from forced_param_values."
       )
       forced_param_values <-
-        forced_param_values[setdiff(names(forced_param_values),
-                                    setdiff(param_names, candidate_param))]
+        forced_param_values[setdiff(
+          names(forced_param_values),
+          setdiff(param_names, candidate_param)
+        )]
     }
   }
 
@@ -360,8 +361,8 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
   crt_candidates <- oblig_param_list
   if (length(crt_candidates) == 0) crt_candidates <- candidate_param[[1]] # in case there are only candidates ...
   count <- 1
-  param_selection_steps<-NULL
-  tmp <- optim_switch(optim_method=optim_method,optim_options=optim_options)
+  param_selection_steps <- NULL
+  tmp <- optim_switch(optim_method = optim_method, optim_options = optim_options)
 
   # Parameter selection loop
   while (!is.null(crt_candidates)) {
@@ -422,7 +423,7 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
       forced_param_values = forced_param_values_tmp,
       info_level = info_level,
       info_crit_list = info_crit_list,
-      weight=weight
+      weight = weight
     )
 
     ## Run the estimation
@@ -432,14 +433,13 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
     )
 
     ## In case no results, there was an error during the estimation process => stop
-    if (length(res_tmp)==0) {
+    if (length(res_tmp) == 0) {
       stop("There was an error during the parameter estimation process.
            Please check warnings and messages displayed above and/or by running warnings().")
     }
 
     ## The following is done only if parameter selection is activated
     if (!is.null(candidate_param)) {
-
       ### Update results in param_selection_steps
       param_selection_steps <- post_treat_FwdRegAgMIP(
         res_tmp, crit_options,
@@ -465,8 +465,10 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
 
   # Print and store results of parameter estimation steps if parameter selection was activated
   if (!is.null(candidate_param)) {
-    summary_FwdRegAgMIP(param_selection_steps, info_crit_list, path_results_ORI,
-                        res)
+    summary_FwdRegAgMIP(
+      param_selection_steps, info_crit_list, path_results_ORI,
+      res
+    )
     save_results_FwdRegAgMIP(param_selection_steps, path_results_ORI)
     res$param_selection_steps <- param_selection_steps
   }

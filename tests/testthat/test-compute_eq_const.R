@@ -35,9 +35,15 @@ test_that("correct format", {
 test_that("correct content", {
   expect_equal(v_new_forced_param_values, c(p3 = 100, p4 = 1001))
   expect_equal(v_new_forced_param_values, c(p3 = 100, p4 = 1001))
-  expect_equal(t_new_forced_param_values, tibble::tibble(p3 = c(100, 100, 100),
-                                                  p4 = c(1001, 2001, 3001)))
-  expect_equal(t_new_forced_param_values_v2,
-               tibble::tibble(p3 = c(100),
-                              p4 = c(1001)))
+  expect_equal(t_new_forced_param_values, tibble::tibble(
+    p3 = c(100, 100, 100),
+    p4 = c(1001, 2001, 3001)
+  ))
+  expect_equal(
+    t_new_forced_param_values_v2,
+    tibble::tibble(
+      p3 = c(100),
+      p4 = c(1001)
+    )
+  )
 })

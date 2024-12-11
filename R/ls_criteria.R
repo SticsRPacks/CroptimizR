@@ -102,8 +102,9 @@ crit_ols <- function(sim_list, obs_list) {
 #' @export
 #' @rdname ls_criteria
 crit_wls <- function(sim_list, obs_list, weight) {
-
-  if(!nargs()) return("ls")  # return criterion type (ls, log-ls, likelihood, log-likelihood) if no argument given
+  if (!nargs()) {
+    return("ls")
+  } # return criterion type (ls, log-ls, likelihood, log-likelihood) if no argument given
 
   var_list <- unique(unlist(lapply(obs_list, function(x) colnames(x))))
   var_list <- setdiff(var_list, "Date")
@@ -118,20 +119,24 @@ crit_wls <- function(sim_list, obs_list, weight) {
     res <- res[id_not_na]
     sigma <- weight(obs[id_not_na], var)
 
-    if (any(sigma==0)) {
-      stop(paste("Error in crit_wls: weight is zero for variable",var,
-                 ". The wls criterion takes Inf value.",
-                 "Please handle this case in the function given in weight argument of estim_param."))
+    if (any(sigma == 0)) {
+      stop(paste(
+        "Error in crit_wls: weight is zero for variable", var,
+        ". The wls criterion takes Inf value.",
+        "Please handle this case in the function given in weight argument of estim_param."
+      ))
     }
     if (any(is.na(sigma))) {
-      stop(paste("Error in crit_wls: weight is NA for variable",var,
-                 ". The wls criterion takes NA value.",
-                 "Please handle this case in the function given in weight argument of estim_param."))
+      stop(paste(
+        "Error in crit_wls: weight is NA for variable", var,
+        ". The wls criterion takes NA value.",
+        "Please handle this case in the function given in weight argument of estim_param."
+      ))
     }
 
     sz <- length(res)
 
-    result <- result + (res/sigma) %*% (res/sigma)
+    result <- result + (res / sigma) %*% (res / sigma)
   }
 
   return(as.numeric(result))

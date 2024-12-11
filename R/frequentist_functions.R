@@ -107,7 +107,8 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
 
   # EstimatedVSinit plot
 
-  tryCatch({
+  tryCatch(
+    {
       grDevices::pdf(
         file = file.path(path_results, "EstimatedVSinit.pdf"),
         width = 9, height = 9
@@ -127,7 +128,8 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
     }
   )
 
-  tryCatch({
+  tryCatch(
+    {
       p <- plot_estimVSinit(
         init_values, est_values,
         crit_values, bounds$lb, bounds$ub
@@ -155,7 +157,8 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
 
   # ValuesVSit plot
 
-  tryCatch({
+  tryCatch(
+    {
       grDevices::pdf(
         file = file.path(path_results, "ValuesVSit.pdf"),
         width = 9, height = 9
@@ -184,7 +187,8 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
 
   # ValuesVSit_2D plot
 
-  tryCatch({
+  tryCatch(
+    {
       grDevices::pdf(
         file = file.path(path_results, "ValuesVSit_2D.pdf"),
         width = 9, height = 9
@@ -284,7 +288,7 @@ plot_estimVSinit <- function(init_values, est_values, crit, lb, ub,
       theme(plot.title = element_text(hjust = 0.5))
 
     if (bubble) {
-    p[[param_name]] <- p[[param_name]] + geom_point(alpha = 0.5, color = "red")
+      p[[param_name]] <- p[[param_name]] + geom_point(alpha = 0.5, color = "red")
     }
 
     p[[param_name]] <- p[[param_name]] +
@@ -374,7 +378,7 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
     if (all(df$crit > 0)) {
       trans <- "log10"
       mid <- (max(log10(df$crit)) -
-                min(log10(df$crit))) / 2 + min(log10(df$crit))
+        min(log10(df$crit))) / 2 + min(log10(df$crit))
     } else {
       warning("The criterion takes negative values, log transformation will not be done.")
       crit_log <- FALSE
@@ -438,8 +442,10 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
     color = "rep"
   )) +
     labs(
-      title = paste0("Evolution of the minimized criterion \n in function of the minimization ",
-                     lab),
+      title = paste0(
+        "Evolution of the minimized criterion \n in function of the minimization ",
+        lab
+      ),
       y = "Minimized criterion",
       x = paste(lab, "number"),
       fill = "Repetition"
@@ -526,7 +532,7 @@ plot_valuesVSit_2D <- function(df, param_info, iter_or_eval = c("eval", "iter"),
     if (all(df$crit > 0)) {
       trans <- "log10"
       mid <- (max(log10(df$crit)) -
-                min(log10(df$crit))) / 2 + min(log10(df$crit))
+        min(log10(df$crit))) / 2 + min(log10(df$crit))
     } else {
       warning("The criterion takes negative values, log transformation will not be done.")
       crit_log <- FALSE
@@ -578,14 +584,14 @@ plot_valuesVSit_2D <- function(df, param_info, iter_or_eval = c("eval", "iter"),
         if (rep_label[1] == "begin_end" || rep_label[1] == "begin") {
           p[[ipair]] <- p[[ipair]] +
             geom_label(aes(label = rep),
-             data = filter(df, rep == irep) %>% filter(eval == min(.data$eval)),
+              data = filter(df, rep == irep) %>% filter(eval == min(.data$eval)),
               size = 3
             )
         }
         if (rep_label[1] == "begin_end" || rep_label[1] == "end") {
           p[[ipair]] <- p[[ipair]] +
             geom_label(aes(label = rep),
-            data = filter(df, rep == irep) %>% filter(eval == max(.data$eval)),
+              data = filter(df, rep == irep) %>% filter(eval == max(.data$eval)),
               size = 3
             )
         }

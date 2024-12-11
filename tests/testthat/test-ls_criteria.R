@@ -18,24 +18,50 @@ test_that("crit_ols", {
 })
 
 test_that("crit_wls", {
-  expect_equal(crit_wls(sim_list, sim_list,
-                        function(...) { return(Inf) }), 0)
-  expect_equal(crit_wls(sim_list2, obs_list2,
-                        function(...) { return(1) }),
-               crit_ols(obs_list2, sim_list2))
-  expect_equal(crit_wls(sim_list2, obs_list2,
-                        function(...) { return(Inf) }), 0)
-  expect_equal(crit_wls(sim_list2, obs_list2,
-                        function(obs, ...) { return(obs) }), 10)
-  expect_error(crit_wls(sim_list2, obs_list2,
-                        function(obs, ...) { return(0) }))
-  expect_error(crit_wls(sim_list2, obs_list2,
-                        function(obs, ...) { return(NA) }))
+  expect_equal(crit_wls(
+    sim_list, sim_list,
+    function(...) {
+      return(Inf)
+    }
+  ), 0)
+  expect_equal(
+    crit_wls(
+      sim_list2, obs_list2,
+      function(...) {
+        return(1)
+      }
+    ),
+    crit_ols(obs_list2, sim_list2)
+  )
+  expect_equal(crit_wls(
+    sim_list2, obs_list2,
+    function(...) {
+      return(Inf)
+    }
+  ), 0)
+  expect_equal(crit_wls(
+    sim_list2, obs_list2,
+    function(obs, ...) {
+      return(obs)
+    }
+  ), 10)
+  expect_error(crit_wls(
+    sim_list2, obs_list2,
+    function(obs, ...) {
+      return(0)
+    }
+  ))
+  expect_error(crit_wls(
+    sim_list2, obs_list2,
+    function(obs, ...) {
+      return(NA)
+    }
+  ))
 })
 test_that("crit_log_cwss", {
   expect_equal(crit_log_cwss(sim_list, sim_list), -Inf)
   expect_equal(crit_log_cwss(sim_list, obs_list), log(2))
-  expect_equal(crit_log_cwss(sim_list2, obs_list2), log((17 / 3)^ (3 / 2)))
+  expect_equal(crit_log_cwss(sim_list2, obs_list2), log((17 / 3)^(3 / 2)))
 })
 test_that("crit_log_cwss_corr", {
   expect_equal(crit_log_cwss_corr(sim_list, sim_list), -Inf)
