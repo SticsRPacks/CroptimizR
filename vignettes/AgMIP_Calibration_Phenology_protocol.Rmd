@@ -65,14 +65,15 @@ The STICS crop model is used in this example. Initialization steps required by t
 ## Plotting the observations
 
 ```{r setup_initializations, eval=params$eval_auto_test, message=FALSE, results=FALSE, warning=FALSE, include=FALSE}
-
 # DEFINE THE PATH TO YOUR LOCALLY INSTALLED VERSION OF JAVASTICS
 javastics_path <- path_to_JavaStics
 
 # Download the example USMs and define the path to the JavaStics workspace
 # (JavaStics XML input files):
-data_dir <- file.path(SticsRFiles::download_data(example_dirs = "study_case_1",
-                                               stics_version = "V9.0"))
+data_dir <- file.path(SticsRFiles::download_data(
+  example_dirs = "study_case_1",
+  stics_version = "V9.0"
+))
 
 javastics_workspace_path <- file.path(data_dir, "XmlFiles")
 
@@ -83,22 +84,29 @@ model_wrapper <- stics_wrapper
 stics_inputs_path <- file.path(data_dir, "TxtFiles")
 dir.create(stics_inputs_path, showWarnings = FALSE)
 
-gen_usms_xml2txt(javastics = javastics_path,
-                 workspace = javastics_workspace_path,
-  out_dir = stics_inputs_path, verbose = TRUE)
+gen_usms_xml2txt(
+  javastics = javastics_path,
+  workspace = javastics_workspace_path,
+  out_dir = stics_inputs_path, verbose = TRUE
+)
 ```
 ```{r eval=params$eval_auto_test, results='hide', message=FALSE, warning=FALSE, include=FALSE}
-
 # Set the model options (see '? stics_wrapper_options' for details)
-model_options <- stics_wrapper_options(javastics = javastics_path,
-                                     workspace = stics_inputs_path,
-                                     parallel = TRUE, cores = 4)
+model_options <- stics_wrapper_options(
+  javastics = javastics_path,
+  workspace = stics_inputs_path,
+  parallel = TRUE, cores = 4
+)
 
 # Run the model on all situations found in stics_inputs_path
-sim_res <- stics_wrapper(model_options = model_options,
-                  param_values = c(stlevamf = 350, stamflax = 650,
-                                 tdmin = 7, tdmax = 26),
-                         var = c("iamfs", "ilaxs"))
+sim_res <- stics_wrapper(
+  model_options = model_options,
+  param_values = c(
+    stlevamf = 350, stamflax = 650,
+    tdmin = 7, tdmax = 26
+  ),
+  var = c("iamfs", "ilaxs")
+)
 set.seed(1234)
 obs_list <- lapply(sim_res$sim_list, function(x) {
   tmp <- x[nrow(x), c("Date", "iamfs", "ilaxs")]
@@ -131,8 +139,10 @@ Let's plot the values of these observations:
 
 ```{r eval=params$eval_auto_vignette, message=FALSE, warning=FALSE}
 obs_df <- dplyr::bind_rows(obs_list) %>% tidyr::pivot_longer(
-  cols = c("iamfs", "ilaxs"), names_to = "stage")
-ggplot(obs_df, aes(x = stage, y = value)) + geom_boxplot()
+  cols = c("iamfs", "ilaxs"), names_to = "stage"
+)
+ggplot(obs_df, aes(x = stage, y = value)) +
+  geom_boxplot()
 ```
 
 The "end juvenile" stage occurred around day 180 after sowing, while the "maximum LAI" stage occurred around day 230 after sowing.
@@ -148,7 +158,7 @@ In this example, we will consider 5 parameters of the STICS crop model: `stlevam
 param_info <- list(
   lb = c(stlevamf = 100, stamflax = 300, tdmin = 4, stressdev = 0, tdmax = 25),
   ub = c(stlevamf = 500, stamflax = 800, tdmin = 8, stressdev = 1, tdmax = 32)
-  )
+)
 ```
 
 Note that `-Inf` or `Ìnf` can be used for, respectively, lower and upper bounds. In that case, initial values must 
@@ -211,20 +221,21 @@ By default, the information criterion used for the parameter selection is the BI
 Note, however, that other criteria can be used (AIC and AICc) using the `info_crit_func` argument.
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
-res <- estim_param(obs_list = obs_list,
-                crit_function = crit_ols,
-                model_function = model_wrapper,
-                model_options = model_options,
-                optim_options = optim_options,
-                forced_param_values = forced_param_values,
-                candidate_param = candidate_param,
-                param_info = param_info)
+res <- estim_param(
+  obs_list = obs_list,
+  crit_function = crit_ols,
+  model_function = model_wrapper,
+  model_options = model_options,
+  optim_options = optim_options,
+  forced_param_values = forced_param_values,
+  candidate_param = candidate_param,
+  param_info = param_info
+)
 ```
 
 At the end of the execution, some information such as the selected step number, the list of selected parameters, their estimated values and some stats about the execution time are printed in the R console: 
 
 ```{r eval=FALSE, echo=TRUE}
- 
 ...
 # ----------------------
 # End of parameter selection process
@@ -273,9 +284,11 @@ load(file.path("ResultsAgmipPhenology", "optim_results.Rdata"))
 
 ```{r eval=params$eval_manual_vignette, message=FALSE, warning=FALSE}
 param_values <- c(res$final_values, res$forced_param_values)
-sim_after_optim <- model_wrapper(param_values = param_values,
-                              model_options = model_options,
-                              var = c("iamfs", "ilaxs"))
+sim_after_optim <- model_wrapper(
+  param_values = param_values,
+  model_options = model_options,
+  var = c("iamfs", "ilaxs")
+)
 ```
 
 Then, the simulated versus observed values can be plotted using the CroPlotR plot function:
@@ -296,13 +309,17 @@ knitr::include_graphics("ResultsAgmipPhenology/all_situations.png")
 MSE and its components can be calcuted for each variable using the CroPlotR summary function: 
 
 ```{r eval=FALSE, warning=FALSE, message=FALSE}
-summary(sim_after_optim$sim_list, obs = obs_list,
-        stats = c("MSE", "Bias2", "SDSD", "LCS"))
+summary(sim_after_optim$sim_list,
+  obs = obs_list,
+  stats = c("MSE", "Bias2", "SDSD", "LCS")
+)
 ```
 
 ```{r eval=params$eval_manual_vignette, warning=FALSE, message=FALSE, echo=FALSE}
-stats <- summary(sim_after_optim$sim_list, obs = obs_list,
-                 stats = c("MSE", "Bias2", "SDSD", "LCS"))
+stats <- summary(sim_after_optim$sim_list,
+  obs = obs_list,
+  stats = c("MSE", "Bias2", "SDSD", "LCS")
+)
 save(stats, file = file.path(params$result_path, "stats.Rdata"))
 ```
 
@@ -315,16 +332,26 @@ print(stats)
 ```{r move_results, eval=params$eval_manual_vignette, include=FALSE}
 # Move the files produced since the temp. folder is removed after Rmd execution
 file.copy(file.path(optim_options$out_dir, "param_selection_steps.csv"),
-          params$result_path, overwrite = TRUE)
+  params$result_path,
+  overwrite = TRUE
+)
 file.copy(file.path(optim_options$out_dir, "param_selection_steps.Rdata"),
-          params$result_path, overwrite = TRUE)
+  params$result_path,
+  overwrite = TRUE
+)
 file.copy(file.path(optim_options$out_dir, "optim_results.Rdata"),
-          params$result_path, overwrite = TRUE)
+  params$result_path,
+  overwrite = TRUE
+)
 file.copy(file.path(optim_options$out_dir, "all_situations.png"),
-          params$result_path, overwrite = TRUE)
+  params$result_path,
+  overwrite = TRUE
+)
 dir.create(file.path(params$result_path, "results_all_steps"))
-file.copy(from = file.path(optim_options$out_dir, "results_all_steps"),
-        to = file.path(params$result_path, "results_all_steps"),
-        recursive = TRUE,
-        overwrite = TRUE)
+file.copy(
+  from = file.path(optim_options$out_dir, "results_all_steps"),
+  to = file.path(params$result_path, "results_all_steps"),
+  recursive = TRUE,
+  overwrite = TRUE
+)
 ```

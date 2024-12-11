@@ -16,20 +16,16 @@
 #'
 
 optim_switch <- function(...) {
-
   # Store and save results at the end of the current optimization step
   if (nargs() > 2) {
-
     # Initialize res
     res <- list()
     flag_error <- FALSE
 
     on.exit({
-
-      res$forced_param_values = crit_options$forced_param_values
+      res$forced_param_values <- crit_options$forced_param_values
 
       if (exists(".croptEnv")) {
-
         # Save results even in case parameter estimation crash
         res$obs_var_list <- .croptEnv$obs_var_list
         if (exists(".croptEnv$obs_var_list")) {

@@ -39,7 +39,6 @@ test_that("filter_obs filters-out correctly", {
     filter_obs(obs_list, var = c("var2")),
     "No observations found in situation\\(s\\) sit2, sit3",
   )
-
 })
 
 

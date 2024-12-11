@@ -384,7 +384,6 @@ get_init_values <- function(param_info) {
 
     # Case of simultaneous estimation of varietal and specific parameters
   } else if (is.list(param_info[[1]])) {
-
     # check if colnames were set to params_names, if not set them
     # and handle translation if necessary
     for (i in 1:length(param_info)) {
@@ -398,7 +397,7 @@ get_init_values <- function(param_info) {
         }
       } else {
         if (!is.null(param_info[[i]]$sit_list)) {
-          param_info[[i]]$init_values <- data.frame(t(rep(NA,length(param_info[[i]]$sit_list))))
+          param_info[[i]]$init_values <- data.frame(t(rep(NA, length(param_info[[i]]$sit_list))))
         } else {
           param_info[[i]]$init_values <- data.frame(NA)
         }

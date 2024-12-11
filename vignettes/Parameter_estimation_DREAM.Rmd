@@ -48,7 +48,6 @@ library(CroptimizR)
 
 
 ```{r setup_initializations, eval=params$eval_auto_test, message=FALSE, results=FALSE, warning=FALSE,  echo=FALSE}
-
 # DEFINE THE PATH TO YOUR LOCALLY INSTALLED VERSION OF JAVASTICS
 javastics_path <- path_to_JavaStics
 
@@ -141,12 +140,12 @@ The main basic options are set here. The reader can refer to `? DREAMzs` (see do
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
 optim_options <- list()
 optim_options$iterations <- 10000 # Total number of iterations
-                                  # (=> optim_options$iterations/
-                                  # optim_options$startValue
-                                  # iterations per chain)
+# (=> optim_options$iterations/
+# optim_options$startValue
+# iterations per chain)
 optim_options$startValue <- 3 # Number of markov chains
 optim_options$out_dir <- data_dir # path where to store the results
-                                  # (graph and Rdata)
+# (graph and Rdata)
 optim_options$ranseed <- 1234 # seed for random numbers
 ```
 
@@ -234,11 +233,14 @@ In this case, we obtain:
 
 ```{r eval=params$eval_auto_vignette, echo=FALSE, out.width = '45%'}
 knitr::include_graphics(
-  "ResultsSpecificVarietalDREAM/N10000/Gelman_dlaimax.PNG")
+  "ResultsSpecificVarietalDREAM/N10000/Gelman_dlaimax.PNG"
+)
 knitr::include_graphics(
-  "ResultsSpecificVarietalDREAM/N10000/Gelman_durvieF1.PNG")
+  "ResultsSpecificVarietalDREAM/N10000/Gelman_durvieF1.PNG"
+)
 knitr::include_graphics(
-  "ResultsSpecificVarietalDREAM/N10000/Gelman_durvieF2.PNG")
+  "ResultsSpecificVarietalDREAM/N10000/Gelman_durvieF2.PNG"
+)
 ```
 
 Figure 1: Gelman diagnostic.
@@ -249,11 +251,14 @@ marginalPlots.pdf shows estimation of the prior (blue) and posterior (pink) dens
 
 ```{r eval=params$eval_auto_vignette, echo=FALSE, out.width = '45%'}
 knitr::include_graphics(
-  "ResultsSpecificVarietalDREAM/N10000/densities_dlaimax.PNG")
+  "ResultsSpecificVarietalDREAM/N10000/densities_dlaimax.PNG"
+)
 knitr::include_graphics(
-  "ResultsSpecificVarietalDREAM/N10000/densities_durvieF1.PNG")
+  "ResultsSpecificVarietalDREAM/N10000/densities_durvieF1.PNG"
+)
 knitr::include_graphics(
-  "ResultsSpecificVarietalDREAM/N10000/densities_durvieF2.PNG")
+  "ResultsSpecificVarietalDREAM/N10000/densities_durvieF2.PNG"
+)
 ```
 
 Figure 2: Prior and posterior densities.
@@ -263,7 +268,8 @@ correlationPlots.pdf gives information about the correlation between parameters:
 
 ```{r eval=params$eval_auto_vignette, echo=FALSE, out.width = '75%'}
 knitr::include_graphics(
-  "ResultsSpecificVarietalDREAM/N10000/correlation_plot.PNG")
+  "ResultsSpecificVarietalDREAM/N10000/correlation_plot.PNG"
+)
 ```
 
 Figure 3: Correlation plot.

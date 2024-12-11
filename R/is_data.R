@@ -47,9 +47,8 @@
 #' @keywords internal
 #'
 is.data <- function(data_list) {
-
   # Check data_list format
-  if (length(data_list)==0 || !is.list(data_list) || !all(sapply(
+  if (length(data_list) == 0 || !is.list(data_list) || !all(sapply(
     data_list,
     function(x) is.data.frame(x)
   ))) {
@@ -74,11 +73,12 @@ is.data <- function(data_list) {
   ))) {
     warning(paste(
       "Incorrect format, Date column include replicated dates for situations",
-      paste(names(data_list)[sapply(
-        data_list,
-        function(x) length(unique(x$Date)) < length(x$Date)
-      )],
-      collapse = ","
+      paste(
+        names(data_list)[sapply(
+          data_list,
+          function(x) length(unique(x$Date)) < length(x$Date)
+        )],
+        collapse = ","
       )
     ))
     return(FALSE)

@@ -11,7 +11,6 @@
 #' @keywords internal
 #'
 make_obsSim_consistent <- function(sim_list, obs_list) {
-
   # Check homogeneity of types of obs and sim Date columns
   # ------------------------------------------------------
 
@@ -38,14 +37,14 @@ make_obsSim_consistent <- function(sim_list, obs_list) {
 
   if (!all(isPosixObs | isDateObs)) {
     stop(paste(
-  "Error: incorrect format for Date column of observation list for situations",
+      "Error: incorrect format for Date column of observation list for situations",
       paste(names(obs_list)[!(isPosixObs | isDateObs)], collapse = ", "),
       ". \n Date columns should be of type Date or POSIXct."
     ))
   }
   if (!all(isPosixSim | isDateSim)) {
     stop(paste(
-    "Error: incorrect format for Date column of simulation list for situations",
+      "Error: incorrect format for Date column of simulation list for situations",
       paste(names(sim_list)[!(isPosixSim | isDateSim)], collapse = ", "),
       ". \n Date columns should be of type Date or POSIXct."
     ))
@@ -139,7 +138,6 @@ make_obsSim_consistent <- function(sim_list, obs_list) {
 #' @keywords internal
 #'
 check_obsSim_consistency <- function(sim_list, obs_list) {
-
   # Check homogeneity of types of obs and sim Date columns
   # ------------------------------------------------------
 
@@ -162,14 +160,14 @@ check_obsSim_consistency <- function(sim_list, obs_list) {
 
   if (!all(isPosixObs | isDateObs)) {
     stop(paste(
-  "Error: incorrect format for Date column of observation list for situations",
+      "Error: incorrect format for Date column of observation list for situations",
       paste(names(obs_list)[!(isPosixObs | isDateObs)], collapse = ", "),
       ". \n Date columns should be of type Date or POSIXct."
     ))
   }
   if (!all(isPosixSim | isDateSim)) {
     stop(paste(
-    "Error: incorrect format for Date column of simulation list for situations",
+      "Error: incorrect format for Date column of simulation list for situations",
       paste(names(sim_list)[!(isPosixSim | isDateSim)], collapse = ", "),
       ". \n Date columns should be of type Date or POSIXct."
     ))
@@ -226,21 +224,19 @@ check_obsSim_consistency <- function(sim_list, obs_list) {
 #' @keywords internal
 #'
 is_sim_inf_or_na <- function(sim_list, obs_list, param_values) {
-
   res <- FALSE
   mess <- ""
 
   # check presence of Inf/NA in simulated results where obs is not NA
   for (sit in names(sim_list)) {
-
     var_list <- lapply(names(sim_list[[sit]]), function(x) {
-      if (any(is.infinite(sim_list[[sit]][!is.na(obs_list[[sit]][,x]),][[x]])) ||
-          any(is.na(sim_list[[sit]][!is.na(obs_list[[sit]][,x]),][[x]]))) {
+      if (any(is.infinite(sim_list[[sit]][!is.na(obs_list[[sit]][, x]), ][[x]])) ||
+        any(is.na(sim_list[[sit]][!is.na(obs_list[[sit]][, x]), ][[x]]))) {
         return(list(sim_list[[sit]]$Date[(is.infinite(sim_list[[sit]][[x]]) &
-                                                        !is.na(obs_list[[sit]][,x])) |
-                                           (is.na(sim_list[[sit]][[x]]) &
-                                                    !is.na(obs_list[[sit]][,x]))]))
-      }  else {
+          !is.na(obs_list[[sit]][, x])) |
+          (is.na(sim_list[[sit]][[x]]) &
+            !is.na(obs_list[[sit]][, x]))]))
+      } else {
         return(NULL)
       }
     })
@@ -248,27 +244,32 @@ is_sim_inf_or_na <- function(sim_list, obs_list, param_values) {
     names(var_list) <- names(sim_list[[sit]])
 
     if (!is.null(unlist(var_list))) {
-      mess <- paste(mess,
-        paste("\n  for situation ",sit,
-        ", variable(s):",
-        paste(sapply(names(var_list), function(x) {
-          if (!is.null(var_list[[x]])) {
-            paste("\n    o",x," at date(s) ",
-                  paste(var_list[[x]][[1]], collapse = ", "))
-          } else {
-            return("")
-          }
-        }),collapse="")
-      ))
+      mess <- paste(
+        mess,
+        paste(
+          "\n  for situation ", sit,
+          ", variable(s):",
+          paste(sapply(names(var_list), function(x) {
+            if (!is.null(var_list[[x]])) {
+              paste(
+                "\n    o", x, " at date(s) ",
+                paste(var_list[[x]][[1]], collapse = ", ")
+              )
+            } else {
+              return("")
+            }
+          }), collapse = "")
+        )
+      )
       res <- TRUE
     }
-
   }
   if (res) {
-    warning("\n\nSimulated values are NA or Inf," ,mess, ",\nwhen using input parameters: ",
-            paste(names(param_values), collapse = ", "), ", with values: ",
-            paste(param_values, collapse = ", "))
+    warning(
+      "\n\nSimulated values are NA or Inf,", mess, ",\nwhen using input parameters: ",
+      paste(names(param_values), collapse = ", "), ", with values: ",
+      paste(param_values, collapse = ", ")
+    )
   }
   return(res)
-
 }

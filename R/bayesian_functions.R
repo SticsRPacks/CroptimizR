@@ -52,7 +52,8 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
   nb_chains <- length(out$chain)
   nb_iterations <- nrow(optim_results$post_sample) / nb_chains
 
-  tryCatch({
+  tryCatch(
+    {
       grDevices::pdf(
         file = file.path(path_results, "iterAndDensityPlots.pdf"),
         width = 9, height = 9
@@ -81,7 +82,8 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
     }
   )
 
-  tryCatch({
+  tryCatch(
+    {
       grDevices::pdf(
         file = file.path(path_results, "marginalPlots.pdf"),
         width = 9, height = 9
@@ -110,7 +112,8 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
   )
 
   if (nb_params >= 2) {
-    tryCatch({
+    tryCatch(
+      {
         grDevices::pdf(
           file = file.path(path_results, "correlationPlots.pdf"),
           width = 9, height = 9
@@ -145,7 +148,8 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
     # an error
     if (is.null(optim_options$thin)) optim_options$thin <- 1
     if (nb_iterations >= (optim_options$thin + 50)) {
-      tryCatch({
+      tryCatch(
+        {
           grDevices::pdf(
             file = file.path(path_results, "gelmanDiagPlots.pdf"),
             width = 9, height = 9

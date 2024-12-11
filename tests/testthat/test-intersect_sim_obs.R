@@ -35,10 +35,12 @@ sim_list <- list(sit1 = data.frame(
   var1 = rep(2, 4), var2 = c(NA, NA, NA, 4)
 ))
 res <- suppressWarnings(eval(parse(
-  text = "CroptimizR:::intersect_sim_obs(obs_list,sim_list)")))
+  text = "CroptimizR:::intersect_sim_obs(obs_list,sim_list)"
+)))
 test_that("intersect_sim_obs", {
   expect_warning(eval(parse(
-    text = "CroptimizR:::intersect_sim_obs(obs_list,sim_list)")), "dates")
+    text = "CroptimizR:::intersect_sim_obs(obs_list,sim_list)"
+  )), "dates")
   expect_equal(res, NA)
 })
 obs_list <- list(sit1 = data.frame(
@@ -53,9 +55,11 @@ sim_list <- list(sit1 = data.frame(
   var1 = rep(2, 4), var2 = c(NA, NA, NA, 4)
 ))
 res <- suppressWarnings(eval(parse(
-  text = "CroptimizR:::intersect_sim_obs(obs_list,sim_list)")))
+  text = "CroptimizR:::intersect_sim_obs(obs_list,sim_list)"
+)))
 test_that("intersect_sim_obs", {
   expect_warning(eval(parse(
-    text = "CroptimizR:::intersect_sim_obs(obs_list,sim_list)")), "*variables")
+    text = "CroptimizR:::intersect_sim_obs(obs_list,sim_list)"
+  )), "*variables")
   expect_equal(res, NA)
 })

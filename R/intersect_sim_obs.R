@@ -9,7 +9,6 @@
 #' @keywords internal
 #'
 intersect_sim_obs <- function(sim_list, obs_list) {
-
   # Intersect situations
   situations <- intersect(names(sim_list), names(obs_list))
   if (length(situations) == 0) {
@@ -79,11 +78,11 @@ intersect_sim_obs <- function(sim_list, obs_list) {
   }
 
   sim_list <- sapply(situations,
-  function(x) sim_list[[x]][is.element(sim_list[[x]]$Date, list_dates[[x]]), ],
+    function(x) sim_list[[x]][is.element(sim_list[[x]]$Date, list_dates[[x]]), ],
     simplify = F
   )
   obs_list <- sapply(situations,
-  function(x) obs_list[[x]][is.element(obs_list[[x]]$Date, list_dates[[x]]), ],
+    function(x) obs_list[[x]][is.element(obs_list[[x]]$Date, list_dates[[x]]), ],
     simplify = F
   )
 

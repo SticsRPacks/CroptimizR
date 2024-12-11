@@ -53,7 +53,6 @@ library(gridExtra)
 
 
 ```{r setup_initializations, eval=params$eval_auto_test, message=FALSE, results=FALSE, warning=FALSE,  echo=FALSE}
-
 # DEFINE THE PATH TO YOUR LOCALLY INSTALLED VERSION OF JAVASTICS
 javastics_path <- path_to_JavaStics
 
@@ -138,7 +137,6 @@ param_info$durvieF <- list(
 ## Set options for the model
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
-
 model_options <-
   stics_wrapper_options(
     javastics = javastics_path,
@@ -151,7 +149,6 @@ model_options <-
 ## Set options for the parameter estimation method
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
-
 optim_options <- list()
 optim_options$nb_rep <- 7 # Number of repetitions of the minimization
 # (each time starting with different initial
@@ -212,7 +209,6 @@ Figure 1: plots of estimated vs initial values of parameters dlaimax and durvieF
 A piece of code to run the model with the values of the parameters before and after the optimization and to create a couple of plots using the [CroPlotR](https://github.com/SticsRPacks/CroPlotR) package to check if the calibration reduced the difference between simulations and observations:
 
 ```{r eval=params$eval_manual_vignette, message=FALSE, warning=FALSE}
-
 # Run the model without and with forcing the optimized values of the parameters
 sim_before_optim <- stics_wrapper(model_options = model_options)
 sim_after_optim <- stics_wrapper(
@@ -230,11 +226,12 @@ p <- plot(
 
 p1 <-
   p[[1]] +
-  labs(title =
-         paste(
-           "Before Optimization, \n RMSE=",
-           round(stats$RMSE, digits = 2)
-         )
+  labs(
+    title =
+      paste(
+        "Before Optimization, \n RMSE=",
+        round(stats$RMSE, digits = 2)
+      )
   ) +
   theme(plot.title = element_text(size = 9, hjust = 0.5))
 
@@ -249,11 +246,12 @@ p <-
 
 p2 <-
   p[[1]] +
-  labs(title =
-         paste(
-           "After Optimization, \n RMSE=",
-           round(stats$RMSE, digits = 2)
-         )
+  labs(
+    title =
+      paste(
+        "After Optimization, \n RMSE=",
+        round(stats$RMSE, digits = 2)
+      )
   ) +
   theme(plot.title = element_text(size = 9, hjust = 0.5))
 
@@ -266,7 +264,6 @@ ggsave(
   ),
   plot = p
 )
-
 ```
 
 This gives:

@@ -60,7 +60,6 @@ if (!require("SticsRPacks")) {
 ```
 
 ```{r setup_initializations, eval=params$eval_auto_test, message=FALSE, results=FALSE, warning=FALSE}
-
 # DEFINE THE PATH TO YOUR LOCALLY INSTALLED VERSION OF JAVASTICS
 javastics_path <- path_to_JavaStics
 
@@ -109,7 +108,6 @@ Here model parameters values are read in the model input files.
 
 
 ```{r eval=params$eval_auto_test, results='hide', message=FALSE, warning=FALSE}
-
 # Set the model options (see '? stics_wrapper_options' for details)
 model_options <-
   stics_wrapper_options(
@@ -135,11 +133,10 @@ In variables and parameters names, "(\*)" must be replaced by "_\*" to be handle
 
 
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
-
-sit_name <- "bo96iN+"  # can be a vector of situation names if you want to
-                       # consider several, e.g. c("bo96iN+","bou00t1")
-var_name <- "lai_n"    # can be a vector of variable names if you want to
-                       # consider several, e.g. c("lai_n","masec_n")
+sit_name <- "bo96iN+" # can be a vector of situation names if you want to
+# consider several, e.g. c("bo96iN+","bou00t1")
+var_name <- "lai_n" # can be a vector of variable names if you want to
+# consider several, e.g. c("lai_n","masec_n")
 obs_list <- get_obs(javastics_workspace_path, usm = sit_name)
 obs_list <- filter_obs(obs_list, var = var_name, include = TRUE)
 ```
@@ -178,19 +175,19 @@ The number of repetitions is advised to be set to at least 5, while 10 is a reas
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE}
 optim_options <- list()
 optim_options$nb_rep <- 7 # Number of repetitions of the minimization
-                          # (each time starting with different initial
-                          # values for the estimated parameters)
+# (each time starting with different initial
+# values for the estimated parameters)
 optim_options$maxeval <- 500 # Maximum number of evaluations of the
-                             # minimized criteria
+# minimized criteria
 optim_options$xtol_rel <- 1e-03 # Tolerance criterion between two iterations
-                                # (threshold for the relative difference of
-                                # parameter values between the 2 previous
-                                # iterations)
+# (threshold for the relative difference of
+# parameter values between the 2 previous
+# iterations)
 optim_options$out_dir <- data_dir # path where to store the results
-                                  # (graph and Rdata)
+# (graph and Rdata)
 optim_options$ranseed <- 1234 # set random seed so that each execution give the
-                              # same results
-                              # If you want randomization, don't set it.
+# same results
+# If you want randomization, don't set it.
 ```
 
 
@@ -291,7 +288,6 @@ This data is also stored in the `optim_options$out_dir` folder (file optim_resul
 
 
 ```{r eval=params$eval_auto_vignette, echo=FALSE, out.width = '45%'}
-
 knitr::include_graphics("ResultsSimpleCase/estimInit_dlaimax.PNG")
 
 knitr::include_graphics("ResultsSimpleCase/estimInit_durvieF.PNG")
@@ -303,13 +299,11 @@ Figure 1: plots of estimated vs initial values of parameters dlaimax and durvieF
 * the ValuesVSit.pdf file contains:
 
 ```{r eval=params$eval_auto_vignette, echo=FALSE, out.width = '45%', fig.show = "hold", fig.align="default"}
-
 knitr::include_graphics("ResultsSimpleCase/critVSit.PNG")
 
 knitr::include_graphics("ResultsSimpleCase/dlaimaxVSit.PNG")
 
 knitr::include_graphics("ResultsSimpleCase/durvieFVSit.PNG")
-
 ```
 
 Figure 2: The top left figure displays the evolution of the minimized criterion value in function of the iterations of the minimization. Colors and labels represent the repetition number. The top right figure displays the evolution of the value of the dlaimax parameter in function of the iterations of the minimization. Labels represent the repetition number and colors the value of the minimized criterion. The figure at the bottom is the same but for the durvieF parameter.
@@ -379,7 +373,6 @@ ggsave(
   ),
   plot = p
 )
-
 ```
 
 

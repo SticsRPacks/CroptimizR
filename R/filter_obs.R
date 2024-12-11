@@ -41,7 +41,6 @@
 filter_obs <- function(obs_list, var = NULL, situation = NULL, dates = NULL,
                        include = FALSE, var_names = lifecycle::deprecated(),
                        sit_names = lifecycle::deprecated()) {
-
   # Managing parameter names changes between versions:
   if (lifecycle::is_present(sit_names)) {
     lifecycle::deprecate_warn("0.5.0", "filter_obs(sit_names)", "filter_obs(situation)")
