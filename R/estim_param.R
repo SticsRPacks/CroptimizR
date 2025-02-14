@@ -356,122 +356,175 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
   # set seed
   set.seed(optim_options$ranseed)
 
-  # Initializations before parameter selection loop
-  oblig_param_list <- setdiff(param_names, candidate_param)
-  crt_candidates <- oblig_param_list
-  if (length(crt_candidates) == 0) crt_candidates <- candidate_param[[1]] # in case there are only candidates ...
-  count <- 1
-  param_selection_steps <- NULL
-  tmp <- optim_switch(optim_method = optim_method, optim_options = optim_options)
+  nb_steps <- length(steps)
+  estimated_param_values <- NULL
 
-  # Parameter selection loop
-  while (!is.null(crt_candidates)) {
-    cat("\n---------------------\n")
-    cat(paste("Estimated parameters:", paste(crt_candidates, collapse = " "), "\n"))
-    cat("---------------------\n")
+  # Loop over the different steps
+  for (istep in 1:nb_steps) {
+    cat("\n------\n")
+    cat(paste("Step", istep, "\n"))
+    cat("------\n")
 
-    ## Filter information about the parameters to estimate
-    param_info_tmp <- filter_param_info(param_info, crt_candidates)
-    bounds <- get_params_bounds(param_info_tmp)
-    forced_param_values_tmp <- forced_param_values
-    inter_forc_cand <- names(forced_param_values_tmp) %in% crt_candidates
-    if (any(inter_forc_cand)) {
-      forced_param_values_tmp <- forced_param_values[-which(inter_forc_cand)]
-    }
-
-    ## Initialize parameters
-    ## nb_rep may be different for the different parameter selection steps
-    ## ... quite ugly ... should be improved ...
-    init_values_nb <- tmp$init_values_nb[min(length(tmp$init_values_nb), count)]
-    param_info_tmp <- complete_init_values(param_info_tmp,
-      nb_values = init_values_nb,
-      satisfy_par_const = satisfy_par_const
+    path_results_step <- file.path(
+      path_results_ORI, paste0("step", istep)
     )
-    ### Initialize already estimated parameters with the values leading to the best criterion obtained so far
-    if (!is.null(param_selection_steps)) {
-      ind_min_infocrit <- which.min(param_selection_steps[[info_crit_list[[1]]()$name]])
-      best_final_values <- param_selection_steps$`Final values`[[ind_min_infocrit]]
-      names(best_final_values) <- param_selection_steps$`Estimated parameters`[[ind_min_infocrit]]
-      init_values <- get_init_values(param_info_tmp)
-      init_values[, names(best_final_values)] <- as.data.frame(as.list(best_final_values))[rep(1, init_values_nb), , drop = FALSE]
-      param_info_tmp <- set_init_values(param_info_tmp, init_values)
-    }
 
-    if (!is.null(optim_options$nb_rep)) {
-      optim_options$nb_rep <- init_values_nb
-    }
+    # Initialize required information
+    candidate_param <- steps[[istep]]$candidate_param
+    # optim_method <- steps[[istep]]$optim_method
+    # optim_options <- steps[[istep]]$optim_options
+    param_info <- steps[[istep]]$param_info
+    param_names <- names(param_info)
+    crit_function <- steps[[istep]]$crit_function
+    # model_function <- steps[[istep]]$model_function
+    # model_options <- steps[[istep]]$model_options
+    obs_list <- steps[[istep]]$obs_list
+    transform_var <- steps[[istep]]$transform_var
+    transform_obs <- steps[[istep]]$transform_obs
+    transform_sim <- steps[[istep]]$transform_sim
+    satisfy_par_const <- steps[[istep]]$satisfy_par_const
+    weight <- steps[[istep]]$weight
+    var_names <- steps[[istep]]$var_names
 
-    ## Redefine path_result in case of several steps (results are stored in step_* sub-directories of optim_options$path_results)
-    if (!is.null(candidate_param)) {
-      path_results <- file.path(
-        path_results_ORI, "results_all_steps",
-        paste0("step_", count)
+    # Handle parameter values forcing
+    forced_param_values <- c(
+      steps[[istep]]$forced_param_values,
+      estimated_param_values,
+      default_values[setdiff(
+        names(default_values),
+        names(estimated_param_values)
+      )]
+    )
+
+
+    # Initializations before parameter selection loop
+    oblig_param_list <- setdiff(param_names, candidate_param)
+    crt_candidates <- oblig_param_list
+    if (length(crt_candidates) == 0) crt_candidates <- candidate_param[[1]] # in case there are only candidates ...
+    count <- 1
+    param_selection_steps <- NULL
+    tmp <- optim_switch(optim_method = optim_method, optim_options = optim_options)
+
+    # Parameter selection loop
+    while (!is.null(crt_candidates)) {
+      ## Filter information about the parameters to estimate
+      param_info_tmp <- filter_param_info(param_info, crt_candidates)
+      bounds <- get_params_bounds(param_info_tmp)
+      forced_param_values_tmp <- forced_param_values
+      inter_forc_cand <- names(forced_param_values_tmp) %in% crt_candidates
+      if (any(inter_forc_cand)) {
+        forced_param_values_tmp <- forced_param_values[-which(inter_forc_cand)]
+      }
+      cat("\n\t---------------------\n")
+      cat(paste("\tEstimated parameters:", paste(crt_candidates, collapse = " "), "\n"))
+      cat(paste("\tForced parameters:", paste(names(forced_param_values_tmp), forced_param_values_tmp, sep = "=", collapse = ", ")), "\n")
+      cat("\t---------------------\n")
+
+
+      ## Initialize parameters
+      ## nb_rep may be different for the different parameter selection steps
+      ## ... quite ugly ... should be improved ...
+      init_values_nb <- tmp$init_values_nb[min(length(tmp$init_values_nb), count)]
+      param_info_tmp <- complete_init_values(param_info_tmp,
+        nb_values = init_values_nb,
+        satisfy_par_const = satisfy_par_const
       )
+      ### Initialize already estimated parameters with the values leading to the best criterion obtained so far
+      if (!is.null(param_selection_steps)) {
+        ind_min_infocrit <- which.min(param_selection_steps[[info_crit_list[[1]]()$name]])
+        best_final_values <- param_selection_steps$`Final values`[[ind_min_infocrit]]
+        names(best_final_values) <- param_selection_steps$`Estimated parameters`[[ind_min_infocrit]]
+        init_values <- get_init_values(param_info_tmp)
+        init_values[, names(best_final_values)] <- as.data.frame(as.list(best_final_values))[rep(1, init_values_nb), , drop = FALSE]
+        param_info_tmp <- set_init_values(param_info_tmp, init_values)
+      }
+
+      if (!is.null(optim_options$nb_rep)) {
+        optim_options$nb_rep <- init_values_nb
+      }
+
+      ## Redefine path_result in case of several parameter selection steps
+      ## (results are stored in results_param_select/step_* sub-directories of optim_options$path_results)
+      if (!is.null(candidate_param)) {
+        path_results <- file.path(
+          path_results_step, "results_param_select",
+          paste0("param_select_step", count)
+        )
+      } else {
+        path_results <- path_results_step
+      }
       if (!dir.exists(path_results)) dir.create(path_results, recursive = TRUE)
       optim_options$path_results <- path_results
-    }
 
-    crit_options <- list(
-      param_names = crt_candidates, obs_list = obs_list,
-      crit_function = crit_function, model_function = model_function,
-      model_options = model_options, param_info = param_info_tmp,
-      transform_var = transform_var,
-      transform_obs = transform_obs, transform_sim = transform_sim,
-      satisfy_par_const = satisfy_par_const,
-      path_results = optim_options$path_results,
-      var_names = var_names,
-      forced_param_values = forced_param_values_tmp,
-      info_level = info_level,
-      info_crit_list = info_crit_list,
-      weight = weight
-    )
+      crit_options <- list(
+        param_names = crt_candidates, obs_list = obs_list,
+        crit_function = crit_function, model_function = model_function,
+        model_options = model_options, param_info = param_info_tmp,
+        transform_var = transform_var,
+        transform_obs = transform_obs, transform_sim = transform_sim,
+        satisfy_par_const = satisfy_par_const,
+        path_results = optim_options$path_results,
+        var_names = var_names,
+        forced_param_values = forced_param_values_tmp,
+        info_level = info_level,
+        info_crit_list = info_crit_list,
+        weight = weight
+      )
 
-    ## Run the estimation
-    res_tmp <- optim_switch(
-      optim_method = optim_method, optim_options = optim_options,
-      param_info = param_info_tmp, crit_options = crit_options
-    )
+      ## Run the estimation
+      res_tmp <- optim_switch(
+        optim_method = optim_method, optim_options = optim_options,
+        param_info = param_info_tmp, crit_options = crit_options
+      )
 
-    ## In case no results, there was an error during the estimation process => stop
-    if (length(res_tmp) == 0) {
-      stop("There was an error during the parameter estimation process.
+      ## In case no results, there was an error during the estimation process => stop
+      if (length(res_tmp) == 0) {
+        stop("There was an error during the parameter estimation process.
            Please check warnings and messages displayed above and/or by running warnings().")
-    }
+      }
 
-    ## The following is done only if parameter selection is activated
-    if (!is.null(candidate_param)) {
-      ### Update results in param_selection_steps
-      param_selection_steps <- post_treat_FwdRegAgMIP(
-        res_tmp, crit_options,
-        crt_candidates, param_selection_steps
-      )
+      ## Compute the next candidate parameters to estimate
+      if (!is.null(candidate_param)) {
+        ### Update results in param_selection_steps
+        param_selection_steps <- post_treat_FwdRegAgMIP(
+          res_tmp, crit_options,
+          crt_candidates, param_selection_steps
+        )
 
-      ### Select the next list of candidate parameters
-      res_select_param <- select_param_FwdRegAgMIP(
-        oblig_param_list, candidate_param,
-        crt_candidates,
-        param_selection_steps[[info_crit_list[[1]]()$name]]
-      )
-      crt_candidates <- res_select_param$next_candidates
-      if (res_select_param$selected) {
+        ### Select the next list of candidate parameters
+        res_select_param <- select_param_FwdRegAgMIP(
+          oblig_param_list, candidate_param,
+          crt_candidates,
+          param_selection_steps[[info_crit_list[[1]]()$name]]
+        )
+        crt_candidates <- res_select_param$next_candidates
+        if (res_select_param$selected) {
+          res <- res_tmp
+        }
+        count <- count + 1
+      } else {
+        crt_candidates <- NULL
         res <- res_tmp
       }
-      count <- count + 1
-    } else {
-      crt_candidates <- NULL
-      res <- res_tmp
+    } # End parameter selection loop
+
+    # Print and store results of parameter estimation steps if parameter selection was activated
+    if (!is.null(candidate_param)) {
+      summary_FwdRegAgMIP(
+        param_selection_steps, info_crit_list, path_results_step,
+        res
+      )
+      save_results_FwdRegAgMIP(param_selection_steps, path_results_step)
+      res$param_selection_steps <- param_selection_steps
     }
+
+    # Gather estimated values in a single vector for next steps
+    estimated_param_values <- c(
+      estimated_param_values,
+      res$final_values
+    )
   }
 
-  # Print and store results of parameter estimation steps if parameter selection was activated
-  if (!is.null(candidate_param)) {
-    summary_FwdRegAgMIP(
-      param_selection_steps, info_crit_list, path_results_ORI,
-      res
-    )
-    save_results_FwdRegAgMIP(param_selection_steps, path_results_ORI)
-    res$param_selection_steps <- param_selection_steps
-  }
 
   # Measure elapse time
   log.lst <- tictoc::tic.log(format = FALSE)
@@ -496,4 +549,5 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
   return(res)
 }
 
+utils::globalVariables(c(".croptEnv"))
 utils::globalVariables(c(".croptEnv"))
