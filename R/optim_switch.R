@@ -28,32 +28,32 @@ optim_switch <- function(...) {
       if (exists(".croptEnv")) {
         # Save results even in case parameter estimation crash
         res$obs_var_list <- .croptEnv$obs_var_list
-        if (exists(".croptEnv$obs_var_list")) {
+        if (exists("obs_var_list", where = .croptEnv)) {
           rm("obs_var_list", envir = .croptEnv)
         }
 
         if (arguments$crit_options$info_level >= 1) {
           res$params_and_crit <- dplyr::bind_rows(.croptEnv$params_and_crit)
-          if (exists(".croptEnv$params_and_crit")) {
+          if (exists("params_and_crit", where = .croptEnv)) {
             rm("params_and_crit", envir = .croptEnv)
           }
         }
         if (arguments$crit_options$info_level >= 2) {
           res$sim_intersect <- .croptEnv$sim_intersect
-          if (exists(".croptEnv$sim_intersect")) {
+          if (exists("sim_intersect", where = .croptEnv)) {
             rm("sim_intersect", envir = .croptEnv)
           }
         }
         if (arguments$crit_options$info_level >= 3) {
           res$obs_intersect <- .croptEnv$obs_intersect
-          if (exists(".croptEnv$obs_intersect")) {
+          if (exists("obs_intersect", where = .croptEnv)) {
             rm("obs_intersect", envir = .croptEnv)
           }
         }
         if (arguments$crit_options$info_level >= 4) {
           res$sim <- .croptEnv$sim
           res$sim_transformed <- .croptEnv$sim_transformed
-          if (exists(".croptEnv$sim_transformed")) {
+          if (exists("sim_transformed", where = .croptEnv)) {
             rm("sim_transformed", envir = .croptEnv)
           }
         }
