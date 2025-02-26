@@ -81,7 +81,7 @@ jobs:
     name: Trigger SticsRTest check
     # Publish main when the test job succeeds and it's not a pull request.
     needs: R-CMD-check
-    if: needs.R-CMD-check.result == 'success'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.R-CMD-check.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: Trigger
