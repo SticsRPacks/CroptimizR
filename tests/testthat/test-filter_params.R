@@ -2,11 +2,13 @@ context("Test the filter_param_info function")
 
 param_info1 <- list(
   lb = c(dlaimax = 0.0005, durvieF = 50),
-  ub = c(dlaimax = 0.0025, durvieF = 400)
+  ub = c(dlaimax = 0.0025, durvieF = 400),
+  default = c(dlaimax = 0.001, durvieF = 200)
 )
 param_info1_res <- list(
   lb = c(durvieF = 50),
-  ub = c(durvieF = 400)
+  ub = c(durvieF = 400),
+  default = c(durvieF = 200)
 )
 
 # A case with groups of situations per parameter
