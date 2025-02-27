@@ -22,6 +22,7 @@ estim_param(
   info_level = 1,
   info_crit_func = list(CroptimizR::BIC, CroptimizR::AICc, CroptimizR::AIC),
   weight = NULL,
+  step = NULL,
   var_names = lifecycle::deprecated()
 )
 }
@@ -142,6 +143,8 @@ ONLY AVAILABLE FOR THE MOMENT FOR crit_function==crit_ols.}
 \item{weight}{Weights to use in the criterion to optimize. A function that takes in input a vector
 of observed values and the name of the corresponding variable and that must return either a single value
 for the weights for the given variable or a vector of values of length the length of the vector of observed values given in input.}
+
+\item{step}{(optional) List that describes the steps of the parameter estimation process (see details section).}
 
 \item{var_names}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} \code{var_names} is no
 longer supported, use \code{var} instead.}
