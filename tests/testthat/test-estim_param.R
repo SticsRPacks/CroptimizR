@@ -148,7 +148,8 @@ res <- estim_param(obs_synth,
   model_function = toymodel_wrapper,
   model_options = model_options,
   optim_options = optim_options,
-  param_info = param_info
+  param_info = param_info,
+  var = c("biomass", "yield")
 )
 test_that("estim_param 1 step default criterion", {
   expect_equal(res$final_values[["rB"]],

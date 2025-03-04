@@ -14,16 +14,16 @@ estim_param(
   param_info,
   forced_param_values = NULL,
   candidate_param = NULL,
+  var = NULL,
   transform_var = NULL,
   transform_obs = NULL,
   transform_sim = NULL,
   satisfy_par_const = NULL,
-  var = NULL,
+  var_to_simulate = NULL,
   info_level = 1,
   info_crit_func = list(CroptimizR::BIC, CroptimizR::AICc, CroptimizR::AIC),
   weight = NULL,
-  step = NULL,
-  var_names = lifecycle::deprecated()
+  step = NULL
 )
 }
 \arguments{
@@ -93,6 +93,9 @@ argument \code{candidate_param}).}
 \item{candidate_param}{Names of the parameters, among those defined in the argument param_info,
 that must only be considered as candidate for parameter estimation (see details section).}
 
+\item{var}{(optional) List of observed variables to take into account within obs_list.
+var = NULL means that all variables in obs_list will be used.}
+
 \item{transform_var}{Named vector of functions to apply both on simulated and
 observed variables. \code{transform_var=c(var1=log, var2=sqrt)} will for example
 apply log-transformation on simulated and observed values of variable var1,
@@ -107,7 +110,7 @@ evaluation  (optional), see details section for more information.}
 \item{satisfy_par_const}{User function for including constraints on estimated
 parameters (optional), see details section for more information.}
 
-\item{var}{(optional) List of variables for which the model wrapper must return
+\item{var_to_simulate}{(optional) List of variables for which the model wrapper must return
 results.
 By default the wrapper is asked to simulate only the observed variables. However,
 it may be useful to simulate also other variables, typically when transform_sim
@@ -145,9 +148,6 @@ of observed values and the name of the corresponding variable and that must retu
 for the weights for the given variable or a vector of values of length the length of the vector of observed values given in input.}
 
 \item{step}{(optional) List that describes the steps of the parameter estimation process (see details section).}
-
-\item{var_names}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} \code{var_names} is no
-longer supported, use \code{var} instead.}
 }
 \value{
 prints, graphs and a list containing the results of the parameter estimation,

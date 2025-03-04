@@ -60,6 +60,9 @@
 #' @param candidate_param Names of the parameters, among those defined in the argument param_info,
 #' that must only be considered as candidate for parameter estimation (see details section).
 #'
+#' @param var (optional) List of observed variables to take into account within obs_list.
+#' var = NULL means that all variables in obs_list will be used.
+#'
 #' @param transform_var Named vector of functions to apply both on simulated and
 #' observed variables. `transform_var=c(var1=log, var2=sqrt)` will for example
 #' apply log-transformation on simulated and observed values of variable var1,
@@ -74,7 +77,7 @@
 #' @param satisfy_par_const User function for including constraints on estimated
 #' parameters (optional), see details section for more information.
 #'
-#' @param var (optional) List of variables for which the model wrapper must return
+#' @param var_to_simulate (optional) List of variables for which the model wrapper must return
 #' results.
 #' By default the wrapper is asked to simulate only the observed variables. However,
 #' it may be useful to simulate also other variables, typically when transform_sim
@@ -110,9 +113,6 @@
 #' for the weights for the given variable or a vector of values of length the length of the vector of observed values given in input.
 #'
 #' @param step (optional) List that describes the steps of the parameter estimation process (see details section).
-#'
-#' @param var_names `r lifecycle::badge("deprecated")` `var_names` is no
-#'   longer supported, use `var` instead.
 #'
 #' @details
 #'   In CroptimizR, parameter estimation is based on the comparison between the values
@@ -193,27 +193,21 @@
 estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
                         model_options = NULL, optim_method = "nloptr.simplex",
                         optim_options = NULL, param_info, forced_param_values = NULL,
-                        candidate_param = NULL, transform_var = NULL, transform_obs = NULL,
+                        candidate_param = NULL, var = NULL, transform_var = NULL, transform_obs = NULL,
                         transform_sim = NULL, satisfy_par_const = NULL,
-                        var = NULL, info_level = 1,
+                        var_to_simulate = NULL, info_level = 1,
                         info_crit_func = list(
                           CroptimizR::BIC, CroptimizR::AICc,
                           CroptimizR::AIC
                         ),
                         weight = NULL,
-                        step = NULL,
-                        var_names = lifecycle::deprecated()) {
+                        step = NULL) {
   # Managing parameter names changes between versions:
   if (rlang::has_name(optim_options, "path_results")) {
     lifecycle::deprecate_warn("0.5.0", "estim_param(optim_options = 'is deprecated, use `out_dir` instead of `path_results`')")
   } else if (rlang::has_name(optim_options, "out_dir")) {
     # Note: we add a test here again because it is potentially never given
     optim_options$path_results <- optim_options$out_dir # to remove when we update inside the function
-  }
-  if (lifecycle::is_present(var_names)) {
-    lifecycle::deprecate_warn("0.5.0", "estim_param(var_names)", "estim_param(var)")
-  } else {
-    var_names <- var # to remove when we update inside the function
   }
 
   # Initialize res
@@ -513,7 +507,7 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
         transform_sim = step[[istep]]$transform_sim,
         satisfy_par_const = step[[istep]]$satisfy_par_const,
         path_results = step[[istep]]$optim_options$path_results,
-        var_names = var_names,
+        var_to_simulate = var_to_simulate,
         forced_param_values = forced_param_values_cur,
         info_level = step[[istep]]$info_level,
         info_crit_list = info_crit_list,
