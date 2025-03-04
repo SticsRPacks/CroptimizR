@@ -143,7 +143,10 @@ param_info <- list(
   h = list(lb = 0, ub = 1)
 )
 
-optim_options <- list(nb_rep = 5, maxeval = 100, xtol_rel = 1e-2, out_dir = tempdir())
+optim_options <- list(
+  nb_rep = 5, maxeval = 100, xtol_rel = 1e-2,
+  out_dir = tempdir(), ranseed = 1234
+)
 res <- estim_param(obs_synth,
   model_function = toymodel_wrapper,
   model_options = model_options,
@@ -167,7 +170,10 @@ test_that("estim_param 1 step default criterion", {
 # obs_synth_biomass <- filter_obs(obs_synth, var = c("biomass"), include = TRUE)
 # obs_synth_yield <- filter_obs(obs_synth, var = c("yield"), include = TRUE)
 
-optim_options <- list(nb_rep = 5, maxeval = 100, xtol_rel = 1e-2, out_dir = tempdir())
+optim_options <- list(
+  nb_rep = 5, maxeval = 100, xtol_rel = 1e-2,
+  out_dir = tempdir(), ranseed = 1234
+)
 param_info <- list(
   rB = list(lb = 0, ub = 1, default = 0.1),
   h = list(lb = 0, ub = 1, default = 0.5),
