@@ -385,7 +385,7 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
     }
   }
 
-  tmp <- rbind(bounds$lb, bounds$ub, select(df, param_names))
+  tmp <- rbind(bounds$lb, bounds$ub, select(df, all_of(param_names)))
   tmp[tmp == Inf | tmp == -Inf] <- NA
   minvalue <- apply(tmp, 2, min, na.rm = TRUE)
   maxvalue <- apply(tmp, 2, max, na.rm = TRUE)
@@ -539,7 +539,7 @@ plot_valuesVSit_2D <- function(df, param_info, iter_or_eval = c("eval", "iter"),
     }
   }
 
-  tmp <- rbind(bounds$lb, bounds$ub, select(df, param_names))
+  tmp <- rbind(bounds$lb, bounds$ub, select(df, all_of(param_names)))
   # -.data$ avoid NOTES on check ...
   tmp[tmp == Inf | tmp == -Inf] <- NA
   minvalue <- apply(tmp, 2, min, na.rm = TRUE)
