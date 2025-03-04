@@ -526,7 +526,7 @@ complete_init_values <- function(param_info, nb_values, ranseed = NULL,
 #' @keywords internal
 #'
 get_params_default <- function(param_info) {
-  if (!is.null(param_info$default)) {
+  if (!is.null(param_info$lb)) { # check the shape of param_info (list per parameter or per information)
     default <- param_info$default
   } else {
     default <- unlist(sapply(param_info, function(x) x$default, simplify = FALSE))
