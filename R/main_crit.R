@@ -27,6 +27,7 @@ main_crit <- function(param_values, crit_options) {
           function(x) setdiff(names(x), c("Date"))
         ))
       )
+      .croptEnv$obs_situation_list <- names(obs_sim_list$obs_list)
     }
 
     if (crit_options$info_level >= 1 && !is.null(crit_options$tot_max_eval)) {

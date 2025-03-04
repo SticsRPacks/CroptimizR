@@ -60,6 +60,9 @@
 #' @param candidate_param Names of the parameters, among those defined in the argument param_info,
 #' that must only be considered as candidate for parameter estimation (see details section).
 #'
+#' @param situation (optional) List of situations to take into account within obs_list.
+#' situation = NULL means that all situations in obs_list will be used.
+#'
 #' @param var (optional) List of observed variables to take into account within obs_list.
 #' var = NULL means that all variables in obs_list will be used.
 #'
@@ -193,7 +196,7 @@
 estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
                         model_options = NULL, optim_method = "nloptr.simplex",
                         optim_options = NULL, param_info, forced_param_values = NULL,
-                        candidate_param = NULL, var = NULL, transform_var = NULL, transform_obs = NULL,
+                        candidate_param = NULL, situation = NULL, var = NULL, transform_var = NULL, transform_obs = NULL,
                         transform_sim = NULL, satisfy_par_const = NULL,
                         var_to_simulate = NULL, info_level = 1,
                         info_crit_func = list(
@@ -418,6 +421,12 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
     if (!identical(step[[istep]]$var, NULL)) {
       step[[istep]]$obs_list <- filter_obs(step[[istep]]$obs_list,
         var = step[[istep]]$var,
+        include = TRUE
+      )
+    }
+    if (!identical(step[[istep]]$situation, NULL)) {
+      step[[istep]]$obs_list <- filter_obs(step[[istep]]$obs_list,
+        situation = step[[istep]]$situation,
         include = TRUE
       )
     }

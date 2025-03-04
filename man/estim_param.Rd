@@ -14,6 +14,7 @@ estim_param(
   param_info,
   forced_param_values = NULL,
   candidate_param = NULL,
+  situation = NULL,
   var = NULL,
   transform_var = NULL,
   transform_obs = NULL,
@@ -92,6 +93,9 @@ argument \code{candidate_param}).}
 
 \item{candidate_param}{Names of the parameters, among those defined in the argument param_info,
 that must only be considered as candidate for parameter estimation (see details section).}
+
+\item{situation}{(optional) List of situations to take into account within obs_list.
+situation = NULL means that all situations in obs_list will be used.}
 
 \item{var}{(optional) List of observed variables to take into account within obs_list.
 var = NULL means that all variables in obs_list will be used.}

@@ -102,9 +102,9 @@ toymodel_wrapper <- function(param_values = NULL, situation,
 # Test the wrapper
 model_options <- list()
 model_options <- tibble(
-  situation = c("sit1_2000", "sit1_2001", "sit2_2003"),
-  begin_date = as.Date(c("2000-05-01", "2001-05-12", "2003-05-05")),
-  end_date = as.Date(c("2000-11-05", "2001-11-20", "2003-11-15"))
+  situation = c("sit1_2000", "sit1_2001", "sit2_2003", "sit2_2004"),
+  begin_date = as.Date(c("2000-05-01", "2001-05-12", "2003-05-05", "2004-05-15")),
+  end_date = as.Date(c("2000-11-05", "2001-11-20", "2003-11-15", "2004-11-18"))
 )
 res <- test_wrapper(
   model_function = toymodel_wrapper,
@@ -119,13 +119,13 @@ test_that("Wrapper OK", {
 
 # Create synthetic observations by selecting simulated results
 model_options <- tibble(
-  situation = c("sit1_2000", "sit1_2001", "sit2_2003"),
-  begin_date = as.Date(c("2000-05-01", "2001-05-12", "2003-05-05")),
-  end_date = as.Date(c("2000-11-05", "2001-11-20", "2003-11-15"))
+  situation = c("sit1_2000", "sit1_2001", "sit2_2003", "sit2_2004"),
+  begin_date = as.Date(c("2000-05-01", "2001-05-12", "2003-05-05", "2004-05-15")),
+  end_date = as.Date(c("2000-11-05", "2001-11-20", "2003-11-15", "2004-11-18"))
 )
 param_true_values <- c(rB = 0.08, h = 0.55)
 tmp <- toymodel_wrapper(
-  situation = c("sit1_2000", "sit1_2001", "sit2_2003"),
+  situation = c("sit1_2000", "sit1_2001", "sit2_2003", "sit2_2004"),
   param_values = param_true_values,
   model_options = model_options
 )
@@ -152,7 +152,8 @@ res <- estim_param(obs_synth,
   model_options = model_options,
   optim_options = optim_options,
   param_info = param_info,
-  var = c("biomass", "yield")
+  var = c("biomass", "yield"),
+  situation = c("sit1_2000", "sit1_2001", "sit2_2003")
 )
 test_that("estim_param 1 step default criterion", {
   expect_equal(res$final_values[["rB"]],
@@ -162,6 +163,10 @@ test_that("estim_param 1 step default criterion", {
   expect_equal(res$final_values[["h"]],
     param_true_values[["h"]],
     tolerance = param_true_values[["h"]] * 1e-2
+  )
+  expect_equal(
+    res$obs_situation_list,
+    c("sit1_2000", "sit1_2001", "sit2_2003")
   )
 })
 

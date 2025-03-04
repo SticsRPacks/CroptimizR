@@ -31,7 +31,10 @@ optim_switch <- function(...) {
         if (exists("obs_var_list", where = .croptEnv)) {
           rm("obs_var_list", envir = .croptEnv)
         }
-
+        res$obs_situation_list <- .croptEnv$obs_situation_list
+        if (exists("obs_situation_list", where = .croptEnv)) {
+          rm("obs_situation_list", envir = .croptEnv)
+        }
         if (arguments$crit_options$info_level >= 1) {
           res$params_and_crit <- dplyr::bind_rows(.croptEnv$params_and_crit)
           if (exists("params_and_crit", where = .croptEnv)) {
@@ -93,6 +96,7 @@ optim_switch <- function(...) {
       res <- do.call(wrap_nloptr, wrap_args)
       if (nargs() > 2) {
         res$obs_var_list <- .croptEnv$obs_var_list
+        res$obs_situation_list <- .croptEnv$obs_situation_list
         if (arguments$crit_options$info_level >= 1) {
           res$params_and_crit <- dplyr::bind_rows(.croptEnv$params_and_crit)
         }
@@ -117,6 +121,7 @@ optim_switch <- function(...) {
       res <- do.call(wrap_BayesianTools, wrap_args)
       if (nargs() > 2) {
         res$obs_var_list <- .croptEnv$obs_var_list
+        res$obs_situation_list <- .croptEnv$obs_situation_list
         res$plots <- plot_bayesian(
           optim_options = optim_options,
           param_info = param_info, optim_results = res
@@ -130,6 +135,7 @@ optim_switch <- function(...) {
       res <- do.call(wrap_optim, wrap_args)
       if (nargs() > 2) {
         res$obs_var_list <- .croptEnv$obs_var_list
+        res$obs_situation_list <- .croptEnv$obs_situation_list
         if (arguments$crit_options$info_level >= 1) {
           res$params_and_crit <- dplyr::bind_rows(.croptEnv$params_and_crit)
         }
