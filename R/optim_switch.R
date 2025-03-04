@@ -25,7 +25,7 @@ optim_switch <- function(...) {
     on.exit({
       res$forced_param_values <- crit_options$forced_param_values
 
-      if (exists(".croptEnv")) {
+      if (exists(".croptEnv") && !is.null(arguments$crit_options$info_level)) {
         # Save results even in case parameter estimation crash
         res$obs_var_list <- .croptEnv$obs_var_list
         if (exists("obs_var_list", where = .croptEnv)) {
