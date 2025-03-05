@@ -226,6 +226,8 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
   )
   .croptEnv$total_eval_count <- 0
 
+  path_results_ORI <- getwd()
+
   # Remove CroptimizR environment before exiting and save stored results (even if the process crashes)
   on.exit({
     if (exists(".croptEnv")) {
@@ -234,169 +236,24 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
     save(res, file = file.path(path_results_ORI, "optim_results.Rdata"))
   })
 
-  # Check inputs
-
-  ## optim_options
-  if (is.null(optim_options$path_results)) {
-    optim_options$path_results <- getwd()
-  }
-  if (!dir.exists(optim_options$path_results)) {
-    dir.create(optim_options$path_results,
-      recursive = TRUE
-    )
-  }
-  path_results_ORI <- optim_options$path_results
-
-  ## obs_list
-  if (!is.obs(obs_list)) {
-    stop("Incorrect format for argument obs_list.")
-  }
-  ## crit_function
-  if (!is.function(crit_function)) {
-    stop("Incorrect format for argument crit_function. Should be a function.")
-  }
-  ## model_function
-  if (!is.function(model_function)) {
-    stop("Incorrect format for argument model_function. Should be a function.")
-  }
-  ## optim_method
-  if (!is.character(optim_method)) {
-    stop("Incorrect format for argument optim_method. Should be of type character and contains the name of the parameter estimation method to use.")
-  }
-  ## param_info
-  if (!is.list(param_info)) {
-    stop("Incorrect format for argument param_info. Should be a list.")
-  } else if (!all(is.element(c("lb", "ub"), names(param_info))) &&
-    !all(sapply(param_info, function(x) all(is.element(c("lb", "ub"), names(x)))))) {
-    stop("Incorrect format for argument param_info. Should contains lb and ub vectors.")
-  }
-  if (any(sapply(param_info, function(x) is.element("sit_list", names(x))))) {
-    if (!all(sapply(param_info, function(x) is.element("sit_list", names(x))))) {
-      stop("sit_list is defined for at least one parameter in argument param_info but not for all.")
-    }
-    param_info <- lapply(param_info, function(x) {
-      if (length(x$sit_list) > length(x$lb) & length(x$lb) == 1) x$lb <- rep(x$lb, length(x$sit_list))
-      if (length(x$sit_list) > length(x$ub) & length(x$ub) == 1) x$ub <- rep(x$ub, length(x$sit_list))
-      return(x)
-    })
-    param_info <- lapply(param_info, function(x) {
-      if (length(x$sit_list) > length(x$lb) & length(x$lb) == 1) x$lb <- rep(x$lb, length(x$sit_list))
-      if (length(x$sit_list) > length(x$ub) & length(x$ub) == 1) x$ub <- rep(x$ub, length(x$sit_list))
-      return(x)
-    })
-  }
-  param <- get_params_names(param_info, short_list = TRUE)
-
-  ## forced_param_values
-  if (!is.null(forced_param_values)) {
-    if (!is.vector(forced_param_values)) {
-      stop("Incorrect format for argument forced_param_values, should be a vector.")
-    }
-    if (any(names(forced_param_values) %in% setdiff(param, candidate_param))) {
-      tmp <- intersect(names(forced_param_values), setdiff(param, candidate_param))
-      warning(
-        "The following parameters are defined both in forced_param_values and param_info
-           arguments of estim_param function while they should not (a parameter cannot
-           be both forced and estimated except if it is part of the `candidate` parameters):",
-        paste(tmp, collapse = ","),
-        "\n They will be removed from forced_param_values."
-      )
-      forced_param_values <-
-        forced_param_values[setdiff(
-          names(forced_param_values),
-          setdiff(param, candidate_param)
-        )]
-    }
-  }
-
-  ## Information criterion
-  info_crit_list <- list()
-  if (is.function(info_crit_func)) {
-    info_crit_list <- list(info_crit_func)
-  } else if (is.list(info_crit_func)) {
-    info_crit_list <- info_crit_func
-  } else if (!is.null(info_crit_func)) {
-    stop("Argument info_crit_func should be NULL, a function or a list of functions.")
-  }
-  if (!is.null(info_crit_func)) {
-    sapply(info_crit_list, function(x) {
-      if ((!is.function(x)) || (is.null(x()$name))) {
-        stop(paste(
-          "info_crit_func argument may be badly defined:\n",
-          "The information functions should return a named list including an element called name containing the name of the function when called without arguments."
-        ))
-      }
-    })
-    # set to NULL the info_crit that are not compatible with the crit_function used
-    # info_crit_list[sapply(info_crit_list, function(x) {
-    #   (x()$name == "AIC" || x()$name == "AICc" || x()$name == "BIC") && !identical(crit_function, crit_ols)
-    # })] <- NULL
-  }
-  if (length(info_crit_list) == 0) info_crit_list <- NULL
-
-
-  ## candidate_param
-  ## candidate_param can only be used if info_crit_list[[1]] is provided and if it is compatible with the crit_function used
-  if (!is.null(candidate_param) && is.null(info_crit_list)) {
-    stop("The argument candidate_param can only be used if argument info_crit_list is provided and compatible with the crit_function used.")
-  }
-  if (!all(candidate_param %in% param)) {
-    stop("Parameters included in argument candidate_param must be defined in param_info argument.")
-  }
-
-  ## weight
-  if (!is.function(weight) && !is.null(weight)) {
-    stop("Incorrect format for argument weight: should be a function or NULL.")
-  }
-
-  ## step
-  ## If `step` is empty, initialize it with a single empty list to ensure at least one element.
-  ## Then, complete each element of `step` with the arguments from `estim_param`,
-  ## adding only those that are not already present.
+  # Complete step and validate it
   nb_steps <- length(step)
   if (nb_steps == 0) {
     step <- list(list())
     nb_steps <- 1
   }
-  mc <- match.call()[-1]
-  args_given <- lapply(mc, eval, envir = parent.frame())
-  args_default <- as.list(formals(estim_param))[-1] # [-1] Exclude step
-  args_default <- lapply(args_default, function(arg) {
-    if (!is.symbol(arg) || (is.symbol(arg) && deparse(arg) != "")) {
-      tryCatch(
-        eval(arg, envir = parent.frame()),
-        error = function(e) arg # if eval fails, the non evaluated value is kept
-      )
-    } else {
-      arg # keep as it if no default value
-    }
-  })
-  args_total <- modifyList(args_default, args_given)
-  args_total <- args_total[setdiff(names(args_total), "step")]
-  step <- lapply(step, function(x) {
-    for (arg_name in names(args_total)) {
-      if (!arg_name %in% names(x) && arg_name %in% names(args_total)) {
-        val <- args_total[[arg_name]]
-        if (!missing(val)) {
-          if (is.symbol(val) && identical(deparse(val), "NULL")) {
-            val <- NULL
-          }
-          x[[arg_name]] <- val
-        }
-      }
-    }
-    if (!"param" %in% names(x)) x$param <- param
-    return(x)
-  })
   if (!is.list(step)) {
     stop("Incorrect format for argument step. Should be a list.")
   }
   if (!all(sapply(step, function(x) is.list(x)))) {
     stop("Incorrect format for argument step. Should be a list of lists.")
   }
-  # if (!all(sapply(step, function(x) all(is.element(c("candidate_param", "crit_function", "model_function", "model_options", "optim_method", "optim_options", "param_info", "forced_param_values", "transform_var", "transform_obs", "transform_sim", "satisfy_par_const", "obs_list", "weight", "var_names"), names(x)))))) {
-  #   stop("Incorrect format for argument step. Should be a list of lists containing the following elements: candidate_param, crit_function, model_function, model_options, optim_method, optim_options, param_info, forced_param_values, transform_var, transform_obs, transform_sim, satisfy_par_const, obs_list, weight, var_names.")
-  # }
+  ## Complete each element of `step` with the arguments from `estim_param`,
+  ## adding only those that are not already present.
+  step <- fill_step_info(step, mc = match.call())
+  ## Validate the structure of each element of `step`
+  step <- validate_steps(step)
+
 
   # Measured elapse time
   tictoc::tic.clearlog()
@@ -412,6 +269,8 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
     cat("\n------\n")
     cat(paste("Step", istep, "\n"))
     cat("------\n")
+
+    path_results_ORI <- step[[istep]]$optim_options$path_results
 
     path_results_step <- file.path(
       path_results_ORI, paste0("step", istep)
@@ -479,7 +338,7 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
       )
       ### Initialize already estimated parameters with the values leading to the best criterion obtained so far
       if (!is.null(param_selection_steps)) {
-        ind_min_infocrit <- which.min(param_selection_steps[[info_crit_list[[1]]()$name]])
+        ind_min_infocrit <- which.min(param_selection_steps[[step[[istep]]$info_crit_list[[1]]()$name]])
         best_final_values <- param_selection_steps$`Final values`[[ind_min_infocrit]]
         names(best_final_values) <- param_selection_steps$`Estimated parameters`[[ind_min_infocrit]]
         init_values <- get_init_values(param_info_cur)
@@ -519,7 +378,7 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
         var_to_simulate = var_to_simulate,
         forced_param_values = forced_param_values_cur,
         info_level = step[[istep]]$info_level,
-        info_crit_list = info_crit_list,
+        info_crit_list = step[[istep]]$info_crit_list,
         weight = step[[istep]]$weight
       )
 
@@ -549,7 +408,7 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
         res_select_param <- select_param_FwdRegAgMIP(
           oblig_param_list, step[[istep]]$candidate_param,
           crt_candidates,
-          param_selection_steps[[info_crit_list[[1]]()$name]]
+          param_selection_steps[[step[[istep]]$info_crit_list[[1]]()$name]]
         )
         crt_candidates <- res_select_param$next_candidates
         if (res_select_param$selected) {
@@ -565,7 +424,7 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
     # Print and store results of parameter estimation steps if parameter selection was activated
     if (!is.null(step[[istep]]$candidate_param)) {
       summary_FwdRegAgMIP(
-        param_selection_steps, info_crit_list, path_results_step,
+        param_selection_steps, step[[istep]]$info_crit_list, path_results_step,
         res
       )
       save_results_FwdRegAgMIP(param_selection_steps, path_results_step)
@@ -603,3 +462,184 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
 }
 
 utils::globalVariables(c(".croptEnv"))
+
+
+#' @title Fill the step information
+#'
+#' @inheritParams estim_param
+#'
+#' @param mc A matched call object from `match.call()` in `estim_param`,
+#' containing the arguments explicitly provided by the user when calling `estim_param`.
+#' This ensures that `fill_step_info` has access to the correct function call context.
+#'
+#' @return A list of step definitions provided by the user in the `estim_param` function call,
+#' enriched with default values and additional arguments passed to `estim_param`.
+#' The returned object is a list of lists, where each sublist contains the characteristics of a step.
+#'
+#' @keywords internal
+fill_step_info <- function(step, mc) {
+  mc <- mc[-1] # remove the function name
+  args_given <- lapply(mc, eval, envir = parent.frame())
+  args_default <- as.list(formals(estim_param))[-1] # [-1] Exclude step
+  args_default <- lapply(args_default, function(arg) {
+    if (!is.symbol(arg) || (is.symbol(arg) && deparse(arg) != "")) {
+      tryCatch(
+        eval(arg, envir = parent.frame()),
+        error = function(e) arg # if eval fails, the non evaluated value is kept
+      )
+    } else {
+      arg # keep as it if no default value
+    }
+  })
+  args_total <- modifyList(args_default, args_given)
+  args_total <- args_total[setdiff(names(args_total), "step")]
+  step <- lapply(step, function(x) {
+    for (arg_name in names(args_total)) {
+      if (!arg_name %in% names(x) && arg_name %in% names(args_total)) {
+        val <- args_total[[arg_name]]
+        if (!missing(val)) {
+          if (is.symbol(val) && identical(deparse(val), "NULL")) {
+            val <- NULL
+          }
+          x[[arg_name]] <- val
+        }
+      }
+    }
+    if (!"param" %in% names(x)) x$param <- setdiff(get_params_names(x$param_info, short_list = TRUE), x$candidate_param)
+    return(x)
+  })
+  return(step)
+}
+
+
+#' @title Validate the information for a given step
+#'
+#' @param step A list containing the characteristics of a given step.
+#'
+#' @param istep The index of the step in the list of steps.
+#'
+#' @return The validated step with possibly updated information.
+#'
+#' @keywords internal
+validate_step <- function(step, istep) {
+  ## optim_options
+  if (is.null(step$optim_options$path_results)) {
+    step$optim_options$path_results <- getwd()
+  }
+  if (!dir.exists(step$optim_options$path_results)) {
+    dir.create(step$optim_options$path_results, recursive = TRUE)
+  }
+
+  ## obs_list
+  if (!is.obs(step$obs_list)) {
+    stop(paste("Step", istep, ": Incorrect format for argument obs_list."))
+  }
+
+  ## crit_function
+  if (!is.function(step$crit_function)) {
+    stop(paste("Step", istep, ": Incorrect format for argument crit_function. Should be a function."))
+  }
+
+  ## model_function
+  if (!is.function(step$model_function)) {
+    stop(paste("Step", istep, ": Incorrect format for argument model_function. Should be a function."))
+  }
+
+  ## optim_method
+  if (!is.character(step$optim_method)) {
+    stop(paste("Step", istep, ": Incorrect format for argument optim_method. Should be of type character and contain the name of the parameter estimation method to use."))
+  }
+
+  ## param_info
+  if (!is.list(step$param_info)) {
+    stop(paste("Step", istep, ": Incorrect format for argument param_info. Should be a list."))
+  } else if (!all(is.element(c("lb", "ub"), names(step$param_info))) &&
+    !all(sapply(step$param_info, function(x) all(is.element(c("lb", "ub"), names(x)))))) {
+    stop(paste("Step", istep, ": Incorrect format for argument param_info. Should contain 'lb' and 'ub' vectors."))
+  }
+
+  ## Handling of `sit_list` in param_info
+  if (any(sapply(step$param_info, function(x) is.element("sit_list", names(x))))) {
+    if (!all(sapply(step$param_info, function(x) is.element("sit_list", names(x))))) {
+      stop(paste("Step", istep, ": `sit_list` is defined for at least one parameter in param_info but not for all."))
+    }
+
+    step$param_info <- lapply(step$param_info, function(x) {
+      if (length(x$sit_list) > length(x$lb) & length(x$lb) == 1) x$lb <- rep(x$lb, length(x$sit_list))
+      if (length(x$sit_list) > length(x$ub) & length(x$ub) == 1) x$ub <- rep(x$ub, length(x$sit_list))
+      return(x)
+    })
+  }
+
+  ## forced_param_values
+  if (!is.null(step$forced_param_values)) {
+    if (!is.vector(step$forced_param_values)) {
+      stop(paste("Step", istep, ": Incorrect format for argument forced_param_values, should be a vector."))
+    }
+    if (any(names(step$forced_param_values) %in% setdiff(step$param, step$candidate_param))) {
+      tmp <- intersect(names(step$forced_param_values), setdiff(step$param, step$candidate_param))
+      warning(paste(
+        "Step", istep, ": The following parameters are defined both in forced_param_values and param_info",
+        "arguments of estim_param function while they should not (a parameter cannot",
+        "be both forced and estimated except if it is part of the `candidate` parameters):",
+        paste(tmp, collapse = ","),
+        "\n They will be removed from forced_param_values."
+      ))
+      step$forced_param_values <- step$forced_param_values[setdiff(
+        names(step$forced_param_values),
+        setdiff(step$param, step$candidate_param)
+      )]
+    }
+  }
+
+  ## Information criterion
+  if (is.function(step$info_crit_func)) {
+    step$info_crit_list <- list(step$info_crit_func)
+  } else if (is.list(step$info_crit_func)) {
+    step$info_crit_list <- step$info_crit_func
+  } else if (!is.null(step$info_crit_func)) {
+    stop(paste("Step", istep, ": Argument info_crit_func should be NULL, a function, or a list of functions."))
+  }
+
+  if (!is.null(step$info_crit_func)) {
+    sapply(step$info_crit_list, function(x) {
+      if ((!is.function(x)) || (is.null(x()$name))) {
+        stop(paste(
+          "Step", istep, ": info_crit_func argument may be badly defined:\n",
+          "The information functions should return a named list including an element called 'name' containing the name of the function when called without arguments."
+        ))
+      }
+    })
+  }
+  if (length(step$info_crit_list) == 0) step$info_crit_list <- NULL
+
+  ## candidate_param
+  if (!is.null(step$candidate_param) && is.null(step$info_crit_list)) {
+    stop(paste("Step", istep, ": The argument candidate_param can only be used if info_crit_list is provided and compatible with crit_function."))
+  }
+  if (!all(step$candidate_param %in% get_params_names(step$param_info, short_list = TRUE))) {
+    stop(paste("Step", istep, ": Parameters included in candidate_param must be defined in param_info."))
+  }
+
+  ## weight
+  if (!is.function(step$weight) && !is.null(step$weight)) {
+    stop(paste("Step", istep, ": Incorrect format for argument weight: should be a function or NULL."))
+  }
+
+  return(step)
+}
+
+
+#' @title Validate the information for all steps
+#'
+#' @param steps A list of steps, each containing the characteristics of a given step.
+#'
+#' @return The validated list of steps with possibly updated information.
+#'
+#' @keywords internal
+validate_steps <- function(steps) {
+  steps <- lapply(seq_along(steps), function(i) {
+    validate_step(steps[[i]], i)
+  })
+  return(steps)
+}
