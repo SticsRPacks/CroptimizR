@@ -16,7 +16,7 @@ summary_frequentist <- function(optim_options, param_info, optim_results) {
 
   cat(paste(
     "\nList of observed variables used:",
-    paste(optim_results$obs_var_list, collapse = ", "), "\n"
+    paste(optim_results$obs_var_list, collapse = ", ")
   ))
 
   # Display of parameters values for the repetition which has the
@@ -27,16 +27,16 @@ summary_frequentist <- function(optim_options, param_info, optim_results) {
       format(est_values[ind_min_crit, ipar],
         scientific = FALSE,
         digits = 2, nsmall = 0
-      ), "\n"
+      )
     ))
   }
   cat(paste(
-    "Minimum value of the criterion:",
-    format(min_crit_value, scientific = FALSE, digits = 2, nsmall = 0), "\n"
+    "\nMinimum value of the criterion:",
+    format(min_crit_value, scientific = FALSE, digits = 2, nsmall = 0)
   ))
   cat(paste(
-    "Complementary graphs and results can be found in ",
-    path_results, "\n\n"
+    "\nComplementary graphs and results can be found in ",
+    path_results, "\n"
   ))
 }
 
@@ -151,7 +151,9 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
     }
   )
 
-  print(p)
+  for (plot in p) {
+    print(plot)
+  }
   grDevices::dev.off()
   p_all$estimVSinit <- p
 
@@ -180,7 +182,9 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
 
   if (!is.null(optim_results$params_and_crit)) {
     p <- plot_valuesVSit(optim_results$params_and_crit, param_info)
-    print(p)
+    for (plot in p) {
+      print(plot)
+    }
     grDevices::dev.off()
     p_all$valuesVSit <- p
   }
@@ -210,7 +214,9 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
 
   if (!is.null(optim_results$params_and_crit)) {
     p <- plot_valuesVSit_2D(optim_results$params_and_crit, param_info)
-    print(p)
+    for (plot in p) {
+      print(plot)
+    }
     grDevices::dev.off()
     p_all$valuesVSit_2D <- p
   }

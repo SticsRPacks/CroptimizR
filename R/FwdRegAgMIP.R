@@ -162,10 +162,6 @@ post_treat_FwdRegAgMIP <- function(optim_results, crit_options, crt_list,
 #'
 summary_FwdRegAgMIP <- function(param_selection_steps,
                                 info_crit_list, path_results, optim_results) {
-  cat("----------------------\n")
-  cat("End of parameter selection process\n")
-  cat("----------------------\n\n")
-
   cat(paste(
     "\nList of observed variables used:",
     paste(optim_results$obs_var_list, collapse = ", "), "\n"

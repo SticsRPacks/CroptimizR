@@ -308,9 +308,9 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
 
   # Loop over the different steps
   for (istep in 1:nb_steps) {
-    cat("\n------\n")
-    cat(paste("Step", istep, "\n"))
-    cat("------\n")
+    # cat("\n------\n")
+    # cat(paste("Step", istep, "\n"))
+    #    cat("------\n")
 
     path_results_ORI <- step[[istep]]$optim_options$path_results
 
@@ -356,6 +356,7 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
       optim_method = step[[istep]]$optim_method,
       optim_options = step[[istep]]$optim_options
     )
+    param_selection_activated <- !is.null(step[[istep]]$candidate_param)
 
     # Parameter selection loop
     while (!is.null(crt_candidates)) {
@@ -364,10 +365,15 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
       bounds <- get_params_bounds(param_info_cur)
       forced_param_values_cur <- forced_param_values_istep
       forced_param_values_cur <- forced_param_values_cur[!names(forced_param_values_cur) %in% crt_candidates]
-      cat("\n\t---------------------\n")
-      cat(paste("\tEstimated parameters:", paste(crt_candidates, collapse = " "), "\n"))
-      cat(paste("\tForced parameters:", paste(names(forced_param_values_cur), forced_param_values_cur, sep = "=", collapse = ", ")), "\n")
-      cat("\t---------------------\n")
+      #      cat("\n\t---------------------\n")
+      cat("\n---------------------\n")
+      cat(paste("Step", istep, "\n"))
+      if (param_selection_activated) {
+        cat(paste("Parameter automatic selection process: step", count, "\n"))
+      }
+      cat(paste("Estimated parameters:", paste(crt_candidates, collapse = " "), "\n"))
+      cat(paste("Forced parameters:", paste(names(forced_param_values_cur), forced_param_values_cur, sep = "=", collapse = ", ")), "\n")
+      cat("---------------------\n")
 
 
       ## Initialize parameters
@@ -394,7 +400,7 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
 
       ## Redefine path_result in case of several parameter selection steps
       ## (results are stored in results_param_select/step_* sub-directories of optim_options$path_results)
-      if (!is.null(step[[istep]]$candidate_param)) {
+      if (param_selection_activated) {
         path_results <- file.path(
           path_results_step, "results_param_select",
           paste0("param_select_step", count)
@@ -439,7 +445,7 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
       }
 
       ## If the parameter selection process is activated, compute the next candidate parameters to estimate
-      if (!is.null(step[[istep]]$candidate_param)) {
+      if (param_selection_activated) {
         ### Update results in param_selection_steps
         param_selection_steps <- post_treat_FwdRegAgMIP(
           res_tmp, crit_options,
@@ -464,7 +470,12 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
     } # End parameter selection loop
 
     # Print and store results of parameter estimation steps if parameter selection was activated
-    if (!is.null(step[[istep]]$candidate_param)) {
+    if (param_selection_activated) {
+      cat("----------------------\n")
+      cat(paste("Step", istep, "\n"))
+      cat("End of parameter selection process\n")
+      cat("----------------------\n\n")
+
       summary_FwdRegAgMIP(
         param_selection_steps, step[[istep]]$info_crit_list, path_results_step,
         res
