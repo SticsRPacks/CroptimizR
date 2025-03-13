@@ -151,7 +151,8 @@ ONLY AVAILABLE FOR THE MOMENT FOR crit_function==crit_ols.}
 of observed values and the name of the corresponding variable and that must return either a single value
 for the weights for the given variable or a vector of values of length the length of the vector of observed values given in input.}
 
-\item{step}{(optional) List that describes the steps of the parameter estimation process (see details section).}
+\item{step}{(optional) List that describes the steps of the parameter estimation process (see details section).
+If \code{NULL}, a single default step will be created using the \code{estim_param} arguments}
 }
 \value{
 prints, graphs and a list containing the results of the parameter estimation,
@@ -233,6 +234,49 @@ and will dynamically compute the value of p3 in function of the values of parame
 p5 and p6 iteratively provided by the parameter estimation algorithm. In this example,
 the parameters p5 and p6 must thus be part of the list of parameters to estimate, i.e.
 described in the \code{param_info} argument.
+
+The argument \code{step} is a list of lists used to perform parameter estimation in multiple sequential steps.
+If provided, each step represents a separate stage in the estimation process,
+allowing different configurations for each step (e.g., different sets of parameters to estimate,
+different observed variables, different situations, etc.).
+
+When multiple steps are defined, the parameter values estimated in one step
+are used as fixed values in the subsequent step.
+Each step is a named list containing only the elements that vary between steps.
+\strong{Any argument} of the \code{estim_param} function (e.g., \code{var}, \code{candidate_param} ...)
+can be defined within a step. Note that the element \code{param} can be used to define
+the list of parameters to estimate at a given step.
+
+Any element not explicitly defined in a step will inherit its value
+from the corresponding argument of \code{estim_param} and remain identical across all steps.
+If \code{NULL}, a single step is created using the function arguments.
+
+Suppose the \code{step} argument is defined as follows:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{step <- list()
+step[[1]] <- list(
+  param = c("p1"),
+  candidate_param = c("p2"),
+  var = c("var1")
+)
+step[[2]] <- list(
+  param = c("p3"),
+  var = c("var2")
+)
+}\if{html}{\out{</div>}}
+
+In this case, the parameter estimation process will proceed in \strong{two steps}:
+\itemize{
+\item \strong{Step 1}: Parameter \code{p1} is estimated, while \code{p2} is included in a parameter selection process.
+Only observed variable \code{var1} (from \code{obs_list} defined in argument of \code{estim_param}) is used.
+\item \strong{Step 2}: Parameter \code{p3} is estimated, and only observed variable \code{var2} is used.
+Parameters \code{p1} (and possibly \code{p2}, if selected) are fixed at the values estimated in Step 1.
+Information on the parameters to estimate (bounds, ...) can be defined within
+the same \code{param_info} list given in argument of \code{estim_param}.
+}
+
+The results of the parameter estimation process are stored in the folder \code{out_dir},
+with a separate subfolder for each step.
 }
 \seealso{
 For more details and examples, see the different vignettes in
