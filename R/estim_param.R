@@ -295,7 +295,7 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
   step <- fill_step_info(step, mc = match.call())
   ## Validate the structure of each element of `step`
   step <- validate_steps(step)
-
+  res <- list()
 
   # Measured elapse time
   tictoc::tic.clearlog()
@@ -460,12 +460,12 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
         )
         crt_candidates <- res_select_param$next_candidates
         if (res_select_param$selected) {
-          res <- res_tmp
+          res[[istep]] <- res_tmp
         }
         count <- count + 1
       } else {
         crt_candidates <- NULL
-        res <- res_tmp
+        res[[istep]] <- res_tmp
       }
     } # End parameter selection loop
 
@@ -481,15 +481,26 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
         res
       )
       save_results_FwdRegAgMIP(param_selection_steps, path_results_step)
-      res$param_selection_steps <- param_selection_steps
+      res[[istep]]$param_selection_steps <- param_selection_steps
     }
 
     # Gather estimated values in a single vector for next steps
     estimated_param_values <- c(
       estimated_param_values,
-      res$final_values
+      res[[istep]]$final_values
     )
   } # End loop over the different steps
+
+  if (nb_steps > 1) {
+    cat("\n----------------------\n")
+    cat("End of multi-step parameter estimation process\n")
+    cat("----------------------\n")
+
+    res <- post_treat_multi_step(res)
+    summary_multi_step(res, path_results_ORI)
+  } else {
+    res <- res[[1]]
+  }
 
   # Measure elapse time
   log.lst <- tictoc::tic.log(format = FALSE)
