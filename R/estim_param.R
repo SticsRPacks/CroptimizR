@@ -36,6 +36,7 @@
 #' Either
 #' a list containing:
 #'    - `ub` and `lb`, named vectors of upper and lower bounds (-Inf and Inf can be used if init_values is provided),
+#'    - `default`, named vectors of default values (optional, corresponding parameters are set to their default value when the parameter is part of the `candidate_param` list and when it is not estimated)
 #'    - `init_values`, a data.frame containing initial
 #' values to test for the parameters (optional, if not provided, or if less values
 #' than number of repetitions of the minimization are provided, the, or part
@@ -48,6 +49,7 @@
 #' for an example),
 #'   - `ub` and `lb`, vectors of upper and lower bounds (one value per group),
 #'   - `init_values`, the list of initial values per group  (data.frame, one column per group, optional).
+#'   - `default`, vector of default values per group (optional, the parameter is set to its default value when it is part of the `candidate_param` list and when it is not estimated)
 #'
 #' @param forced_param_values Named vector or list, must contain the values (or
 #' arithmetic expression, see details section) for the model parameters to force. The corresponding
