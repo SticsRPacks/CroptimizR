@@ -237,8 +237,8 @@ save_results_FwdRegAgMIP <- function(param_selection_steps, path_results) {
     "is stored in ", file.path(path_results, "param_selection_steps.csv"), "\n"
   )
   cat(
-    "Graphs and detailed results obtained for the different steps can be ",
-    "found in ", file.path(path_results, "results_all_steps", "step_#"),
+    "Graphs and detailed results obtained for the different parameter selection steps can be ",
+    "found in ", file.path(path_results, "results_param_select", "param_select_step#"),
     "folders.\n\n"
   )
 }
