@@ -113,7 +113,8 @@ wrap_BayesianTools <- function(optim_options, param_info, crit_options) {
     quantiles = tmp$quantiles,
     MAP = MAP(out)$parametersMAP,
     post_sample = post_sample,
-    out = out
+    out = out,
+    final_values = MAP(out)$parametersMAP
   )
 
   return(res)
