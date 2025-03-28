@@ -36,7 +36,7 @@
 #' Either
 #' a list containing:
 #'    - `ub` and `lb`, named vectors of upper and lower bounds (-Inf and Inf can be used if init_values is provided),
-#'    - `default`, named vectors of default values (optional, corresponding parameters are set to their default value when the parameter is part of the `candidate_param` list and when it is not estimated)
+#'    - `default`, named vectors of default values (optional, corresponding parameters are set to their default value when the parameter is part of the `candidate_param` list and when it is not estimated ; the default values are also used as first initial values when the parameters are estimated)
 #'    - `init_values`, a data.frame containing initial
 #' values to test for the parameters (optional, if not provided, or if less values
 #' than number of repetitions of the minimization are provided, the, or part
@@ -49,7 +49,7 @@
 #' for an example),
 #'   - `ub` and `lb`, vectors of upper and lower bounds (one value per group),
 #'   - `init_values`, the list of initial values per group  (data.frame, one column per group, optional).
-#'   - `default`, vector of default values per group (optional, the parameter is set to its default value when it is part of the `candidate_param` list and when it is not estimated)
+#'   - `default`, vector of default values per group (optional, the parameter is set to its default value when it is part of the `candidate_param` list and when it is not estimated ; the default value is also used as first initial value when the parameter is estimated)
 #'
 #' @param forced_param_values Named vector or list, must contain the values (or
 #' arithmetic expression, see details section) for the model parameters to force. The corresponding
@@ -310,10 +310,6 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
 
   # Loop over the different steps
   for (istep in 1:nb_steps) {
-    # cat("\n------\n")
-    # cat(paste("Step", istep, "\n"))
-    #    cat("------\n")
-
     path_results_ORI <- step[[istep]]$optim_options$path_results
 
     path_results_step <- file.path(
@@ -367,7 +363,6 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
       bounds <- get_params_bounds(param_info_cur)
       forced_param_values_cur <- forced_param_values_istep
       forced_param_values_cur <- forced_param_values_cur[!names(forced_param_values_cur) %in% crt_candidates]
-      #      cat("\n\t---------------------\n")
       cat("\n---------------------\n")
       cat(paste("Step", istep, "\n"))
       if (param_selection_activated) {
@@ -393,6 +388,11 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
         names(best_final_values) <- param_selection_steps$`Estimated parameters`[[ind_min_infocrit]]
         init_values <- get_init_values(param_info_cur)
         init_values[, names(best_final_values)] <- as.data.frame(as.list(best_final_values))[rep(1, init_values_nb), , drop = FALSE]
+        default_values <- forced_param_values_istep[setdiff(names(init_values), names(best_final_values))]
+        default_values <- default_values[!is.na(default_values)]
+        if (length(default_values) > 0) {
+          init_values[1, names(default_values)] <- default_values
+        }
         param_info_cur <- set_init_values(param_info_cur, init_values)
       }
 
