@@ -43,6 +43,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - uses: r-hub/actions/setup-r-sysreqs@v1 # Install and setup R system dependencies on macOS.
+        with:
+          type: full
 
       - uses: r-lib/actions/setup-pandoc@v2
 
