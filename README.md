@@ -9,7 +9,7 @@ CroptimizR
 state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![R build
-status](https://github.com/SticsRPacks/CroptimizR/workflows/R-CMD-check/badge.svg)](https://github.com/SticsRPacks/CroptimizR/actions)
+status](https://github.com/SticsRPacks/CroptimizR/actions/workflows/check-standard.yaml/badge.svg?branch=main)](https://github.com/SticsRPacks/CroptimizR/actions)
 [![Codecov test
 coverage](https://codecov.io/gh/SticsRPacks/CroptimizR/branch/master/graph/badge.svg)](https://codecov.io/gh/SticsRPacks/CroptimizR?branch=master)
 [![DOI](https://zenodo.org/badge/187874725.svg)](https://zenodo.org/badge/latestdoi/187874725)
