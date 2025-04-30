@@ -211,15 +211,15 @@ test_that("estim_param 2 steps crit_ols", {
   )
 
   # Load results from step 1
-  load(file.path(tempdir(), "step1\\optim_results.Rdata"))
+  load(file.path(tempdir(), "step1/optim_results.Rdata"))
   res1 <- res
-  load(file.path(tempdir(), "step1\\results_param_select\\param_select_step1\\optim_results.Rdata"))
+  load(file.path(tempdir(), "step1/results_param_select/param_select_step1/optim_results.Rdata"))
   res1a <- res
-  load(file.path(tempdir(), "step1\\results_param_select\\param_select_step2\\optim_results.Rdata"))
+  load(file.path(tempdir(), "step1/results_param_select/param_select_step2/optim_results.Rdata"))
   res1b <- res
 
   # Load results from step 2
-  load(file.path(tempdir(), "step2\\optim_results.Rdata"))
+  load(file.path(tempdir(), "step2/optim_results.Rdata"))
   res2 <- res
 
   nb_eval_steps <- sum(sapply(list(res1a, res1b, res2), function(x) nrow(x$params_and_crit)))
