@@ -698,14 +698,13 @@ validate_step <- function(step, istep) {
 
 #' @title Validate the information for all steps
 #'
-#' @param steps A list of steps, each containing the characteristics of a given step.
+#' @param step_list A list of steps, each containing the characteristics of a given step.
 #'
 #' @return The validated list of steps with possibly updated information.
 #'
 #' @keywords internal
-validate_steps <- function(steps) {
-  steps <- lapply(seq_along(steps), function(i) {
-    validate_step(steps[[i]], i)
+validate_steps <- function(step_list) {
+  lapply(seq_along(step_list), function(i) {
+    validate_step(step_list[[i]], i)
   })
-  return(steps)
 }

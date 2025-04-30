@@ -4,10 +4,10 @@
 \alias{validate_steps}
 \title{Validate the information for all steps}
 \usage{
-validate_steps(steps)
+validate_steps(step_list)
 }
 \arguments{
-\item{steps}{A list of steps, each containing the characteristics of a given step.}
+\item{step_list}{A list of steps, each containing the characteristics of a given step.}
 }
 \value{
 The validated list of steps with possibly updated information.
