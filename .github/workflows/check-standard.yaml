@@ -43,6 +43,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - uses: r-hub/actions/setup-r-sysreqs@v1 # Install and setup R system dependencies on macOS.
+        with:
+          type: full
 
       - uses: r-lib/actions/setup-pandoc@v2
 
@@ -54,17 +57,8 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          pak-version: rc
-          # about pak-version:
-          # Ubuntu doesn't install the proper version of XML see https://github.com/r-lib/actions/issues/559. Remove when fixed.
-          # see also: https://stackoverflow.com/questions/73243945/pkgdown-action-failing-at-build-xml
-          extra-packages: |
-            any::rcmdcheck
+          extra-packages: any::rcmdcheck
           needs: check
-          exclude: ape
-
-      - name: Install ape 5.6
-        run: Rscript -e "install.packages('https://cran.r-project.org/src/contrib/Archive/ape/ape_5.6.tar.gz', repos = NULL, type = 'source')"
 
       - name: Install custom R dependencies
         run: |
@@ -75,6 +69,7 @@ jobs:
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
+          build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
 
   # Trigger CI using SticsRTest
   trigger-SticsRTest:
