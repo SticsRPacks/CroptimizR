@@ -482,8 +482,8 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
         param_selection_steps, step[[istep]]$info_crit_list, path_results_step,
         res
       )
-      save_results_FwdRegAgMIP(param_selection_steps, path_results_step)
       res[[istep]]$param_selection_steps <- param_selection_steps
+      save_results_FwdRegAgMIP(res[[istep]], param_selection_steps, path_results_step)
     }
 
     # Gather estimated values in a single vector for next steps
