@@ -150,7 +150,7 @@ test_that("estim_param 1 step default criterion", {
   )
 
   optim_options <- list(
-    nb_rep = 5, maxeval = 100, xtol_rel = 1e-2,
+    nb_rep = 5, xtol_rel = 5e-3,
     ranseed = 1234
   )
 
@@ -184,7 +184,7 @@ test_that("estim_param 1 step default criterion", {
 # Test 2 steps with param selection
 test_that("estim_param 2 steps crit_ols", {
   optim_options <- list(
-    nb_rep = 5, maxeval = 100, xtol_rel = 1e-2,
+    nb_rep = 5, xtol_rel = 5e-3,
     ranseed = 1234
   )
   param_info <- list(
@@ -244,7 +244,7 @@ test_that("estim_param 2 steps crit_ols", {
 # Test 2 steps without param selection
 test_that("estim_param 2 steps without param selection", {
   optim_options <- list(
-    nb_rep = 5, maxeval = 100, xtol_rel = 1e-2,
+    nb_rep = 5, xtol_rel = 5e-3,
     ranseed = 1234
   )
   param_info <- list(
@@ -284,7 +284,7 @@ test_that("estim_param 2 steps without param selection", {
 # Test 1 step with param selection
 test_that("estim_param 1 steps with param selection", {
   optim_options <- list(
-    nb_rep = 5, maxeval = 100, xtol_rel = 1e-2,
+    nb_rep = 5, xtol_rel = 5e-3,
     ranseed = 1234
   )
   param_info <- list(
