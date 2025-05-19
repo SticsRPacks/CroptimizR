@@ -105,7 +105,7 @@ setup({
     begin_date = as.Date(c("2000-05-01", "2001-05-12", "2003-05-05", "2004-05-15")),
     end_date = as.Date(c("2000-11-05", "2001-11-20", "2003-11-15", "2004-11-18"))
   )
-  .GlobalEnv$param_true_values <- c(rB = 0.08, h = 0.55)
+  .GlobalEnv$param_true_values <- c(rB = 0.08, h = 0.55, Bmax = 7)
 
   # Generate synthetic observations
   tmp <- toymodel_wrapper(
@@ -154,6 +154,8 @@ test_that("estim_param 1 step default criterion", {
     ranseed = 1234
   )
 
+  forced_param_values <- c(Bmax = 7)
+
   res <- estim_param(
     obs_list = obs_synth,
     model_function = toymodel_wrapper,
@@ -161,6 +163,7 @@ test_that("estim_param 1 step default criterion", {
     optim_options = optim_options,
     param_info = param_info,
     var = c("biomass", "yield"),
+    forced_param_values = forced_param_values,
     situation = c("sit1_2000", "sit1_2001", "sit2_2003")
   )
 
@@ -187,7 +190,7 @@ test_that("estim_param 2 steps crit_ols", {
   param_info <- list(
     rB = list(lb = 0, ub = 1, default = 0.1),
     h = list(lb = 0, ub = 1, default = 0.5),
-    Bmax = list(lb = 5, ub = 15, default = 10)
+    Bmax = list(lb = 5, ub = 15, default = 7)
   )
 
   res_final <- estim_param(
@@ -246,9 +249,10 @@ test_that("estim_param 2 steps without param selection", {
   )
   param_info <- list(
     rB = list(lb = 0, ub = 1, default = 0.1),
-    h = list(lb = 0, ub = 1, default = 0.5),
-    Bmax = list(lb = 5, ub = 15, default = 10)
+    h = list(lb = 0, ub = 1, default = 0.5)
   )
+
+  forced_param_values <- c(Bmax = 7)
 
   res_final <- estim_param(
     obs_list = obs_synth,
@@ -257,6 +261,7 @@ test_that("estim_param 2 steps without param selection", {
     model_options = model_options,
     optim_options = optim_options,
     param_info = param_info,
+    forced_param_values = forced_param_values,
     step = list(
       list(
         param = c("rB"),
@@ -284,7 +289,7 @@ test_that("estim_param 1 steps with param selection", {
   )
   param_info <- list(
     rB = list(lb = 0, ub = 1, default = 0.1),
-    Bmax = list(lb = 5, ub = 15, default = 10)
+    Bmax = list(lb = 5, ub = 15, default = 7)
   )
   forced_param_values <- c(h = 0.55)
 
