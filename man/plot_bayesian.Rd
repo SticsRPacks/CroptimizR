@@ -4,18 +4,17 @@
 \alias{plot_bayesian}
 \title{Generate plots for bayesian methods}
 \usage{
-plot_bayesian(optim_options, param_info, optim_results)
+plot_bayesian(optim_options, param_info, optim_results, out_dir)
 }
 \arguments{
 \item{optim_options}{List of options of the parameter estimation method, containing:
 \itemize{
-\item \code{out_dir} Directory path where to write the optimization results (optional, default to \code{getwd()})
 \item \code{ranseed} Set random seed so that each execution of estim_param give the same
 results when using the same seed. If you want randomization, set it to NULL,
 otherwise set it to a number of your choice (e.g. 1234) (optional, default to NULL, which means random seed)
 \item specific options depending on the method used. Click on the links to see examples with the \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html}{simplex}
 and \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html}{DreamZS} methods.
-\item \code{path_results} \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} \code{path_results} is no longer supported, use \code{out_dir} instead.
+\item \code{out_dir} \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Definition of \code{out_dir} in \code{optim_options} is no longer supported, use the new argument \code{out_dir} of \code{estim_param} instead.
 }}
 
 \item{param_info}{Information on the parameters to estimate.
@@ -42,9 +41,11 @@ for an example),
 }}
 
 \item{optim_results}{Results list returned by bayesian method wrappers}
+
+\item{out_dir}{Path to the directory where the optimization results will be written. (optional, default to \code{getwd()})}
 }
 \value{
-Save plots in optim_options$path_results.
+Save plots in out_dir.
 }
 \description{
 Generate plots for bayesian methods

@@ -5,9 +5,11 @@
 \title{Save the results of the Forward Selection algorithm proposed in
 AgMIP calibration phaseIII protocol}
 \usage{
-save_results_FwdRegAgMIP(param_selection_steps, path_results)
+save_results_FwdRegAgMIP(res, param_selection_steps, path_results)
 }
 \arguments{
+\item{res}{Results list returned by parameter estimation method wrappers}
+
 \item{param_selection_steps}{A tibble summarizing the results of the previous
 parameter estimation steps as returned by the previous call to this function,
 NULL if it is the first step.}

@@ -13,7 +13,7 @@ post_treat_FwdRegAgMIP(
 )
 }
 \arguments{
-\item{optim_results}{Results list returned by frequentist method wrappers}
+\item{optim_results}{Results list returned by parameter estimation method wrappers}
 
 \item{crit_options}{List containing several arguments given to \code{estim_param}
 function: \code{param_names}, \code{obs_list}, \code{crit_function}, \code{model_function},

@@ -24,7 +24,8 @@ estim_param(
   info_level = 1,
   info_crit_func = list(CroptimizR::BIC, CroptimizR::AICc, CroptimizR::AIC),
   weight = NULL,
-  step = NULL
+  step = NULL,
+  out_dir = getwd()
 )
 }
 \arguments{
@@ -53,13 +54,12 @@ for a brief description and references on the available methods.}
 
 \item{optim_options}{List of options of the parameter estimation method, containing:
 \itemize{
-\item \code{out_dir} Directory path where to write the optimization results (optional, default to \code{getwd()})
 \item \code{ranseed} Set random seed so that each execution of estim_param give the same
 results when using the same seed. If you want randomization, set it to NULL,
 otherwise set it to a number of your choice (e.g. 1234) (optional, default to NULL, which means random seed)
 \item specific options depending on the method used. Click on the links to see examples with the \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html}{simplex}
 and \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html}{DreamZS} methods.
-\item \code{path_results} \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} \code{path_results} is no longer supported, use \code{out_dir} instead.
+\item \code{out_dir} \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Definition of \code{out_dir} in \code{optim_options} is no longer supported, use the new argument \code{out_dir} of \code{estim_param} instead.
 }}
 
 \item{param_info}{Information on the parameters to estimate.
@@ -155,6 +155,8 @@ for the weights for the given variable or a vector of values of length the lengt
 
 \item{step}{(optional) List that describes the steps of the parameter estimation process (see details section).
 If \code{NULL}, a single default step will be created using the \code{estim_param} arguments}
+
+\item{out_dir}{Path to the directory where the optimization results will be written. (optional, default to \code{getwd()})}
 }
 \value{
 prints, graphs and a list containing the results of the parameter estimation,
