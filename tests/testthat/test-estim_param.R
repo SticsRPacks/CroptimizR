@@ -151,7 +151,7 @@ test_that("estim_param 1 step default criterion", {
 
   optim_options <- list(
     nb_rep = 5, maxeval = 100, xtol_rel = 1e-2,
-    out_dir = tempdir(), ranseed = 1234
+    ranseed = 1234
   )
 
   res <- estim_param(
@@ -182,7 +182,7 @@ test_that("estim_param 1 step default criterion", {
 test_that("estim_param 2 steps crit_ols", {
   optim_options <- list(
     nb_rep = 5, maxeval = 100, xtol_rel = 1e-2,
-    out_dir = tempdir(), ranseed = 1234
+    ranseed = 1234
   )
   param_info <- list(
     rB = list(lb = 0, ub = 1, default = 0.1),
@@ -207,7 +207,8 @@ test_that("estim_param 2 steps crit_ols", {
         param = c("h"),
         var = c("yield")
       )
-    )
+    ),
+    out_dir = tempdir()
   )
 
   # Load results from step 1
@@ -241,7 +242,7 @@ test_that("estim_param 2 steps crit_ols", {
 test_that("estim_param 2 steps without param selection", {
   optim_options <- list(
     nb_rep = 5, maxeval = 100, xtol_rel = 1e-2,
-    out_dir = tempdir(), ranseed = 1234
+    ranseed = 1234
   )
   param_info <- list(
     rB = list(lb = 0, ub = 1, default = 0.1),
@@ -265,7 +266,8 @@ test_that("estim_param 2 steps without param selection", {
         param = c("h"),
         var = c("yield")
       )
-    )
+    ),
+    out_dir = tempdir()
   )
 
   expect_equal(res_final$final_values[["rB"]],
@@ -278,7 +280,7 @@ test_that("estim_param 2 steps without param selection", {
 test_that("estim_param 1 steps with param selection", {
   optim_options <- list(
     nb_rep = 5, maxeval = 100, xtol_rel = 1e-2,
-    out_dir = tempdir(), ranseed = 1234
+    ranseed = 1234
   )
   param_info <- list(
     rB = list(lb = 0, ub = 1, default = 0.1),
@@ -295,7 +297,8 @@ test_that("estim_param 1 steps with param selection", {
     param_info = param_info,
     candidate_param = c("Bmax"),
     var = "biomass",
-    forced_param_values = forced_param_values
+    forced_param_values = forced_param_values,
+    out_dir = tempdir()
   )
 
   expect_equal(res_final$final_values[["rB"]],

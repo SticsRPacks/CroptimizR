@@ -24,13 +24,12 @@
 #' for a brief description and references on the available methods.
 #'
 #' @param optim_options List of options of the parameter estimation method, containing:
-#'   - `out_dir` Directory path where to write the optimization results (optional, default to `getwd()`)
 #'   - `ranseed` Set random seed so that each execution of estim_param give the same
 #'   results when using the same seed. If you want randomization, set it to NULL,
 #'   otherwise set it to a number of your choice (e.g. 1234) (optional, default to NULL, which means random seed)
 #'   - specific options depending on the method used. Click on the links to see examples with the [simplex](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html)
 #' and [DreamZS](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html) methods.
-#'   - `path_results` `r lifecycle::badge("deprecated")` `path_results` is no longer supported, use `out_dir` instead.
+#'   - `out_dir` `r lifecycle::badge("deprecated")` Definition of `out_dir` in `optim_options` is no longer supported, use the new argument `out_dir` of `estim_param` instead.
 #'
 #' @param param_info Information on the parameters to estimate.
 #' Either
@@ -120,6 +119,8 @@
 #' @param step (optional) List that describes the steps of the parameter estimation process (see details section).
 #' If `NULL`, a single default step will be created using the `estim_param` arguments
 #'
+#' @param out_dir Path to the directory where the optimization results will be written. (optional, default to `getwd()`)
+
 #' @details
 #'   In CroptimizR, parameter estimation is based on the comparison between the values
 #'   of the observed and simulated variables at corresponding dates. Only the situations,
@@ -248,13 +249,16 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
                           CroptimizR::AIC
                         ),
                         weight = NULL,
-                        step = NULL) {
+                        step = NULL,
+                        out_dir = getwd()) {
   # Managing parameter names changes between versions:
-  if (rlang::has_name(optim_options, "path_results")) {
-    lifecycle::deprecate_warn("0.5.0", "estim_param(optim_options = 'is deprecated, use `out_dir` instead of `path_results`')")
-  } else if (rlang::has_name(optim_options, "out_dir")) {
-    # Note: we add a test here again because it is potentially never given
-    optim_options$path_results <- optim_options$out_dir # to remove when we update inside the function
+  if (rlang::has_name(optim_options, "out_dir")) {
+    lifecycle::deprecate_warn(
+      when = "1.0.0",
+      what = "optim_options(out_dir)",
+      details = "Using `out_dir` inside `optim_options` is deprecated. Please use the top-level `out_dir` argument of `estim_param()`."
+    )
+    out_dir <- optim_options$out_dir
   }
 
   # Initialize res
@@ -270,14 +274,12 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
   )
   .croptEnv$total_eval_count <- 0
 
-  path_results_ORI <- getwd()
-
   # Remove CroptimizR environment before exiting and save stored results (even if the process crashes)
   on.exit({
     if (exists(".croptEnv")) {
       rm(".croptEnv")
     }
-    save(res, file = file.path(path_results_ORI, "optim_results.Rdata"))
+    save(res, file = file.path(out_dir, "optim_results.Rdata"))
   })
 
   # Complete step and validate it
@@ -310,14 +312,12 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
 
   # Loop over the different steps
   for (istep in 1:nb_steps) {
-    path_results_ORI <- step[[istep]]$optim_options$path_results
-
     if (nb_steps > 1) {
-      path_results_step <- file.path(
-        path_results_ORI, paste0("step", istep)
+      out_dir_cur_step <- file.path(
+        out_dir, paste0("step", istep)
       )
     } else {
-      path_results_step <- path_results_ORI
+      out_dir_cur_step <- out_dir
     }
 
     # Filter observations if necessary
@@ -404,18 +404,18 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
         step[[istep]]$optim_options$nb_rep <- init_values_nb
       }
 
-      ## Redefine path_result in case of several parameter selection steps
+      ## Redefine output directory path in case of several parameter selection steps
       ## (results are stored in param_select_step_* sub-directories of the result folder corresp. to the current step)
       if (param_selection_activated) {
-        path_results <- file.path(
-          path_results_step,
+        out_dir_cur_optim <- file.path(
+          out_dir_cur_step,
           paste0("param_select_step", count)
         )
       } else {
-        path_results <- path_results_step
+        out_dir_cur_optim <- out_dir_cur_step
       }
-      if (!dir.exists(path_results)) dir.create(path_results, recursive = TRUE)
-      step[[istep]]$optim_options$path_results <- path_results
+      if (!dir.exists(out_dir_cur_optim)) dir.create(out_dir_cur_optim, recursive = TRUE)
+      step[[istep]]$optim_options$out_dir_cur_optim <- out_dir_cur_optim
 
       crit_options <- list(
         param_names = crt_candidates,
@@ -428,7 +428,7 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
         transform_obs = step[[istep]]$transform_obs,
         transform_sim = step[[istep]]$transform_sim,
         satisfy_par_const = step[[istep]]$satisfy_par_const,
-        path_results = step[[istep]]$optim_options$path_results,
+        path_results = out_dir_cur_optim,
         var_to_simulate = var_to_simulate,
         forced_param_values = forced_param_values_cur,
         info_level = step[[istep]]$info_level,
@@ -483,11 +483,11 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
       cat("----------------------\n\n")
 
       summary_FwdRegAgMIP(
-        param_selection_steps, step[[istep]]$info_crit_list, path_results_step,
+        param_selection_steps, step[[istep]]$info_crit_list, out_dir_cur_step,
         res
       )
       res[[istep]]$param_selection_steps <- param_selection_steps
-      save_results_FwdRegAgMIP(res[[istep]], param_selection_steps, path_results_step)
+      save_results_FwdRegAgMIP(res[[istep]], param_selection_steps, out_dir_cur_step)
     }
 
     # Gather estimated values in a single vector for next steps
@@ -503,7 +503,7 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
     cat("----------------------\n")
 
     res <- post_treat_multi_step(res)
-    summary_multi_step(res, path_results_ORI)
+    summary_multi_step(res, out_dir)
   } else {
     res <- res[[1]]
   }
@@ -592,14 +592,6 @@ fill_step_info <- function(step, mc) {
 #'
 #' @keywords internal
 validate_step <- function(step, istep) {
-  ## optim_options
-  if (is.null(step$optim_options$path_results)) {
-    step$optim_options$path_results <- getwd()
-  }
-  if (!dir.exists(step$optim_options$path_results)) {
-    dir.create(step$optim_options$path_results, recursive = TRUE)
-  }
-
   ## obs_list
   if (!is.obs(step$obs_list)) {
     stop(paste("Step", istep, ": Incorrect format for argument obs_list."))
