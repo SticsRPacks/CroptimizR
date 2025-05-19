@@ -312,9 +312,13 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
   for (istep in 1:nb_steps) {
     path_results_ORI <- step[[istep]]$optim_options$path_results
 
-    path_results_step <- file.path(
-      path_results_ORI, paste0("step", istep)
-    )
+    if (nb_steps > 1) {
+      path_results_step <- file.path(
+        path_results_ORI, paste0("step", istep)
+      )
+    } else {
+      path_results_step <- path_results_ORI
+    }
 
     # Filter observations if necessary
     if (!identical(step[[istep]]$var, NULL)) {
