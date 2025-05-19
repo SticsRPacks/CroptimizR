@@ -401,10 +401,10 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
       }
 
       ## Redefine path_result in case of several parameter selection steps
-      ## (results are stored in results_param_select/step_* sub-directories of optim_options$path_results)
+      ## (results are stored in param_select_step_* sub-directories of the result folder corresp. to the current step)
       if (param_selection_activated) {
         path_results <- file.path(
-          path_results_step, "results_param_select",
+          path_results_step,
           paste0("param_select_step", count)
         )
       } else {
