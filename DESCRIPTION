@@ -71,6 +71,7 @@ Remotes:
     github::hol430/ApsimOnR,
     github::SticsRPacks/CroPlotR@*release,
     github::SticsRPacks/SticsOnR@*release,
+    github::SticsRPacks/SticsRFiles@*release,
 ByteCompile: true
 Encoding: UTF-8
 Language: en-US
