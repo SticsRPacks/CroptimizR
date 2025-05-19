@@ -38,9 +38,6 @@ wrap_optim <- function(optim_options, param_info, crit_options) {
       maxit <- 100
     }
   }
-  if (is.null((path_results <- optim_options$path_results))) {
-    path_results <- getwd()
-  }
 
   # return requested information if only optim_options is given in argument
   if (nargs() == 1 & methods::hasArg(optim_options)) {

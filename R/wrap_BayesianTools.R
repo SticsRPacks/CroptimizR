@@ -21,9 +21,6 @@ wrap_BayesianTools <- function(optim_options, param_info, crit_options) {
   if (!is.numeric(optim_options$startValue)) {
     stop("startValue should be the number of markov chains. Please use param_info$init_values to prescribe initial values for the parameters.")
   }
-  if (is.null((path_results <- optim_options$path_results))) {
-    path_results <- getwd()
-  }
   if (is.null((optim_options$method))) {
     method <- "DREAMzs"
   } else {
@@ -75,7 +72,6 @@ wrap_BayesianTools <- function(optim_options, param_info, crit_options) {
   # Don't pass CroptimizR options to BayesianTools ... this lead to an error ...
   optim_options_BT <- optim_options
   if (!is.null(optim_options$ranseed)) optim_options_BT <- within(optim_options_BT, rm("ranseed"))
-  if (!is.null(optim_options$path_results)) optim_options_BT <- within(optim_options_BT, rm("path_results"))
   if (!is.null(optim_options$out_dir)) optim_options_BT <- within(optim_options_BT, rm("out_dir"))
 
   set.seed(ranseed)

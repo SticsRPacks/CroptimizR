@@ -31,9 +31,6 @@ wrap_nloptr <- function(optim_options, param_info, crit_options) {
   if (is.null((ranseed <- optim_options$ranseed))) {
     ranseed <- NULL
   }
-  if (is.null((path_results <- optim_options$path_results))) {
-    path_results <- getwd()
-  }
   if (!is.null((optim_options$algorithm))) {
     if (toupper(optim_options$algorithm) != "NLOPT_LN_NELDERMEAD") {
       warning("Only NLOPT_LN_NELDERMEAD algorithm is interfaced in CroptimizR for package nloptr.")

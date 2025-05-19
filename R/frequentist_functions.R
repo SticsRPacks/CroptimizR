@@ -6,10 +6,9 @@
 #'
 #' @return Prints results of frequentist methods
 #'
-summary_frequentist <- function(optim_options, param_info, optim_results) {
+summary_frequentist <- function(optim_options, param_info, optim_results, out_dir) {
   param_names <- get_params_names(param_info)
   nb_params <- length(param_names)
-  path_results <- optim_options$path_results
   est_values <- optim_results$est_values
   ind_min_crit <- optim_results$ind_min_crit
   min_crit_value <- optim_results$min_crit_value
@@ -35,8 +34,8 @@ summary_frequentist <- function(optim_options, param_info, optim_results) {
     format(min_crit_value, scientific = FALSE, digits = 2, nsmall = 0)
   ))
   cat(paste(
-    "\nComplementary graphs and results can be found in ",
-    path_results, "\n"
+    "\nComplementary graphs and results can be found in ", out_dir,
+    "\n"
   ))
 }
 
@@ -97,9 +96,8 @@ post_treat_frequentist <- function(optim_options, param_info, optim_results,
 #'
 #' @keywords internal
 #'
-plot_frequentist <- function(optim_options, param_info, optim_results) {
+plot_frequentist <- function(optim_options, param_info, optim_results, out_dir) {
   bounds <- get_params_bounds(param_info)
-  path_results <- optim_options$path_results
   init_values <- optim_results$init_values
   est_values <- optim_results$est_values
   crit_values <- optim_results$crit_values
@@ -110,19 +108,19 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
   tryCatch(
     {
       grDevices::pdf(
-        file = file.path(path_results, "EstimatedVSinit.pdf"),
+        file = file.path(out_dir, "EstimatedVSinit.pdf"),
         width = 9, height = 9
       )
     },
     error = function(cond) {
       filename <- paste0("EstimatedVSinit_new.pdf")
       warning(
-        "Error trying to create ", path_results,
+        "Error trying to create ", out_dir,
         "/EstimatedVSinit.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
         filename
       )
       grDevices::pdf(
-        file = file.path(path_results, filename),
+        file = file.path(out_dir, filename),
         width = 9, height = 9
       )
     }
@@ -162,19 +160,19 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
   tryCatch(
     {
       grDevices::pdf(
-        file = file.path(path_results, "ValuesVSit.pdf"),
+        file = file.path(out_dir, "ValuesVSit.pdf"),
         width = 9, height = 9
       )
     },
     error = function(cond) {
       filename <- paste0("ValuesVSit_new.pdf")
       warning(
-        "Error trying to create ", path_results,
+        "Error trying to create ", out_dir,
         "/ValuesVSit.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
         filename
       )
       grDevices::pdf(
-        file = file.path(path_results, filename),
+        file = file.path(out_dir, filename),
         width = 9, height = 9
       )
     }
@@ -194,19 +192,19 @@ plot_frequentist <- function(optim_options, param_info, optim_results) {
   tryCatch(
     {
       grDevices::pdf(
-        file = file.path(path_results, "ValuesVSit_2D.pdf"),
+        file = file.path(out_dir, "ValuesVSit_2D.pdf"),
         width = 9, height = 9
       )
     },
     error = function(cond) {
       filename <- paste0("ValuesVSit_2D_new.pdf")
       warning(
-        "Error trying to create ", path_results,
+        "Error trying to create ", out_dir,
         "/ValuesVSit_2D.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
         filename
       )
       grDevices::pdf(
-        file = file.path(path_results, filename),
+        file = file.path(out_dir, filename),
         width = 9, height = 9
       )
     }
