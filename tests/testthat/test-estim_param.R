@@ -142,8 +142,8 @@ test_that("Synthetic obs", {
   expect_true(CroptimizR:::is.obs(obs_synth))
 })
 
-# Test estim_param - 1 step, default criterion
-test_that("estim_param 1 step default criterion", {
+# Test estim_param - 1 step, OLS criterion
+test_that("estim_param 1 step OLS criterion", {
   param_info <- list(
     rB = list(lb = 0, ub = 1),
     h = list(lb = 0, ub = 1)
@@ -160,11 +160,13 @@ test_that("estim_param 1 step default criterion", {
     obs_list = obs_synth,
     model_function = toymodel_wrapper,
     model_options = model_options,
+    crit_function = crit_ols,
     optim_options = optim_options,
     param_info = param_info,
     var = c("biomass", "yield"),
     forced_param_values = forced_param_values,
-    situation = c("sit1_2000", "sit1_2001", "sit2_2003")
+    situation = c("sit1_2000", "sit1_2001", "sit2_2003"),
+    out_dir = tempdir()
   )
 
   expect_equal(res$final_values[["rB"]],
