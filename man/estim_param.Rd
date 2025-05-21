@@ -15,7 +15,7 @@ estim_param(
   forced_param_values = NULL,
   candidate_param = NULL,
   situation = NULL,
-  var = NULL,
+  obs_var = NULL,
   transform_var = NULL,
   transform_obs = NULL,
   transform_sim = NULL,
@@ -25,7 +25,8 @@ estim_param(
   info_crit_func = list(CroptimizR::BIC, CroptimizR::AICc, CroptimizR::AIC),
   weight = NULL,
   step = NULL,
-  out_dir = getwd()
+  out_dir = getwd(),
+  var = lifecycle::deprecated()
 )
 }
 \arguments{
@@ -99,8 +100,8 @@ that must only be considered as candidate for parameter estimation (see details 
 \item{situation}{(optional) List of situations to take into account within obs_list.
 situation = NULL means that all situations in obs_list will be used.}
 
-\item{var}{(optional) List of observed variables to take into account within obs_list.
-var = NULL means that all variables in obs_list will be used.}
+\item{obs_var}{(optional) List of observed variables to take into account within obs_list.
+obs_var = NULL means that all variables in obs_list will be used.}
 
 \item{transform_var}{Named vector of functions to apply both on simulated and
 observed variables. \code{transform_var=c(var1=log, var2=sqrt)} will for example
@@ -122,8 +123,8 @@ By default the wrapper is asked to simulate only the observed variables. However
 it may be useful to simulate also other variables, typically when transform_sim
 and/or transform_obs functions are used. Note however that it is
 active only if the model_function used handles this argument.
-If it is the case, and if the var argument is provided, then the list of observations
-used will be restricted to the list of variables given in the var argument,
+If it is the case, and if the obs_var argument is provided, then the list of observations
+used will be restricted to the list of variables given in the obs_var argument,
 plus the ones possibly computed by the transform_sim function.}
 
 \item{info_level}{(optional) Integer that controls the level of information returned and stored
@@ -157,6 +158,9 @@ for the weights for the given variable or a vector of values of length the lengt
 If \code{NULL}, a single default step will be created using the \code{estim_param} arguments}
 
 \item{out_dir}{Path to the directory where the optimization results will be written. (optional, default to \code{getwd()})}
+
+\item{var}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} \code{var} is no
+longer supported, use \code{var_to_simulate} instead.}
 }
 \value{
 prints, graphs and a list containing the results of the parameter estimation,
@@ -247,7 +251,7 @@ different observed variables, different situations, etc.).
 When multiple steps are defined, the parameter values estimated in one step
 are used as fixed values in the subsequent step.
 Each step is a named list containing only the elements that vary between steps.
-\strong{Any argument} of the \code{estim_param} function (e.g., \code{var}, \code{candidate_param} ...)
+\strong{Any argument} of the \code{estim_param} function (e.g., \code{obs_var}, \code{candidate_param} ...)
 can be defined within a step. Note that the element \code{param} can be used to define
 the list of parameters to estimate at a given step.
 
@@ -261,11 +265,11 @@ Suppose the \code{step} argument is defined as follows:
 step[[1]] <- list(
   param = c("p1"),
   candidate_param = c("p2"),
-  var = c("var1")
+  obs_var = c("var1")
 )
 step[[2]] <- list(
   param = c("p3"),
-  var = c("var2")
+  obs_var = c("var2")
 )
 }\if{html}{\out{</div>}}
 

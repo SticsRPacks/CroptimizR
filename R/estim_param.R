@@ -64,8 +64,8 @@
 #' @param situation (optional) List of situations to take into account within obs_list.
 #' situation = NULL means that all situations in obs_list will be used.
 #'
-#' @param var (optional) List of observed variables to take into account within obs_list.
-#' var = NULL means that all variables in obs_list will be used.
+#' @param obs_var (optional) List of observed variables to take into account within obs_list.
+#' obs_var = NULL means that all variables in obs_list will be used.
 #'
 #' @param transform_var Named vector of functions to apply both on simulated and
 #' observed variables. `transform_var=c(var1=log, var2=sqrt)` will for example
@@ -87,8 +87,8 @@
 #' it may be useful to simulate also other variables, typically when transform_sim
 #' and/or transform_obs functions are used. Note however that it is
 #' active only if the model_function used handles this argument.
-#' If it is the case, and if the var argument is provided, then the list of observations
-#' used will be restricted to the list of variables given in the var argument,
+#' If it is the case, and if the obs_var argument is provided, then the list of observations
+#' used will be restricted to the list of variables given in the obs_var argument,
 #' plus the ones possibly computed by the transform_sim function.
 #'
 #' @param info_level (optional) Integer that controls the level of information returned and stored
@@ -120,7 +120,10 @@
 #' If `NULL`, a single default step will be created using the `estim_param` arguments
 #'
 #' @param out_dir Path to the directory where the optimization results will be written. (optional, default to `getwd()`)
-
+#'
+#' @param var `r lifecycle::badge("deprecated")` `var` is no
+#'   longer supported, use `var_to_simulate` instead.
+#'
 #' @details
 #'   In CroptimizR, parameter estimation is based on the comparison between the values
 #'   of the observed and simulated variables at corresponding dates. Only the situations,
@@ -194,7 +197,7 @@
 #'   When multiple steps are defined, the parameter values estimated in one step
 #'   are used as fixed values in the subsequent step.
 #'   Each step is a named list containing only the elements that vary between steps.
-#'   **Any argument** of the `estim_param` function (e.g., `var`, `candidate_param` ...)
+#'   **Any argument** of the `estim_param` function (e.g., `obs_var`, `candidate_param` ...)
 #'   can be defined within a step. Note that the element `param` can be used to define
 #'   the list of parameters to estimate at a given step.
 #'
@@ -208,11 +211,11 @@
 #'   step[[1]] <- list(
 #'     param = c("p1"),
 #'     candidate_param = c("p2"),
-#'     var = c("var1")
+#'     obs_var = c("var1")
 #'   )
 #'   step[[2]] <- list(
 #'     param = c("p3"),
-#'     var = c("var2")
+#'     obs_var = c("var2")
 #'   )
 #'  ```
 #'
@@ -241,7 +244,7 @@
 estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
                         model_options = NULL, optim_method = "nloptr.simplex",
                         optim_options = NULL, param_info, forced_param_values = NULL,
-                        candidate_param = NULL, situation = NULL, var = NULL, transform_var = NULL, transform_obs = NULL,
+                        candidate_param = NULL, situation = NULL, obs_var = NULL, transform_var = NULL, transform_obs = NULL,
                         transform_sim = NULL, satisfy_par_const = NULL,
                         var_to_simulate = NULL, info_level = 1,
                         info_crit_func = list(
@@ -250,7 +253,8 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
                         ),
                         weight = NULL,
                         step = NULL,
-                        out_dir = getwd()) {
+                        out_dir = getwd(),
+                        var = lifecycle::deprecated()) {
   # Managing parameter names changes between versions:
   if (rlang::has_name(optim_options, "out_dir")) {
     lifecycle::deprecate_warn(
@@ -259,6 +263,10 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
       details = "Using `out_dir` inside `optim_options` is deprecated. Please use the top-level `out_dir` argument of `estim_param()`."
     )
     out_dir <- optim_options$out_dir
+  }
+  if (lifecycle::is_present(var)) {
+    lifecycle::deprecate_warn("1.0.0", "estim_param(var)", "estim_param(var_to_simulate)")
+    var_to_simulate <- var
   }
 
   # Initialize res
@@ -321,13 +329,13 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
     }
 
     # Filter observations if necessary
-    if (!identical(step[[istep]]$var, NULL)) {
+    if (!identical(step[[istep]][["obs_var"]], NULL)) {
       step[[istep]]$obs_list <- filter_obs(step[[istep]]$obs_list,
-        var = step[[istep]]$var,
+        var = step[[istep]]$obs_var,
         include = TRUE
       )
     }
-    if (!identical(step[[istep]]$situation, NULL)) {
+    if (!identical(step[[istep]][["situation"]], NULL)) {
       step[[istep]]$obs_list <- filter_obs(step[[istep]]$obs_list,
         situation = step[[istep]]$situation,
         include = TRUE

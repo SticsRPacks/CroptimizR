@@ -163,7 +163,7 @@ test_that("estim_param 1 step OLS criterion", {
     crit_function = crit_ols,
     optim_options = optim_options,
     param_info = param_info,
-    var = c("biomass", "yield"),
+    obs_var = c("biomass", "yield"),
     forced_param_values = forced_param_values,
     situation = c("sit1_2000", "sit1_2001", "sit2_2003"),
     out_dir = tempdir()
@@ -206,11 +206,11 @@ test_that("estim_param 2 steps crit_ols", {
       list(
         param = c("rB"),
         candidate_param = c("Bmax"),
-        var = c("biomass")
+        obs_var = c("biomass")
       ),
       list(
         param = c("h"),
-        var = c("yield")
+        obs_var = c("yield")
       )
     ),
     out_dir = tempdir()
@@ -267,11 +267,11 @@ test_that("estim_param 2 steps without param selection", {
     step = list(
       list(
         param = c("rB"),
-        var = c("biomass")
+        obs_var = c("biomass")
       ),
       list(
         param = c("h"),
-        var = c("yield")
+        obs_var = c("yield")
       )
     ),
     out_dir = tempdir()
@@ -303,7 +303,7 @@ test_that("estim_param 1 steps with param selection", {
     optim_options = optim_options,
     param_info = param_info,
     candidate_param = c("Bmax"),
-    var = "biomass",
+    obs_var = "biomass",
     forced_param_values = forced_param_values,
     out_dir = tempdir()
   )
