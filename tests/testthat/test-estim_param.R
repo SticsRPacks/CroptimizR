@@ -290,8 +290,8 @@ test_that("estim_param 1 steps with param selection", {
     ranseed = 1234
   )
   param_info <- list(
-    rB = list(lb = 0, ub = 1, default = 0.1),
-    Bmax = list(lb = 5, ub = 15, default = 7)
+    rB = list(lb = 0, ub = 1),
+    Bmax = list(lb = 5, ub = 15)
   )
   forced_param_values <- c(h = 0.55)
 
@@ -312,4 +312,28 @@ test_that("estim_param 1 steps with param selection", {
     param_true_values[["rB"]],
     tolerance = param_true_values[["rB"]] * 1e-2
   )
+})
+
+
+# Test check step
+test_that("Test step check", {
+  optim_options <- list(
+    nb_rep = 5, xtol_rel = 5e-3,
+    ranseed = 1234
+  )
+  param_info <- list(
+    rB = list(lb = 0, ub = 1, default = 0.1)
+  )
+
+  expect_error(estim_param(
+    obs_list = obs_synth,
+    crit_function = crit_ols,
+    model_function = toymodel_wrapper,
+    model_options = model_options,
+    optim_options = optim_options,
+    param_info = param_info,
+    candidate_param = c("Bmax"),
+    obs_var = "biomass",
+    out_dir = tempdir()
+  ), regexp = "candidate parameter")
 })
