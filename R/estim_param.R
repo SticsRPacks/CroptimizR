@@ -688,7 +688,14 @@ validate_step <- function(step, istep) {
     stop(paste("Step", istep, ": The argument candidate_param can only be used if info_crit_list is provided and compatible with crit_function."))
   }
   if (!all(step$candidate_param %in% get_params_names(step$param_info, short_list = TRUE))) {
-    stop(paste("Step", istep, ": Parameters included in candidate_param must be defined in param_info."))
+    stop(paste(
+      "Step", istep, ": candidate parameter(s)",
+      paste(setdiff(
+        step$candidate_param,
+        get_params_names(step$param_info, short_list = TRUE)
+      ), collapse = ","),
+      "must be defined in param_info."
+    ))
   }
 
   ## weight
