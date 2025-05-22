@@ -127,7 +127,7 @@ main_crit <- function(param_values, crit_options) {
 
     if (is.na(crit)) {
       filename <- file.path(
-        crit_options$path_results,
+        crit_options$out_dir,
         paste0("debug_crit_NA.Rdata")
       )
       warning(paste(
