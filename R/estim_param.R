@@ -376,7 +376,9 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
       forced_param_values_cur <- forced_param_values_istep
       forced_param_values_cur <- forced_param_values_cur[!names(forced_param_values_cur) %in% crt_candidates]
       cat("\n---------------------\n")
-      cat(paste("Step", istep, "\n"))
+      if (nb_steps > 1) {
+        cat(paste("Step", istep, "\n"))
+      }
       if (param_selection_activated) {
         cat(paste("Parameter automatic selection process: step", count, "\n"))
       }
@@ -423,7 +425,6 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
         out_dir_cur_optim <- out_dir_cur_step
       }
       if (!dir.exists(out_dir_cur_optim)) dir.create(out_dir_cur_optim, recursive = TRUE)
-      step[[istep]]$optim_options$out_dir_cur_optim <- out_dir_cur_optim
 
       crit_options <- list(
         param_names = crt_candidates,
@@ -486,7 +487,9 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
     # Print and store results of parameter estimation steps if parameter selection was activated
     if (param_selection_activated) {
       cat("----------------------\n")
-      cat(paste("Step", istep, "\n"))
+      if (nb_steps > 1) {
+        cat(paste("Step", istep, "\n"))
+      }
       cat("End of parameter selection process\n")
       cat("----------------------\n\n")
 
