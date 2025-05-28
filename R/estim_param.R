@@ -373,7 +373,17 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
         }
       }
       cat(paste("Estimated parameter(s):", paste(crt_candidates, collapse = " "), "\n"))
-      cat(paste("Forced parameter(s):", paste(names(forced_param_values_cur), forced_param_values_cur, sep = "=", collapse = ", ")), "\n")
+      cat(paste("Forced parameter(s):", paste(names(forced_param_values_cur), format(
+        forced_param_values_cur,
+        scientific = FALSE,
+        digits = 2, nsmall = 2
+      ), sep = "=", collapse = ", ")), "\n")
+      cat(paste("Observed variable(s) used:", unique(
+        unlist(lapply(
+          step[[istep]]$obs_list,
+          function(x) setdiff(names(x), c("Date"))
+        ))
+      ), "\n"))
       cat("---------------------\n")
 
 

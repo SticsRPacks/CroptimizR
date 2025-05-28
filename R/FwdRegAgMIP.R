@@ -37,10 +37,17 @@ select_param_FwdRegAgMIP <- function(oblig_param_list, add_param_list, crt_list,
                                      info_crit_values) {
   res <- list()
   res$next_candidates <- NULL
+  crt_info_crit <- tail(info_crit_values, 1)
   if (length(info_crit_values) > 1) {
-    crt_info_crit <- tail(info_crit_values, 1)
     prev_info_crit <- head(info_crit_values, length(info_crit_values) - 1)
   }
+
+  cat(paste(
+    "\nCurrent value of the information criterion:",
+    format(crt_info_crit,
+      scientific = FALSE, digits = 2, nsmall = 0
+    ), "\n"
+  ))
 
   if (is.null(add_param_list)) {
     res$selected <- TRUE
@@ -53,11 +60,11 @@ select_param_FwdRegAgMIP <- function(oblig_param_list, add_param_list, crt_list,
     } else {
       res$selected <- FALSE
     }
-    return(res)
   } else if (length(crt_list) == length(oblig_param_list)) {
     # we only tested so far the obligatory parameters
     res$selected <- TRUE
     res$next_candidates <- c(oblig_param_list, add_param_list[1])
+    return(res)
   } else {
     if (crt_info_crit < min(prev_info_crit)) {
       # Add the next candidate to the list
@@ -74,6 +81,15 @@ select_param_FwdRegAgMIP <- function(oblig_param_list, add_param_list, crt_list,
         add_param_list[which(add_param_list == crt_list[length(crt_list)]) + 1]
       )
     }
+  }
+
+  cat(paste(
+    "Candidate parameter", crt_list[length(crt_list)]
+  ))
+  if (res$selected) {
+    cat(" is selected\n")
+  } else {
+    cat(" is rejected\n")
   }
 
   return(res)
@@ -162,11 +178,6 @@ post_treat_FwdRegAgMIP <- function(optim_results, crit_options, crt_list,
 #'
 summary_FwdRegAgMIP <- function(param_selection_steps,
                                 info_crit_list, path_results, optim_results) {
-  cat(paste(
-    "\nList of observed variables used:",
-    paste(optim_results$obs_var_list, collapse = ", "), "\n"
-  ))
-
   ind_min_infocrit <-
     which.min(param_selection_steps[[info_crit_list[[1]]()$name]])
   cat("Selected step:", ind_min_infocrit, "\n")
