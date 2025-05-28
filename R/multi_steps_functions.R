@@ -52,8 +52,7 @@ summary_multi_step <- function(results_multi_step, path_results) {
 #' @return List of estimated and forced parameters values
 #'
 post_treat_multi_step <- function(optim_results_list) {
-  # Put res into element step of res
-  res <- list(step = optim_results_list)
+  res <- list()
 
   # Concatenate the list of estimated values
   res$final_values <- unlist(lapply(optim_results_list, function(x) x$final_values))
