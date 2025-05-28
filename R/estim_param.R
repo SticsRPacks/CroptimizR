@@ -328,20 +328,6 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
       out_dir_cur_step <- out_dir
     }
 
-    # Filter observations if necessary
-    if (!identical(step[[istep]][["obs_var"]], NULL)) {
-      step[[istep]]$obs_list <- filter_obs(step[[istep]]$obs_list,
-        var = step[[istep]]$obs_var,
-        include = TRUE
-      )
-    }
-    if (!identical(step[[istep]][["situation"]], NULL)) {
-      step[[istep]]$obs_list <- filter_obs(step[[istep]]$obs_list,
-        situation = step[[istep]]$situation,
-        include = TRUE
-      )
-    }
-
     # Add already estimated parameters values and default values of non-estimated ones to forced_param_values
     default_values <- get_params_default(step[[istep]]$param_info)
     forced_param_values_istep <- c(
@@ -381,9 +367,13 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
       }
       if (param_selection_activated) {
         cat(paste("Parameter automatic selection process: step", count, "\n"))
+        cat(paste("Major parameter(s):", paste(oblig_param_list, collapse = " "), "\n"))
+        if (length(crt_candidates) > length(oblig_param_list)) {
+          cat(paste("Current candidate parameter evaluated: ", crt_candidates[length(crt_candidates)], "\n"))
+        }
       }
-      cat(paste("Estimated parameters:", paste(crt_candidates, collapse = " "), "\n"))
-      cat(paste("Forced parameters:", paste(names(forced_param_values_cur), forced_param_values_cur, sep = "=", collapse = ", ")), "\n")
+      cat(paste("Estimated parameter(s):", paste(crt_candidates, collapse = " "), "\n"))
+      cat(paste("Forced parameter(s):", paste(names(forced_param_values_cur), forced_param_values_cur, sep = "=", collapse = ", ")), "\n")
       cat("---------------------\n")
 
 
@@ -587,8 +577,24 @@ fill_step_info <- function(step, mc) {
       }
     }
     if (!"param" %in% names(x)) x$param <- setdiff(get_params_names(x$param_info, short_list = TRUE), x$candidate_param)
+
+    # Filter observations if necessary
+    if (!identical(x[["obs_var"]], NULL)) {
+      x$obs_list <- filter_obs(x$obs_list,
+        var = x$obs_var,
+        include = TRUE
+      )
+    }
+    if (!identical(x[["situation"]], NULL)) {
+      x$obs_list <- filter_obs(x$obs_list,
+        situation = x$situation,
+        include = TRUE
+      )
+    }
+
     return(x)
   })
+
   return(step)
 }
 

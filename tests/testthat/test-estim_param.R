@@ -316,7 +316,7 @@ test_that("estim_param 1 steps with param selection", {
 
 
 # Test check step
-test_that("Test step check", {
+test_that("Test step check undefined candidate", {
   optim_options <- list(
     nb_rep = 5, xtol_rel = 1e-2,
     ranseed = 1234
@@ -336,4 +336,24 @@ test_that("Test step check", {
     obs_var = "biomass",
     out_dir = tempdir()
   ), regexp = "candidate parameter")
+})
+test_that("Test step check undefined observed variable", {
+  optim_options <- list(
+    nb_rep = 5, xtol_rel = 1e-2,
+    ranseed = 1234
+  )
+  param_info <- list(
+    rB = list(lb = 0, ub = 1, default = 0.1)
+  )
+
+  expect_error(estim_param(
+    obs_list = obs_synth,
+    crit_function = crit_ols,
+    model_function = toymodel_wrapper,
+    model_options = model_options,
+    optim_options = optim_options,
+    param_info = param_info,
+    obs_var = "LAI",
+    out_dir = tempdir()
+  ), regexp = "")
 })
