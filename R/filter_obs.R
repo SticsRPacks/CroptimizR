@@ -66,16 +66,20 @@ filter_obs <- function(obs_list, var = NULL, situation = NULL, dates = NULL,
   if (!is.null(sit_names)) {
     tmp <- intersect(sit_names, names(obs_list))
     if (is.null(tmp) || !setequal(tmp, sit_names)) {
-      warning("Argument sit_names contains situations that are not included in obs_list. \n obs_list contains: ", paste(names(obs_list), collapse = " "))
+      warning("Situation(s) ", paste(setdiff(sit_names, tmp), collapse = ", "), " is/are not included in obs_list. \n obs_list contains: ", paste(names(obs_list), collapse = " "))
       sit_names <- tmp
     }
     ## Filter
     if (include) {
       obs_list <- obs_list[sit_names]
+      if (length(obs_list) == 0) {
+        warning("No situation to keep in the list.")
+        return(NULL)
+      }
     } else {
       obs_list[sit_names] <- NULL
       if (length(obs_list) == 0) {
-        warning("All situations have been excluded from the list")
+        warning("All situations have been excluded from the list.")
         return(NULL)
       }
     }
@@ -90,16 +94,17 @@ filter_obs <- function(obs_list, var = NULL, situation = NULL, dates = NULL,
   if (!is.null(var_names)) {
     tmp <- intersect(var_names, names(df))
     if (is.null(tmp) || !setequal(tmp, var_names)) {
-      warning("Argument var_names contains variables that are not included in obs_list. \n obs_list contains: ", paste(colnames(df), collapse = " "))
-      if (length(tmp) == 0) {
-        return(list())
-      } # If variable does not exist at all, return empty df
+      warning("Variable(s) ", paste(setdiff(var_names, tmp), collapse = ", "), " is/are not included in obs_list. \n obs_list contains: ", paste(colnames(df), collapse = " "))
       var_names <- tmp
     }
     ## Filter
     if (include) {
       keep <- c("id", "Date", intersect("Plant", names(df)))
       df <- df[, c(keep, var_names)]
+      if (ncol(df) == 2) {
+        warning("No variable to keep in the list.")
+        return(NULL)
+      }
     } else {
       df[var_names] <- NULL
       if (ncol(df) == 2) {
@@ -114,15 +119,22 @@ filter_obs <- function(obs_list, var = NULL, situation = NULL, dates = NULL,
   if (!is.null(dates)) {
     included <- sapply(dates, function(x) any(df$Date == x))
     if (!all(c = included)) {
-      warning("Argument dates contains dates that are not included in obs_list: ", paste(dates[!included], collapse = " "))
+      warning("Date(s) ", paste(dates[!included], collapse = ", "), " is/are not included in obs_list.")
       dates <- dates[included]
     }
     ## Filter
     if (include) {
-      df <- dplyr::filter(df, .data$Date == dates)
+      if (length(dates) > 0) {
+        df <- dplyr::filter(df, .data$Date == dates)
+      } else {
+        warning("No date to keep in the list.")
+        return(NULL)
+      }
     } else {
-      df <- dplyr::filter(df, .data$Date != dates)
-      if (nrow(df) == 0) {
+      if (length(dates) > 0) {
+        df <- dplyr::filter(df, .data$Date != dates)
+      }
+      if ((nrow(df) == 0) || (length(dates) == 0)) {
         warning("All dates have been excluded from the list.")
         return(NULL)
       }
@@ -152,13 +164,9 @@ filter_obs <- function(obs_list, var = NULL, situation = NULL, dates = NULL,
   obs_list <- lapply(
     obs_list,
     function(x) {
-      select(x, !.data$id & where(~ !all(is.na(.x))))
+      select(x, !.data$id & tidyselect::where(~ !all(is.na(.x))))
     }
   )
 
   return(obs_list)
 }
-
-# Remove when tidyselect exports where() (very soon),
-# see https://github.com/r-lib/tidyselect/issues/244
-utils::globalVariables("where")

@@ -31,6 +31,18 @@ test_that("filter_obs filters-out correctly", {
     filter_obs(obs_list, var = c("var1")),
     "No observations found in situation\\(s\\) sit2",
   )
+  expect_warning(
+    filter_obs(obs_list, var = c("toto", "titi")),
+    "Variable\\(s\\) toto, titi is/are not included in obs_list."
+  )
+  expect_warning(
+    filter_obs(obs_list, sit_names = c("toto", "titi")),
+    "Situation\\(s\\) toto, titi is/are not included in obs_list."
+  )
+  expect_warning(
+    filter_obs(obs_list, dates = c("2032-11-30", "2032-12-5")),
+    "Date\\(s\\)"
+  )
   expect_equal(
     suppressWarnings(filter_obs(obs_list, var = c("var2"))),
     list(sit1 = obs_list[[1]][, 1:2])
@@ -65,4 +77,22 @@ test_that("filter_obs filters-in correctly", {
     filter_obs(obs_list, var = c("var2"), include = TRUE),
     "No observations found in situation\\(s\\) sit2",
   )
+
+  expect_warning(
+    res <- filter_obs(obs_list, var = c("toto", "titi"), include = TRUE),
+    "Variable\\(s\\) toto, titi is/are not included in obs_list."
+  )
+  expect_null(res)
+
+  expect_warning(
+    res <- filter_obs(obs_list, sit_names = c("toto", "titi"), include = TRUE),
+    "Situation\\(s\\) toto, titi is/are not included in obs_list."
+  )
+  expect_null(res)
+
+  expect_warning(
+    res <- filter_obs(obs_list, dates = c("2032-11-30", "2032-12-5"), include = TRUE),
+    "Date\\(s\\)"
+  )
+  expect_null(res)
 })
