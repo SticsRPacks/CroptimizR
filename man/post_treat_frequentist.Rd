@@ -22,7 +22,7 @@ Either
 a list containing:
 \itemize{
 \item \code{ub} and \code{lb}, named vectors of upper and lower bounds (-Inf and Inf can be used if init_values is provided),
-\item \code{default}, named vectors of default values (optional, corresponding parameters are set to their default value when the parameter is part of the \code{candidate_param} list and when it is not estimated ; the default values are also used as first initial values when the parameters are estimated)
+\item \code{default}, named vectors of default values (optional, corresponding parameters are set to these values when the parameter is part of the \code{candidate_param} list and when it is not estimated ; these values are also used as first initial values when the parameters are estimated)
 \item \code{init_values}, a data.frame containing initial
 values to test for the parameters (optional, if not provided, or if less values
 than number of repetitions of the minimization are provided, the, or part

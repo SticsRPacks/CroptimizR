@@ -18,6 +18,7 @@
 #' @export
 #'
 #' @importFrom rlang .data
+#' @importFrom dplyr where
 #'
 #' @examples
 #'
@@ -164,7 +165,7 @@ filter_obs <- function(obs_list, var = NULL, situation = NULL, dates = NULL,
   obs_list <- lapply(
     obs_list,
     function(x) {
-      select(x, !.data$id & tidyselect::where(~ !all(is.na(.x))))
+      select(x, !.data$id & dplyr::where(~ !all(is.na(.x))))
     }
   )
 
