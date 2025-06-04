@@ -47,7 +47,6 @@ Imports:
     purrr,
     rlang,
     rstudioapi,
-    stringr,
     tibble,
     tictoc,
     SticsRFiles (>= 1.1.3)
@@ -76,4 +75,4 @@ Encoding: UTF-8
 Language: en-US
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.3.1
