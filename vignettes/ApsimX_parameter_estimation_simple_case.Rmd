@@ -71,7 +71,7 @@ if (!require("tidyr")) {
 # DEFINE THE PATH TO THE LOCALLY INSTALLED VERSION OF APSIM (should be something
 # like C:/path/to/apsimx/bin/Models.exe on windows, and /usr/local/bin/Models
 # on linux)
-apsimx_path <- "D:\\Home\\sbuis\\Documents\\OUTILS-INFORMATIQUE\\APSIM2021.01.20.5937\\Bin\\Models.exe"
+apsimx_path <- "D:\\Home\\sbuis\\Documents\\OUTILS-INFORMATIQUE\\APSIM2025.04.7734.0\\bin\\Models.exe"
 ```
 
 
