@@ -14,6 +14,8 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 params:
   eval_rmd: FALSE
+  eval_auto_vignette: TRUE     # automatic execution of the vignette
+  result_path: "D:/Home/sbuis/Documents/GitHub/CroptimizR/vignettes"
 ---
 
 
