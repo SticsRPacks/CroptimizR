@@ -20,7 +20,6 @@ vignette: >
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(stringr)
 library(dplyr)
 library(tibble)
 library(tidyr)
@@ -428,7 +427,7 @@ laitm_simple_wrapper <- function(param_values = NULL, situation,
 
   for (sit in situation) {
     # Retrieve year, emergence and crop_duration from situation name
-    tmp <- stringr::str_split(sit, "_")
+    tmp <- strsplit(sit, "_")
     year <- as.numeric(tmp[[1]][[1]])
 
     # Check inputs
@@ -586,7 +585,7 @@ laitm_simple_wrapper_v2 <- function(param_values = NULL, situation,
 
   for (sit in situation) {
     # Retrieve year, emergence and crop_duration from situation name
-    tmp <- stringr::str_split(sit, "_")
+    tmp <- strsplit(sit, "_")
     year <- as.numeric(tmp[[1]][[1]])
 
     # Check inputs

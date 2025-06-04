@@ -219,14 +219,14 @@ main_crit <- function(param_values, crit_options) {
     )
     if (!flag_const) {
       crit_type <- crit_function()
-      if (stringr::str_detect(crit_type, "ls")) {
-        return(crit <- Inf)
-      } else if (stringr::str_detect(crit_type, "log-likelihood")) {
-        return(crit <- -Inf)
-      } else if (stringr::str_detect(crit_type, "likelihood")) {
-        return(crit <- 0)
+      if (grepl("ls", crit_type)) {
+        return(Inf)
+      } else if (grepl("log-likelihood", crit_type)) {
+        return(-Inf)
+      } else if (grepl("likelihood", crit_type)) {
+        return(0)
       } else {
-        warning("Unknown type for criterion (argument crit_function of estim_param): contraints on parameters will not be taken into account.")
+        warning(cat("Unknown type returned by crit_function when used without arguments:", crit_type, ". Should be \"ls\", \"log-likelihood\" or \"likelihood\".\n Contraints on parameters will not be taken into account."))
       }
     }
   }
@@ -289,18 +289,18 @@ main_crit <- function(param_values, crit_options) {
       "Error in model simulations for parameters values",
       paste0(param_values, collapse = ",")
     ))
-    return(crit <- NA)
+    return(NA)
   }
   if (is.null(model_results$sim_list) || length(model_results$sim_list) == 0) {
     warning(paste(
       "Model wrapper returned an empty list for parameters values",
       paste0(param_values, collapse = ",")
     ))
-    return(crit <- NA)
+    return(NA)
   }
   if (!is.sim(model_results$sim_list)) {
     warning("Format of results returned by the model wrapper is incorrect!")
-    return(crit <- NA)
+    return(NA)
   }
 
 
@@ -337,15 +337,15 @@ main_crit <- function(param_values, crit_options) {
   if (is.null(model_results) ||
     (!is.null(model_results$error) && model_results$error)) {
     warning("Error in transformation of simulation results.")
-    return(crit <- NA)
+    return(NA)
   }
   if (is.null(model_results$sim_list) || length(model_results$sim_list) == 0) {
     warning("Transformation of simulation results returned an empty list!")
-    return(crit <- NA)
+    return(NA)
   }
   if (!is.sim(model_results$sim_list)) {
     warning("Format of results returned by transformation of model results is incorrect!")
-    return(crit <- NA)
+    return(NA)
   }
 
 
@@ -377,7 +377,7 @@ main_crit <- function(param_values, crit_options) {
   # Check results, return NA if incorrect
   if (is.null(obs_list) || !is.obs(obs_list)) {
     warning("Transformation of observations returned an empty list or a list with an unexpected format.")
-    return(crit <- NA)
+    return(NA)
   }
 
   # Make observations and simulations consistent if possible
@@ -393,13 +393,13 @@ main_crit <- function(param_values, crit_options) {
   )
   if (!is.list(obs_sim_list)) {
     warning("Intersection of simulations and observations is empty (no date and/or variable in common)!")
-    return(crit <- NA)
+    return(NA)
   }
 
   # check presence of Inf/NA in simulated results where obs is not NA
   if (is_sim_inf_or_na(obs_sim_list$sim_list, obs_sim_list$obs_list, param_values)) {
     warning("\nThe optimized criterion is set to NA.\n")
-    return(crit <- NA)
+    return(NA)
   }
 
   # Filter reserved columns that should not be taken into account in the computation of the criterion
