@@ -183,8 +183,6 @@ optim_options$xtol_rel <- 1e-03 # Tolerance criterion between two iterations
 # (threshold for the relative difference of
 # parameter values between the 2 previous
 # iterations)
-optim_options$out_dir <- data_dir # path where to store the results
-# (graph and Rdata)
 optim_options$ranseed <- 1234 # set random seed so that each execution give the
 # same results
 # If you want randomization, don't set it.
@@ -204,11 +202,12 @@ res <- estim_param(
   model_function = stics_wrapper,
   model_options = model_options,
   optim_options = optim_options,
-  param_info = param_info
+  param_info = param_info,
+  out_dir = data_dir # path where to store the results
 )
 ```
 
-The `estim_param` function returns a list which is also stored in the optim_results.Rdata file of the `optim_options$out_dir` folder. 
+The `estim_param` function returns a list which is also stored in the optim_results.Rdata file of the `out_dir` folder. 
 
 This list contains different information depending on the method used. For the Nelder-Mead simplex method it includes among others:
 
@@ -282,7 +281,7 @@ load(file.path("ResultsSimpleCase", "optim_results.Rdata"))
 print(res$nlo[[res$ind_min_crit]])
 ```
 
-This data is also stored in the `optim_options$out_dir` folder (file optim_results.Rdata) along with a set of pdf files:
+This data is also stored in the `out_dir` folder (file optim_results.Rdata) along with a set of pdf files:
 
 * the EstimatedVSinit.pdf file contains the following figures:
 
@@ -368,7 +367,7 @@ p <- grid.arrange(
 # Save the graph
 ggsave(
   file.path(
-    optim_options$out_dir,
+    data_dir,
     paste0("sim_obs_plots", ".png")
   ),
   plot = p
@@ -387,17 +386,17 @@ knitr::include_graphics("ResultsSimpleCase/sim_obs_plots.png")
 ```{r move_results, eval=params$eval_manual_vignette, include=FALSE}
 # Move the files produced since the temp. folder is removed after Rmd execution
 file.copy(
-  file.path(optim_options$out_dir, "EstimatedVSinit.pdf"),
+  file.path(data_dir, "EstimatedVSinit.pdf"),
   params$result_path,
   overwrite = TRUE
 )
 file.copy(
-  file.path(optim_options$out_dir, "optim_results.Rdata"),
+  file.path(data_dir, "optim_results.Rdata"),
   params$result_path,
   overwrite = TRUE
 )
 file.copy(
-  file.path(optim_options$out_dir, "sim_obs_plots.png"),
+  file.path(data_dir, "sim_obs_plots.png"),
   params$result_path,
   overwrite = TRUE
 )

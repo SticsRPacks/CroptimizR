@@ -144,8 +144,6 @@ optim_options$iterations <- 10000 # Total number of iterations
 # optim_options$startValue
 # iterations per chain)
 optim_options$startValue <- 3 # Number of markov chains
-optim_options$out_dir <- data_dir # path where to store the results
-# (graph and Rdata)
 optim_options$ranseed <- 1234 # seed for random numbers
 ```
 
@@ -170,7 +168,8 @@ optim_results <- estim_param(
   model_options = model_options,
   optim_options = optim_options,
   optim_method = "BayesianTools.dreamzs",
-  param_info = param_info
+  param_info = param_info,
+  out_dir = data_dir # path where to store the results
 )
 ```
 
@@ -224,7 +223,7 @@ The output value of `estim_param` contains:
 * `post_sample`, a sample of the posterior distribution (excluding the burnin phase),
 * `out`: the list returned by the package BayesianTools.
 
-It is stored with complementary graphs in the `optim_options$out_dir` folder.
+It is stored with complementary graphs in the `out_dir` folder.
 
 Among these graphs, gelmanDiagPlots.pdf plots the evolution of the Gelman diagnostic. According to (Vrugt, 2016) the algorithm is considered to have converged to the posterior distribution when all the values of this diagnostic are inferior to 1.2. In theory the sample of the posterior distribution should thus be taken only after this (WARNING: it is not the case here, neither in BayesianTools, this should be improved).
 
@@ -298,24 +297,24 @@ optim_results <- estim_param(
 ```{r move_results, eval=params$eval_manual_vignette, include=FALSE}
 # Move the files produced since the temp. folder is removed after Rmd execution
 file.copy(
-  file.path(optim_options$out_dir, "correlationPlots.pdf"),
+  file.path(data_dir, "correlationPlots.pdf"),
   params$result_path
 )
 
 file.copy(
-  file.path(optim_options$out_dir, "gelmanDiagPlots.pdf"),
+  file.path(data_dir, "gelmanDiagPlots.pdf"),
   params$result_path
 )
 file.copy(
-  file.path(optim_options$out_dir, "iterAndDensityPlots.pdf"),
+  file.path(data_dir, "iterAndDensityPlots.pdf"),
   params$result_path
 )
 file.copy(
-  file.path(optim_options$out_dir, "marginalPlots.pdf"),
+  file.path(data_dir, "marginalPlots.pdf"),
   params$result_path
 )
 file.copy(
-  file.path(optim_options$out_dir, "optim_results.Rdata"),
+  file.path(data_dir, "optim_results.Rdata"),
   params$result_path
 )
 ```
