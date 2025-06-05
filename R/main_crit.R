@@ -27,6 +27,7 @@ main_crit <- function(param_values, crit_options) {
           function(x) setdiff(names(x), c("Date"))
         ))
       )
+      .croptEnv$obs_situation_list <- names(obs_sim_list$obs_list)
     }
 
     if (crit_options$info_level >= 1 && !is.null(crit_options$tot_max_eval)) {
@@ -126,7 +127,7 @@ main_crit <- function(param_values, crit_options) {
 
     if (is.na(crit)) {
       filename <- file.path(
-        crit_options$path_results,
+        crit_options$out_dir,
         paste0("debug_crit_NA.Rdata")
       )
       warning(paste(
@@ -159,7 +160,7 @@ main_crit <- function(param_values, crit_options) {
   transform_obs <- crit_options$transform_obs
   transform_sim <- crit_options$transform_sim
   satisfy_par_const <- crit_options$satisfy_par_const
-  var_names <- crit_options$var_names
+  var_to_simulate <- crit_options$var_to_simulate
   forced_param_values <- crit_options$forced_param_values
 
   param_names <- get_params_names(param_info)
@@ -231,13 +232,13 @@ main_crit <- function(param_values, crit_options) {
   }
 
   sit_names <- situation_names
-  if (is.null(var_names)) {
-    var_names <- setdiff(unique(unlist(lapply(obs_list, names))), "Date")
+  if (is.null(var_to_simulate)) {
+    var_to_simulate <- setdiff(unique(unlist(lapply(obs_list, names))), "Date")
     sit_var_dates_mask <- obs_list
   } else {
-    # use var_names as given by the user in argument of estim_param
+    # use var_to_simulate as given by the user in argument of estim_param
     # set sit_var_dates_mask to NULL so that it can not be used in place of
-    # var_names to select variables
+    # var_to_simulate to select variables
     sit_var_dates_mask <- NULL
   }
 
@@ -246,7 +247,7 @@ main_crit <- function(param_values, crit_options) {
   # hum, this test is a bit uggly but seems to be necessary
   # (wrappers may have or not the arguments situation and var or their old name
   # sit_names and var_names and they may have both in case the use deprecated
-  #  arguments for sit_names and var_names ...
+  #  arguments for sit_names and var_to_simulate ...
   if ((("situation" %in% names(formals(model_function))) |
     ("var" %in% names(formals(model_function)))) |
     !(("sit_names" %in% names(formals(model_function))) |
@@ -255,7 +256,7 @@ main_crit <- function(param_values, crit_options) {
       model_options = model_options,
       param_values = param_values,
       situation = sit_names,
-      var = var_names,
+      var = var_to_simulate,
       sit_var_dates_mask = sit_var_dates_mask
     ))
   } else if (("sit_names" %in% names(formals(model_function))) |
@@ -264,7 +265,7 @@ main_crit <- function(param_values, crit_options) {
       model_options = model_options,
       param_values = param_values,
       sit_names = sit_names,
-      var_names = var_names,
+      var_names = var_to_simulate,
       sit_var_dates_mask = sit_var_dates_mask
     ))
     lifecycle::deprecate_warn(

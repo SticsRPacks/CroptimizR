@@ -486,3 +486,51 @@ complete_init_values <- function(param_info, nb_values, ranseed = NULL,
 
   return(set_init_values(param_info, sampled_values))
 }
+
+
+#' @title Extract default values from parameter information
+#'
+#' @inheritParams estim_param
+#'
+#' @return A named vector of default values
+#'
+#' @examples
+#' \donttest{
+#' # A simple case
+#' param_info <- list(
+#'   lb = c(dlaimax = 0.0005, durvieF = 50),
+#'   ub = c(dlaimax = 0.0025, durvieF = 400),
+#'   default = c(dlaimax = 0.001, durvieF = 200)
+#' )
+#' CroptimizR:::get_params_default(param_info)
+#'
+#' # A case with groups of situations per parameter
+#' param_info <- list()
+#' param_info$dlaimax <- list(
+#'   sit_list = list(c(
+#'     "bou99t3", "bou00t3", "bou99t1", "bou00t1",
+#'     "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"
+#'   )),
+#'   lb = 0.0005, ub = 0.0025, default = 0.001
+#' )
+#' param_info$durvieF <- list(
+#'   sit_list = list(
+#'     c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
+#'     c("bou99t3", "bou00t3", "bou99t1", "bou00t1")
+#'   ),
+#'   lb = c(50, 100), ub = c(400, 500), default = c(200, 300)
+#' )
+#' CroptimizR:::get_params_default(param_info)
+#' }
+#'
+#' @keywords internal
+#'
+get_params_default <- function(param_info) {
+  if (!is.null(param_info$lb)) { # check the shape of param_info (list per parameter or per information)
+    default <- param_info$default
+  } else {
+    default <- unlist(sapply(param_info, function(x) x$default, simplify = FALSE))
+  }
+
+  return(default)
+}

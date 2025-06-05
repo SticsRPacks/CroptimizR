@@ -7,10 +7,9 @@
 #' @return Prints results of bayesian methods
 #' @keywords internal
 #'
-summary_bayesian <- function(optim_options, param_info, optim_results) {
+summary_bayesian <- function(optim_options, param_info, optim_results, out_dir) {
   param_names <- get_params_names(param_info)
   nb_params <- length(param_names)
-  path_results <- optim_options$path_results
   out <- optim_results$out
 
   cat(paste(
@@ -28,7 +27,7 @@ summary_bayesian <- function(optim_options, param_info, optim_results) {
   }
   cat(paste(
     "Complementary graphs and results can be found in ",
-    path_results, "\n\n"
+    out_dir, "\n\n"
   ))
 }
 
@@ -40,14 +39,13 @@ summary_bayesian <- function(optim_options, param_info, optim_results) {
 #'
 #' @param optim_results Results list returned by bayesian method wrappers
 #'
-#' @return Save plots in optim_options$path_results.
+#' @return Save plots in out_dir.
 #'
 #' @keywords internal
 #'
-plot_bayesian <- function(optim_options, param_info, optim_results) {
+plot_bayesian <- function(optim_options, param_info, optim_results, out_dir) {
   param_names <- get_params_names(param_info)
   nb_params <- length(param_names)
-  path_results <- optim_options$path_results
   out <- optim_results$out
   nb_chains <- length(out$chain)
   nb_iterations <- nrow(optim_results$post_sample) / nb_chains
@@ -55,7 +53,7 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
   tryCatch(
     {
       grDevices::pdf(
-        file = file.path(path_results, "iterAndDensityPlots.pdf"),
+        file = file.path(out_dir, "iterAndDensityPlots.pdf"),
         width = 9, height = 9
       )
       graphics::plot(out)
@@ -68,13 +66,13 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
       )
       warning(
         "Error trying to create ",
-        path_results,
+        out_dir,
         "/iterAndDensityPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
         filename
       )
       utils::flush.console()
       grDevices::pdf(
-        file = file.path(path_results, filename),
+        file = file.path(out_dir, filename),
         width = 9, height = 9
       )
       graphics::plot(out)
@@ -85,7 +83,7 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
   tryCatch(
     {
       grDevices::pdf(
-        file = file.path(path_results, "marginalPlots.pdf"),
+        file = file.path(out_dir, "marginalPlots.pdf"),
         width = 9, height = 9
       )
       marginalPlot(out)
@@ -97,13 +95,13 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
         format(Sys.time(), "%Y_%d_%H_%M_%S"), ".pdf"
       )
       warning(
-        "Error trying to create ", path_results,
+        "Error trying to create ", out_dir,
         "/marginalPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
         filename
       )
       utils::flush.console()
       grDevices::pdf(
-        file = file.path(path_results, filename),
+        file = file.path(out_dir, filename),
         width = 9, height = 9
       )
       marginalPlot(out)
@@ -115,7 +113,7 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
     tryCatch(
       {
         grDevices::pdf(
-          file = file.path(path_results, "correlationPlots.pdf"),
+          file = file.path(out_dir, "correlationPlots.pdf"),
           width = 9, height = 9
         )
         correlationPlot(out)
@@ -127,13 +125,13 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
           format(Sys.time(), "%Y_%d_%H_%M_%S"), ".pdf"
         )
         warning(
-          "Error trying to create ", path_results,
+          "Error trying to create ", out_dir,
           "/correlationPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
           filename
         )
         utils::flush.console()
         grDevices::pdf(
-          file = file.path(path_results, filename),
+          file = file.path(out_dir, filename),
           width = 9, height = 9
         )
         correlationPlot(out)
@@ -151,7 +149,7 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
       tryCatch(
         {
           grDevices::pdf(
-            file = file.path(path_results, "gelmanDiagPlots.pdf"),
+            file = file.path(out_dir, "gelmanDiagPlots.pdf"),
             width = 9, height = 9
           )
           gelmanDiagnostics(out, thin = optim_options$thin, log = "y", plot = T)
@@ -163,13 +161,13 @@ plot_bayesian <- function(optim_options, param_info, optim_results) {
             format(Sys.time(), "%Y_%d_%H_%M_%S"), ".pdf"
           )
           warning(
-            "Error trying to create ", path_results,
+            "Error trying to create ", out_dir,
             "/gelmanDiagPlots.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
             filename
           )
           utils::flush.console()
           grDevices::pdf(
-            file = file.path(path_results, filename),
+            file = file.path(out_dir, filename),
             width = 9, height = 9
           )
           gelmanDiagnostics(out, thin = optim_options$thin, log = "y", plot = T)

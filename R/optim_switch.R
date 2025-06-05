@@ -5,12 +5,12 @@
 #' @param param_info see description in estim_param
 #' @param crit_options List containing several arguments given to `estim_param`
 #'  function: `param_names`, `obs_list`, `crit_function`, `model_function`,
-#'  `model_options`, `param_info`, `transform_obs`, `transform_sim`
+#'  `model_options`, `param_info`, `transform_obs`, `transform_sim`, `out_dir`
 #' that must be passed to main_crit function by the methods wrappers.
 #'
 #' @return prints, graphs and a list containing the results of the parameter
-#' estimation, which content depends on the method used, all that saved in the
-#' defined in `optim_options.path_results`
+#' estimation, which content depends on the method used, all that saved in
+#' `crit_options$out_dir`.
 #'
 #' @keywords internal
 #'
@@ -25,13 +25,16 @@ optim_switch <- function(...) {
     on.exit({
       res$forced_param_values <- crit_options$forced_param_values
 
-      if (exists(".croptEnv")) {
+      if (exists(".croptEnv") && !is.null(arguments$crit_options$info_level)) {
         # Save results even in case parameter estimation crash
         res$obs_var_list <- .croptEnv$obs_var_list
         if (exists("obs_var_list", where = .croptEnv)) {
           rm("obs_var_list", envir = .croptEnv)
         }
-
+        res$obs_situation_list <- .croptEnv$obs_situation_list
+        if (exists("obs_situation_list", where = .croptEnv)) {
+          rm("obs_situation_list", envir = .croptEnv)
+        }
         if (arguments$crit_options$info_level >= 1) {
           res$params_and_crit <- dplyr::bind_rows(.croptEnv$params_and_crit)
           if (exists("params_and_crit", where = .croptEnv)) {
@@ -59,9 +62,9 @@ optim_switch <- function(...) {
         }
       }
 
-      if (!is.null(optim_options$path_results) & length(res) > 0) {
+      if (!is.null(crit_options$out_dir) & length(res) > 0) {
         save(res, file = file.path(
-          optim_options$path_results,
+          crit_options$out_dir,
           "optim_results.Rdata"
         ))
       }
@@ -72,7 +75,7 @@ optim_switch <- function(...) {
       } else if (length(res) > 0) {
         warning(paste(
           "An error occured during the parameter estimation process (see other error and warning messages). Partial results saved in",
-          file.path(optim_options$path_results, "optim_results.Rdata")
+          file.path(crit_options$out_dir, "optim_results.Rdata")
         ))
       }
     })
@@ -93,6 +96,7 @@ optim_switch <- function(...) {
       res <- do.call(wrap_nloptr, wrap_args)
       if (nargs() > 2) {
         res$obs_var_list <- .croptEnv$obs_var_list
+        res$obs_situation_list <- .croptEnv$obs_situation_list
         if (arguments$crit_options$info_level >= 1) {
           res$params_and_crit <- dplyr::bind_rows(.croptEnv$params_and_crit)
         }
@@ -105,11 +109,13 @@ optim_switch <- function(...) {
         res$plots <- plot_frequentist(
           optim_options = optim_options,
           param_info = param_info,
-          optim_results = res
+          optim_results = res,
+          out_dir = crit_options$out_dir
         )
         summary_frequentist(
           optim_options = optim_options, param_info = param_info,
-          optim_results = res
+          optim_results = res,
+          out_dir = crit_options$out_dir
         )
       }
     } else if (optim_method == "BayesianTools.dreamzs" ||
@@ -117,19 +123,23 @@ optim_switch <- function(...) {
       res <- do.call(wrap_BayesianTools, wrap_args)
       if (nargs() > 2) {
         res$obs_var_list <- .croptEnv$obs_var_list
+        res$obs_situation_list <- .croptEnv$obs_situation_list
         res$plots <- plot_bayesian(
           optim_options = optim_options,
-          param_info = param_info, optim_results = res
+          param_info = param_info, optim_results = res,
+          out_dir = crit_options$out_dir
         )
         summary_bayesian(
           optim_options = optim_options, param_info = param_info,
-          optim_results = res
+          optim_results = res,
+          out_dir = crit_options$out_dir
         )
       }
     } else if (optim_method == "optim") {
       res <- do.call(wrap_optim, wrap_args)
       if (nargs() > 2) {
         res$obs_var_list <- .croptEnv$obs_var_list
+        res$obs_situation_list <- .croptEnv$obs_situation_list
         if (arguments$crit_options$info_level >= 1) {
           res$params_and_crit <- dplyr::bind_rows(.croptEnv$params_and_crit)
         }
@@ -141,11 +151,13 @@ optim_switch <- function(...) {
         )
         res$plots <- plot_frequentist(
           optim_options = optim_options,
-          param_info = param_info, optim_results = res
+          param_info = param_info, optim_results = res,
+          out_dir = crit_options$out_dir
         )
         summary_frequentist(
           optim_options = optim_options, param_info = param_info,
-          optim_results = res
+          optim_results = res,
+          out_dir = crit_options$out_dir
         )
       }
     } else {

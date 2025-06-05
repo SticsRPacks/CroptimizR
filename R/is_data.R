@@ -48,11 +48,19 @@
 #'
 is.data <- function(data_list) {
   # Check data_list format
-  if (length(data_list) == 0 || !is.list(data_list) || !all(sapply(
+  if (length(data_list) == 0 || !is.list(data_list)) {
+    warning("Incorrect format: Should be a (non-empty) list.")
+    return(FALSE)
+  }
+  if (is.null(names(data_list))) {
+    warning("Incorrect format: Should be a named list.")
+    return(FALSE)
+  }
+  if (!all(sapply(
     data_list,
     function(x) is.data.frame(x)
   ))) {
-    warning("Incorrect format: Should be a named list containing data.frames.")
+    warning("Incorrect format: The named list must contain data.frames.")
     return(FALSE)
   }
   # Check existence of Date column

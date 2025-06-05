@@ -208,3 +208,36 @@ test_that("get_params_per_sit", {
     c(p1 = 2, p2 = 3, p3 = 5)
   )
 })
+
+
+# Test get_params_default
+prior_simple <- list(
+  lb = c(dlaimax = 0.0005, durvieF = 50),
+  ub = c(dlaimax = 0.0025, durvieF = 400),
+  default = c(dlaimax = 0.001, durvieF = 200)
+)
+prior_spec_var <- list()
+prior_spec_var$dlaimax <- list(
+  sit_list = list(c(
+    "bou99t3", "bou00t3", "bou99t1", "bou00t1",
+    "bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"
+  )),
+  lb = 0.0005, ub = 0.0025, default = 0.001
+)
+prior_spec_var$durvieF <- list(
+  sit_list = list(
+    c("bo96iN+", "lu96iN+", "lu96iN6", "lu97iN+"),
+    c("bou99t3", "bou00t3", "bou99t1", "bou00t1")
+  ),
+  lb = c(50, 100), ub = c(400, 500), default = c(200, 300)
+)
+test_that("get_params_default", {
+  expect_equal(
+    eval(parse(text = "CroptimizR:::get_params_default(prior_simple)")),
+    c(dlaimax = 0.001, durvieF = 200)
+  )
+  expect_equal(
+    eval(parse(text = "CroptimizR:::get_params_default(prior_spec_var)")),
+    c(dlaimax = 0.001, durvieF1 = 200, durvieF2 = 300),
+  )
+})

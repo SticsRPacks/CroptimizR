@@ -13,7 +13,7 @@ wrap_nloptr(optim_options, param_info, crit_options)
 
 \item{crit_options}{List containing several arguments given to \code{estim_param}
 function: \code{param_names}, \code{obs_list}, \code{crit_function}, \code{model_function},
-\code{model_options}, \code{param_info}, \code{transform_obs}, \code{transform_sim}
+\code{model_options}, \code{param_info}, \code{transform_obs}, \code{transform_sim}, \code{out_dir}
 that must be passed to main_crit function by the methods wrappers.}
 }
 \value{

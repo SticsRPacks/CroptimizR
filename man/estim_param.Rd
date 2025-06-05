@@ -14,15 +14,19 @@ estim_param(
   param_info,
   forced_param_values = NULL,
   candidate_param = NULL,
+  situation = NULL,
+  obs_var = NULL,
   transform_var = NULL,
   transform_obs = NULL,
   transform_sim = NULL,
   satisfy_par_const = NULL,
-  var = NULL,
+  var_to_simulate = NULL,
   info_level = 1,
   info_crit_func = list(CroptimizR::BIC, CroptimizR::AICc, CroptimizR::AIC),
   weight = NULL,
-  var_names = lifecycle::deprecated()
+  step = NULL,
+  out_dir = getwd(),
+  var = lifecycle::deprecated()
 )
 }
 \arguments{
@@ -51,13 +55,12 @@ for a brief description and references on the available methods.}
 
 \item{optim_options}{List of options of the parameter estimation method, containing:
 \itemize{
-\item \code{out_dir} Directory path where to write the optimization results (optional, default to \code{getwd()})
 \item \code{ranseed} Set random seed so that each execution of estim_param give the same
 results when using the same seed. If you want randomization, set it to NULL,
 otherwise set it to a number of your choice (e.g. 1234) (optional, default to NULL, which means random seed)
 \item specific options depending on the method used. Click on the links to see examples with the \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html}{simplex}
 and \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html}{DreamZS} methods.
-\item \code{path_results} \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} \code{path_results} is no longer supported, use \code{out_dir} instead.
+\item \code{out_dir} \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Definition of \code{out_dir} in \code{optim_options} is no longer supported, use the new argument \code{out_dir} of \code{estim_param} instead.
 }}
 
 \item{param_info}{Information on the parameters to estimate.
@@ -65,6 +68,7 @@ Either
 a list containing:
 \itemize{
 \item \code{ub} and \code{lb}, named vectors of upper and lower bounds (-Inf and Inf can be used if init_values is provided),
+\item \code{default}, named vectors of default values (optional, corresponding parameters are set to these values when the parameter is part of the \code{candidate_param} list and when it is not estimated ; these values are also used as first initial values when the parameters are estimated)
 \item \code{init_values}, a data.frame containing initial
 values to test for the parameters (optional, if not provided, or if less values
 than number of repetitions of the minimization are provided, the, or part
@@ -79,6 +83,7 @@ parameter must take different values (see \href{https://sticsrpacks.github.io/Cr
 for an example),
 \item \code{ub} and \code{lb}, vectors of upper and lower bounds (one value per group),
 \item \code{init_values}, the list of initial values per group  (data.frame, one column per group, optional).
+\item \code{default}, vector of default values per group (optional, the parameter is set to its default value when it is part of the \code{candidate_param} list and when it is not estimated ; the default value is also used as first initial value when the parameter is estimated)
 }}
 
 \item{forced_param_values}{Named vector or list, must contain the values (or
@@ -91,6 +96,12 @@ argument \code{candidate_param}).}
 
 \item{candidate_param}{Names of the parameters, among those defined in the argument param_info,
 that must only be considered as candidate for parameter estimation (see details section).}
+
+\item{situation}{(optional) List of situations to take into account within obs_list.
+situation = NULL means that all situations in obs_list will be used.}
+
+\item{obs_var}{(optional) List of observed variables to take into account within obs_list.
+obs_var = NULL means that all variables in obs_list will be used.}
 
 \item{transform_var}{Named vector of functions to apply both on simulated and
 observed variables. \code{transform_var=c(var1=log, var2=sqrt)} will for example
@@ -106,14 +117,14 @@ evaluation  (optional), see details section for more information.}
 \item{satisfy_par_const}{User function for including constraints on estimated
 parameters (optional), see details section for more information.}
 
-\item{var}{(optional) List of variables for which the model wrapper must return
+\item{var_to_simulate}{(optional) List of variables for which the model wrapper must return
 results.
 By default the wrapper is asked to simulate only the observed variables. However,
 it may be useful to simulate also other variables, typically when transform_sim
 and/or transform_obs functions are used. Note however that it is
 active only if the model_function used handles this argument.
-If it is the case, and if the var argument is provided, then the list of observations
-used will be restricted to the list of variables given in the var argument,
+If it is the case, and if the obs_var argument is provided, then the list of observations
+used will be restricted to the list of variables given in the obs_var argument,
 plus the ones possibly computed by the transform_sim function.}
 
 \item{info_level}{(optional) Integer that controls the level of information returned and stored
@@ -143,8 +154,13 @@ ONLY AVAILABLE FOR THE MOMENT FOR crit_function==crit_ols.}
 of observed values and the name of the corresponding variable and that must return either a single value
 for the weights for the given variable or a vector of values of length the length of the vector of observed values given in input.}
 
-\item{var_names}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} \code{var_names} is no
-longer supported, use \code{var} instead.}
+\item{step}{(optional) List that describes the steps of the parameter estimation process (see details section).
+If \code{NULL}, a single default step will be created using the \code{estim_param} arguments}
+
+\item{out_dir}{Path to the directory where the optimization results will be written. (optional, default to \code{getwd()})}
+
+\item{var}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} \code{var} is no
+longer supported, use \code{var_to_simulate} instead.}
 }
 \value{
 prints, graphs and a list containing the results of the parameter estimation,
@@ -226,6 +242,49 @@ and will dynamically compute the value of p3 in function of the values of parame
 p5 and p6 iteratively provided by the parameter estimation algorithm. In this example,
 the parameters p5 and p6 must thus be part of the list of parameters to estimate, i.e.
 described in the \code{param_info} argument.
+
+The argument \code{step} is a list of lists used to perform parameter estimation in multiple sequential steps.
+If provided, each step represents a separate stage in the estimation process,
+allowing different configurations for each step (e.g., different sets of parameters to estimate,
+different observed variables, different situations, etc.).
+
+When multiple steps are defined, the parameter values estimated in one step
+are used as fixed values in the subsequent step.
+Each step is a named list containing only the elements that vary between steps.
+\strong{Any argument} of the \code{estim_param} function (e.g., \code{obs_var}, \code{candidate_param} ...)
+can be defined within a step. Note that the element \code{param} can be used to define
+the list of parameters to estimate at a given step.
+
+Any element not explicitly defined in a step will inherit its value
+from the corresponding argument of \code{estim_param} and remain identical across all steps.
+If \code{NULL}, a single step is created using the function arguments.
+
+Suppose the \code{step} argument is defined as follows:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{step <- list()
+step[[1]] <- list(
+  param = c("p1"),
+  candidate_param = c("p2"),
+  obs_var = c("var1")
+)
+step[[2]] <- list(
+  param = c("p3"),
+  obs_var = c("var2")
+)
+}\if{html}{\out{</div>}}
+
+In this case, the parameter estimation process will proceed in \strong{two steps}:
+\itemize{
+\item \strong{Step 1}: Parameter \code{p1} is estimated, while \code{p2} is included in a parameter selection process.
+Only observed variable \code{var1} (from \code{obs_list} defined in argument of \code{estim_param}) is used.
+\item \strong{Step 2}: Parameter \code{p3} is estimated, and only observed variable \code{var2} is used.
+Parameters \code{p1} (and possibly \code{p2}, if selected) are fixed at the values estimated in Step 1.
+Information on the parameters to estimate (bounds, ...) can be defined within
+the same \code{param_info} list given in argument of \code{estim_param}.
+}
+
+The results of the parameter estimation process are stored in the folder \code{out_dir},
+with a separate subfolder for each step.
 }
 \seealso{
 For more details and examples, see the different vignettes in

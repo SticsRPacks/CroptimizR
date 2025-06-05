@@ -37,10 +37,17 @@ select_param_FwdRegAgMIP <- function(oblig_param_list, add_param_list, crt_list,
                                      info_crit_values) {
   res <- list()
   res$next_candidates <- NULL
+  crt_info_crit <- tail(info_crit_values, 1)
   if (length(info_crit_values) > 1) {
-    crt_info_crit <- tail(info_crit_values, 1)
     prev_info_crit <- head(info_crit_values, length(info_crit_values) - 1)
   }
+
+  cat(paste(
+    "\nCurrent value of the information criterion:",
+    format(crt_info_crit,
+      scientific = FALSE, digits = 2, nsmall = 0
+    ), "\n"
+  ))
 
   if (is.null(add_param_list)) {
     res$selected <- TRUE
@@ -53,11 +60,11 @@ select_param_FwdRegAgMIP <- function(oblig_param_list, add_param_list, crt_list,
     } else {
       res$selected <- FALSE
     }
-    return(res)
   } else if (length(crt_list) == length(oblig_param_list)) {
     # we only tested so far the obligatory parameters
     res$selected <- TRUE
     res$next_candidates <- c(oblig_param_list, add_param_list[1])
+    return(res)
   } else {
     if (crt_info_crit < min(prev_info_crit)) {
       # Add the next candidate to the list
@@ -76,6 +83,15 @@ select_param_FwdRegAgMIP <- function(oblig_param_list, add_param_list, crt_list,
     }
   }
 
+  cat(paste(
+    "Candidate parameter", crt_list[length(crt_list)]
+  ))
+  if (res$selected) {
+    cat(" is selected\n")
+  } else {
+    cat(" is rejected\n")
+  }
+
   return(res)
 }
 
@@ -85,7 +101,7 @@ select_param_FwdRegAgMIP <- function(oblig_param_list, add_param_list, crt_list,
 #' @title Post-treat the results of the Forward Selection algorithm proposed in
 #' AgMIP calibration phaseIII protocol
 #'
-#' @param optim_results Results list returned by frequentist method wrappers
+#' @param optim_results Results list returned by parameter estimation method wrappers
 #' @param crit_options List containing several arguments given to `estim_param`
 #' function: `param_names`, `obs_list`, `crit_function`, `model_function`,
 #' `model_options`, `param_info`, `transform_obs`, `transform_sim`
@@ -162,15 +178,6 @@ post_treat_FwdRegAgMIP <- function(optim_results, crit_options, crt_list,
 #'
 summary_FwdRegAgMIP <- function(param_selection_steps,
                                 info_crit_list, path_results, optim_results) {
-  cat("----------------------\n")
-  cat("End of parameter selection process\n")
-  cat("----------------------\n\n")
-
-  cat(paste(
-    "\nList of observed variables used:",
-    paste(optim_results$obs_var_list, collapse = ", "), "\n"
-  ))
-
   ind_min_infocrit <-
     which.min(param_selection_steps[[info_crit_list[[1]]()$name]])
   cat("Selected step:", ind_min_infocrit, "\n")
@@ -196,6 +203,7 @@ summary_FwdRegAgMIP <- function(param_selection_steps,
 #' @title Save the results of the Forward Selection algorithm proposed in
 #' AgMIP calibration phaseIII protocol
 #'
+#' @param res Results list returned by parameter estimation method wrappers
 #' @param param_selection_steps A tibble summarizing the results of the previous
 #' parameter estimation steps as returned by the previous call to this function,
 #' NULL if it is the first step.
@@ -208,7 +216,7 @@ summary_FwdRegAgMIP <- function(param_selection_steps,
 #'
 #' @keywords internal
 #'
-save_results_FwdRegAgMIP <- function(param_selection_steps, path_results) {
+save_results_FwdRegAgMIP <- function(res, param_selection_steps, path_results) {
   tb <- purrr::modify_if(
     param_selection_steps,
     function(x) !is.list(x), as.list
@@ -236,13 +244,21 @@ save_results_FwdRegAgMIP <- function(param_selection_steps, path_results) {
     row.names = FALSE
   )
 
+  save(res, file = file.path(
+    path_results,
+    "optim_results.Rdata"
+  ))
+  cat(
+    "\nResults of the parameter selection process are stored in ",
+    file.path(path_results, "optim_results.Rdata"), "\n"
+  )
   cat(
     "\nA table summarizing the results obtained at the different steps ",
     "is stored in ", file.path(path_results, "param_selection_steps.csv"), "\n"
   )
   cat(
-    "Graphs and detailed results obtained for the different steps can be ",
-    "found in ", file.path(path_results, "results_all_steps", "step_#"),
+    "Graphs and detailed results obtained for the different parameter selection steps can be ",
+    "found in ", file.path(path_results, "param_select_step#"),
     "folders.\n\n"
   )
 }
