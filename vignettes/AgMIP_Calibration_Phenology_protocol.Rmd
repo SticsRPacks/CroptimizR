@@ -203,7 +203,6 @@ optim_options <- list(nb_rep = c(10, 5))
 ```{r eval=params$eval_auto_test, message=FALSE, warning=FALSE, include=FALSE}
 optim_options$xtol_rel <- 1e-2
 optim_options$ftol_rel <- 1e-3
-optim_options$out_dir <- data_dir
 optim_options$ranseed <- 1234
 ```
 
@@ -229,7 +228,8 @@ res <- estim_param(
   optim_options = optim_options,
   forced_param_values = forced_param_values,
   candidate_param = candidate_param,
-  param_info = param_info
+  param_info = param_info,
+  out_dir = data_dir
 )
 ```
 
@@ -259,7 +259,7 @@ At the end of the execution, some information such as the selected step number, 
 
 The list returned by the `estim_param` function contains the results obtained for the selected step and a data.frame, called `param_selection_steps`, providing detailed results of the protocol. 
 The element `param_selection_steps` gives, for each minimization step, the list of candidate parameters, their initial and final values and the values of the Sum of Squares and information criteria. 
-The selected  step is indicated in the last column. It is also stored in csv format for sake of readability (file "param_selection_steps.csv" in `getwd()` folder or in `optim_options$out_dir` folder, if provided to `estim_param`).
+The selected  step is indicated in the last column. It is also stored in csv format for sake of readability (file "param_selection_steps.csv" in `getwd()` folder or in `out_dir` folder, if provided to `estim_param`).
 
 ```{r eval=params$eval_auto_vignette, message=FALSE, warning=FALSE}
 df <- read.csv("ResultsAgmipPhenology/param_selection_steps.csv", sep = ";")
@@ -299,7 +299,7 @@ plot(sim_after_optim$sim_list, obs = obs_list, type = "scatter")
 
 ```{r eval=params$eval_manual_vignette, warning=FALSE, message=FALSE, echo=FALSE}
 p <- plot(sim_after_optim$sim_list, obs = obs_list, type = "scatter")
-save_plot_png(p, optim_options$out_dir)
+save_plot_png(p, data_dir)
 ```
 
 ```{r eval=params$eval_auto_vignette, echo=FALSE, message=FALSE, warning=FALSE, out.width = '60%'}
@@ -331,25 +331,25 @@ print(stats)
 
 ```{r move_results, eval=params$eval_manual_vignette, include=FALSE}
 # Move the files produced since the temp. folder is removed after Rmd execution
-file.copy(file.path(optim_options$out_dir, "param_selection_steps.csv"),
+file.copy(file.path(data_dir, "param_selection_steps.csv"),
   params$result_path,
   overwrite = TRUE
 )
-file.copy(file.path(optim_options$out_dir, "param_selection_steps.Rdata"),
+file.copy(file.path(data_dir, "param_selection_steps.Rdata"),
   params$result_path,
   overwrite = TRUE
 )
-file.copy(file.path(optim_options$out_dir, "optim_results.Rdata"),
+file.copy(file.path(data_dir, "optim_results.Rdata"),
   params$result_path,
   overwrite = TRUE
 )
-file.copy(file.path(optim_options$out_dir, "all_situations.png"),
+file.copy(file.path(data_dir, "all_situations.png"),
   params$result_path,
   overwrite = TRUE
 )
 dir.create(file.path(params$result_path, "results_all_steps"))
 file.copy(
-  from = file.path(optim_options$out_dir, "results_all_steps"),
+  from = file.path(data_dir, "results_all_steps"),
   to = file.path(params$result_path, "results_all_steps"),
   recursive = TRUE,
   overwrite = TRUE

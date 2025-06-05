@@ -194,9 +194,6 @@ optim_options$xtol_rel <- 1e-03 # Tolerance criterion between two iterations
 # parameter values between the 2 previous
 # iterations)
 
-optim_options$out_dir <- getwd() # path where to store the results
-# (graph and Rdata)
-
 optim_options$ranseed <- 1234 # set random seed so that each execution give the
 #  same results. If you want randomization,
 # don't set it.
@@ -232,7 +229,7 @@ res$final_values
 ```
 
 
-Complementary graphs and data are stored in the folder which path is given in `optim_options$out_dir`. Among them, the `EstimatedVSinit.pdf` file contains the following figures:
+Complementary graphs and data are stored in the folder which path is given in the `out_dir` argument of `estim_param` (equal to `getwd()` by default). Among them, the `EstimatedVSinit.pdf` file contains the following figures:
 
 
 ```{r eval=TRUE, echo=FALSE, out.width = '45%'}
@@ -271,10 +268,10 @@ p2 <- p[[sit_name]] + labs(title = "After Optimization") +
 
 p <- grid.arrange(grobs = list(p1, p2), nrow = 1, ncol = 2)
 # Save the graph
-ggsave(file.path(
-  optim_options$out_dir,
-  paste0("sim_obs_plots", ".png")
-), plot = p)
+ggsave(
+  paste0("sim_obs_plots", ".png"),
+  plot = p
+)
 ```
 
 
@@ -288,15 +285,15 @@ knitr::include_graphics("ResultsSimpleCaseApsim/sim_obs_plots.png")
 
 ```{r move_results, include=FALSE}
 # Move the files produced since the temp. folder is removed after Rmd execution
-file.copy(file.path(optim_options$out_dir, "EstimatedVSinit.pdf"),
+file.copy("EstimatedVSinit.pdf",
   params$result_path,
   overwrite = TRUE
 )
-file.copy(file.path(optim_options$out_dir, "optim_results.Rdata"),
+file.copy("optim_results.Rdata",
   params$result_path,
   overwrite = TRUE
 )
-file.copy(file.path(optim_options$out_dir, "sim_obs_plots.png"),
+file.copy("sim_obs_plots.png",
   params$result_path,
   overwrite = TRUE
 )

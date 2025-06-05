@@ -159,8 +159,6 @@ optim_options$xtol_rel <- 1e-04 # Tolerance criterion between two iterations
 # (threshold for the relative difference of
 # parameter values between the 2 previous
 # iterations)
-optim_options$out_dir <- data_dir # path where to store the results
-# (graph and Rdata)
 optim_options$ranseed <- 1234 # random seed
 ```
 
@@ -176,7 +174,8 @@ res <- estim_param(
   model_function = stics_wrapper,
   model_options = model_options,
   optim_options = optim_options,
-  param_info = param_info
+  param_info = param_info,
+  out_dir = data_dir # path where to store the results
 )
 ```
 
@@ -259,7 +258,7 @@ p <- grid.arrange(grobs = list(p1, p2), nrow = 1, ncol = 2)
 # Save the graph
 ggsave(
   file.path(
-    optim_options$out_dir,
+    data_dir,
     paste0("sim_obs", ".png")
   ),
   plot = p
@@ -277,17 +276,17 @@ knitr::include_graphics("ResultsSpecificVarietal/sim_obs.png")
 ```{r move_results, eval=params$eval_manual_vignette, include=FALSE}
 # Move the files produced since the temp. folder is removed after Rmd execution
 file.copy(
-  file.path(optim_options$out_dir, "EstimatedVSinit.pdf"),
+  file.path(data_dir, "EstimatedVSinit.pdf"),
   params$result_path,
   overwrite = TRUE
 )
 file.copy(
-  file.path(optim_options$out_dir, "optim_results.Rdata"),
+  file.path(data_dir, "optim_results.Rdata"),
   params$result_path,
   overwrite = TRUE
 )
 file.copy(
-  file.path(optim_options$out_dir, "sim_obs.png"),
+  file.path(data_dir, "sim_obs.png"),
   params$result_path,
   overwrite = TRUE
 )
