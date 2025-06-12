@@ -53,6 +53,11 @@ toymodel_wrapper <- function(param_values = NULL, situation,
   )
   attr(results$sim_list, "class") <- "cropr_simulation"
 
+  # Remove dummy in param_values, just here for specific tests
+  if (!is.null(param_values) && "dummy" %in% names(param_values)) {
+    param_values <- param_values[!names(param_values) %in% "dummy"]
+  }
+
   for (sit in situation) {
     # Retrieve begin and end date from situation name
     begin_date <- dplyr::filter(model_options, situation == sit) %>%
@@ -356,4 +361,40 @@ test_that("Test step check undefined observed variable", {
     obs_var = "LAI",
     out_dir = tempdir()
   ), regexp = "")
+})
+
+
+# Test estim_param - equality constraints
+## Test that the parameter defined as equal to an estimated parameter
+## is effectively set to the value of this estimated parameter
+test_that("estim_param equality constraints", {
+  param_info <- list(
+    rB = list(lb = 0, ub = 1),
+    h = list(lb = 0, ub = 1)
+  )
+
+  optim_options <- list(
+    nb_rep = 2, xtol_rel = 1e-2, maxeval = 3,
+    ranseed = 1234
+  )
+
+  forced_param_values <- c(Bmax = 7, dummy = "rB")
+
+  res <- estim_param(
+    obs_list = obs_synth,
+    model_function = toymodel_wrapper,
+    model_options = model_options,
+    crit_function = crit_ols,
+    optim_options = optim_options,
+    param_info = param_info,
+    obs_var = c("biomass", "yield"),
+    forced_param_values = forced_param_values,
+    situation = c("sit1_2000", "sit1_2001", "sit2_2003"),
+    out_dir = tempdir()
+  )
+
+  expect_equal(res$forced_param_values[["dummy"]],
+    res$final_values[["rB"]],
+    tolerance = res$final_values[["rB"]] * 1e-8
+  )
 })
