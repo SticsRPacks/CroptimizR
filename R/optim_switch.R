@@ -24,6 +24,12 @@ optim_switch <- function(...) {
 
     on.exit({
       res$forced_param_values <- crit_options$forced_param_values
+      if (!is.null(res$final_values)) {
+        res$forced_param_values <- compute_eq_const(
+          res$forced_param_values,
+          res$final_values
+        )
+      }
 
       if (exists(".croptEnv") && !is.null(arguments$crit_options$info_level)) {
         # Save results even in case parameter estimation crash
