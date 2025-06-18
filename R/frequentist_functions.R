@@ -399,9 +399,10 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
   p <- list()
 
   for (param_name in param_names) {
-    p[[param_name]] <- ggplot(df, aes_string(
-      x = iter_or_eval[1], y = param_name,
-      color = "crit"
+    p[[param_name]] <- ggplot(df, aes(
+      x = !!rlang::sym(iter_or_eval[1]),
+      y = !!rlang::sym(param_name),
+      color = crit
     )) +
       labs(
         title = paste0(
