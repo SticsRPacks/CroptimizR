@@ -4,7 +4,7 @@
 \alias{fill_step_info}
 \title{Fill the step information}
 \usage{
-fill_step_info(step, mc)
+fill_step_info(step, mc, env)
 }
 \arguments{
 \item{step}{(optional) List that describes the steps of the parameter estimation process (see details section).

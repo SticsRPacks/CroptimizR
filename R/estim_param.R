@@ -291,20 +291,10 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
   })
 
   # Complete step and validate it
-  nb_steps <- length(step)
-  if (nb_steps == 0) {
-    step <- list(list())
-    nb_steps <- 1
-  }
-  if (!is.list(step)) {
-    stop("Incorrect format for argument step. Should be a list.")
-  }
-  if (!all(sapply(step, function(x) is.list(x)))) {
-    stop("Incorrect format for argument step. Should be a list of lists.")
-  }
   ## Complete each element of `step` with the arguments from `estim_param`,
   ## adding only those that are not already present.
-  step <- fill_step_info(step, mc = match.call())
+  step <- fill_step_info(step, mc = match.call(), env = environment())
+  nb_steps <- length(step)
   ## Validate the structure of each element of `step`
   step <- validate_steps(step)
   res <- list()
@@ -558,10 +548,31 @@ utils::globalVariables(c(".croptEnv"))
 #' The returned object is a list of lists, where each sublist contains the characteristics of a step.
 #'
 #' @keywords internal
-fill_step_info <- function(step, mc) {
-  mc <- mc[-1] # remove the function name
-  args_given <- lapply(mc, eval, envir = parent.frame())
-  args_default <- as.list(formals(estim_param))[-1] # [-1] Exclude step
+fill_step_info <- function(step, mc, env) {
+  # Check step format
+  if (is.null(step)) {
+    step <- list(list())
+  }
+  if (!is.list(step)) {
+    stop("Incorrect format for argument step. Should be a list.")
+  }
+  if (!all(sapply(step, function(x) is.list(x)))) {
+    stop("Incorrect format for argument step. Should be a list of lists.")
+  }
+  # Gather and evaluate estim_param arguments (both given and default values)
+  arg_names <- names(mc[-1]) # remove the function name
+  arg_names <- setdiff(arg_names, "step") # remove step as it is handled separately
+  args_given <- lapply(arg_names, function(nm) {
+    expr <- mc[[nm]]
+    if (is.symbol(expr) || is.call(expr)) {
+      eval(expr, envir = env)
+    } else {
+      expr
+    }
+  })
+  names(args_given) <- arg_names
+  args_default <- as.list(formals(estim_param))
+  args_default$step <- NULL # Exclude step as it is handled separately
   args_default <- lapply(args_default, function(arg) {
     if (!is.symbol(arg) || (is.symbol(arg) && deparse(arg) != "")) {
       tryCatch(
@@ -573,7 +584,7 @@ fill_step_info <- function(step, mc) {
     }
   })
   args_total <- modifyList(args_default, args_given)
-  args_total <- args_total[setdiff(names(args_total), "step")]
+  # Fill step with the arguments from estim_param if not already present
   step <- lapply(step, function(x) {
     for (arg_name in names(args_total)) {
       if (!arg_name %in% names(x) && arg_name %in% names(args_total)) {

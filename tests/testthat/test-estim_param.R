@@ -199,6 +199,17 @@ test_that("estim_param 2 steps crit_ols", {
     h = list(lb = 0, ub = 1, default = 0.5),
     Bmax = list(lb = 5, ub = 15, default = 7)
   )
+  steps <- list(
+    list(
+      param = c("rB"),
+      candidate_param = c("Bmax"),
+      obs_var = c("biomass")
+    ),
+    list(
+      param = c("h"),
+      obs_var = c("yield")
+    )
+  )
 
   res_final <- estim_param(
     obs_list = obs_synth,
@@ -207,17 +218,7 @@ test_that("estim_param 2 steps crit_ols", {
     model_options = model_options,
     optim_options = optim_options,
     param_info = param_info,
-    step = list(
-      list(
-        param = c("rB"),
-        candidate_param = c("Bmax"),
-        obs_var = c("biomass")
-      ),
-      list(
-        param = c("h"),
-        obs_var = c("yield")
-      )
-    ),
+    step = steps,
     out_dir = tempdir()
   )
 
@@ -258,8 +259,17 @@ test_that("estim_param 2 steps without param selection", {
     rB = list(lb = 0, ub = 1, default = 0.1),
     h = list(lb = 0, ub = 1, default = 0.5)
   )
-
   forced_param_values <- c(Bmax = 7)
+  step <- list(
+    list(
+      param = c("rB"),
+      obs_var = c("biomass")
+    ),
+    list(
+      param = c("h"),
+      obs_var = c("yield")
+    )
+  )
 
   res_final <- estim_param(
     obs_list = obs_synth,
@@ -269,16 +279,7 @@ test_that("estim_param 2 steps without param selection", {
     optim_options = optim_options,
     param_info = param_info,
     forced_param_values = forced_param_values,
-    step = list(
-      list(
-        param = c("rB"),
-        obs_var = c("biomass")
-      ),
-      list(
-        param = c("h"),
-        obs_var = c("yield")
-      )
-    ),
+    step = step,
     out_dir = tempdir()
   )
 
@@ -351,7 +352,7 @@ test_that("Test step check undefined observed variable", {
     rB = list(lb = 0, ub = 1, default = 0.1)
   )
 
-  expect_error(estim_param(
+  expect_error(suppressWarnings(estim_param(
     obs_list = obs_synth,
     crit_function = crit_ols,
     model_function = toymodel_wrapper,
@@ -360,7 +361,7 @@ test_that("Test step check undefined observed variable", {
     param_info = param_info,
     obs_var = "LAI",
     out_dir = tempdir()
-  ), regexp = "")
+  )), regexp = "")
 })
 
 
