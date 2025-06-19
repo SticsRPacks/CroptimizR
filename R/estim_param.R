@@ -351,6 +351,8 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
       bounds <- get_params_bounds(param_info_cur)
       forced_param_values_cur <- forced_param_values_istep
       forced_param_values_cur <- forced_param_values_cur[!names(forced_param_values_cur) %in% crt_candidates]
+
+      ## Print information about the current step
       cat("\n---------------------\n")
       if (nb_steps > 1) {
         cat(paste("Step", istep, "\n"))
@@ -363,17 +365,21 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
         }
       }
       cat(paste("Estimated parameter(s):", paste(crt_candidates, collapse = " "), "\n"))
-      cat(paste("Forced parameter(s):", paste(names(forced_param_values_cur), format(
-        forced_param_values_cur,
-        scientific = FALSE,
-        digits = 2, nsmall = 2
-      ), sep = "=", collapse = ", ")), "\n")
-      cat(paste("Observed variable(s) used:", unique(
+      if (length(forced_param_values_cur) > 0) {
+        cat(paste("Forced parameter(s):", paste(names(forced_param_values_cur), format(
+          forced_param_values_cur,
+          scientific = FALSE,
+          digits = 2, nsmall = 2
+        ), sep = "=", collapse = ", ")), "\n")
+      } else {
+        cat("Forced parameter(s): none\n")
+      }
+      cat(paste("Observed variable(s) used:", paste(unique(
         unlist(lapply(
           step[[istep]]$obs_list,
-          function(x) setdiff(names(x), c("Date"))
+          function(x) setdiff(names(x), c("Date", "Plant"))
         ))
-      ), "\n"))
+      ), collapse = ", "), "\n"))
       cat("---------------------\n")
 
 
