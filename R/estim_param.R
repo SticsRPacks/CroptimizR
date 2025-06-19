@@ -569,11 +569,15 @@ fill_step_info <- function(step, mc, env) {
   arg_names <- names(mc[-1]) # remove the function name
   arg_names <- setdiff(arg_names, "step") # remove step as it is handled separately
   args_given <- lapply(arg_names, function(nm) {
-    expr <- mc[[nm]]
-    if (is.symbol(expr) || is.call(expr)) {
-      eval(expr, envir = env)
+    if (exists(nm, envir = env)) {
+      get(nm, envir = env)
     } else {
-      expr
+      expr <- mc[[nm]]
+      if (is.symbol(expr) || is.call(expr)) {
+        eval(expr, envir = env)
+      } else {
+        expr
+      }
     }
   })
   names(args_given) <- arg_names
