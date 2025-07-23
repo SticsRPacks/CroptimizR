@@ -1,0 +1,239 @@
+#' @title Run the AgMIP PhaseIV protocol
+#'
+#' @inheritParams estim_param
+#'
+#' @param
+#'
+#' @details
+#'
+#' The AgMIP PhaseIV protocol is thoroughly detailed in Wallach et al., 2024
+#' and Wallach et al. 2025.
+#'
+#'
+#' @return
+#'
+#' @seealso Wallach et al., 2024 and Wallach et al. 2025
+#'
+#' @importFrom CroPlotR summary
+#'
+#' @export
+#'
+run_protocol_agmip <- function(model_function, model_options, obs_list, optim_options, protocol_file_path = NULL,
+                               out_dir = getwd(), var_to_simulate = NULL, transform_sim = NULL,
+                               transform_obs = NULL, transform_var = NULL, step = NULL, param_info = NULL) {
+  res <- NULL
+  on.exit({
+    save(res, file = file.path(out_dir, "optim_results.Rdata"))
+  })
+
+  # Read the excel file describing the protocol to generate the step6 list
+
+
+  ##### METTRE TOUS LES PARAM DE ESTIM_PARAM EN ENTREE ??? (e.g. quid de optim_method ???)
+  ### ou tout dans le excel ?
+  ### ou que dans step pour flexibilité ?
+  ### ou pas de flexibilité par rapport au protocole AgMIP ?
+
+  ######### GERER TRANSFORM_OUTPUTS : QUEL RAPPORT AVEC TRANSFORM_SIM, OBS et VAR ?
+  #################################################################################
+  if (is.null(step)) {
+    tmp <- load_protocol_agmip(protocol_file_path, transform_outputs = transform_sim)
+    steps <- tmp$step
+    param_info <- tmp$param_info
+  } else {
+    steps <- step
+  }
+
+  # Run step6
+  res_step6 <- estim_param(
+    obs_list = obs_list,
+    model_function = model_function,
+    model_options = model_options,
+    crit_function = crit_ols,
+    optim_options = optim_options,
+    param_info = param_info,
+    step = steps,
+    out_dir = file.path(out_dir, "AgMIP_protocol_step6")
+  )
+
+  # Compute weights for step7
+
+  ## Run model wrapper using parameter values estimated in step6
+  sim_after_step6 <- compute_simulations(
+    model_function = model_function,
+    model_options = model_options,
+    param_values = c(
+      res_step6$final_values,
+      res_step6$forced_param_values
+    ),
+    situation = names(obs_list),
+    var_to_simulate = var_to_simulate, obs_list = obs_list,
+    transform_sim = transform_sim, transform_var = transform_var
+  )
+
+  #
+  # Revoir le type de sortie renvoyé par compute_simulations ...
+  #
+
+  ## Transform observations if necessary
+  if (!is.null(transform_obs)) {
+    obs_list <- tryCatch(
+      transform_obs(
+        model_results = sim_after_step6$model_results, obs_list = obs_list,
+        param_values = c(
+          res_step6$final_values,
+          res_step6$forced_param_values
+        ),
+        model_options = model_options
+      ),
+      error = function(cond) {
+        message(paste("Caught an error while executing the user function for transforming
+        observations (argument transform_obs)."))
+        print(cond)
+        stop()
+      }
+    )
+  }
+  if (!is.null(transform_var)) {
+    obs_list <- lapply(obs_list, function(x) {
+      for (var in intersect(names(x), names(transform_var))) {
+        x[var] <- transform_var[[var]](x[var])
+      }
+      return(x)
+    })
+  }
+
+  ## Compute SSE and number of observations for each observed variable
+  # stats_tmp <- CroPlotR:::summary.cropr_simulation(sim_after_step6$model_results$sim_list,
+  #   obs = obs_list, stats = c("n_obs", "SS_res")
+  # )
+  stats_tmp <- summary(sim_after_step6$model_results$sim_list,
+    obs = obs_list, stats = c("n_obs", "SS_res")
+  )
+
+  ## Sum SSE and number of observations per group of variables
+  ## (weight of variables belonging to the same group must be the same)
+  ### Compute the list of variables used at the same step for each variable
+  obs_var_names <- get_obs_var(obs_list)
+  step_var_map <- lapply(obs_var_names, function(var) {
+    unique(
+      unlist(
+        lapply(res_step6$step, function(x) {
+          if (var %in% x$obs_var) x$obs_var else NULL
+        })
+      )
+    )
+  })
+  names(step_var_map) <- obs_var_names
+  SSE <- compute_stat_per_group("SS_res", step_var_map, stats_tmp)
+  n_obs <- compute_stat_per_group("n_obs", step_var_map, stats_tmp)
+  names(SSE) <- obs_var_names
+  names(n_obs) <- obs_var_names
+
+  ## Compute number of estimated parameters per variable
+  p <- vapply(obs_var_names, function(var) {
+    sum(sapply(res_step6$step, function(x) {
+      if (var %in% x$obs_var) {
+        return(length(x$optim_results$final_values))
+      } else {
+        return(0)
+      }
+    }))
+  }, numeric(1))
+  names(p) <- obs_var_names
+
+  ## Define weight function
+  weights <- vapply(obs_var_names, function(var) {
+    sqrt(SSE[[var]] / (n_obs[[var]] - p[[var]]))
+  }, numeric(1))
+  names(weights) <- obs_var_names
+
+  weight_step7 <- function(obs, var) {
+    return(weights[[var]])
+  }
+
+  # Define parameters to estimate and to set for step7
+  param_info_step7 <- filter_param_info(param_info, names(res_step6$final_values))
+  forced_param_values_step7 <- NULL
+  if (length(res_step6$forced_param_values) > 0) {
+    forced_param_values_step7 <- res_step6$forced_param_values
+  }
+
+  # Define initial values for step7
+  param_info_step7 <- set_init_values(
+    param_info_step7,
+    as.data.frame(t(res_step6$final_values))
+  )
+
+  # Run step7
+  res_step7 <- estim_param(
+    obs_list = obs_list,
+    model_function = model_function,
+    model_options = model_options,
+    crit_function = crit_wls,
+    optim_options = optim_options,
+    param_info = param_info_step7,
+    forced_param_values = forced_param_values_step7,
+    weight = weight_step7,
+    out_dir = file.path(out_dir, "AgMIP_protocol_step7")
+  )
+
+  # Compute diagnostics
+
+  # ... TODO ...
+
+  # Return results
+  res <- res_step7
+  res$step6 <- res_step6
+  res$step7 <- res_step7
+  res$weights <- weights
+  res$nb_param_per_var <- p
+  res$nb_obs_per_var <- n_obs
+  res$SSE <- SSE
+  return(res)
+}
+
+
+
+#' @title Compute statistics per group of variables
+#'
+#' @param stat_col Name of the column of stats_per_var containing the statistics to compute
+#'
+#' @param step_var_map A list mapping each variable to a list of variables used at the same step
+#'
+#' @param stats_per_var A data frame containing statistics per variable
+#'
+#' @return A named vector containing for each variable the sum of the statistics for each group of variables
+#'
+#' @keywords internal
+#'
+compute_stat_per_group <- function(stat_col, step_var_map, stats_per_var) {
+  if (is.null(names(stats_per_var)) || length(names(stats_per_var)) == 0) {
+    stop(paste(
+      "stats_per_var must be a data frame with named columns. \n While str(stats_per_var)=",
+      paste(str(stats_per_var), collapse = ", ")
+    ))
+  }
+  if (!stat_col %in% names(stats_per_var)) {
+    stop(paste(
+      stat_col, "not a column of stats_per_var. \nColumns of stats_per_var are:",
+      paste(names(stats_per_var), collapse = ",")
+    ))
+  }
+
+  vapply(
+    names(step_var_map),
+    function(var) {
+      step_var_list <- step_var_map[[var]]
+
+      if (is.null(step_var_list)) {
+        # in case the variable is not used in step6 but is in step7, just take the stat of the variable
+        stats_per_var[[stat_col]][which(stats_per_var$variable == var)]
+      } else {
+        # sum stats_per_var$stat_col of each variable belonging to the same step as var (as defined in res_step6$step$var)
+        sum(stats_per_var[[stat_col]][stats_per_var$variable %in% step_var_list], na.rm = TRUE)
+      }
+    },
+    numeric(1)
+  )
+}

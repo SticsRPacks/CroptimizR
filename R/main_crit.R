@@ -115,9 +115,9 @@ main_crit <- function(param_values, crit_options) {
       if (is.null(.croptEnv$sim)) {
         .croptEnv$sim <- vector("list", crit_options$tot_max_eval)
       }
-      .croptEnv$sim[[.croptEnv$eval_count]] <- sim
+      .croptEnv$sim[[.croptEnv$eval_count]] <- model_results
 
-      if (!is.null(crit_options$transform_sim)) {
+      if (!is.null(crit_options$transform_sim) || !is.null(crit_options$transform_var)) {
         if (is.null(.croptEnv$sim_transformed)) {
           .croptEnv$sim_transformed <- vector("list", crit_options$tot_max_eval)
         }
@@ -135,13 +135,13 @@ main_crit <- function(param_values, crit_options) {
         filename, "for sake of debugging."
       ))
       # just warns in this case. The optimization method may handle the problem
-      # which may happend only for certain parameter values ...).
-      save(param_values, obs_list, model_results, file = filename)
+      # which may happened only for certain parameter values ...).
+      save(param_values, obs_list, model_results, sim_transformed, file = filename)
     }
 
     if (!is.null(crit_options$return_detailed_info) && crit_options$return_detailed_info) {
       return(res <- list(
-        crit = crit, obs_list = obs_list, sim = sim,
+        crit = crit, obs_list = obs_list, sim = model_results,
         sim_transformed = sim_transformed,
         sim_intersect = obs_sim_list$sim_list,
         obs_intersect = obs_sim_list$obs_list,
@@ -171,13 +171,6 @@ main_crit <- function(param_values, crit_options) {
   obs_sim_list <- NULL
   sim_transformed <- NULL
   model_results <- NULL
-  sim <- NULL
-
-  # Denormalize parameters
-  # TO DO
-
-  # Transform parameters
-  # TO DO
 
   # Handle the case of group of parameters (i.e. different values depending on
   # the situations)
@@ -244,116 +237,33 @@ main_crit <- function(param_values, crit_options) {
 
   # Call model function
   tictoc::tic(quiet = TRUE)
-  # hum, this test is a bit uggly but seems to be necessary
-  # (wrappers may have or not the arguments situation and var or their old name
-  # sit_names and var_names and they may have both in case the use deprecated
-  #  arguments for sit_names and var_to_simulate ...
-  if ((("situation" %in% names(formals(model_function))) |
-    ("var" %in% names(formals(model_function)))) |
-    !(("sit_names" %in% names(formals(model_function))) |
-      ("var_names" %in% names(formals(model_function))))) {
-    try(model_results <- model_function(
-      model_options = model_options,
-      param_values = param_values,
-      situation = sit_names,
-      var = var_to_simulate,
-      sit_var_dates_mask = sit_var_dates_mask
-    ))
-  } else if (("sit_names" %in% names(formals(model_function))) |
-    ("var_names" %in% names(formals(model_function)))) {
-    try(model_results <- model_function(
-      model_options = model_options,
-      param_values = param_values,
-      sit_names = sit_names,
-      var_names = var_to_simulate,
-      sit_var_dates_mask = sit_var_dates_mask
-    ))
-    lifecycle::deprecate_warn(
-      "0.5.0", "model_function(sit_names)",
-      "model_function(situation)"
-    )
-    lifecycle::deprecate_warn(
-      "0.5.0", "model_function(var_names)",
-      "model_function(var)"
-    )
+
+  tmp <- compute_simulations(
+    model_function = model_function,
+    model_options = model_options,
+    param_values = param_values,
+    situation = sit_names,
+    var_to_simulate = var_to_simulate,
+    obs_list = obs_list,
+    transform_sim = transform_sim, transform_var = transform_var,
+    sit_var_dates_mask = sit_var_dates_mask
+  )
+  model_results <- tmp$model_results
+  sim_transformed <- tmp$sim_transformed
+  if (!is.null(sim_transformed)) {
+    sim_results <- sim_transformed
+  } else {
+    sim_results <- model_results
   }
+
   tictoc::toc(quiet = TRUE, log = TRUE)
   .croptEnv$total_eval_count <- .croptEnv$total_eval_count + 1
-  sim <- model_results
-
-
-  # Check results, return NA if incorrect
-  if (is.null(model_results) ||
-    (!is.null(model_results$error) && model_results$error)) {
-    warning(paste(
-      "Error in model simulations for parameters values",
-      paste0(param_values, collapse = ",")
-    ))
-    return(NA)
-  }
-  if (is.null(model_results$sim_list) || length(model_results$sim_list) == 0) {
-    warning(paste(
-      "Model wrapper returned an empty list for parameters values",
-      paste0(param_values, collapse = ",")
-    ))
-    return(NA)
-  }
-  if (!is.sim(model_results$sim_list)) {
-    warning("Format of results returned by the model wrapper is incorrect!")
-    return(NA)
-  }
-
-
-  # Transform simulations
-  sim_transformed <- NULL
-  if (!is.null(transform_sim)) {
-    model_results <- tryCatch(
-      transform_sim(
-        model_results = model_results, obs_list = obs_list,
-        param_values = param_values,
-        model_options = model_options
-      ),
-      error = function(cond) {
-        message(paste("Caught an error while executing the user function for transforming
-        simulations (argument transform_sim of estim_param function). \n
-                 param_values=", paste(param_values, collapse = ",")))
-        print(cond)
-        stop()
-      }
-    )
-    sim_transformed <- model_results
-  }
-  if (!is.null(transform_var)) {
-    model_results$sim_list <- lapply(model_results$sim_list, function(x) {
-      for (var in intersect(names(x), names(transform_var))) {
-        x[var] <- transform_var[[var]](x[var])
-      }
-      return(x)
-    })
-    attr(model_results$sim_list, "class") <- "cropr_simulation"
-    sim_transformed <- model_results
-  }
-  # Check results, return NA if incorrect
-  if (is.null(model_results) ||
-    (!is.null(model_results$error) && model_results$error)) {
-    warning("Error in transformation of simulation results.")
-    return(NA)
-  }
-  if (is.null(model_results$sim_list) || length(model_results$sim_list) == 0) {
-    warning("Transformation of simulation results returned an empty list!")
-    return(NA)
-  }
-  if (!is.sim(model_results$sim_list)) {
-    warning("Format of results returned by transformation of model results is incorrect!")
-    return(NA)
-  }
-
 
   # Transform observations
   if (!is.null(transform_obs)) {
     obs_list <- tryCatch(
       transform_obs(
-        model_results = model_results, obs_list = obs_list,
+        model_results = sim_results, obs_list = obs_list,
         param_values = param_values,
         model_options = model_options
       ),
@@ -382,7 +292,7 @@ main_crit <- function(param_values, crit_options) {
 
   # Make observations and simulations consistent if possible
   obs_sim_list <- make_obsSim_consistent(
-    model_results$sim_list,
+    sim_results$sim_list,
     obs_list
   )
 
