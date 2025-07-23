@@ -16,19 +16,21 @@ check_protocol_content(
 )
 }
 \arguments{
-\item{variables_df}{}
+\item{protocol_file_path}{Path to the Excel file describing the AgMIP PhaseIV protocol.}
 
-\item{varNames_corresp}{}
+\item{variables_df}{to be defined ...}
 
-\item{simVar_units}{}
+\item{varNames_corresp}{to be defined ...}
 
-\item{transform_outputs}{}
+\item{simVar_units}{to be defined ...}
 
-\item{param_group}{}
+\item{transform_outputs}{to be defined ...}
 
-\item{obsVar_group}{}
+\item{param_group}{to be defined ...}
 
-\item{sitNames_corresp}{}
+\item{obsVar_group}{to be defined ...}
+
+\item{sitNames_corresp}{to be defined ...}
 }
 \value{
 Stop if the content of the protocol description file is not as expected

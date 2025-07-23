@@ -1,7 +1,5 @@
 #' @title Summarizes results of multi-step procedure
 #'
-#' @inheritParams estim_param
-#'
 #' @param results_multi_step Results of the multi_step procedure as returned by post_treat_multi_step
 #'
 #' @param path_results Folder path where results of the multi-step optimization process can be found
@@ -45,9 +43,8 @@ summary_multi_step <- function(results_multi_step, path_results) {
 
 #' @title Post-treat results of multi-step procedure
 #'
-#' @inheritParams estim_param
-#'
 #' @param step List of steps of the multi-step procedure
+#'
 #' @param optim_results_list List of results returned for each step of the multi-step parameter estimation process
 #'
 #' @return List of estimated and forced parameters values

@@ -1,16 +1,12 @@
 #' @title Load the protocol description as given in xls file `protocol_file_path`
 #'
-#' @inheritParams estim_param
+#' @inheritParams run_protocol_agmip
 #'
-#' @param
-#'
-#' @param
+#' @param transform_outputs to be described ...
 #'
 #' @details
-#'
 #' The AgMIP PhaseIV protocol is thoroughly detailed in Wallach et al., 2024
 #' and Wallach et al. 2025.
-#'
 #'
 #' @return A list including:
 #   - sitNames_corresp: correspondence between observed and simulated situation names
@@ -244,10 +240,6 @@ load_protocol_agmip <- function(protocol_file_path, transform_outputs = NULL) {
 #'
 #' @inheritParams load_protocol_agmip
 #'
-#' @param
-#'
-#' @param
-#'
 #' @details
 #'   Check that the protocol description as given in xls file `protocol_file_path`
 #'   include the required sheets and columns.
@@ -322,21 +314,19 @@ check_col_names <- function(protocol_file_path, expected_cols, cols, sheet) {
 #'
 #' @inheritParams load_protocol_agmip
 #'
-#' @param variables_df
+#' @param variables_df to be defined ...
 #'
-#' @param varNames_corresp
+#' @param varNames_corresp to be defined ...
 #'
-#' @param simVar_units
+#' @param simVar_units to be defined ...
 #'
-#' @param transform_outputs
+#' @param transform_outputs to be defined ...
 #'
-#' @param param_group
+#' @param param_group to be defined ...
 #'
-#' @param obsVar_group
+#' @param obsVar_group to be defined ...
 #'
-#' @param sitNames_corresp
-#'
-#' @details
+#' @param sitNames_corresp to be defined ...
 #'
 #' @return Stop if the content of the protocol description file is not as expected
 #'

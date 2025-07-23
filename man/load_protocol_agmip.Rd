@@ -6,6 +6,11 @@
 \usage{
 load_protocol_agmip(protocol_file_path, transform_outputs = NULL)
 }
+\arguments{
+\item{protocol_file_path}{Path to the Excel file describing the AgMIP PhaseIV protocol.}
+
+\item{transform_outputs}{to be described ...}
+}
 \value{
 A list including:
 }

@@ -7,6 +7,8 @@
 check_col_names(protocol_file_path, expected_cols, cols, sheet)
 }
 \arguments{
+\item{protocol_file_path}{Path to the Excel file describing the AgMIP PhaseIV protocol.}
+
 \item{expected_cols}{List of expected column names for a given sheet}
 
 \item{cols}{List of column names as read in the protocol description file for a given sheet}

@@ -165,7 +165,7 @@ longer supported, use \code{var_to_simulate} instead.}
 \value{
 prints, graphs and a list containing the results of the parameter estimation,
 which content depends on the method used and on the values of the \code{info_level} argument.
-All results are saved in the folder \code{optim_options$out_dir}.
+All results are saved in the folder \code{out_dir}.
 }
 \description{
 main function for parameter estimation

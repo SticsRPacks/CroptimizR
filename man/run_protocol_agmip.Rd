@@ -43,6 +43,8 @@ and \href{https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation
 \item \code{out_dir} \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Definition of \code{out_dir} in \code{optim_options} is no longer supported, use the new argument \code{out_dir} of \code{estim_param} instead.
 }}
 
+\item{protocol_file_path}{Path to the Excel file describing the AgMIP PhaseIV protocol.}
+
 \item{out_dir}{Path to the directory where the optimization results will be written. (optional, default to \code{getwd()})}
 
 \item{var_to_simulate}{(optional) List of variables for which the model wrapper must return
@@ -92,13 +94,17 @@ for an example),
 \item \code{default}, vector of default values per group (optional, the parameter is set to its default value when it is part of the \code{candidate_param} list and when it is not estimated ; the default value is also used as first initial value when the parameter is estimated)
 }}
 }
+\value{
+prints, graphs and a list containing the results of the AgMIP PhaseIV protocol.
+All results are saved in the folder \code{out_dir}.
+}
 \description{
 Run the AgMIP PhaseIV protocol
 }
 \details{
-The AgMIP PhaseIV protocol is thoroughly detailed in Wallach et al., 2024
-and Wallach et al. 2025.
+The AgMIP PhaseIV protocol is thoroughly detailed in Wallach et al. (2024)
+and Wallach et al. (2025).
 }
 \seealso{
-Wallach et al., 2024 and Wallach et al. 2025
+Wallach et al. (2024), Wallach et al. (2025), and the \code{estim_param} function.
 }

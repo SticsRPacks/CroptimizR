@@ -2,17 +2,17 @@
 #'
 #' @inheritParams estim_param
 #'
-#' @param
+#' @param protocol_file_path Path to the Excel file describing the AgMIP PhaseIV protocol.
 #'
 #' @details
 #'
-#' The AgMIP PhaseIV protocol is thoroughly detailed in Wallach et al., 2024
-#' and Wallach et al. 2025.
+#' The AgMIP PhaseIV protocol is thoroughly detailed in Wallach et al. (2024)
+#' and Wallach et al. (2025).
 #'
+#' @return prints, graphs and a list containing the results of the AgMIP PhaseIV protocol.
+#' All results are saved in the folder `out_dir`.
 #'
-#' @return
-#'
-#' @seealso Wallach et al., 2024 and Wallach et al. 2025
+#' @seealso Wallach et al. (2024), Wallach et al. (2025), and the `estim_param` function.
 #'
 #' @export
 #'
@@ -24,16 +24,7 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
     save(res, file = file.path(out_dir, "optim_results.Rdata"))
   })
 
-  # Read the excel file describing the protocol to generate the step6 list
-
-
-  ##### METTRE TOUS LES PARAM DE ESTIM_PARAM EN ENTREE ??? (e.g. quid de optim_method ???)
-  ### ou tout dans le excel ?
-  ### ou que dans step pour flexibilité ?
-  ### ou pas de flexibilité par rapport au protocole AgMIP ?
-
-  ######### GERER TRANSFORM_OUTPUTS : QUEL RAPPORT AVEC TRANSFORM_SIM, OBS et VAR ?
-  #################################################################################
+  # Read the excel file describing the protocol to generate the step6 list if step is not provided
   if (is.null(step)) {
     tmp <- load_protocol_agmip(protocol_file_path, transform_outputs = transform_sim)
     steps <- tmp$step
@@ -74,10 +65,6 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
     transform_sim = transform_sim, transform_var = transform_var
   )
 
-  #
-  # Revoir le type de sortie renvoyé par compute_simulations ...
-  #
-
   ## Transform observations if necessary
   if (!is.null(transform_obs)) {
     obs_list <- tryCatch(
@@ -107,9 +94,6 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
   }
 
   ## Compute SSE and number of observations for each observed variable
-  # stats_tmp <- CroPlotR:::summary.cropr_simulation(sim_after_step6$model_results$sim_list,
-  #   obs = obs_list, stats = c("n_obs", "SS_res")
-  # )
   stats_tmp <- summary(sim_after_step6$model_results$sim_list,
     obs = obs_list, stats = c("n_obs", "SS_res")
   )

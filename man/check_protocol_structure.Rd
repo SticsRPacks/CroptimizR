@@ -6,6 +6,9 @@
 \usage{
 check_protocol_structure(protocol_file_path)
 }
+\arguments{
+\item{protocol_file_path}{Path to the Excel file describing the AgMIP PhaseIV protocol.}
+}
 \value{
 Stop if protocol structure is not as expected
 }

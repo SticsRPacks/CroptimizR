@@ -232,7 +232,7 @@
 #'
 #' @return prints, graphs and a list containing the results of the parameter estimation,
 #' which content depends on the method used and on the values of the `info_level` argument.
-#' All results are saved in the folder `optim_options$out_dir`.
+#' All results are saved in the folder `out_dir`.
 #'
 #' @seealso For more details and examples, see the different vignettes in
 #' [CroptimizR website](https://sticsrpacks.github.io/CroptimizR/)
