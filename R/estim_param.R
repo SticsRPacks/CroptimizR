@@ -349,8 +349,11 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
       ## Filter information about the parameters to estimate
       param_info_cur <- filter_param_info(step[[istep]]$param_info, crt_candidates)
       bounds <- get_params_bounds(param_info_cur)
-      forced_param_values_cur <- forced_param_values_istep
-      forced_param_values_cur <- forced_param_values_cur[!names(forced_param_values_cur) %in% crt_candidates]
+      if (is.null(forced_param_values_istep) || all(names(forced_param_values_istep) %in% crt_candidates)) {
+        forced_param_values_cur <- NULL
+      } else {
+        forced_param_values_cur <- forced_param_values_istep[!names(forced_param_values_istep) %in% crt_candidates]
+      }
 
       ## Print information about the current step
       cat("\n---------------------\n")
