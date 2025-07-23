@@ -191,19 +191,17 @@ test_that("First AgMIP protocol test", {
   )
 
   # Check the number of parameters and observations taken into account for weight computation
-  expect_equal(res$nb_param_per_var[["biomass"]], 1)
-  expect_equal(res$nb_obs_per_var[["biomass"]], 74)
-  expect_equal(res$nb_param_per_var[["yield"]], 1)
-  expect_equal(res$nb_obs_per_var[["yield"]], 74)
+  expect_equal(res$step7$weights$p, c(1, 1))
+  expect_equal(res$step7$weights$n, c(74, 74))
 
   # Check that initial values used for parameter estimation at step7 are equal to estimated values at end of step6
   expect_equal(
     res$step6$final_values[["rB"]],
-    res$init_values[["rB"]][[1]]
+    res$step7$init_values[["rB"]][[1]]
   )
   expect_equal(
     res$step6$final_values[["h"]],
-    res$init_values[["h"]][[1]]
+    res$step7$init_values[["h"]][[1]]
   )
 
   # Check that Bmax is kept to its default value
@@ -261,23 +259,21 @@ test_that("Test efficiency of step7 in case a parameter is estimated late in ste
   )
 
   # Check the number of parameters and observations taken into account for weight computation
-  expect_equal(res$nb_param_per_var[["biomass"]], 1)
-  expect_equal(res$nb_obs_per_var[["biomass"]], 74)
-  expect_equal(res$nb_param_per_var[["yield"]], 2)
-  expect_equal(res$nb_obs_per_var[["yield"]], 74)
+  expect_equal(res$step7$weights$p, c(1, 2))
+  expect_equal(res$step7$weights$n, c(74, 74))
 
   # Check that initial values used for parameter estimation at step7 are equal to estimated values at end of step6
   expect_equal(
     res$step6$final_values[["rB"]],
-    res$init_values[["rB"]][[1]]
+    res$step7$init_values[["rB"]][[1]]
   )
   expect_equal(
     res$step6$final_values[["h"]],
-    res$init_values[["h"]][[1]]
+    res$step7$init_values[["h"]][[1]]
   )
   expect_equal(
     res$step6$final_values[["Bmax"]],
-    res$init_values[["Bmax"]][[1]]
+    res$step7$init_values[["Bmax"]][[1]]
   )
 
   # Check that estimated values for parameters are close to true values
@@ -347,23 +343,21 @@ test_that("Check use of the same variable in different steps and obs variable us
   )
 
   # Check the number of parameters and observations taken into account for weight computation
-  expect_equal(res$nb_param_per_var[["biomass"]], 3)
-  expect_equal(res$nb_obs_per_var[["biomass"]], 74)
-  expect_equal(res$nb_param_per_var[["yield"]], 0)
-  expect_equal(res$nb_obs_per_var[["yield"]], 74)
+  expect_equal(res$step7$weights$p, c(3, 0))
+  expect_equal(res$step7$weights$n, c(74, 74))
 
   # Check that initial values used for parameter estimation at step7 are equal to estimated values at end of step6
   expect_equal(
     res$step6$final_values[["rB"]],
-    res$init_values[["rB"]][[1]]
+    res$step7$init_values[["rB"]][[1]]
   )
   expect_equal(
     res$step6$final_values[["h"]],
-    res$init_values[["h"]][[1]]
+    res$step7$init_values[["h"]][[1]]
   )
   expect_equal(
     res$step6$final_values[["Bmax"]],
-    res$init_values[["Bmax"]][[1]]
+    res$step7$init_values[["Bmax"]][[1]]
   )
 
   # Check that estimated values for parameters are close to true values
@@ -424,29 +418,27 @@ test_that("Check use of several observed variables per group", {
   )
 
   # Check the number of parameters and observations taken into account for weight computation
-  expect_equal(res$nb_param_per_var[["biomass"]], 4)
-  expect_equal(res$nb_obs_per_var[["biomass"]], 74 * 2)
-  expect_equal(res$nb_param_per_var[["yield"]], 4)
-  expect_equal(res$nb_obs_per_var[["yield"]], 74 * 2)
+  expect_equal(res$step7$weights$p, c(4, 4))
+  expect_equal(res$step7$weights$n, c(74 * 2, 74 * 2))
 
   # Check that values of weights for biomass and yield are equal
   expect_equal(
-    res$weight[["biomass"]],
-    res$weight[["yield"]]
+    res$step7$weights$weight[[1]],
+    res$step7$weights$weight[[2]]
   )
 
   # Check that initial values used for parameter estimation at step7 are equal to estimated values at end of step6
   expect_equal(
     res$step6$final_values[["rB"]],
-    res$init_values[["rB"]][[1]]
+    res$step7$init_values[["rB"]][[1]]
   )
   expect_equal(
     res$step6$final_values[["h"]],
-    res$init_values[["h"]][[1]]
+    res$step7$init_values[["h"]][[1]]
   )
   expect_equal(
     res$step6$final_values[["Bmax"]],
-    res$init_values[["Bmax"]][[1]]
+    res$step7$init_values[["Bmax"]][[1]]
   )
 
   # Check that estimated values for parameters are close to true values

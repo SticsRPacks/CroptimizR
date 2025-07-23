@@ -14,6 +14,8 @@
 #'
 #' @seealso Wallach et al. (2024), Wallach et al. (2025), and the `estim_param` function.
 #'
+#' @importFrom CroPlotR save_plot_pdf
+#'
 #' @export
 #'
 run_protocol_agmip <- function(model_function, model_options, obs_list, optim_options, protocol_file_path = NULL,
@@ -22,7 +24,14 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
   res <- NULL
   on.exit({
     save(res, file = file.path(out_dir, "optim_results.Rdata"))
+    cat("\n---------------------\n")
+    cat(paste("End of AgMIP Phase IV protocol"))
+    cat("\n---------------------\n")
   })
+
+  cat("\n---------------------\n")
+  cat(paste("AgMIP Phase IV protocol"))
+  cat("\n---------------------\n")
 
   # Read the excel file describing the protocol to generate the step6 list if step is not provided
   if (is.null(step)) {
@@ -33,12 +42,24 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
     steps <- step
   }
 
+  # Run model wrapper using the default values of the parameters
+  sim_default <- compute_simulations(
+    model_function = model_function,
+    model_options = model_options,
+    param_values = get_params_default(param_info),
+    situation = names(obs_list),
+    var_to_simulate = var_to_simulate, obs_list = obs_list,
+    transform_sim = transform_sim, transform_var = transform_var
+  )
+
   # Force nb_rep to c(10, 5) for step6 as defined in the AgMIP Phase IV protocol
   if (is.null(optim_options$nb_rep)) {
     optim_options$nb_rep <- c(10, 5)
   }
 
   # Run step6
+  cat("\n---------------------\n")
+  cat(paste("Run AgMIP Phase IV protocol Step6"))
   res_step6 <- estim_param(
     obs_list = obs_list,
     model_function = model_function,
@@ -66,8 +87,9 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
   )
 
   ## Transform observations if necessary
+  obs_list_transformed <- obs_list
   if (!is.null(transform_obs)) {
-    obs_list <- tryCatch(
+    obs_list_transformed <- tryCatch(
       transform_obs(
         model_results = sim_after_step6$model_results, obs_list = obs_list,
         param_values = c(
@@ -85,7 +107,7 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
     )
   }
   if (!is.null(transform_var)) {
-    obs_list <- lapply(obs_list, function(x) {
+    obs_list_transformed <- lapply(obs_list_transformed, function(x) {
       for (var in intersect(names(x), names(transform_var))) {
         x[var] <- transform_var[[var]](x[var])
       }
@@ -95,13 +117,13 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
 
   ## Compute SSE and number of observations for each observed variable
   stats_tmp <- summary(sim_after_step6$model_results$sim_list,
-    obs = obs_list, stats = c("n_obs", "SS_res")
+    obs = obs_list_transformed, stats = c("n_obs", "SS_res")
   )
 
   ## Sum SSE and number of observations per group of variables
   ## (weight of variables belonging to the same group must be the same)
   ### Compute the list of variables used at the same step for each variable
-  obs_var_names <- get_obs_var(obs_list)
+  obs_var_names <- get_obs_var(obs_list_transformed)
   step_var_map <- lapply(obs_var_names, function(var) {
     unique(
       unlist(
@@ -158,6 +180,8 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
   }
 
   # Run step7
+  cat("\n---------------------\n")
+  cat(paste("Run AgMIP Phase IV protocol Step7"))
   res_step7 <- estim_param(
     obs_list = obs_list,
     model_function = model_function,
@@ -172,16 +196,94 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
 
   # Compute diagnostics
 
-  # ... TODO ...
+  ## Run model wrapper using parameter values estimated in step7
+  sim_after_step7 <- compute_simulations(
+    model_function = model_function,
+    model_options = model_options,
+    param_values = c(
+      res_step7$final_values,
+      res_step7$forced_param_values
+    ),
+    situation = names(obs_list),
+    var_to_simulate = var_to_simulate, obs_list = obs_list,
+    transform_sim = transform_sim, transform_var = transform_var
+  )
+  ## Compute bias2 and rRMSE for each observed variable from default values of parameters, estimated values after step6 and estimated values after step7
+  stats_default <- summary(sim_default$model_results$sim_list,
+    obs = obs_list_transformed, stats = c("Bias2", "rRMSE", "EF")
+  )
+  stats_step6 <- summary(sim_after_step6$model_results$sim_list,
+    obs = obs_list_transformed, stats = c("Bias2", "rRMSE", "EF")
+  )
+  stats_step7 <- summary(sim_after_step7$model_results$sim_list,
+    obs = obs_list_transformed, stats = c("Bias2", "rRMSE", "EF")
+  )
+  ## Concatenate the different stats in a data.frame with a column variable, a column step and a column per stat
+  stats_per_step <- data.frame(
+    variable = obs_var_names,
+    step = rep(c("default", "step6", "step7"), each = length(obs_var_names)),
+    Bias2 = c(stats_default$Bias2, stats_step6$Bias2, stats_step7$Bias2),
+    rRMSE = c(stats_default$rRMSE, stats_step6$rRMSE, stats_step7$rRMSE),
+    EF = c(stats_default$EF, stats_step6$EF, stats_step7$EF)
+  )
+  ## Arrange it per variable name
+  stats_per_step <- stats_per_step[order(stats_per_step$variable), ]
+
+  ## Generate scatter plots from default values of parameters, estimated values after step6 and estimated values after step7
+  p_default <- plot(sim_default$model_results$sim_list, obs = obs_list_transformed, type = "scatter")
+  p_step6 <- plot(sim_after_step6$model_results$sim_list, obs = obs_list_transformed, type = "scatter")
+  p_step7 <- plot(sim_after_step7$model_results$sim_list, obs = obs_list_transformed, type = "scatter")
+  ## Save the plots in the out_dir
+  save_plot_pdf(
+    p_default,
+    out_dir = out_dir,
+    file_name = "scatter_plots_default"
+  )
+  save_plot_pdf(
+    p_step6,
+    out_dir = out_dir,
+    file_name = "scatter_plots_after_step6"
+  )
+  save_plot_pdf(
+    p_step7,
+    out_dir = out_dir,
+    file_name = "scatter_plots_after_step7"
+  )
+
+  # Print results
+  cat(paste(
+    "\nAgMIP Phase IV protocol: Graphs and results can be found in ",
+    out_dir, "\n"
+  ))
 
   # Return results
-  res <- res_step7
+  res$final_values <- res_step7$final_values
+  res$forced_param_values <- res_step7$forced_param_values
+  res$obs_var_list <- res_step7$obs_var_list
+  res$values_per_step <-
+    data.frame(
+      name = names(res_step7$final_values),
+      default = sapply(names(res_step7$final_values), function(x) {
+        param_info[[x]]$default
+      }),
+      step6 = res_step6$final_values,
+      step7 = res_step7$final_values
+    )
+  res$stats_per_step <- stats_per_step
+  res$scatter_plots <- list(
+    default = p_default,
+    step6 = p_step6,
+    step7 = p_step7
+  )
   res$step6 <- res_step6
   res$step7 <- res_step7
-  res$weights <- weights
-  res$nb_param_per_var <- p
-  res$nb_obs_per_var <- n_obs
-  res$SSE <- SSE
+  res$step7$weights <- data.frame(
+    variable = names(weights),
+    weight = weights,
+    SSE = SSE,
+    n = n_obs,
+    p = p
+  )
   return(res)
 }
 
