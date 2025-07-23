@@ -54,6 +54,11 @@ evaluation  (optional), see details section for more information.}
 observed variables. \code{transform_var=c(var1=log, var2=sqrt)} will for example
 apply log-transformation on simulated and observed values of variable var1,
 and square-root transformation on values of variable var2.}
+
+\item{sit_var_dates_mask}{List of situations: a named list
+containing a mask for variables and dates for which simulated values
+should be returned. Typically a list containing the observations to which
+simulations should be compared.}
 }
 \value{
 List of model and transformed results, in the cropr_simulation format.

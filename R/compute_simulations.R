@@ -4,6 +4,10 @@
 #' @inheritParams estim_param
 #' @param param_values Named vector or tibble, value(s) of the parameters to
 #' pass to the model wrapper
+#' @param sit_var_dates_mask List of situations: a named list
+#' containing a mask for variables and dates for which simulated values
+#' should be returned. Typically a list containing the observations to which
+#' simulations should be compared.
 #'
 #' @return List of model and transformed results, in the cropr_simulation format.
 #'
