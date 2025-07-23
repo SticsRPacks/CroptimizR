@@ -374,12 +374,10 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
       } else {
         cat("Forced parameter(s): none\n")
       }
-      cat(paste("Observed variable(s) used:", paste(unique(
-        unlist(lapply(
-          step[[istep]]$obs_list,
-          function(x) setdiff(names(x), c("Date", "Plant"))
-        ))
-      ), collapse = ", "), "\n"))
+      cat(paste("Observed variable(s) used:", paste(
+        get_obs_var(step[[istep]]$obs_list),
+        collapse = ", "
+      ), "\n"))
       cat("---------------------\n")
 
 
@@ -509,7 +507,7 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
     cat("End of multi-step parameter estimation process\n")
     cat("----------------------\n")
 
-    res <- post_treat_multi_step(res)
+    res <- post_treat_multi_step(step, res)
     summary_multi_step(res, out_dir)
   } else {
     res <- res[[1]]
