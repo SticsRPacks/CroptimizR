@@ -45,6 +45,7 @@ Imports:
     methods,
     nloptr,
     purrr,
+	readxl,
     rlang,
     rstudioapi,
     tibble,
