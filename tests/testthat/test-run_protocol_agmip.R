@@ -317,7 +317,7 @@ test_that("Test efficiency of step7 in case a parameter is estimated late in ste
 # Check that step7 is efficient for variables not included in step6
 test_that("Check use of the same variable in different steps and obs variable used in step7 but not in step6", {
   optim_options <- list(
-    nb_rep = 3, xtol_rel = 1e-3,
+    nb_rep = 5, xtol_rel = 1e-3,
     ranseed = 1234
   )
   param_info <- list(
