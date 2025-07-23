@@ -42,6 +42,11 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
     steps <- step
   }
 
+  # Force nb_rep to c(10, 5) for step6 as defined in the AgMIP Phase IV protocol
+  if (is.null(optim_options$nb_rep)) {
+    optim_options$nb_rep <- c(10, 5)
+  }
+
   # Run step6
   res_step6 <- estim_param(
     obs_list = obs_list,
@@ -162,6 +167,11 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
     param_info_step7,
     as.data.frame(t(res_step6$final_values))
   )
+
+  # Force nb_rep to 20 for step7 as defined in the AgMIP Phase IV protocol
+  if (is.null(optim_options$nb_rep)) {
+    optim_options$nb_rep <- 20
+  }
 
   # Run step7
   res_step7 <- estim_param(
