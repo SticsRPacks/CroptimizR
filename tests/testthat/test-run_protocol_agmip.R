@@ -1,5 +1,9 @@
 context("Test the run_protocol_agmip function using a toy model")
 
+# seems that testthat is not able to load the package automatically
+# which prevent the use of CroPlotR summary function in run_protocol_agmip
+library(CroPlotR)
+
 # Define a toy model and its wrapper
 toymodel <- function(nb_days, year, rB = 0.1, Bmin = 0.1, Bmax = 10, h = 0.5, Bini = 0.01) {
   # Simulate biomass and yield with a simple logistic model

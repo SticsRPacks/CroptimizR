@@ -14,8 +14,6 @@
 #'
 #' @seealso Wallach et al., 2024 and Wallach et al. 2025
 #'
-#' @importFrom CroPlotR summary
-#'
 #' @export
 #'
 run_protocol_agmip <- function(model_function, model_options, obs_list, optim_options, protocol_file_path = NULL,
