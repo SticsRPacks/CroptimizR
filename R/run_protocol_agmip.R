@@ -82,7 +82,7 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
   # Compute weights for step7
 
   ## Run model wrapper using parameter values estimated in step6
-  sim_after_step6 <- compute_simulations(
+  tmp <- compute_simulations(
     model_function = model_function,
     model_options = model_options,
     param_values = c(
