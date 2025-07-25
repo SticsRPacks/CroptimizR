@@ -455,3 +455,92 @@ test_that("Check use of several observed variables per group", {
     tolerance = param_true_values[["Bmax"]] * 1e-2
   )
 })
+
+# Test using transform_sim, obs and var
+test_that("Test using transform_sim, obs and var", {
+  optim_options <- list(
+    nb_rep = 3, xtol_rel = 1e-2,
+    ranseed = 1234
+  )
+  param_info <- list(
+    rB = list(lb = 0, ub = 1, default = 0.1),
+    h = list(lb = 0, ub = 1, default = 0.5),
+    Bmax = list(lb = 5, ub = 15, default = 7)
+  )
+  steps <- list(
+    biomass = list(
+      param = c("rB"),
+      candidate_param = c("Bmax"),
+      obs_var = c("biomass")
+    ),
+    yield = list(
+      param = c("h"),
+      obs_var = c("yield")
+    )
+  )
+  transform_var <- list(biomass = log)
+  transform_obs <- function(model_results, obs_list, param_values, model_options) {
+    for (i in seq_along(obs_list)) {
+      if ("yield" %in% names(obs_list[[i]])) {
+        obs_list[[i]]$yield_kg <- obs_list[[i]]$yield * 1000 # to simulate a yield in kg/ha
+        obs_list[[i]]$yield <- NULL
+      }
+    }
+    return(obs_list)
+  }
+  transform_sim <- function(model_results, obs_list, param_values, model_options) {
+    for (i in seq_along(model_results$sim_list)) {
+      if ("yield" %in% names(model_results$sim_list[[i]])) {
+        model_results$sim_list[[i]]$yield_kg <- model_results$sim_list[[i]]$yield * 1000 # to simulate a yield in kg/ha
+      }
+    }
+    return(model_results)
+  }
+
+  res <- run_protocol_agmip(
+    model_function = toymodel_wrapper,
+    model_options = model_options,
+    optim_options = optim_options,
+    obs_list = obs_synth,
+    out_dir = tempdir(),
+    step = steps,
+    param_info = param_info,
+    transform_var = transform_var,
+    transform_sim = transform_sim,
+    transform_obs = transform_obs
+  )
+
+  # Check the transformed sim and obs variable is used
+  expect_true("yield_kg" %in% res$obs_var_list)
+  expect_true("yield_kg" %in% res$step7$weights$variable)
+
+  # Check the number of parameters and observations taken into account for weight computation
+  expect_equal(res$step7$weights$p, c(1, 1))
+  expect_equal(res$step7$weights$n, c(74, 74))
+
+  # Check that initial values used for parameter estimation at step7 are equal to estimated values at end of step6
+  expect_equal(
+    res$step6$final_values[["rB"]],
+    res$step7$init_values[["rB"]][[1]]
+  )
+  expect_equal(
+    res$step6$final_values[["h"]],
+    res$step7$init_values[["h"]][[1]]
+  )
+
+  # Check that Bmax is kept to its default value
+  expect_equal(
+    res$forced_param_values[["Bmax"]],
+    param_info$Bmax$default
+  )
+
+  # Check that estimated values for parameters are close to true values
+  expect_equal(res$final_values[["rB"]],
+    param_true_values[["rB"]],
+    tolerance = param_true_values[["rB"]] * 1e-2
+  )
+  expect_equal(res$final_values[["h"]],
+    param_true_values[["h"]],
+    tolerance = param_true_values[["h"]] * 1e-2
+  )
+})
