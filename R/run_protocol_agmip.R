@@ -43,7 +43,7 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
   }
 
   # Run model wrapper using the default values of the parameters
-  sim_default <- compute_simulations(
+  tmp <- compute_simulations(
     model_function = model_function,
     model_options = model_options,
     param_values = get_params_default(param_info),
@@ -51,6 +51,12 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
     var_to_simulate = var_to_simulate, obs_list = obs_list,
     transform_sim = transform_sim, transform_var = transform_var
   )
+  if (!is.null(tmp$sim_transformed)) {
+    sim_default <- tmp$sim_transformed
+  } else {
+    sim_default <- tmp$model_results
+  }
+
 
   # Force nb_rep to c(10, 5) for step6 as defined in the AgMIP Phase IV protocol
   if (is.null(optim_options$nb_rep)) {
@@ -68,7 +74,9 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
     optim_options = optim_options,
     param_info = param_info,
     step = steps,
-    out_dir = file.path(out_dir, "AgMIP_protocol_step6")
+    out_dir = file.path(out_dir, "AgMIP_protocol_step6"),
+    var_to_simulate = var_to_simulate, transform_sim = transform_sim,
+    transform_obs = transform_obs, transform_var = transform_var
   )
 
   # Compute weights for step7
@@ -85,13 +93,17 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
     var_to_simulate = var_to_simulate, obs_list = obs_list,
     transform_sim = transform_sim, transform_var = transform_var
   )
-
+  if (!is.null(tmp$sim_transformed)) {
+    sim_after_step6 <- tmp$sim_transformed
+  } else {
+    sim_after_step6 <- tmp$model_results
+  }
   ## Transform observations if necessary
   obs_list_transformed <- obs_list
   if (!is.null(transform_obs)) {
     obs_list_transformed <- tryCatch(
       transform_obs(
-        model_results = sim_after_step6$model_results, obs_list = obs_list,
+        model_results = sim_after_step6, obs_list = obs_list,
         param_values = c(
           res_step6$final_values,
           res_step6$forced_param_values
@@ -116,7 +128,7 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
   }
 
   ## Compute SSE and number of observations for each observed variable
-  stats_tmp <- summary(sim_after_step6$model_results$sim_list,
+  stats_tmp <- summary(sim_after_step6$sim_list,
     obs = obs_list_transformed, stats = c("n_obs", "SS_res")
   )
 
@@ -191,13 +203,15 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
     param_info = param_info_step7,
     forced_param_values = forced_param_values_step7,
     weight = weight_step7,
-    out_dir = file.path(out_dir, "AgMIP_protocol_step7")
+    out_dir = file.path(out_dir, "AgMIP_protocol_step7"),
+    var_to_simulate = var_to_simulate, transform_sim = transform_sim,
+    transform_obs = transform_obs, transform_var = transform_var
   )
 
   # Compute diagnostics
 
   ## Run model wrapper using parameter values estimated in step7
-  sim_after_step7 <- compute_simulations(
+  tmp <- compute_simulations(
     model_function = model_function,
     model_options = model_options,
     param_values = c(
@@ -208,14 +222,19 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
     var_to_simulate = var_to_simulate, obs_list = obs_list,
     transform_sim = transform_sim, transform_var = transform_var
   )
+  if (!is.null(tmp$sim_transformed)) {
+    sim_after_step7 <- tmp$sim_transformed
+  } else {
+    sim_after_step7 <- tmp$model_results
+  }
   ## Compute bias2 and rRMSE for each observed variable from default values of parameters, estimated values after step6 and estimated values after step7
-  stats_default <- summary(sim_default$model_results$sim_list,
+  stats_default <- summary(sim_default$sim_list,
     obs = obs_list_transformed, stats = c("Bias2", "rRMSE", "EF")
   )
-  stats_step6 <- summary(sim_after_step6$model_results$sim_list,
+  stats_step6 <- summary(sim_after_step6$sim_list,
     obs = obs_list_transformed, stats = c("Bias2", "rRMSE", "EF")
   )
-  stats_step7 <- summary(sim_after_step7$model_results$sim_list,
+  stats_step7 <- summary(sim_after_step7$sim_list,
     obs = obs_list_transformed, stats = c("Bias2", "rRMSE", "EF")
   )
   ## Concatenate the different stats in a data.frame with a column variable, a column step and a column per stat
@@ -230,9 +249,9 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
   stats_per_step <- stats_per_step[order(stats_per_step$variable), ]
 
   ## Generate scatter plots from default values of parameters, estimated values after step6 and estimated values after step7
-  p_default <- plot(sim_default$model_results$sim_list, obs = obs_list_transformed, type = "scatter")
-  p_step6 <- plot(sim_after_step6$model_results$sim_list, obs = obs_list_transformed, type = "scatter")
-  p_step7 <- plot(sim_after_step7$model_results$sim_list, obs = obs_list_transformed, type = "scatter")
+  p_default <- plot(sim_default$sim_list, obs = obs_list_transformed, type = "scatter")
+  p_step6 <- plot(sim_after_step6$sim_list, obs = obs_list_transformed, type = "scatter")
+  p_step7 <- plot(sim_after_step7$sim_list, obs = obs_list_transformed, type = "scatter")
   ## Save the plots in the out_dir
   save_plot_pdf(
     p_default,
@@ -260,11 +279,12 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
   res$final_values <- res_step7$final_values
   res$forced_param_values <- res_step7$forced_param_values
   res$obs_var_list <- res_step7$obs_var_list
+  default_values <- get_params_default(param_info)
   res$values_per_step <-
     data.frame(
       name = names(res_step7$final_values),
       default = sapply(names(res_step7$final_values), function(x) {
-        param_info[[x]]$default
+        default_values[[x]]
       }),
       step6 = res_step6$final_values,
       step7 = res_step7$final_values
