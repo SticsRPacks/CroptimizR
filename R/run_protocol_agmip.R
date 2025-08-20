@@ -239,8 +239,8 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
   )
   ## Concatenate the different stats in a data.frame with a column variable, a column step and a column per stat
   stats_per_step <- data.frame(
-    variable = obs_var_names,
-    step = rep(c("default", "step6", "step7"), each = length(obs_var_names)),
+    variable = stats_default$variable,
+    step = rep(c("default", "step6", "step7"), each = length(stats_default$variable)),
     Bias2 = c(stats_default$Bias2, stats_step6$Bias2, stats_step7$Bias2),
     rRMSE = c(stats_default$rRMSE, stats_step6$rRMSE, stats_step7$rRMSE),
     EF = c(stats_default$EF, stats_step6$EF, stats_step7$EF)
