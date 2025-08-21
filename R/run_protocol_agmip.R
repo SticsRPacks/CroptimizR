@@ -22,6 +22,8 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
                                out_dir = getwd(), var_to_simulate = NULL, transform_sim = NULL,
                                transform_obs = NULL, transform_var = NULL, step = NULL, param_info = NULL) {
   res <- NULL
+  optim_options_given <- optim_options
+
   on.exit({
     save(res, file = file.path(out_dir, "optim_results.Rdata"))
     cat("\n---------------------\n")
@@ -59,7 +61,7 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
 
 
   # Force nb_rep to c(10, 5) for step6 as defined in the AgMIP Phase IV protocol
-  if (is.null(optim_options$nb_rep)) {
+  if (is.null(optim_options_given$nb_rep)) {
     optim_options$nb_rep <- c(10, 5)
   }
 
@@ -187,7 +189,7 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
   )
 
   # Force nb_rep to 20 for step7 as defined in the AgMIP Phase IV protocol
-  if (is.null(optim_options$nb_rep)) {
+  if (is.null(optim_options_given$nb_rep)) {
     optim_options$nb_rep <- 20
   }
 
