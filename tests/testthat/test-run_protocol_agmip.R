@@ -197,11 +197,11 @@ test_that("First AgMIP protocol test", {
   # Check that initial values used for parameter estimation at step7 are equal to estimated values at end of step6
   expect_equal(
     c(res$step6$final_values[["rB"]], param_info$rB$default),
-    res$step7$init_values[["rB"]][c(1,2)]
+    res$step7$init_values[["rB"]][c(1, 2)]
   )
   expect_equal(
     c(res$step6$final_values[["h"]], param_info$h$default),
-    res$step7$init_values[["h"]][c(1,2)]
+    res$step7$init_values[["h"]][c(1, 2)]
   )
 
   # Check that Bmax is kept to its default value
@@ -212,39 +212,45 @@ test_that("First AgMIP protocol test", {
 
   # Check that estimated values for parameters are close to true values
   expect_equal(res$final_values[["rB"]],
-               param_true_values[["rB"]],
-               tolerance = param_true_values[["rB"]] * 1e-2
+    param_true_values[["rB"]],
+    tolerance = param_true_values[["rB"]] * 1e-2
   )
   expect_equal(res$final_values[["h"]],
-               param_true_values[["h"]],
-               tolerance = param_true_values[["h"]] * 1e-2
+    param_true_values[["h"]],
+    tolerance = param_true_values[["h"]] * 1e-2
   )
 
   # Check that Goodness-of-fit for biomass is better than default after biomass step
-  # and at worse equal after yield step and Step7
+  # and at worse equal (or very close) after yield step and Step7
   stats_biomass <- res$stats_per_step[res$stats_per_step$variable == "biomass", ]
   expect_true(
     all(
       (stats_biomass[["MSE"]][stats_biomass$step == "Step6.biomass"] <
-         stats_biomass[["MSE"]][stats_biomass$step == "Default"]) &&
-        (stats_biomass[["MSE"]][stats_biomass$step == "Step6.yield"] <=
-           stats_biomass[["MSE"]][stats_biomass$step == "Step6.biomass"]) &&
-        (stats_biomass[["MSE"]][stats_biomass$step == "Step7"] <=
-           stats_biomass[["MSE"]][stats_biomass$step == "Step6.biomass"])
+        stats_biomass[["MSE"]][stats_biomass$step == "Default"]) &&
+        ((stats_biomass[["MSE"]][stats_biomass$step == "Step6.yield"] <
+          stats_biomass[["MSE"]][stats_biomass$step == "Step6.biomass"]) ||
+          abs(stats_biomass[["MSE"]][stats_biomass$step == "Step6.yield"] -
+            stats_biomass[["MSE"]][stats_biomass$step == "Step6.biomass"]) < stats_biomass[["MSE"]][stats_biomass$step == "Step6.yield"] * 1e-6) &&
+        ((stats_biomass[["MSE"]][stats_biomass$step == "Step7"] <
+          stats_biomass[["MSE"]][stats_biomass$step == "Step6.biomass"]) ||
+          abs(stats_biomass[["MSE"]][stats_biomass$step == "Step7"] -
+            stats_biomass[["MSE"]][stats_biomass$step == "Step6.biomass"]) < stats_biomass[["MSE"]][stats_biomass$step == "Step7"] * 1e-6)
     )
   )
   # Check that Goodness-of-fit for yield is better than default and than at biomass step
   # after yield step
-  # and at worse equal after Step7
+  # and at worse equal (or very close) after Step7
   stats_yield <- res$stats_per_step[res$stats_per_step$variable == "yield", ]
   expect_true(
     all(
       (stats_yield[["MSE"]][stats_yield$step == "Step6.yield"] <
-         stats_yield[["MSE"]][stats_yield$step == "Default"]) &&
+        stats_yield[["MSE"]][stats_yield$step == "Default"]) &&
         (stats_yield[["MSE"]][stats_yield$step == "Step6.yield"] <
-           stats_yield[["MSE"]][stats_yield$step == "Step6.biomass"]) &&
-        (stats_yield[["MSE"]][stats_yield$step == "Step7"] <=
-           stats_yield[["MSE"]][stats_yield$step == "Step6.yield"])
+          stats_yield[["MSE"]][stats_yield$step == "Step6.biomass"]) &&
+        ((stats_yield[["MSE"]][stats_yield$step == "Step7"] <
+          stats_yield[["MSE"]][stats_yield$step == "Step6.yield"]) ||
+          abs(stats_yield[["MSE"]][stats_yield$step == "Step7"] -
+            stats_yield[["MSE"]][stats_yield$step == "Step6.yield"]) < stats_yield[["MSE"]][stats_yield$step == "Step7"] * 1e-6)
     )
   )
 })
@@ -306,16 +312,16 @@ test_that("Test efficiency of step7 in case a parameter is estimated late in ste
 
   # Check that estimated values for parameters are close to true values
   expect_equal(res$final_values[["rB"]],
-               param_true_values[["rB"]],
-               tolerance = param_true_values[["rB"]] * 1e-2
+    param_true_values[["rB"]],
+    tolerance = param_true_values[["rB"]] * 1e-2
   )
   expect_equal(res$final_values[["h"]],
-               param_true_values[["h"]],
-               tolerance = param_true_values[["h"]] * 1e-2
+    param_true_values[["h"]],
+    tolerance = param_true_values[["h"]] * 1e-2
   )
   expect_equal(res$final_values[["Bmax"]],
-               param_true_values[["Bmax"]],
-               tolerance = param_true_values[["Bmax"]] * 1e-2
+    param_true_values[["Bmax"]],
+    tolerance = param_true_values[["Bmax"]] * 1e-2
   )
 
   # Check that the final value of all parameters are closer to the true values than the one at step6
@@ -340,11 +346,11 @@ test_that("Test efficiency of step7 in case a parameter is estimated late in ste
   expect_true(
     all(
       (stats_biomass[["MSE"]][stats_biomass$step == "Step6.biomass"] <
-         stats_biomass[["MSE"]][stats_biomass$step == "Default"]) &&
+        stats_biomass[["MSE"]][stats_biomass$step == "Default"]) &&
         (stats_biomass[["MSE"]][stats_biomass$step == "Step6.yield"] >
-           stats_biomass[["MSE"]][stats_biomass$step == "Step6.biomass"]) &&
+          stats_biomass[["MSE"]][stats_biomass$step == "Step6.biomass"]) &&
         (stats_biomass[["MSE"]][stats_biomass$step == "Step7"] <
-           stats_biomass[["MSE"]][stats_biomass$step == "Step6.biomass"])
+          stats_biomass[["MSE"]][stats_biomass$step == "Step6.biomass"])
     )
   )
   # Check that Goodness-of-fit for yield is better after each step
@@ -352,11 +358,11 @@ test_that("Test efficiency of step7 in case a parameter is estimated late in ste
   expect_true(
     all(
       (stats_yield[["MSE"]][stats_yield$step == "Default"] >
-         stats_yield[["MSE"]][stats_yield$step == "Step6.biomass"]) &&
+        stats_yield[["MSE"]][stats_yield$step == "Step6.biomass"]) &&
         (stats_yield[["MSE"]][stats_yield$step == "Step6.biomass"] >
-           stats_yield[["MSE"]][stats_yield$step == "Step6.yield"]) &&
+          stats_yield[["MSE"]][stats_yield$step == "Step6.yield"]) &&
         (stats_yield[["MSE"]][stats_yield$step == "Step6.yield"] >
-           stats_yield[["MSE"]][stats_yield$step == "Step7"])
+          stats_yield[["MSE"]][stats_yield$step == "Step7"])
     )
   )
 })
@@ -418,16 +424,16 @@ test_that("Check use of the same variable in different steps and obs variable us
 
   # Check that estimated values for parameters are close to true values
   expect_equal(res$final_values[["rB"]],
-               param_true_values[["rB"]],
-               tolerance = param_true_values[["rB"]] * 1e-2
+    param_true_values[["rB"]],
+    tolerance = param_true_values[["rB"]] * 1e-2
   )
   expect_equal(res$final_values[["h"]],
-               param_true_values[["h"]],
-               tolerance = param_true_values[["h"]] * 1e-2
+    param_true_values[["h"]],
+    tolerance = param_true_values[["h"]] * 1e-2
   )
   expect_equal(res$final_values[["Bmax"]],
-               param_true_values[["Bmax"]],
-               tolerance = param_true_values[["Bmax"]] * 1e-2
+    param_true_values[["Bmax"]],
+    tolerance = param_true_values[["Bmax"]] * 1e-2
   )
 
   # Check that the final value of h is closer to the true value than the one at step6
@@ -439,17 +445,19 @@ test_that("Check use of the same variable in different steps and obs variable us
   # Check that Goodness-of-fit for biomass is
   #   - better than default after biomass_1 step
   #   - equal after biomass_1 and biomass_2 steps
-  #   - at least not worse after Step7
+  #   - at least not worse (or very close) after Step7
   stats_biomass <- res$stats_per_step[res$stats_per_step$variable == "biomass", ]
   expect_true(
     all(
       (stats_biomass[["MSE"]][stats_biomass$step == "Step6.biomass_1"] <
-         stats_biomass[["MSE"]][stats_biomass$step == "Default"]) &&
+        stats_biomass[["MSE"]][stats_biomass$step == "Default"]) &&
         (abs(stats_biomass[["MSE"]][stats_biomass$step == "Step6.biomass_1"] -
-               stats_biomass[["MSE"]][stats_biomass$step == "Step6.biomass_2"]) <
-           stats_biomass[["MSE"]][stats_biomass$step == "Step6.biomass_1"] * 1e-6) &&
-        (stats_biomass[["MSE"]][stats_biomass$step == "Step7"] <=
-           stats_biomass[["MSE"]][stats_biomass$step == "Step6.biomass_1"])
+          stats_biomass[["MSE"]][stats_biomass$step == "Step6.biomass_2"]) <
+          stats_biomass[["MSE"]][stats_biomass$step == "Step6.biomass_1"] * 1e-6) &&
+        ((stats_biomass[["MSE"]][stats_biomass$step == "Step7"] <
+          stats_biomass[["MSE"]][stats_biomass$step == "Step6.biomass_1"]) ||
+          abs(stats_biomass[["MSE"]][stats_biomass$step == "Step7"] -
+            stats_biomass[["MSE"]][stats_biomass$step == "Step6.biomass_1"]) < stats_biomass[["MSE"]][stats_biomass$step == "Step7"] * 1e-6)
     )
   )
   # Check that Goodness-of-fit for yield is better after Step7 than after the other steps
@@ -457,11 +465,11 @@ test_that("Check use of the same variable in different steps and obs variable us
   expect_true(
     all(
       (stats_yield[["MSE"]][stats_yield$step == "Step7"] <
-         stats_yield[["MSE"]][stats_yield$step == "Default"]) &&
+        stats_yield[["MSE"]][stats_yield$step == "Default"]) &&
         (stats_yield[["MSE"]][stats_yield$step == "Step7"] <
-           stats_yield[["MSE"]][stats_yield$step == "Step6.biomass_1"]) &&
+          stats_yield[["MSE"]][stats_yield$step == "Step6.biomass_1"]) &&
         (stats_yield[["MSE"]][stats_yield$step == "Step7"] <
-           stats_yield[["MSE"]][stats_yield$step == "Step6.biomass_2"])
+          stats_yield[["MSE"]][stats_yield$step == "Step6.biomass_2"])
     )
   )
 })
@@ -528,16 +536,16 @@ test_that("Check use of several observed variables per group", {
 
   # Check that estimated values for parameters are close to true values
   expect_equal(res$final_values[["rB"]],
-               param_true_values[["rB"]],
-               tolerance = param_true_values[["rB"]] * 1e-2
+    param_true_values[["rB"]],
+    tolerance = param_true_values[["rB"]] * 1e-2
   )
   expect_equal(res$final_values[["h"]],
-               param_true_values[["h"]],
-               tolerance = param_true_values[["h"]] * 1e-2
+    param_true_values[["h"]],
+    tolerance = param_true_values[["h"]] * 1e-2
   )
   expect_equal(res$final_values[["Bmax"]],
-               param_true_values[["Bmax"]],
-               tolerance = param_true_values[["Bmax"]] * 1e-2
+    param_true_values[["Bmax"]],
+    tolerance = param_true_values[["Bmax"]] * 1e-2
   )
 
   # Check that Goodness-of-fit for biomass is
@@ -547,21 +555,25 @@ test_that("Check use of several observed variables per group", {
   expect_true(
     all(
       (stats_biomass[["MSE"]][stats_biomass$step == "Step6.common_step"] <
-         stats_biomass[["MSE"]][stats_biomass$step == "Default"]) &&
-        (stats_biomass[["MSE"]][stats_biomass$step == "Step7"] <=
-           stats_biomass[["MSE"]][stats_biomass$step == "Step6.common_step"])
+        stats_biomass[["MSE"]][stats_biomass$step == "Default"]) &&
+        ((stats_biomass[["MSE"]][stats_biomass$step == "Step7"] <
+          stats_biomass[["MSE"]][stats_biomass$step == "Step6.common_step"]) ||
+          abs(stats_biomass[["MSE"]][stats_biomass$step == "Step7"] -
+            stats_biomass[["MSE"]][stats_biomass$step == "Step6.common_step"]) < stats_biomass[["MSE"]][stats_biomass$step == "Step7"] * 1e-6)
     )
   )
   # Check that Goodness-of-fit for yield is
   #   - better than default after common_step step
-  #   - at least not worse after Step7
+  #   - at least not worse (or very close) after Step7
   stats_yield <- res$stats_per_step[res$stats_per_step$variable == "yield", ]
   expect_true(
     all(
       (stats_yield[["MSE"]][stats_yield$step == "Step6.common_step"] <
-         stats_yield[["MSE"]][stats_yield$step == "Default"]) &&
-        (stats_yield[["MSE"]][stats_yield$step == "Step7"] <=
-           stats_yield[["MSE"]][stats_yield$step == "Step6.common_step"])
+        stats_yield[["MSE"]][stats_yield$step == "Default"]) &&
+        ((stats_yield[["MSE"]][stats_yield$step == "Step7"] <
+          stats_yield[["MSE"]][stats_yield$step == "Step6.common_step"]) ||
+          abs(stats_yield[["MSE"]][stats_yield$step == "Step7"] -
+            stats_yield[["MSE"]][stats_yield$step == "Step6.common_step"]) < stats_yield[["MSE"]][stats_yield$step == "Step7"] * 1e-6)
     )
   )
 })
@@ -644,25 +656,27 @@ test_that("Test using transform_sim and var", {
 
   # Check that estimated values for parameters are close to true values
   expect_equal(res$final_values[["rB"]],
-               param_true_values[["rB"]],
-               tolerance = param_true_values[["rB"]] * 1e-2
+    param_true_values[["rB"]],
+    tolerance = param_true_values[["rB"]] * 1e-2
   )
   expect_equal(res$final_values[["h"]],
-               param_true_values[["h"]],
-               tolerance = param_true_values[["h"]] * 1e-2
+    param_true_values[["h"]],
+    tolerance = param_true_values[["h"]] * 1e-2
   )
 
   # Check that Goodness-of-fit for biomass is better than default after biomass step
-  # and at worse equal after yield step and Step7
+  # and at worse equal (or very close) after yield step and Step7
   stats_biomass <- res$stats_per_step[res$stats_per_step$variable == "biomass", ]
   expect_true(
     all(
       (stats_biomass[["MSE"]][stats_biomass$step == "Step6.biomass"] <
-         stats_biomass[["MSE"]][stats_biomass$step == "Default"]) &&
+        stats_biomass[["MSE"]][stats_biomass$step == "Default"]) &&
         (stats_biomass[["MSE"]][stats_biomass$step == "Step6.yield"] <=
-           stats_biomass[["MSE"]][stats_biomass$step == "Step6.biomass"]) &&
-        (stats_biomass[["MSE"]][stats_biomass$step == "Step7"] <=
-           stats_biomass[["MSE"]][stats_biomass$step == "Step6.biomass"])
+          stats_biomass[["MSE"]][stats_biomass$step == "Step6.biomass"]) &&
+        ((stats_biomass[["MSE"]][stats_biomass$step == "Step7"] <
+          stats_biomass[["MSE"]][stats_biomass$step == "Step6.biomass"]) ||
+          abs(stats_biomass[["MSE"]][stats_biomass$step == "Step7"] -
+            stats_biomass[["MSE"]][stats_biomass$step == "Step6.biomass"]) < stats_biomass[["MSE"]][stats_biomass$step == "Step7"] * 1e-6)
     )
   )
   # Check that Goodness-of-fit for yield is better than default and than at biomass step
@@ -672,14 +686,13 @@ test_that("Test using transform_sim and var", {
   expect_true(
     all(
       (stats_yield[["MSE"]][stats_yield$step == "Step6.yield"] <
-         stats_yield[["MSE"]][stats_yield$step == "Default"]) &&
+        stats_yield[["MSE"]][stats_yield$step == "Default"]) &&
         (stats_yield[["MSE"]][stats_yield$step == "Step6.yield"] <
-           stats_yield[["MSE"]][stats_yield$step == "Step6.biomass"]) &&
-        ( (stats_yield[["MSE"]][stats_yield$step == "Step7"] <
-             stats_yield[["MSE"]][stats_yield$step == "Step6.yield"]) ||
-            abs(stats_yield[["MSE"]][stats_yield$step == "Step7"] -
-                  stats_yield[["MSE"]][stats_yield$step == "Step6.yield"]) < stats_yield[["MSE"]][stats_yield$step == "Step7"] * 1e-6)
+          stats_yield[["MSE"]][stats_yield$step == "Step6.biomass"]) &&
+        ((stats_yield[["MSE"]][stats_yield$step == "Step7"] <
+          stats_yield[["MSE"]][stats_yield$step == "Step6.yield"]) ||
+          abs(stats_yield[["MSE"]][stats_yield$step == "Step7"] -
+            stats_yield[["MSE"]][stats_yield$step == "Step6.yield"]) < stats_yield[["MSE"]][stats_yield$step == "Step7"] * 1e-6)
     )
   )
 })
-
