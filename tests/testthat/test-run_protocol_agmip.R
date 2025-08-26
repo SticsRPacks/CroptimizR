@@ -196,12 +196,12 @@ test_that("First AgMIP protocol test", {
 
   # Check that initial values used for parameter estimation at step7 are equal to estimated values at end of step6
   expect_equal(
-    res$step6$final_values[["rB"]],
-    res$step7$init_values[["rB"]][[1]]
+    c(res$step6$final_values[["rB"]], param_info$rB$default),
+    res$step7$init_values[["rB"]][c(1,2)]
   )
   expect_equal(
-    res$step6$final_values[["h"]],
-    res$step7$init_values[["h"]][[1]]
+    c(res$step6$final_values[["h"]], param_info$h$default),
+    res$step7$init_values[["h"]][c(1,2)]
   )
 
   # Check that Bmax is kept to its default value

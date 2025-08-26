@@ -220,10 +220,12 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
     forced_param_values_step7 <- res_step6$forced_param_values
   }
 
-  # Define initial values for step7
+  # Define initial values for step7: values estimated at step6 for 1st rep.,
+  # default values for 2nd rep., the values for the other rep. and randomly sampled
   param_info_step7 <- set_init_values(
     param_info_step7,
-    as.data.frame(t(res_step6$final_values))
+    dplyr::bind_rows(as.data.frame(t(res_step6$final_values)),
+              get_params_default(param_info)[names(res_step6$final_values)])
   )
 
   # Force nb_rep to 20 for step7 as defined in the AgMIP Phase IV protocol
