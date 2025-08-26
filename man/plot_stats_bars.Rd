@@ -9,7 +9,7 @@ plot_stats_bars(stats_per_steps)
 \arguments{
 \item{stats_per_steps}{A data.frame containing at least the columns:
 \itemize{
-\item \code{group}: the step name,
+\item \code{step}: the step name,
 \item \code{variable}: the variable name,
 \item \code{rRMSE}: root Relative Mean Squared Error,
 \item \code{EF}: Efficiency Factor.
@@ -26,8 +26,8 @@ are colored according to the step.
 \examples{
 # Example with fake data:
 stats_per_steps <- data.frame(
-  group = rep(c("Step1","Step2"), each = 3),
-  variable = rep(c("VarA","VarB","VarC"), 2),
+  step = rep(c("Step1", "Step2"), each = 3),
+  variable = rep(c("VarA", "VarB", "VarC"), 2),
   rRMSE = runif(6, 0, 0.5),
   EF = runif(6, 0, 1)
 )

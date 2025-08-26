@@ -22,7 +22,7 @@
 #' @return A ggplot object with one facet per variable, ordered according to
 #'   their step of use.
 #'
-#' @importFrom dplyr mutate select distinct arrange step_by summarise unstep filter
+#' @importFrom dplyr mutate select distinct arrange group_by summarise ungroup filter
 #' @importFrom tidyr pivot_longer
 #' @importFrom ggplot2 ggplot aes geom_line geom_point geom_segment facet_wrap scale_alpha_manual labs theme_bw theme element_text
 #'
