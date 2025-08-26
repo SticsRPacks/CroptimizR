@@ -269,6 +269,9 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
     var_to_simulate <- var
   }
 
+  # Create out_dir if it does not exist
+  if (!dir.exists(out_dir)) dir.create(out_dir, recursive = TRUE)
+
   # Initialize res
   res <- list()
 

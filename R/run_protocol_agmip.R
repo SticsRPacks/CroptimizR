@@ -15,6 +15,7 @@
 #' @seealso Wallach et al. (2024), Wallach et al. (2025), and the `estim_param` function.
 #'
 #' @importFrom CroPlotR save_plot_pdf
+#' @importFrom dplyr bind_rows mutate
 #'
 #' @export
 #'
@@ -23,6 +24,7 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
                                transform_obs = NULL, transform_var = NULL, step = NULL, param_info = NULL) {
   res <- NULL
   optim_options_given <- optim_options
+  if (!dir.exists(out_dir)) dir.create(out_dir, recursive = TRUE)
 
   on.exit({
     save(res, file = file.path(out_dir, "optim_results.Rdata"))
@@ -58,16 +60,57 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
   } else {
     sim_default <- tmp$model_results
   }
+  # Transform obs if specified
+  obs_transformed <- obs_list
+  if (!is.null(transform_obs)) {
+    obs_transformed <- tryCatch(
+      transform_obs(
+        model_results = sim_default, obs_list = obs_list,
+        param_values = NULL,
+        model_options = model_options
+      ),
+      error = function(cond) {
+        message(paste("Caught an error while executing the user function for transforming
+        observations (argument transform_obs)."))
+        print(cond)
+        stop()
+      }
+    )
+  }
+  # Transform obs var if specified
+  if (!is.null(transform_var)) {
+    obs_transformed <- lapply(obs_transformed, function(x) {
+      for (var in intersect(names(x), names(transform_var))) {
+        x[var] <- transform_var[[var]](x[var])
+      }
+      return(x)
+    })
+  }
+
+  # Compute stats for default values of the parameters
+  stats_default <- summary(sim_default$sim_list,
+    obs = obs_transformed, stats = c("Bias2", "MSE", "rRMSE", "EF")
+  ) %>%
+    dplyr::mutate(step = "Default") %>%
+    dplyr::select(step, dplyr::everything(), -group, -situation)
+  # Generate scatter plots from default values of parameters
+  p_default <- plot(sim_default$sim_list, obs = obs_transformed, type = "scatter")
+  # Save the plots in the out_dir
+  save_plot_pdf(
+    p_default,
+    out_dir = out_dir,
+    file_name = "scatter_plots_default"
+  )
 
 
+  # Run step6
+  cat("\n---------------------\n")
+  cat(paste("Run AgMIP Phase IV protocol Step6"))
   # Force nb_rep to c(10, 5) for step6 as defined in the AgMIP Phase IV protocol
   if (is.null(optim_options_given$nb_rep)) {
     optim_options$nb_rep <- c(10, 5)
   }
 
-  # Run step6
-  cat("\n---------------------\n")
-  cat(paste("Run AgMIP Phase IV protocol Step6"))
   res_step6 <- estim_param(
     obs_list = obs_list,
     model_function = model_function,
@@ -81,63 +124,58 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
     transform_obs = transform_obs, transform_var = transform_var
   )
 
-  # Compute weights for step7
-
-  ## Run model wrapper using parameter values estimated in step6
-  tmp <- compute_simulations(
-    model_function = model_function,
-    model_options = model_options,
-    param_values = c(
-      res_step6$final_values,
-      res_step6$forced_param_values
-    ),
-    situation = names(obs_list),
-    var_to_simulate = var_to_simulate, obs_list = obs_list,
-    transform_sim = transform_sim, transform_var = transform_var
-  )
-  if (!is.null(tmp$sim_transformed)) {
-    sim_after_step6 <- tmp$sim_transformed
-  } else {
-    sim_after_step6 <- tmp$model_results
-  }
-  ## Transform observations if necessary
-  obs_list_transformed <- obs_list
-  if (!is.null(transform_obs)) {
-    obs_list_transformed <- tryCatch(
-      transform_obs(
-        model_results = sim_after_step6, obs_list = obs_list,
-        param_values = c(
-          res_step6$final_values,
-          res_step6$forced_param_values
-        ),
-        model_options = model_options
+  # Run the model with the parameters values estimated at each sub-step of step 6
+  stats_step6 <- list()
+  p_step6 <- list()
+  for (istep in seq(steps)) {
+    ## Run the model for the current step
+    tmp <- compute_simulations(
+      model_function = model_function,
+      model_options = model_options,
+      param_values = c(
+        res_step6$step[[istep]]$optim_results$final_values,
+        res_step6$step[[istep]]$optim_results$forced_param_values
       ),
-      error = function(cond) {
-        message(paste("Caught an error while executing the user function for transforming
-        observations (argument transform_obs)."))
-        print(cond)
-        stop()
-      }
+      situation = names(obs_list),
+      var_to_simulate = var_to_simulate, obs_list = obs_list,
+      transform_sim = transform_sim, transform_var = transform_var
+    )
+    if (!is.null(tmp$sim_transformed)) {
+      sim <- tmp$sim_transformed
+    } else {
+      sim <- tmp$model_results
+    }
+
+    # Compute stats
+    stats_step6[[istep]] <- summary(
+      sim$sim_list,
+      obs = obs_transformed, stats = c("Bias2", "MSE", "rRMSE", "EF")
+    ) %>%
+      dplyr::mutate(step = paste0("Step6.", names(res_step6$step)[istep])) %>%
+      dplyr::select(step, dplyr::everything(), -group, -situation)
+
+    # Generate scatter plots for each sub-step of step6
+    p_step6[[istep]] <- plot(sim$sim_list, obs = obs_transformed, type = "scatter")
+    # Save the plots in the out_dir
+    save_plot_pdf(
+      p_step6[[istep]],
+      out_dir = out_dir,
+      file_name = paste0("scatter_plots_after_step6.", names(res$step6$step)[istep])
     )
   }
-  if (!is.null(transform_var)) {
-    obs_list_transformed <- lapply(obs_list_transformed, function(x) {
-      for (var in intersect(names(x), names(transform_var))) {
-        x[var] <- transform_var[[var]](x[var])
-      }
-      return(x)
-    })
-  }
+  stats_step6 <- dplyr::bind_rows(stats_step6)
+
+  # Compute weights for step7
 
   ## Compute SSE and number of observations for each observed variable
-  stats_tmp <- summary(sim_after_step6$sim_list,
-    obs = obs_list_transformed, stats = c("n_obs", "SS_res")
+  stats_tmp <- summary(sim$sim_list,
+    obs = obs_transformed, stats = c("n_obs", "SS_res")
   )
 
   ## Sum SSE and number of observations per group of variables
   ## (weight of variables belonging to the same group must be the same)
   ### Compute the list of variables used at the same step for each variable
-  obs_var_names <- get_obs_var(obs_list_transformed)
+  obs_var_names <- get_obs_var(obs_transformed)
   step_var_map <- lapply(obs_var_names, function(var) {
     unique(
       unlist(
@@ -229,46 +267,44 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
   } else {
     sim_after_step7 <- tmp$model_results
   }
-  ## Compute bias2 and rRMSE for each observed variable from default values of parameters, estimated values after step6 and estimated values after step7
-  stats_default <- summary(sim_default$sim_list,
-    obs = obs_list_transformed, stats = c("Bias2", "rRMSE", "EF")
-  )
-  stats_step6 <- summary(sim_after_step6$sim_list,
-    obs = obs_list_transformed, stats = c("Bias2", "rRMSE", "EF")
-  )
+  ## Compute goodness-of-fit stats after step7
   stats_step7 <- summary(sim_after_step7$sim_list,
-    obs = obs_list_transformed, stats = c("Bias2", "rRMSE", "EF")
-  )
-  ## Concatenate the different stats in a data.frame with a column variable, a column step and a column per stat
-  stats_per_step <- data.frame(
-    variable = stats_default$variable,
-    step = rep(c("default", "step6", "step7"), each = length(stats_default$variable)),
-    Bias2 = c(stats_default$Bias2, stats_step6$Bias2, stats_step7$Bias2),
-    rRMSE = c(stats_default$rRMSE, stats_step6$rRMSE, stats_step7$rRMSE),
-    EF = c(stats_default$EF, stats_step6$EF, stats_step7$EF)
-  )
-  ## Arrange it per variable name
-  stats_per_step <- stats_per_step[order(stats_per_step$variable), ]
+    obs = obs_transformed, stats = c("Bias2", "MSE", "rRMSE", "EF")
+  ) %>%
+    dplyr::mutate(step = "Step7") %>%
+    dplyr::select(step, dplyr::everything(), -group, -situation)
 
   ## Generate scatter plots from default values of parameters, estimated values after step6 and estimated values after step7
-  p_default <- plot(sim_default$sim_list, obs = obs_list_transformed, type = "scatter")
-  p_step6 <- plot(sim_after_step6$sim_list, obs = obs_list_transformed, type = "scatter")
-  p_step7 <- plot(sim_after_step7$sim_list, obs = obs_list_transformed, type = "scatter")
+  p_step7 <- plot(sim_after_step7$sim_list, obs = obs_transformed, type = "scatter")
   ## Save the plots in the out_dir
-  save_plot_pdf(
-    p_default,
-    out_dir = out_dir,
-    file_name = "scatter_plots_default"
-  )
-  save_plot_pdf(
-    p_step6,
-    out_dir = out_dir,
-    file_name = "scatter_plots_after_step6"
-  )
   save_plot_pdf(
     p_step7,
     out_dir = out_dir,
     file_name = "scatter_plots_after_step7"
+  )
+
+  ## Concatenate the different stats in a data.frame with a column variable, a column step and a column per stat
+  stats_per_step <- dplyr::bind_rows(stats_default, stats_step6, stats_step7)
+  ## Arrange it per variable name
+  stats_per_step <- stats_per_step[order(stats_per_step$variable), ]
+
+  # Plot diagnostics graphs
+  ## Evolution of MSE and Bias2 for all steps and variables
+  steps_by_var_tmp <- lapply(names(res_step6$step), function(step_name) {
+    vars <- res_step6$step[[step_name]]$obs_var
+    setNames(rep(paste0("Step6.", step_name), length(vars)), vars)
+  })
+  steps_by_var_all <- unlist(steps_by_var_tmp)
+  steps_by_var <- steps_by_var_all[!duplicated(names(steps_by_var_all), fromLast = TRUE)]
+  p_evol <- plot_stats_evolution(stats_per_step, steps_by_var)
+  ggsave(
+    filename = file.path(out_dir, "plot_MSE_Bias2_per_step.pdf")
+  )
+  ## Bar graphs of rRMSE and EF for all variables and main steps (default, step6, step7)
+  p_bar <- plot_stats_bars(stats_per_step)
+  ggsave(
+    filename = file.path(out_dir, "barplot_rRMSE_EF_per_step.pdf"),
+    width = 11, height = 8.5, units = "in"
   )
 
   # Print results
@@ -306,6 +342,8 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
     n = n_obs,
     p = p
   )
+  res$p_bar <- p_bar
+  res$p_evol <- p_evol
   return(res)
 }
 
