@@ -23,13 +23,3 @@ Creates bar charts for the statistics rRMSE and EF across calibration steps,
 with one panel per statistic. Variables are displayed on the x-axis and bars
 are colored according to the step.
 }
-\examples{
-# Example with fake data:
-stats_per_steps <- data.frame(
-  step = rep(c("Step1", "Step2"), each = 3),
-  variable = rep(c("VarA", "VarB", "VarC"), 2),
-  rRMSE = runif(6, 0, 0.5),
-  EF = runif(6, 0, 1)
-)
-plot_stats_bars(stats_per_steps)
-}

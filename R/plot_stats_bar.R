@@ -16,15 +16,6 @@
 #' @import ggplot2
 #' @importFrom tidyr pivot_longer
 #'
-#' @examples
-#' # Example with fake data:
-#' stats_per_steps <- data.frame(
-#'   step = rep(c("Step1", "Step2"), each = 3),
-#'   variable = rep(c("VarA", "VarB", "VarC"), 2),
-#'   rRMSE = runif(6, 0, 0.5),
-#'   EF = runif(6, 0, 1)
-#' )
-#' plot_stats_bars(stats_per_steps)
 plot_stats_bars <- function(stats_per_steps) {
   # Convert wide to long for rRMSE and EF
   df_long <- stats_per_steps %>%

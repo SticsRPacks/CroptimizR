@@ -88,7 +88,7 @@ plot_stats_evolution <- function(stats_per_step, steps, step_levels = NULL) {
     ) +
     facet_wrap(~variable, scales = "free_y") +
     scale_alpha_manual(values = c(pre = 0.25, post = 1), guide = "none") +
-    labs(x = "step", y = "bias² or MSE") +
+    labs(x = "step", y = "bias^2 or MSE") +
     theme_bw() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 }
