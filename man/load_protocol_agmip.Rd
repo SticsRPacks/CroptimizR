@@ -4,12 +4,10 @@
 \alias{load_protocol_agmip}
 \title{Load the protocol description as given in xls file \code{protocol_file_path}}
 \usage{
-load_protocol_agmip(protocol_file_path, transform_outputs = NULL)
+load_protocol_agmip(protocol_file_path)
 }
 \arguments{
 \item{protocol_file_path}{Path to the Excel file describing the AgMIP PhaseIV protocol.}
-
-\item{transform_outputs}{to be described ...}
 }
 \value{
 A list including:

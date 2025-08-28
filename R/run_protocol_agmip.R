@@ -21,7 +21,8 @@
 #'
 run_protocol_agmip <- function(model_function, model_options, obs_list, optim_options, protocol_file_path = NULL,
                                out_dir = getwd(), var_to_simulate = NULL, transform_sim = NULL,
-                               transform_obs = NULL, transform_var = NULL, step = NULL, param_info = NULL) {
+                               transform_obs = NULL, transform_var = NULL, forced_param_values = NULL,
+                               step = NULL, param_info = NULL) {
   res <- NULL
   optim_options_given <- optim_options
   if (!dir.exists(out_dir)) dir.create(out_dir, recursive = TRUE)
@@ -39,9 +40,10 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
 
   # Read the excel file describing the protocol to generate the step6 list if step is not provided
   if (is.null(step)) {
-    tmp <- load_protocol_agmip(protocol_file_path, transform_outputs = transform_sim)
+    tmp <- load_protocol_agmip(protocol_file_path)
     steps <- tmp$step
     param_info <- tmp$param_info
+    forced_param_values <- tmp$forced_param_values
   } else {
     steps <- step
   }
@@ -50,7 +52,10 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
   tmp <- compute_simulations(
     model_function = model_function,
     model_options = model_options,
-    param_values = get_params_default(param_info),
+    param_values = c(
+      get_params_default(param_info),
+      compute_eq_const(forced_param_values, get_params_default(param_info))
+    ),
     situation = names(obs_list),
     var_to_simulate = var_to_simulate, obs_list = obs_list,
     transform_sim = transform_sim, transform_var = transform_var
@@ -118,6 +123,7 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
     crit_function = crit_ols,
     optim_options = optim_options,
     param_info = param_info,
+    forced_param_values = forced_param_values,
     step = steps,
     out_dir = file.path(out_dir, "AgMIP_protocol_step6"),
     var_to_simulate = var_to_simulate, transform_sim = transform_sim,
@@ -224,8 +230,10 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
   # default values for 2nd rep., the values for the other rep. and randomly sampled
   param_info_step7 <- set_init_values(
     param_info_step7,
-    dplyr::bind_rows(as.data.frame(t(res_step6$final_values)),
-              get_params_default(param_info)[names(res_step6$final_values)])
+    dplyr::bind_rows(
+      as.data.frame(t(res_step6$final_values)),
+      get_params_default(param_info)[names(res_step6$final_values)]
+    )
   )
 
   # Force nb_rep to 20 for step7 as defined in the AgMIP Phase IV protocol

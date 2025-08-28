@@ -9,7 +9,6 @@ check_protocol_content(
   variables_df,
   varNames_corresp,
   simVar_units,
-  transform_outputs,
   param_group,
   obsVar_group,
   sitNames_corresp
@@ -23,8 +22,6 @@ check_protocol_content(
 \item{varNames_corresp}{to be defined ...}
 
 \item{simVar_units}{to be defined ...}
-
-\item{transform_outputs}{to be defined ...}
 
 \item{param_group}{to be defined ...}
 

@@ -15,6 +15,7 @@ run_protocol_agmip(
   transform_sim = NULL,
   transform_obs = NULL,
   transform_var = NULL,
+  forced_param_values = NULL,
   step = NULL,
   param_info = NULL
 )
@@ -52,10 +53,7 @@ results.
 By default the wrapper is asked to simulate only the observed variables. However,
 it may be useful to simulate also other variables, typically when transform_sim
 and/or transform_obs functions are used. Note however that it is
-active only if the model_function used handles this argument.
-If it is the case, and if the obs_var argument is provided, then the list of observations
-used will be restricted to the list of variables given in the obs_var argument,
-plus the ones possibly computed by the transform_sim function.}
+active only if the model_function used handles this argument.}
 
 \item{transform_sim}{User function for transforming simulations before each criterion
 evaluation  (optional), see details section for more information.}
@@ -67,6 +65,14 @@ evaluation (optional), see details section for more information.}
 observed variables. \code{transform_var=c(var1=log, var2=sqrt)} will for example
 apply log-transformation on simulated and observed values of variable var1,
 and square-root transformation on values of variable var2.}
+
+\item{forced_param_values}{Named vector or list, must contain the values (or
+arithmetic expression, see details section) for the model parameters to force. The corresponding
+values will be transferred to the model wrapper through its param_values argument
+during the estimation process.
+Should not include values for estimated parameters (i.e. parameters defined in
+\code{param_info} argument), except if they are listed as candidate parameters (see
+argument \code{candidate_param}).}
 
 \item{step}{(optional) List that describes the steps of the parameter estimation process (see details section).
 If \code{NULL}, a single default step will be created using the \code{estim_param} arguments}

@@ -2,8 +2,6 @@
 #'
 #' @inheritParams run_protocol_agmip
 #'
-#' @param transform_outputs to be described ...
-#'
 #' @details
 #' The AgMIP PhaseIV protocol is thoroughly detailed in Wallach et al., 2024
 #' and Wallach et al. 2025.
@@ -21,7 +19,7 @@
 #'
 #' @export
 #'
-load_protocol_agmip <- function(protocol_file_path, transform_outputs = NULL) {
+load_protocol_agmip <- function(protocol_file_path) {
   if (is.null(protocol_file_path)) {
     return(NULL)
   }
@@ -103,6 +101,11 @@ load_protocol_agmip <- function(protocol_file_path, transform_outputs = NULL) {
   } else {
     constraints_df <- NULL
   }
+  forced_param_values <- setNames(
+    object = constraints_df$`value or formula`,
+    nm = constraints_df$`name of the parameter`
+  )
+
   # Check variable groups
   if (!all(candidate_params_df$group %in% obsVar_group)) {
     stop(paste(
@@ -215,7 +218,7 @@ load_protocol_agmip <- function(protocol_file_path, transform_outputs = NULL) {
   # Check protocol content
   check_protocol_content(
     protocol_file_path, variables_df, varNames_corresp,
-    simVar_units, transform_outputs, param_group,
+    simVar_units, param_group,
     obsVar_group, sitNames_corresp
   )
 
@@ -226,14 +229,14 @@ load_protocol_agmip <- function(protocol_file_path, transform_outputs = NULL) {
       candidate_param = param_group[[x]]$candidates,
       obs_var = varNames_corresp[names(obsVar_group)[obsVar_group == x]]
     )
-    if (is.null(res$candidate_param)) {
-      res$candidate_param <- character(0)
-    }
+    # if (is.null(res$candidate_param)) {
+    #   res$candidate_param <- character(0)
+    # }
     return(res)
   })
   names(step) <- names(param_group)
 
-  return(list(step = step, param_info = param_info))
+  return(list(step = step, param_info = param_info, forced_param_values = forced_param_values))
 }
 
 #' @title Check the protocol description file structure
@@ -320,8 +323,6 @@ check_col_names <- function(protocol_file_path, expected_cols, cols, sheet) {
 #'
 #' @param simVar_units to be defined ...
 #'
-#' @param transform_outputs to be defined ...
-#'
 #' @param param_group to be defined ...
 #'
 #' @param obsVar_group to be defined ...
@@ -333,7 +334,7 @@ check_col_names <- function(protocol_file_path, expected_cols, cols, sheet) {
 #' @keywords internal
 #'
 check_protocol_content <- function(protocol_file_path, variables_df, varNames_corresp,
-                                   simVar_units, transform_outputs, param_group,
+                                   simVar_units, param_group,
                                    obsVar_group, sitNames_corresp) {
   # Check situation names were provided
   if (any(is.na(sitNames_corresp))) {
@@ -368,15 +369,6 @@ check_protocol_content <- function(protocol_file_path, variables_df, varNames_co
       " included in varNames_corresp but not in simVar_units.\n",
       paste(setdiff(names(simVar_units), varNames_corresp), collapse = ","),
       " included in simVar_units but not in varNames_corresp.\n"
-    ))
-  }
-
-  if (!all(transform_outputs %in% varNames_corresp)) {
-    stop(paste0(
-      "Incorrect definition of transform_outputs or of the list of simulated variables defined in the \"variables\" sheet of the protocol description xls file ",
-      "Please check that all variables included in transform_outputs are also included in this sheet.\n",
-      paste(setdiff(transform_outputs, varNames_corresp), collapse = ","),
-      " included in transform_outputs but not in the xls sheet.\n"
     ))
   }
 }
