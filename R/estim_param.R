@@ -87,9 +87,6 @@
 #' it may be useful to simulate also other variables, typically when transform_sim
 #' and/or transform_obs functions are used. Note however that it is
 #' active only if the model_function used handles this argument.
-#' If it is the case, and if the obs_var argument is provided, then the list of observations
-#' used will be restricted to the list of variables given in the obs_var argument,
-#' plus the ones possibly computed by the transform_sim function.
 #'
 #' @param info_level (optional) Integer that controls the level of information returned and stored
 #' by estim_param (in addition to the results automatically provided that depends on the method used).
@@ -324,12 +321,12 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
     # Add already estimated parameters values and default values of non-estimated ones to forced_param_values
     default_values <- get_params_default(step[[istep]]$param_info)
     forced_param_values_istep <- c(
-      step[[istep]]$forced_param_values,
       estimated_param_values,
       default_values[setdiff(
         names(default_values),
         names(estimated_param_values)
-      )]
+      )],
+      step[[istep]]$forced_param_values
     )
 
     # Initializations before parameter selection loop
