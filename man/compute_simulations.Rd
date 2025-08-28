@@ -34,10 +34,7 @@ results.
 By default the wrapper is asked to simulate only the observed variables. However,
 it may be useful to simulate also other variables, typically when transform_sim
 and/or transform_obs functions are used. Note however that it is
-active only if the model_function used handles this argument.
-If it is the case, and if the obs_var argument is provided, then the list of observations
-used will be restricted to the list of variables given in the obs_var argument,
-plus the ones possibly computed by the transform_sim function.}
+active only if the model_function used handles this argument.}
 
 \item{obs_list}{List of observed values to use for parameter estimation.
 A \verb{named list} (names = situations names) of data.frame containing
