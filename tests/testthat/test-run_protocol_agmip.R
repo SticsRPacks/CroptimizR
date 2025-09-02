@@ -489,7 +489,7 @@ test_that("Check use of several observed variables per group", {
     dummy = list(lb = 0, ub = 1, default = 0.5) # just for defining a second step
   )
   steps <- list(
-    common_step = list(
+    main_step = list(
       param = c("rB", "h"),
       candidate_param = c("Bmax"),
       obs_var = c("biomass", "yield")
@@ -549,33 +549,37 @@ test_that("Check use of several observed variables per group", {
   )
 
   # Check that Goodness-of-fit for biomass is
-  #   - better than default after common_step step
+  #   - better than default after main_step step
   #   - at least not worse after Step7
   stats_biomass <- res$stats_per_step[res$stats_per_step$variable == "biomass", ]
   expect_true(
     all(
-      (stats_biomass[["MSE"]][stats_biomass$step == "Step6.common_step"] <
+      (stats_biomass[["MSE"]][stats_biomass$step == "Step6.main_step"] <
         stats_biomass[["MSE"]][stats_biomass$step == "Default"]) &&
         ((stats_biomass[["MSE"]][stats_biomass$step == "Step7"] <
-          stats_biomass[["MSE"]][stats_biomass$step == "Step6.common_step"]) ||
+          stats_biomass[["MSE"]][stats_biomass$step == "Step6.main_step"]) ||
           abs(stats_biomass[["MSE"]][stats_biomass$step == "Step7"] -
-            stats_biomass[["MSE"]][stats_biomass$step == "Step6.common_step"]) < stats_biomass[["MSE"]][stats_biomass$step == "Step7"] * 1e-6)
+            stats_biomass[["MSE"]][stats_biomass$step == "Step6.main_step"]) < stats_biomass[["MSE"]][stats_biomass$step == "Step7"] * 1e-6)
     )
   )
   # Check that Goodness-of-fit for yield is
-  #   - better than default after common_step step
+  #   - better than default after main_step step
   #   - at least not worse (or very close) after Step7
   stats_yield <- res$stats_per_step[res$stats_per_step$variable == "yield", ]
   expect_true(
     all(
-      (stats_yield[["MSE"]][stats_yield$step == "Step6.common_step"] <
+      (stats_yield[["MSE"]][stats_yield$step == "Step6.main_step"] <
         stats_yield[["MSE"]][stats_yield$step == "Default"]) &&
         ((stats_yield[["MSE"]][stats_yield$step == "Step7"] <
-          stats_yield[["MSE"]][stats_yield$step == "Step6.common_step"]) ||
+          stats_yield[["MSE"]][stats_yield$step == "Step6.main_step"]) ||
           abs(stats_yield[["MSE"]][stats_yield$step == "Step7"] -
-            stats_yield[["MSE"]][stats_yield$step == "Step6.common_step"]) < stats_yield[["MSE"]][stats_yield$step == "Step7"] * 1e-6)
+            stats_yield[["MSE"]][stats_yield$step == "Step6.main_step"]) < stats_yield[["MSE"]][stats_yield$step == "Step7"] * 1e-6)
     )
   )
+
+  # Check the order of the steps in the output
+  expect_equal(stats_yield$step, c("Default", "Step6.main_step", "Step6.dummy_step",
+                                          "Step7"))
 })
 
 # Test using transform_sim and var

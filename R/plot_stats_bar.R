@@ -19,12 +19,17 @@
 plot_stats_bars <- function(stats_per_steps) {
   # Convert wide to long for rRMSE and EF
   df_long <- stats_per_steps %>%
-    pivot_longer(cols = c("rRMSE", "EF"), names_to = "statistic", values_to = "value")
+    tidyr::pivot_longer(
+      cols = c("rRMSE", "EF"),
+      names_to = "statistic",
+      values_to = "value"
+    )
 
-  # Ensure variables are ordered by step
-  df_long$variable <- factor(df_long$variable,
-    levels = unique(df_long$variable[order(df_long$step)])
-  )
+  # Conserver l'ordre des steps tel qu'il apparait dans le data.frame
+  df_long$step <- factor(df_long$step, levels = unique(stats_per_steps$step))
+
+  # Conserver l'ordre des variables tel qu'il apparait (optionnel)
+  df_long$variable <- factor(df_long$variable, levels = unique(stats_per_steps$variable))
 
   ggplot(df_long, aes(x = variable, y = value, fill = step)) +
     geom_col(position = position_dodge(width = 0.8)) +
