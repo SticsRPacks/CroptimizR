@@ -12,9 +12,9 @@
 #'   - `variable` (character): name of the variable
 #'   - `Bias2` (numeric): Bias² statistic
 #'   - `MSE` (numeric): MSE statistic
-#' @param steps A named character vector associating each variable
-#'   (`names(steps)`) to the name of the step in which it is (last) used
-#'   (`steps[variable]`).
+#' @param steps_by_var A named character vector associating each variable
+#'   (`names(steps_by_var)`) to the name of the step in which it is (last) used
+#'   (`steps_by_var[variable]`).
 #' @param step_levels (optional) Character vector giving the global order
 #'   of steps. If not provided, the order of appearance in `stats_per_step$step`
 #'   is used.
@@ -26,7 +26,7 @@
 #' @importFrom tidyr pivot_longer
 #' @importFrom ggplot2 ggplot aes geom_line geom_point geom_segment facet_wrap scale_alpha_manual labs theme_bw theme element_text
 #'
-plot_stats_evolution <- function(stats_per_step, steps, step_levels = NULL) {
+plot_stats_evolution <- function(stats_per_step, steps_by_var, step_levels = NULL) {
   # Determine order of steps
   if (is.null(step_levels)) {
     step_levels <- unique(stats_per_step$step)
@@ -40,7 +40,7 @@ plot_stats_evolution <- function(stats_per_step, steps, step_levels = NULL) {
     pivot_longer(c(Bias2, MSE), names_to = "stat", values_to = "value") %>%
     mutate(
       variable_chr = as.character(variable),
-      step_use = steps[variable_chr],
+      step_use = steps_by_var[variable_chr],
       step_use_id = match(step_use, step_levels),
       step_id = as.integer(step),
       phase = ifelse(!is.na(step_use_id) & step_id < step_use_id, "pre", "post")

@@ -4,7 +4,7 @@
 \alias{plot_stats_evolution}
 \title{Plot Bias² and MSE evolution by calibration step as diagnostic of the AgMIP Protocol}
 \usage{
-plot_stats_evolution(stats_per_step, steps, step_levels = NULL)
+plot_stats_evolution(stats_per_step, steps_by_var, step_levels = NULL)
 }
 \arguments{
 \item{stats_per_step}{A data.frame containing at least the following columns:
@@ -15,9 +15,9 @@ plot_stats_evolution(stats_per_step, steps, step_levels = NULL)
 \item \code{MSE} (numeric): MSE statistic
 }}
 
-\item{steps}{A named character vector associating each variable
-(\code{names(steps)}) to the name of the step in which it is (last) used
-(\code{steps[variable]}).}
+\item{steps_by_var}{A named character vector associating each variable
+(\code{names(steps_by_var)}) to the name of the step in which it is (last) used
+(\code{steps_by_var[variable]}).}
 
 \item{step_levels}{(optional) Character vector giving the global order
 of steps. If not provided, the order of appearance in \code{stats_per_step$step}
