@@ -450,7 +450,7 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
       )
 
       ## In case no results, there was an error during the estimation process => stop
-      if (length(res_tmp) == 0) {
+      if (!("final_values" %in% res_tmp)) {
         stop("There was an error during the parameter estimation process.
            Please check warnings and messages displayed above and/or by running warnings().")
       }
