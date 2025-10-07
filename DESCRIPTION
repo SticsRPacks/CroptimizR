@@ -39,7 +39,7 @@ Imports:
     CroPlotR,
     doParallel,
     dplyr,
-    ggplot2,
+    ggplot2 (<= 3.5.2),
     lhs,
     lifecycle,
     lubridate,
