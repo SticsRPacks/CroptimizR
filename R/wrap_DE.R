@@ -99,13 +99,13 @@ wrap_DEoptim <- function(optim_options, param_info, crit_options) {
     for (it in seq_len(itermax)) {
       pop_it <- as.data.frame(storepop[[it]])
       colnames(pop_it) <- param_names
-      pop_it$ind  <- seq_len(NP)   #
+      pop_it$ind  <- seq_len(NP)
       pop_it$iter <- it
       pop_it$crit <- bestvalit[it]
       idx <- seq_len(NP)
       pop_it$eval <- eval_counter + idx
       eval_counter <- eval_counter + NP
-      pop_it$rep    <- 1L
+      pop_it$rep    <- 1
       pop_it$method <- "DEoptim"
       df_list[[it]] <- pop_it
       }
