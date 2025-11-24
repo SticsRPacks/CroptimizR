@@ -6,8 +6,8 @@
 #' @importFrom graDiEnt optim_SQGDE GetAlgoParams
 #' @keywords internal
 wrap_graDiEnt <- function(optim_options, param_info, crit_options) {
-  if(is.null((ranseed <- optim_options$ranseed))) {
-    ranseed = NULL
+  if (is.null((ranseed <- optim_options$ranseed))) {
+    ranseed <- NULL
   }
   if (is.null((reltol <- optim_options$reltol))) {
     optim_options$converge_crit <- "stdev"
@@ -20,7 +20,7 @@ wrap_graDiEnt <- function(optim_options, param_info, crit_options) {
   if (is.null((trace <- optim_options$return_trace))) {
     optim_options$return_trace <- TRUE
   }
-  optim_options$ranseed = NULL # ranseed is set to NULL because getAlgoParams doesn't regonise it
+  optim_options$ranseed <- NULL # ranseed is set to NULL because getAlgoParams doesn't regonise it
   algorithm <- "graDiEnt"
 
   # return requested information if only optim_options is given in argument
@@ -40,7 +40,8 @@ wrap_graDiEnt <- function(optim_options, param_info, crit_options) {
   bounds <- get_params_bounds(param_info)
   init_values <- get_init_values(param_info)
 
-  control_params <- do.call(graDiEnt::GetAlgoParams,optim_options)
+  control_params <- do.call(graDiEnt::GetAlgoParams, optim_options)
+  #  control_params$init_center <- as.vector(init_values[1, ])
 
   crit_options$tot_max_eval <- control_params$n_particles * control_params$n_iter
 
@@ -57,15 +58,18 @@ wrap_graDiEnt <- function(optim_options, param_info, crit_options) {
   }
   SQGDE <- tryCatch(
     graDiEnt::optim_SQGDE(
-      ObjFun    = ObjFun,
+      ObjFun = ObjFun,
       control_params = control_params
     ),
-    error = function(e) { warning(sprintf("GraDiEnt failed: %s", e$message)); NULL }
+    error = function(e) {
+      warning(sprintf("GraDiEnt failed: %s", e$message))
+      NULL
+    }
   )
   elapsed <- Sys.time() - start_time
 
   # Verify criterion value
-  if (is.null(SQGDE) || is.null(SQGDE$solution))  {
+  if (is.null(SQGDE) || is.null(SQGDE$solution)) {
     stop(
       "The value of the criterion is NA."
     )
@@ -76,18 +80,18 @@ wrap_graDiEnt <- function(optim_options, param_info, crit_options) {
   final_values <- bounds$lb + u_sol * range_bounds
   names(final_values) <- param_names
   min_crit_value <- SQGDE$solution_weight
-  if (is.null(min_crit_value) ) {
-        min_crit_value <- main_crit(final_values, crit_options)
+  if (is.null(min_crit_value)) {
+    min_crit_value <- main_crit(final_values, crit_options)
   }
 
 
 
   # Get the estimated values  ==> matrix of 1 * nb_params
-   est_values <- matrix(
-     final_values,
-     nrow = 1L,
-     dimnames = list(NULL, param_names)
-     )
+  est_values <- matrix(
+    final_values,
+    nrow = 1L,
+    dimnames = list(NULL, param_names)
+  )
   colnames(est_values) <- param_names
   if (ncol(est_values) == nb_params) {
     colnames(est_values) <- param_names
@@ -104,9 +108,9 @@ wrap_graDiEnt <- function(optim_options, param_info, crit_options) {
         dimnames = list(NULL, param_names)
       )
     } else {
-      n_it     <- dim(tr)[1]
-      last_pop <- tr[n_it, , ]        # matrice n_particles × n_params (en u)
-      est_u    <- as.matrix(last_pop)
+      n_it <- dim(tr)[1]
+      last_pop <- tr[n_it, , ] # matrice n_particles × n_params (en u)
+      est_u <- as.matrix(last_pop)
       colnames(est_u) <- param_names
 
       # transformation vers l’échelle physique
@@ -173,4 +177,3 @@ wrap_graDiEnt <- function(optim_options, param_info, crit_options) {
 
   return(res)
 }
-

@@ -72,7 +72,7 @@ optim_switch <- function(...) {
         }
       }
 
-      #if (!is.null(crit_options$out_dir) & length(res) > 0) {
+      # if (!is.null(crit_options$out_dir) & length(res) > 0) {
       if (!is.null(crit_options) && !is.null(crit_options$out_dir) && length(res) > 0) {
         save(res, file = file.path(
           crit_options$out_dir,
@@ -99,7 +99,7 @@ optim_switch <- function(...) {
   ##########################
   #
   # param_info   <- NULL
-  #crit_options <- NULL
+  # crit_options <- NULL
 
   # if ("param_info" %in% names(arguments)) {
   #   param_info <- arguments$param_info
@@ -130,7 +130,7 @@ optim_switch <- function(...) {
           optim_results = res,
           crit_options = crit_options
         )
-          res$plots <- plot_frequentist(
+        res$plots <- plot_frequentist(
           optim_options = optim_options,
           param_info = param_info,
           optim_results = res,
@@ -168,25 +168,25 @@ optim_switch <- function(...) {
         if (arguments$crit_options$info_level >= 1) {
           res$params_and_crit <- dplyr::bind_rows(.croptEnv$params_and_crit)
         }
-      res <- post_treat_global_optim(
-        optim_options = optim_options,
-        param_info = param_info,
-        optim_results = res,
-        crit_options = crit_options
-      )
-      res$plots <- plot_global_optim(
-        optim_options = optim_options,
-        param_info = param_info,
-        optim_results = res,
-        out_dir = crit_options$out_dir
-      )
-      summary_global_optim(
-        optim_options = optim_options, param_info = param_info,
-        optim_results = res,
-        out_dir = crit_options$out_dir
-      )
-}
-    }  else if (optim_method == "graDiEnt") {
+        res <- post_treat_global_optim(
+          optim_options = optim_options,
+          param_info = param_info,
+          optim_results = res,
+          crit_options = crit_options
+        )
+        res$plots <- plot_global_optim(
+          optim_options = optim_options,
+          param_info = param_info,
+          optim_results = res,
+          out_dir = crit_options$out_dir
+        )
+        summary_global_optim(
+          optim_options = optim_options, param_info = param_info,
+          optim_results = res,
+          out_dir = crit_options$out_dir
+        )
+      }
+    } else if (optim_method == "graDiEnt") {
       res <- do.call(wrap_graDiEnt, wrap_args)
       if (nargs() > 2) {
         res$obs_var_list <- .croptEnv$obs_var_list
@@ -194,26 +194,26 @@ optim_switch <- function(...) {
         if (arguments$crit_options$info_level >= 1) {
           res$params_and_crit <- dplyr::bind_rows(.croptEnv$params_and_crit)
         }
-      res <- post_treat_global_optim(
-        optim_options = optim_options,
-        param_info = param_info,
-        optim_results = res,
-        crit_options = crit_options
-      )
-      res$plots <- plot_global_optim(
-        optim_options = optim_options,
-        param_info = param_info,
-        optim_results = res,
-        out_dir = crit_options$out_dir
-      )
-      summary_global_optim(
-        optim_options = optim_options,
-        param_info = param_info,
-        optim_results = res,
-        out_dir = crit_options$out_dir
-      )
-
-    }}else {
+        res <- post_treat_global_optim(
+          optim_options = optim_options,
+          param_info = param_info,
+          optim_results = res,
+          crit_options = crit_options
+        )
+        res$plots <- plot_global_optim(
+          optim_options = optim_options,
+          param_info = param_info,
+          optim_results = res,
+          out_dir = crit_options$out_dir
+        )
+        summary_global_optim(
+          optim_options = optim_options,
+          param_info = param_info,
+          optim_results = res,
+          out_dir = crit_options$out_dir
+        )
+      }
+    } else {
       flag_unknown_method <- TRUE
     },
     error = function(cond) {
