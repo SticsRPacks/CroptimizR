@@ -206,6 +206,12 @@ optim_switch <- function(...) {
         optim_results = res,
         out_dir = crit_options$out_dir
       )
+      summary_global_optim(
+        optim_options = optim_options,
+        param_info = param_info,
+        optim_results = res,
+        out_dir = crit_options$out_dir
+      )
 
     }}else {
       flag_unknown_method <- TRUE

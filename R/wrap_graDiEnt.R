@@ -122,13 +122,53 @@ wrap_graDiEnt <- function(optim_options, param_info, crit_options) {
     )
   }
 
+  trace_df <- NULL
+  if (!is.null(SQGDE$particles_trace) && length(dim(SQGDE$particles_trace)) == 3)
+    {
+    tr <- SQGDE$particles_trace
+    n_it  <- dim(tr)[1]
+    n_pop <- dim(tr)[2]
+    df_list <- vector("list", n_it)
+    eval_counter <- 0
+    for (it in seq_len(n_it)) {
+      pop_u <- tr[it, , ]
+      pop_u <- as.matrix(pop_u)
+      colnames(pop_u) <- param_names
+
+      # transformation
+      pop_x <- sweep(pop_u, 2, range_bounds, `*`)
+      pop_x <- sweep(pop_x, 2, bounds$lb, `+`)
+
+      df <- as.data.frame(pop_x)
+
+      df$ind  <- seq_len(n_pop)
+      df$iter <- it
+
+      crit_pop <- apply(pop_x, 1, function(par) {
+        names(par) <- param_names
+        main_crit(par, crit_options = crit_options)
+        })
+      df$crit <- crit_pop
+
+      idx <- seq_len(n_pop)
+      df$eval <- eval_counter + idx
+      eval_counter <- eval_counter + n_pop
+
+      df$method <- "graDiEnt"
+
+      df_list[[it]] <- df
+      }
+    trace_df <- dplyr::bind_rows(df_list)
+    }
+
 
   res <- list(
     final_values = final_values,
     init_values = init_values,
     est_values = est_values,
     min_crit_value = min_crit_value,
-    SQGDE = SQGDE
+    SQGDE = SQGDE,
+    trace_df = trace_df
   )
 
   return(res)

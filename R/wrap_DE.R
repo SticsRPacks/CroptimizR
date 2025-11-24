@@ -88,12 +88,37 @@ wrap_DEoptim <- function(optim_options, param_info, crit_options) {
   final_values <- DE$optim$bestmem
   names(final_values) <- param_names
 
+  trace_df <- NULL
+  if (!is.null(DE$member$storepop)) {
+    storepop  <- DE$member$storepop
+    bestvalit <- DE$member$bestvalit
+    itermax <- length(storepop)
+    NP      <- nrow(storepop[[1]])
+    df_list      <- vector("list", itermax)
+    eval_counter <- 0
+    for (it in seq_len(itermax)) {
+      pop_it <- as.data.frame(storepop[[it]])
+      colnames(pop_it) <- param_names
+      pop_it$ind  <- seq_len(NP)   #
+      pop_it$iter <- it
+      pop_it$crit <- bestvalit[it]
+      idx <- seq_len(NP)
+      pop_it$eval <- eval_counter + idx
+      eval_counter <- eval_counter + NP
+      pop_it$rep    <- 1L
+      pop_it$method <- "DEoptim"
+      df_list[[it]] <- pop_it
+      }
+      trace_df <- dplyr::bind_rows(df_list)
+    }
+
   res <- list(
     final_values = final_values,
     init_values = init_values,
     est_values = est_values,
     min_crit_value = DE$optim$bestval,
-    DE = DE
+    DE = DE,
+    trace_df = trace_df
   )
 
   return(res)

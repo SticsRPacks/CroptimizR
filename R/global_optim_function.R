@@ -9,36 +9,34 @@
 summary_global_optim<- function(optim_options, param_info, optim_results, out_dir) {
   param_names <- get_params_names(param_info)
   nb_params <- length(param_names)
-  est_values <- optim_results$est_values
-  ind_min_crit <- optim_results$ind_min_crit
+  final_values   <- optim_results$final_values
   min_crit_value <- optim_results$min_crit_value
+  est_values <- matrix(final_values, nrow = 1, dimnames = list(NULL, param_names))
 
   cat(paste(
     "\nList of observed variables used:",
     paste(optim_results$obs_var_list, collapse = ", ")
-  ))
-
+    ))
   # Display of parameters values for the candidate which has the
   # smallest criterion
   for (ipar in 1:nb_params) {
     cat(paste(
       "\nEstimated value for", param_names[ipar], ": ",
-      format(est_values[ind_min_crit, ipar],
+      format(est_values[1, ipar],
              scientific = FALSE,
              digits = 2, nsmall = 0
-      )
+             )
     ))
-  }
+    }
   cat(paste(
     "\nMinimum value of the criterion:",
     format(min_crit_value, scientific = FALSE, digits = 2, nsmall = 0)
-  ))
+    ))
   cat(paste(
     "\nComplementary graphs and results can be found in ", out_dir,
     "\n"
   ))
 }
-
 
 #' @title Post-treat results of global optim methods
 #'
@@ -52,8 +50,9 @@ summary_global_optim<- function(optim_options, param_info, optim_results, out_di
 #'
 #' @return Updated results of global optim method
 #'
+
 post_treat_global_optim <- function(optim_options, param_info, optim_results,
-                                   crit_options) {
+                                      crit_options) {
   param_names <- get_params_names(param_info)
   nb_params <- length(param_names)
   info_crit_list <- crit_options$info_crit_list
@@ -63,27 +62,25 @@ post_treat_global_optim <- function(optim_options, param_info, optim_results,
   info_final <- main_crit(
     param_values = optim_results$final_values,
     crit_options = c(crit_options, return_detailed_info = TRUE)
-  )
+    )
   if (info_final$crit != optim_results$min_crit_value) {
     stop(paste(
       "Internal error: incoherent computation of minimum criterion value. \nValue obtained in method wrapper:",
       optim_results$min_crit_value, "\nValue obtained afterwards:",
       info_final$crit
     ))
-  }
+    }
   optim_results$forced_param_values <- info_final$forced_param_values
-
   sapply(info_crit_list, function(x) {
     final_info_crit <- x(
       obs_list = info_final$obs_intersect,
       crit = info_final$crit,
       param_nb = nb_params
-    )
+      )
     optim_results[x()$name] <<- final_info_crit
-  })
-
+    })
   return(optim_results)
-}
+  }
 
 
 #' @title Generate plots for global optim methods
@@ -96,145 +93,92 @@ post_treat_global_optim <- function(optim_options, param_info, optim_results,
 #'
 #' @keywords internal
 #'
-plot_global_optim <- function(optim_options, param_info, optim_results, out_dir) {
-  bounds <- get_params_bounds(param_info)
-  init_values <- optim_results$init_values
+plot_global_optim <- function(optim_options, param_info, optim_results, out_dir){
   est_values <- optim_results$est_values
-  #crit_values <- optim_results$crit_values
+  trace_df   <- optim_results$trace_df
+
   p_all <- list()
 
   # ValuesVSit plot
-
-  tryCatch(
-    {
-      grDevices::pdf(
-        file = file.path(out_dir, "ValuesVSit_globaloptim2.pdf"),
-        width = 9, height = 9
+  if (!is.null(trace_df)) {
+    tryCatch(
+      {
+        grDevices::pdf(
+          file = file.path(out_dir, "ValuesVSit_globaloptim.pdf"),
+          width = 9, height = 9
+          )
+        },
+      error = function(cond) {
+        filename <- paste0("ValuesVSit_new.pdf")
+        warning(
+          "Error trying to create ", out_dir,
+          "/ValuesVSit.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
+          filename
+          )
+        grDevices::pdf(
+          file = file.path(out_dir, filename),
+          width = 9, height = 9
+        )
+        }
       )
-    },
-    error = function(cond) {
-      filename <- paste0("ValuesVSit_new.pdf")
-      warning(
-        "Error trying to create ", out_dir,
-        "/ValuesVSit.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
-        filename
+    #  we should construct a dataframe df "individu × itération"
+    p <- plot_valuesVSit_go(
+      df          = trace_df,
+      param_info  = param_info,
+      iter_or_eval = "iter",
+      crit_log = FALSE,
+      ind_label   = "begin"
       )
-      grDevices::pdf(
-        file = file.path(out_dir, filename),
-        width = 9, height = 9
-      )
+    for (plot in p) print(plot)
+    grDevices::dev.off()
+    p_all$valuesVSit <- p
     }
-  )
-
-  #  DEoptim :we should construct a dataframe df "individu × itération"
-  if (!is.null(optim_results$DE)) {
-
-    DE          <- optim_results$DE
-    param_names <- get_params_names(param_info)
-
-    # storepopfrom = 1 should be activated id wrap_DE
-    storepop <- DE$member$storepop
-    bestvalit  <- DE$member$bestvalit
-
-    if (length(storepop) > 0) {
-      itermax <- length(storepop)
-      NP      <- nrow(storepop[[1]])
-
-      df_list <- vector("list", itermax)
-
-      for (it in seq_len(itermax)) {
-        pop_it <- as.data.frame(storepop[[it]])
-        colnames(pop_it) <- param_names
-
-        pop_it$iter <- it               # it id
-        pop_it$ind  <- seq_len(NP)      # id individual
-        # ------------------------------------------------
-        ### To see with Samuel
-        # compute criterion per individual (To proprely plot the last figure of ValueVSit) (I have to add in parameters crit_options)
-        #crit_pop <- apply(storepop[[it]], 1, function(par) {
-        # main_crit(par, c(crit_options, return_detailed_info = FALSE))$crit
-        #})
-        #pop_it$crit <- crit_pop
-        # ------------------------------------------------
-        pop_it$crit <- bestvalit[it]
-        df_list[[it]] <- pop_it
-      }
-
-      df_DE <- dplyr::bind_rows(df_list)
-
-      # for plot_valuesVSit, we need eval col
-      df_DE$eval <- df_DE$iter
-
-      p <- plot_valuesVSit_go(
-        df          = df_DE,
-        param_info  = param_info,
-        iter_or_eval = "iter",
-        crit_log    = FALSE,
-        ind_label   = "begin"
-      )
-
-      for (plot in p) print(plot)
-      grDevices::dev.off()
-      p_all$valuesVSit_DE <- p
-    } else {
-      warning("DE$member$storepop is empty : verify storepopfrom in DEoptim.control")
-      grDevices::dev.off()
-    }
-  }
 
   # ValuesVSit_2D plot
 
   if (!is.null(est_values)) {
-
-          # Build a data.frame with final parameters
-          df_2d <- as.data.frame(est_values)
-          colnames(df_2d) <- get_params_names(param_info)
-          df_2d$eval <- seq_len(nrow(df_2d))
-          df_2d$iter <- df_2d$eval
-
-            tryCatch(
-                {
-                    grDevices::pdf(
-                        file = file.path(out_dir, "ValuesVSit_2D.pdf"),
-                        width = 9, height = 9
-                      )
-                  },
-                error = function(cond) {
-                    filename <- paste0("ValuesVSit_2D_new.pdf")
-                    warning(
-                        "Error trying to create ", out_dir,
-                        "/ValuesVSit_2D.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
-                        filename
-                      )
-                    grDevices::pdf(
-                        file = file.path(out_dir, filename),
-                        width = 9, height = 9
-                      )
-                  }
-              )
-
-
-            p <- plot_valuesVSit_2D_go(
-                df           = df_2d,
-                param_info   = param_info,
-                iter_or_eval = "eval",
-                fill         = "eval",
-                crit_log     = FALSE,
-                lines        = FALSE,
-                rep_label    = "end"
-              )
-
-              for (plot in p) {
-                  print(plot)
-                }
-            grDevices::dev.off()
-            p_all$valuesVSit_2D <- p
-          }
-
-
+    # Build a data.frame with final parameters
+    df_2d <- as.data.frame(est_values)
+    colnames(df_2d) <- get_params_names(param_info)
+    df_2d$eval <- seq_len(nrow(df_2d))
+    df_2d$iter <- df_2d$eval
+    tryCatch(
+      {
+        grDevices::pdf(
+          file = file.path(out_dir, "ValuesVSit_2D.pdf"),
+          width = 9, height = 9
+        )
+        },
+      error = function(cond) {
+        filename <- paste0("ValuesVSit_2D_new.pdf")
+        warning(
+          "Error trying to create ", out_dir,
+          "/ValuesVSit_2D.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
+          filename
+          )
+        grDevices::pdf(
+          file = file.path(out_dir, filename),
+          width = 9, height = 9
+        )
+        }
+      )
+    p <- plot_valuesVSit_2D_go(
+      df = df_2d,
+      param_info   = param_info,
+      iter_or_eval = "eval",
+      fill   = "eval",
+      crit_log   = FALSE,
+      lines = FALSE,
+      rep_label = "end"
+      )
+    for (plot in p)
+      print(plot)
+    grDevices::dev.off()
+    p_all$valuesVSit_2D <- p
+    }
 
   return(p_all)
-}
+  }
 
 
 #' @title Create plots of parameters and criterion values per iteration or
@@ -271,9 +215,10 @@ plot_global_optim <- function(optim_options, param_info, optim_results, out_dir)
 #'
 #' @export
 #'
+
 plot_valuesVSit_go <- function(df, param_info, iter_or_eval = c("iter", "eval"),
-                            crit_log = TRUE,
-                            ind_label = c("begin_end", "begin", "end")) {
+                               crit_log = TRUE,
+                               ind_label = c("begin_end", "begin", "end")) {
   param_names <- get_params_names(param_info)
   bounds <- get_params_bounds(param_info)
 
@@ -282,18 +227,21 @@ plot_valuesVSit_go <- function(df, param_info, iter_or_eval = c("iter", "eval"),
     df <- filter(df, !is.na(.data$iter))
     lab <- "iterations"
   }
+  have_crit <- "crit" %in% names(df) && !all(is.na(df$crit))
   trans <- "identity"
-  mid <- (max(df$crit) - min(df$crit)) / 2 + min(df$crit)
-  if (crit_log) {
+  mid <- NA_real_
+  if (crit_log && have_crit) {
     if (all(df$crit > 0)) {
       trans <- "log10"
       mid <- (max(log10(df$crit)) -
-        min(log10(df$crit))) / 2 + min(log10(df$crit))
-    } else {
-      warning("The criterion takes negative values, log transformation will not be done.")
+                min(log10(df$crit))) / 2 + min(log10(df$crit))
+      } else {
+        warning("The criterion takes negative values, log transformation will not be done.")
+        crit_log <- FALSE
+        }
+    } else if (!have_crit) {
       crit_log <- FALSE
-    }
-  }
+      }
   tmp <- rbind(bounds$lb, bounds$ub, select(df, all_of(param_names)))
   tmp[tmp == Inf | tmp == -Inf] <- NA
   minvalue <- apply(tmp, 2, min, na.rm = TRUE)
@@ -304,27 +252,31 @@ plot_valuesVSit_go <- function(df, param_info, iter_or_eval = c("iter", "eval"),
   p <- list()
 
   for (param_name in param_names) {
-    p[[param_name]] <- ggplot(df, aes(
-      x = !!rlang::sym(iter_or_eval[1]),
-      y = !!rlang::sym(param_name),
-      color = crit
-    )) +
+    p[[param_name]] <- ggplot(
+      df, aes(x     = !!rlang::sym(iter_or_eval[1]),
+              y     = !!rlang::sym(param_name),
+              color = crit
+              )
+      ) +
       labs(
         title = paste0(
           "Evolution of ", param_name,
           " \n in function of the minimization ", lab
-        ),
-        y = param_name,
-        x = paste(lab, "number"),
+          ),
+        y    = param_name,
+        x    = paste(lab, "number"),
         fill = "Criterion"
-      ) +
+        ) +
       theme(plot.title = element_text(hjust = 0.5)) +
-      geom_point(alpha = 0.5) +
-      scale_color_gradient2(
-        midpoint = mid, low = "blue", mid = "yellow",
-        high = "red", space = "Lab", trans = trans
-      )
+      geom_point(alpha = 0.5)
 
+    if (have_crit) {
+      p[[param_name]] <- p[[param_name]] +
+        scale_color_gradient2(
+          midpoint = mid, low = "blue", mid = "yellow",
+          high = "red", space = "Lab", trans = trans
+        )
+      }
     for (iind in unique(df$ind)) {
       p[[param_name]] <- p[[param_name]] +
         geom_line(data = filter(df, ind == iind))
@@ -334,7 +286,7 @@ plot_valuesVSit_go <- function(df, param_info, iter_or_eval = c("iter", "eval"),
                      data = filter(df, ind == iind) %>% filter(eval == min(.data$eval)),
                      size = 3
           )
-      }
+        }
       if (ind_label[1] == "begin_end" || ind_label[1] == "end") {
         p[[param_name]] <- p[[param_name]] +
           geom_label(aes(label = ind),
@@ -342,20 +294,20 @@ plot_valuesVSit_go <- function(df, param_info, iter_or_eval = c("iter", "eval"),
                      size = 3
           )
       }
-    }
+      }
     ylim(minvalue[param_name], maxvalue[param_name])
-  }
+    }
 
   df$ind <- as.factor(df$ind)
   p[["criterion"]] <- ggplot(df, aes_string(
     x = iter_or_eval[1], y = "crit",
     color = "ind"
-  )) +
+    )) +
     labs(
       title = paste0(
         "Evolution of the minimized criterion \n in function of the minimization ",
         lab
-      ),
+        ),
       y = "Minimized criterion",
       x = paste(lab, "number"),
       fill = "Individual"
@@ -373,14 +325,14 @@ plot_valuesVSit_go <- function(df, param_info, iter_or_eval = c("iter", "eval"),
       geom_label(aes(label = ind),
                  data = filter(df, ind == iind) %>% filter(eval == max(.data$eval))
       )
-  }
+    }
 
   if (crit_log) {
     p[["criterion"]] <- p[["criterion"]] + scale_y_log10()
-  }
+    }
 
   return(p)
-}
+  }
 
 
 #' @title Create 2D plots of parameters values evolution per iteration or
@@ -421,9 +373,9 @@ plot_valuesVSit_go <- function(df, param_info, iter_or_eval = c("iter", "eval"),
 #' @export
 #'
 plot_valuesVSit_2D_go  <- function(df, param_info, iter_or_eval = c("eval", "iter"),
-                               fill = c("crit", "rep"), crit_log = TRUE,
-                               lines = FALSE,
-                               rep_label = c("begin_end", "begin", "end")) {
+                                     fill = c("crit", "rep"), crit_log = TRUE,
+                                     lines = FALSE,
+                                     rep_label = c("begin_end", "begin", "end")) {
   param_names <- get_params_names(param_info)
   if (length(param_names) <= 1) {
     return()
@@ -436,28 +388,28 @@ plot_valuesVSit_2D_go  <- function(df, param_info, iter_or_eval = c("eval", "ite
     lab <- "iterations"
   }
   if ("rep" %in% names(df)) {
-        df$rep <- as.factor(df$rep)
+    df$rep <- as.factor(df$rep)
+  }
+  has_crit <- "crit" %in% names(df)
+  trans <- "identity"
+  mid <- NA_real_
+  if (fill[1] == "crit" && has_crit) {
+    mid <- (max(df$crit) - min(df$crit)) / 2 + min(df$crit)
+    if (crit_log) {
+      if (all(df$crit > 0)) {
+        trans <- "log10"
+        mid <- (max(log10(df$crit)) -
+                  min(log10(df$crit))) / 2 + min(log10(df$crit))
+      } else {
+        warning("The criterion takes negative values, log transformation will not be done.")
+        crit_log <- FALSE
       }
- has_crit <- "crit" %in% names(df)
- trans <- "identity"
- mid <- NA_real_
- if (fill[1] == "crit" && has_crit) {
-   mid <- (max(df$crit) - min(df$crit)) / 2 + min(df$crit)
-   if (crit_log) {
-     if (all(df$crit > 0)) {
-       trans <- "log10"
-       mid <- (max(log10(df$crit)) -
-                 min(log10(df$crit))) / 2 + min(log10(df$crit))
-       } else {
-         warning("The criterion takes negative values, log transformation will not be done.")
-         crit_log <- FALSE
-       }
-     }
-   } else {
-     crit_log <- FALSE
-     }
+      }
+    }else {
+    crit_log <- FALSE
+  }
   tmp <- rbind(bounds$lb, bounds$ub, select(df, all_of(param_names)))
-  # -.data$ avoid NOTES on check ...
+  # check ...
   tmp[tmp == Inf | tmp == -Inf] <- NA
   minvalue <- apply(tmp, 2, min, na.rm = TRUE)
   maxvalue <- apply(tmp, 2, max, na.rm = TRUE)
@@ -487,19 +439,18 @@ plot_valuesVSit_2D_go  <- function(df, param_info, iter_or_eval = c("eval", "ite
       geom_point(alpha = 0.5)
 
     if  (fill[1] == "crit" && has_crit){
-            p[[ipair]] <- p[[ipair]] +
-                scale_color_gradient2(
-                    midpoint = mid, low = "blue", mid = "yellow",
-                    high = "red", space = "Lab", trans = trans
-                  )
-          } else if (fill[1] == "eval") {
-              # palette continue simple pour eval
-                p[[ipair]] <- p[[ipair]] +
-                    scale_color_gradient2(
-                        low  = "lightblue",
-                        high = "darkblue"
-                      )
-              }
+      p[[ipair]] <- p[[ipair]] +
+        scale_color_gradient2(
+          midpoint = mid, low = "blue", mid = "yellow",
+          high = "red", space = "Lab", trans = trans
+        )
+    } else if (fill[1] == "eval") {
+      p[[ipair]] <- p[[ipair]] +
+        scale_color_gradient2(
+          low  = "lightblue",
+          high = "darkblue"
+        )
+      }
 
     if (lines) {
       for (irep in unique(df$rep)) {
@@ -508,15 +459,15 @@ plot_valuesVSit_2D_go  <- function(df, param_info, iter_or_eval = c("eval", "ite
         if (rep_label[1] == "begin_end" || rep_label[1] == "begin") {
           p[[ipair]] <- p[[ipair]] +
             geom_label(aes(label = rep),
-                       data = filter(df, rep == irep) %>% filter(eval == min(.data$eval)),
-                       size = 3
+                        data = filter(df, rep == irep) %>% filter(eval == min(.data$eval)),
+                        size = 3
             )
         }
         if (rep_label[1] == "begin_end" || rep_label[1] == "end") {
           p[[ipair]] <- p[[ipair]] +
             geom_label(aes(label = rep),
-                       data = filter(df, rep == irep) %>% filter(eval == max(.data$eval)),
-                       size = 3
+                        data = filter(df, rep == irep) %>% filter(eval == max(.data$eval)),
+                        size = 3
             )
         }
       }
@@ -526,4 +477,4 @@ plot_valuesVSit_2D_go  <- function(df, param_info, iter_or_eval = c("eval", "ite
   }
 
   return(p)
-}
+  }

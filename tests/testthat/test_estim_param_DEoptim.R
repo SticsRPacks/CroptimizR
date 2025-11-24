@@ -160,6 +160,7 @@ test_that("estim_param 1 step OLS criterion", {
     situation = c("sit1_2000", "sit1_2001", "sit2_2003"),
     out_dir = tempdir()
   )
+  str(res$trace_df)
 
   expect_equal(res$final_values[["rB"]],
                param_true_values[["rB"]],
