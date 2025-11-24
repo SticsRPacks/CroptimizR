@@ -133,13 +133,12 @@ teardown({
 })
 
 
-
 # Test estim_param with DEoptim
 test_that("estim_param 1 step OLS criterion", {
   param_info <- list(
-    rB = list(lb = 0, ub = 1,init_values = 0.2),
-    h = list(lb = 0, ub = 1,init_values = 0.2),
-    Bmax = list(lb = 5, ub = 15,init_values = 6)
+    rB = list(lb = 0, ub = 1, init_values = 0.2),
+    h = list(lb = 0, ub = 1, init_values = 0.2),
+    Bmax = list(lb = 5, ub = 15, init_values = 6)
   )
 
   optim_options <- list(
@@ -163,15 +162,15 @@ test_that("estim_param 1 step OLS criterion", {
   str(res$trace_df)
 
   expect_equal(res$final_values[["rB"]],
-               param_true_values[["rB"]],
-               tolerance = param_true_values[["rB"]] * 1e-2
+    param_true_values[["rB"]],
+    tolerance = param_true_values[["rB"]] * 1e-2
   )
   expect_equal(res$final_values[["h"]],
-               param_true_values[["h"]],
-               tolerance = param_true_values[["h"]] * 1e-2
+    param_true_values[["h"]],
+    tolerance = param_true_values[["h"]] * 1e-2
   )
   expect_equal(res$final_values[["Bmax"]],
-               param_true_values[["Bmax"]],
-               tolerance = param_true_values[["Bmax"]] * 1e-2
+    param_true_values[["Bmax"]],
+    tolerance = param_true_values[["Bmax"]] * 1e-2
   )
 })

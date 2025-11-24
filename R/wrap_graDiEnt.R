@@ -85,7 +85,6 @@ wrap_graDiEnt <- function(optim_options, param_info, crit_options) {
   }
 
 
-
   # Get the estimated values  ==> matrix of 1 * nb_params
   est_values <- matrix(
     final_values,
@@ -127,10 +126,9 @@ wrap_graDiEnt <- function(optim_options, param_info, crit_options) {
   }
 
   trace_df <- NULL
-  if (!is.null(SQGDE$particles_trace) && length(dim(SQGDE$particles_trace)) == 3)
-    {
+  if (!is.null(SQGDE$particles_trace) && length(dim(SQGDE$particles_trace)) == 3) {
     tr <- SQGDE$particles_trace
-    n_it  <- dim(tr)[1]
+    n_it <- dim(tr)[1]
     n_pop <- dim(tr)[2]
     df_list <- vector("list", n_it)
     eval_counter <- 0
@@ -145,13 +143,13 @@ wrap_graDiEnt <- function(optim_options, param_info, crit_options) {
 
       df <- as.data.frame(pop_x)
 
-      df$ind  <- seq_len(n_pop)
+      df$ind <- seq_len(n_pop)
       df$iter <- it
 
       crit_pop <- apply(pop_x, 1, function(par) {
         names(par) <- param_names
         main_crit(par, crit_options = crit_options)
-        })
+      })
       df$crit <- crit_pop
 
       idx <- seq_len(n_pop)
@@ -161,9 +159,9 @@ wrap_graDiEnt <- function(optim_options, param_info, crit_options) {
       df$method <- "graDiEnt"
 
       df_list[[it]] <- df
-      }
-    trace_df <- dplyr::bind_rows(df_list)
     }
+    trace_df <- dplyr::bind_rows(df_list)
+  }
 
 
   res <- list(

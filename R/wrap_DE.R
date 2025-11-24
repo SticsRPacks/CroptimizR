@@ -15,9 +15,9 @@
 #' @keywords internal
 
 wrap_DEoptim <- function(optim_options, param_info, crit_options) {
-  if(is.null((ranseed <- optim_options$ranseed))) {
-    ranseed = NULL
-    }
+  if (is.null((ranseed <- optim_options$ranseed))) {
+    ranseed <- NULL
+  }
   if (is.null((reltol <- optim_options$reltol))) {
     optim_options$reltol <- 1e-10
   }
@@ -29,7 +29,7 @@ wrap_DEoptim <- function(optim_options, param_info, crit_options) {
   if (is.null((trace <- optim_options$trace))) {
     optim_options$trace <- FALSE
   }
-  optim_options$ranseed = NULL # ranseed is set to NULL because DEoptim.controll doesn't regonise it
+  optim_options$ranseed <- NULL # ranseed is set to NULL because DEoptim.controll doesn't regonise it
   optim_options$storepopfrom <- 1
   optim_options$storepopfreq <- 1
   control <- do.call(DEoptim::DEoptim.control, optim_options)
@@ -59,17 +59,20 @@ wrap_DEoptim <- function(optim_options, param_info, crit_options) {
   }
   DE <- tryCatch(
     DEoptim::DEoptim(
-      fn    = fn_de,
+      fn = fn_de,
       lower = bounds$lb,
       upper = bounds$ub,
       control = control
     ),
-    error = function(e) { warning(sprintf("DEoptim failed: %s", e$message)); NULL }
+    error = function(e) {
+      warning(sprintf("DEoptim failed: %s", e$message))
+      NULL
+    }
   )
   elapsed <- Sys.time() - start_time
 
   # Verify criterion value
-  if (is.na( DE$optim$bestval)) {
+  if (is.na(DE$optim$bestval)) {
     stop(
       "The value of the criterion is NA."
     )
@@ -90,27 +93,27 @@ wrap_DEoptim <- function(optim_options, param_info, crit_options) {
 
   trace_df <- NULL
   if (!is.null(DE$member$storepop)) {
-    storepop  <- DE$member$storepop
+    storepop <- DE$member$storepop
     bestvalit <- DE$member$bestvalit
     itermax <- length(storepop)
-    NP      <- nrow(storepop[[1]])
-    df_list      <- vector("list", itermax)
+    NP <- nrow(storepop[[1]])
+    df_list <- vector("list", itermax)
     eval_counter <- 0
     for (it in seq_len(itermax)) {
       pop_it <- as.data.frame(storepop[[it]])
       colnames(pop_it) <- param_names
-      pop_it$ind  <- seq_len(NP)
+      pop_it$ind <- seq_len(NP)
       pop_it$iter <- it
       pop_it$crit <- bestvalit[it]
       idx <- seq_len(NP)
       pop_it$eval <- eval_counter + idx
       eval_counter <- eval_counter + NP
-      pop_it$rep    <- 1
+      pop_it$rep <- 1
       pop_it$method <- "DEoptim"
       df_list[[it]] <- pop_it
-      }
-      trace_df <- dplyr::bind_rows(df_list)
     }
+    trace_df <- dplyr::bind_rows(df_list)
+  }
 
   res <- list(
     final_values = final_values,

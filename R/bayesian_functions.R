@@ -32,7 +32,6 @@ summary_bayesian <- function(optim_options, param_info, optim_results, out_dir) 
 }
 
 
-
 #' @title Generate plots for bayesian methods
 #'
 #' @inheritParams estim_param

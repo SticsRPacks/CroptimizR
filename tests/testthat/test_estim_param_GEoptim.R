@@ -144,10 +144,10 @@ test_that("estim_param 1 step OLS criterion", {
 
   optim_options <- list(
     ranseed = 1234,
-    n_params     = length(param_info),
-    n_iter       = 60,
-    n_particles  = 30,
-    n_diff       = 2,
+    n_params = length(param_info),
+    n_iter = 60,
+    n_particles = 30,
+    n_diff = 2,
     return_trace = TRUE
   )
 
@@ -165,15 +165,15 @@ test_that("estim_param 1 step OLS criterion", {
   )
 
   expect_equal(res$final_values[["rB"]],
-               param_true_values[["rB"]],
-               tolerance = param_true_values[["rB"]] * 1e-2
+    param_true_values[["rB"]],
+    tolerance = param_true_values[["rB"]] * 1e-2
   )
   expect_equal(res$final_values[["h"]],
-               param_true_values[["h"]],
-               tolerance = param_true_values[["h"]] * 1e-2
+    param_true_values[["h"]],
+    tolerance = param_true_values[["h"]] * 1e-2
   )
   expect_equal(res$final_values[["Bmax"]],
-               param_true_values[["Bmax"]],
-               tolerance = param_true_values[["Bmax"]] * 1e-2
+    param_true_values[["Bmax"]],
+    tolerance = param_true_values[["Bmax"]] * 1e-2
   )
 })
