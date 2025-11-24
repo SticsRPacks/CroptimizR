@@ -6,32 +6,32 @@
 #'
 #' @return Prints results of global optim methods
 #'
-summary_global_optim<- function(optim_options, param_info, optim_results, out_dir) {
+summary_global_optim <- function(optim_options, param_info, optim_results, out_dir) {
   param_names <- get_params_names(param_info)
   nb_params <- length(param_names)
-  final_values   <- optim_results$final_values
+  final_values <- optim_results$final_values
   min_crit_value <- optim_results$min_crit_value
   est_values <- matrix(final_values, nrow = 1, dimnames = list(NULL, param_names))
 
   cat(paste(
     "\nList of observed variables used:",
     paste(optim_results$obs_var_list, collapse = ", ")
-    ))
+  ))
   # Display of parameters values for the candidate which has the
   # smallest criterion
   for (ipar in 1:nb_params) {
     cat(paste(
       "\nEstimated value for", param_names[ipar], ": ",
-      format(est_values[1, ipar],
-             scientific = FALSE,
-             digits = 2, nsmall = 0
-             )
+      format(final_values[[ipar]],
+        scientific = FALSE,
+        digits = 2, nsmall = 0
+      )
     ))
-    }
+  }
   cat(paste(
     "\nMinimum value of the criterion:",
     format(min_crit_value, scientific = FALSE, digits = 2, nsmall = 0)
-    ))
+  ))
   cat(paste(
     "\nComplementary graphs and results can be found in ", out_dir,
     "\n"
@@ -52,7 +52,7 @@ summary_global_optim<- function(optim_options, param_info, optim_results, out_di
 #'
 
 post_treat_global_optim <- function(optim_options, param_info, optim_results,
-                                      crit_options) {
+                                    crit_options) {
   param_names <- get_params_names(param_info)
   nb_params <- length(param_names)
   info_crit_list <- crit_options$info_crit_list
@@ -62,25 +62,25 @@ post_treat_global_optim <- function(optim_options, param_info, optim_results,
   info_final <- main_crit(
     param_values = optim_results$final_values,
     crit_options = c(crit_options, return_detailed_info = TRUE)
-    )
+  )
   if (info_final$crit != optim_results$min_crit_value) {
     stop(paste(
       "Internal error: incoherent computation of minimum criterion value. \nValue obtained in method wrapper:",
       optim_results$min_crit_value, "\nValue obtained afterwards:",
       info_final$crit
     ))
-    }
+  }
   optim_results$forced_param_values <- info_final$forced_param_values
   sapply(info_crit_list, function(x) {
     final_info_crit <- x(
       obs_list = info_final$obs_intersect,
       crit = info_final$crit,
       param_nb = nb_params
-      )
+    )
     optim_results[x()$name] <<- final_info_crit
-    })
+  })
   return(optim_results)
-  }
+}
 
 
 #' @title Generate plots for global optim methods
@@ -93,10 +93,9 @@ post_treat_global_optim <- function(optim_options, param_info, optim_results,
 #'
 #' @keywords internal
 #'
-plot_global_optim <- function(optim_options, param_info, optim_results, out_dir){
+plot_global_optim <- function(optim_options, param_info, optim_results, out_dir) {
   est_values <- optim_results$est_values
-  trace_df   <- optim_results$trace_df
-
+  trace_df <- optim_results$trace_df
   p_all <- list()
 
   # ValuesVSit
@@ -125,11 +124,11 @@ plot_global_optim <- function(optim_options, param_info, optim_results, out_dir)
 
     # trace_df : params, ind, iter, crit, eval, rep, method
     p <- plot_valuesVSit_go(
-      df          = trace_df,
-      param_info  = param_info,
+      df = trace_df,
+      param_info = param_info,
       iter_or_eval = "iter",
-      crit_log    = FALSE,
-      ind_label   = "begin"
+      crit_log = FALSE,
+      ind_label = "begin"
     )
     for (plot in p) print(plot)
     grDevices::dev.off()
@@ -164,13 +163,13 @@ plot_global_optim <- function(optim_options, param_info, optim_results, out_dir)
     )
 
     p <- plot_valuesVSit_2D_go(
-      df          = df_2d,
-      param_info  = param_info,
+      df = df_2d,
+      param_info = param_info,
       iter_or_eval = "eval",
-      fill        = "eval",
-      crit_log    = FALSE,
-      lines       = FALSE,
-      rep_label   = "end"
+      fill = "eval",
+      crit_log = FALSE,
+      lines = FALSE,
+      rep_label = "end"
     )
 
     for (plot in p) print(plot)
@@ -179,7 +178,7 @@ plot_global_optim <- function(optim_options, param_info, optim_results, out_dir)
   }
 
   return(p_all)
-  }
+}
 
 
 #' @title Create plots of parameters and criterion values per iteration or
@@ -233,19 +232,19 @@ plot_valuesVSit_go <- function(df, param_info, iter_or_eval = c("iter", "eval"),
   mid <- NA_real_
   if (have_crit) {
     mid <- (max(df$crit) - min(df$crit)) / 2 + min(df$crit)
-         if (crit_log) {
-              if (all(df$crit > 0)) {
-                  trans <- "log10"
-                  mid <- (max(log10(df$crit)) -
-                             +                  min(log10(df$crit))) / 2 + min(log10(df$crit))
-                } else {
-                    warning("The criterion takes negative values, log transformation will not be done.")
-                    crit_log <- FALSE
-                  }
-          }
-        } else {
-            crit_log <- FALSE
-          }
+    if (crit_log) {
+      if (all(df$crit > 0)) {
+        trans <- "log10"
+        mid <- (max(log10(df$crit)) -
+          +min(log10(df$crit))) / 2 + min(log10(df$crit))
+      } else {
+        warning("The criterion takes negative values, log transformation will not be done.")
+        crit_log <- FALSE
+      }
+    }
+  } else {
+    crit_log <- FALSE
+  }
   tmp <- rbind(bounds$lb, bounds$ub, select(df, all_of(param_names)))
   tmp[tmp == Inf | tmp == -Inf] <- NA
   minvalue <- apply(tmp, 2, min, na.rm = TRUE)
@@ -257,20 +256,21 @@ plot_valuesVSit_go <- function(df, param_info, iter_or_eval = c("iter", "eval"),
 
   for (param_name in param_names) {
     p[[param_name]] <- ggplot(
-      df, aes(x     = !!rlang::sym(iter_or_eval[1]),
-              y     = !!rlang::sym(param_name),
-              color = crit
-              )
-      ) +
+      df, aes(
+        x = !!rlang::sym(iter_or_eval[1]),
+        y = !!rlang::sym(param_name),
+        color = crit
+      )
+    ) +
       labs(
         title = paste0(
           "Evolution of ", param_name,
           " \n in function of the minimization ", lab
-          ),
-        y    = param_name,
-        x    = paste(lab, "number"),
+        ),
+        y = param_name,
+        x = paste(lab, "number"),
         fill = "Criterion"
-        ) +
+      ) +
       theme(plot.title = element_text(hjust = 0.5)) +
       geom_point(alpha = 0.5)
 
@@ -280,39 +280,39 @@ plot_valuesVSit_go <- function(df, param_info, iter_or_eval = c("iter", "eval"),
           midpoint = mid, low = "blue", mid = "yellow",
           high = "red", space = "Lab", trans = trans
         )
-      }
+    }
     for (iind in unique(df$ind)) {
       p[[param_name]] <- p[[param_name]] +
         geom_line(data = filter(df, ind == iind))
       if (ind_label[1] == "begin_end" || ind_label[1] == "begin") {
         p[[param_name]] <- p[[param_name]] +
           geom_label(aes(label = ind),
-                     data = filter(df, ind == iind) %>% filter(eval == min(.data$eval)),
-                     size = 3
+            data = filter(df, ind == iind) %>% filter(eval == min(.data$eval)),
+            size = 3
           )
-        }
+      }
       if (ind_label[1] == "begin_end" || ind_label[1] == "end") {
         p[[param_name]] <- p[[param_name]] +
           geom_label(aes(label = ind),
-                     data = filter(df, ind == iind) %>% filter(eval == max(.data$eval)),
-                     size = 3
+            data = filter(df, ind == iind) %>% filter(eval == max(.data$eval)),
+            size = 3
           )
       }
     }
     p[[param_name]] <- p[[param_name]] +
-    ylim(minvalue[param_name], maxvalue[param_name])
-    }
+      ylim(minvalue[param_name], maxvalue[param_name])
+  }
 
   df$ind <- as.factor(df$ind)
   p[["criterion"]] <- ggplot(df, aes_string(
     x = iter_or_eval[1], y = "crit",
     color = "ind"
-    )) +
+  )) +
     labs(
       title = paste0(
         "Evolution of the minimized criterion \n in function of the minimization ",
         lab
-        ),
+      ),
       y = "Minimized criterion",
       x = paste(lab, "number"),
       fill = "Individual"
@@ -324,20 +324,20 @@ plot_valuesVSit_go <- function(df, param_info, iter_or_eval = c("iter", "eval"),
     p[["criterion"]] <- p[["criterion"]] +
       geom_line(data = filter(df, ind == iind)) +
       geom_label(aes(label = ind),
-                 data = filter(df, ind == iind) %>% filter(eval == min(.data$eval)),
-                 size = 3
+        data = filter(df, ind == iind) %>% filter(eval == min(.data$eval)),
+        size = 3
       ) +
       geom_label(aes(label = ind),
-                 data = filter(df, ind == iind) %>% filter(eval == max(.data$eval))
+        data = filter(df, ind == iind) %>% filter(eval == max(.data$eval))
       )
-    }
+  }
 
   if (crit_log) {
     p[["criterion"]] <- p[["criterion"]] + scale_y_log10()
-    }
+  }
 
   return(p)
-  }
+}
 
 
 #' @title Create 2D plots of parameters values evolution per iteration or
@@ -377,10 +377,10 @@ plot_valuesVSit_go <- function(df, param_info, iter_or_eval = c("iter", "eval"),
 #'
 #' @export
 #'
-plot_valuesVSit_2D_go  <- function(df, param_info, iter_or_eval = c("eval", "iter"),
-                                     fill = c("crit", "rep"), crit_log = TRUE,
-                                     lines = FALSE,
-                                     rep_label = c("begin_end", "begin", "end")) {
+plot_valuesVSit_2D_go <- function(df, param_info, iter_or_eval = c("eval", "iter"),
+                                  fill = c("crit", "rep"), crit_log = TRUE,
+                                  lines = FALSE,
+                                  rep_label = c("begin_end", "begin", "end")) {
   param_names <- get_params_names(param_info)
   if (length(param_names) <= 1) {
     return()
@@ -404,13 +404,13 @@ plot_valuesVSit_2D_go  <- function(df, param_info, iter_or_eval = c("eval", "ite
       if (all(df$crit > 0)) {
         trans <- "log10"
         mid <- (max(log10(df$crit)) -
-                  min(log10(df$crit))) / 2 + min(log10(df$crit))
+          min(log10(df$crit))) / 2 + min(log10(df$crit))
       } else {
         warning("The criterion takes negative values, log transformation will not be done.")
         crit_log <- FALSE
       }
-      }
-    }else {
+    }
+  } else {
     crit_log <- FALSE
   }
   tmp <- rbind(bounds$lb, bounds$ub, select(df, all_of(param_names)))
@@ -443,7 +443,7 @@ plot_valuesVSit_2D_go  <- function(df, param_info, iter_or_eval = c("eval", "ite
       theme(plot.title = element_text(hjust = 0.5)) +
       geom_point(alpha = 0.5)
 
-    if  (fill[1] == "crit" && has_crit){
+    if (fill[1] == "crit" && has_crit) {
       p[[ipair]] <- p[[ipair]] +
         scale_color_gradient2(
           midpoint = mid, low = "blue", mid = "yellow",
@@ -455,7 +455,7 @@ plot_valuesVSit_2D_go  <- function(df, param_info, iter_or_eval = c("eval", "ite
           low  = "lightblue",
           high = "darkblue"
         )
-      }
+    }
 
     if (lines) {
       for (irep in unique(df$rep)) {
@@ -464,23 +464,23 @@ plot_valuesVSit_2D_go  <- function(df, param_info, iter_or_eval = c("eval", "ite
         if (rep_label[1] == "begin_end" || rep_label[1] == "begin") {
           p[[ipair]] <- p[[ipair]] +
             geom_label(aes(label = rep),
-                        data = filter(df, rep == irep) %>% filter(eval == min(.data$eval)),
-                        size = 3
+              data = filter(df, rep == irep) %>% filter(eval == min(.data$eval)),
+              size = 3
             )
         }
         if (rep_label[1] == "begin_end" || rep_label[1] == "end") {
           p[[ipair]] <- p[[ipair]] +
             geom_label(aes(label = rep),
-                        data = filter(df, rep == irep) %>% filter(eval == max(.data$eval)),
-                        size = 3
+              data = filter(df, rep == irep) %>% filter(eval == max(.data$eval)),
+              size = 3
             )
         }
       }
     }
     p[[ipair]] <- p[[ipair]] +
-           xlim(minvalue[df_pairs[1, ipair]], maxvalue[df_pairs[1, ipair]]) +
-           ylim(minvalue[df_pairs[2, ipair]], maxvalue[df_pairs[2, ipair]])
+      xlim(minvalue[df_pairs[1, ipair]], maxvalue[df_pairs[1, ipair]]) +
+      ylim(minvalue[df_pairs[2, ipair]], maxvalue[df_pairs[2, ipair]])
   }
 
   return(p)
-  }
+}
