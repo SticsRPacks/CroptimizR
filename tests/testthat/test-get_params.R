@@ -39,7 +39,6 @@ test_that("get_params_bounds", {
 })
 
 
-
 # Test get_init_values
 prior_1 <- list(
   init_values = c(dlaimax = 0.001, durvieF = 200),
@@ -112,7 +111,6 @@ test_that("get_init_values", {
 })
 
 
-
 # Test get_params_names
 prior_1 <- list(
   lb = c(dlaimax = 0.0005, durvieF = 50),
@@ -174,7 +172,6 @@ test_that("get_params_names", {
     c("durvieF", "dlaimax")
   )
 })
-
 
 
 # Test get_params_per_sit

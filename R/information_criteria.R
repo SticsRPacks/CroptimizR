@@ -25,7 +25,6 @@ AIC <- function(obs_list, crit_value, param_nb) {
 }
 
 
-
 #' @title Computes AICc for ordinary least squares
 #'
 #' @inheritParams estim_param
@@ -60,7 +59,6 @@ AICc <- function(obs_list, crit_value, param_nb) {
 
   return(n * log(crit_value / n) + 2 * p + 2 * p * (p + 1) / (n - p - 1))
 }
-
 
 
 #' @title Computes BIC for ordinary least squares

@@ -96,8 +96,6 @@ select_param_FwdRegAgMIP <- function(oblig_param_list, add_param_list, crt_list,
 }
 
 
-
-
 #' @title Post-treat the results of the Forward Selection algorithm proposed in
 #' AgMIP calibration phaseIII protocol
 #'
@@ -196,8 +194,6 @@ summary_FwdRegAgMIP <- function(param_selection_steps,
     )
   }
 }
-
-
 
 
 #' @title Save the results of the Forward Selection algorithm proposed in

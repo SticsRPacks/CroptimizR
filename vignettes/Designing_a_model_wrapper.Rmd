@@ -67,9 +67,7 @@ Here's a header for a basic version of a model wrapper:
 #'     o `error`: an error code indicating if at least one simulation ended
 #'     with an error.
 
-model_wrapper <- function(param_values = NULL, situation, model_options, ...) {
-
-}
+model_wrapper <- function(param_values = NULL, situation, model_options, ...) {}
 ```
 
 **Each argument detailed here must be defined for any CroptimizR model wrapper. You can use this header to develop yours.

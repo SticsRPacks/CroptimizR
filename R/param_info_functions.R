@@ -71,7 +71,6 @@ get_params_names <- function(param_info, short_list = FALSE) {
 }
 
 
-
 #' @title Extract bounds from parameter information
 #'
 #' @inheritParams estim_param
@@ -416,7 +415,6 @@ get_init_values <- function(param_info) {
 
   return(init_values)
 }
-
 
 
 #' @title Complete initial values in param_info by sampling values from bounds taking into account inequality constraints between parameters
