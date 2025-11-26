@@ -15,7 +15,7 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: r-hub/actions/setup-r-sysreqs@v1 # Install and setup R system dependencies on macOS.
         with:
@@ -30,6 +30,12 @@ jobs:
           extra-packages: any::covr
           needs: coverage
 
+      - name: Force ggplot2 version 3.5.2
+        run: |
+          # Temporarily forcing ggplot2 to v3.5.2 on main branch (see https://github.com/SticsRPacks/CroPlotR/issues/84)
+          remotes::install_version("ggplot2", version = "3.5.2", upgrade = "never")
+        shell: Rscript {0}
+        
       - name: Test coverage
         run: |
           covr::codecov(
@@ -48,7 +54,7 @@ jobs:
 
       - name: Upload test results
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: coverage-test-failures
           path: ${{ runner.temp }}/package
