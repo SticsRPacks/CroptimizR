@@ -20,20 +20,10 @@ jobs:
         config:
           - { os: macos-latest, r: "release" }
           - { os: windows-latest, r: "release" }
-          - {
-              os: ubuntu-latest,
-              r: "devel",
-              http-user-agent: "release",
-              rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest",
-            }
+          - { os: windows-latest, r: "4.2.0" }
           - {
               os: ubuntu-latest,
               r: "release",
-              rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest",
-            }
-          - {
-              os: ubuntu-latest,
-              r: "4.1.0",
               rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest",
             }
 
@@ -62,8 +52,8 @@ jobs:
 
       - name: Install custom R dependencies
         run: |
-          # Install dev version of SticsRFiles to be in sync for tests (packages are developed synchronously):
-          remotes::install_github("SticsRPacks/SticsRFiles@main", dependencies = FALSE, upgrade = "never", force=TRUE)
+          # Temporarily forcing ggplot2 to v3.5.2 on main branch (see https://github.com/SticsRPacks/CroPlotR/issues/84)
+          remotes::install_version("ggplot2", version = "3.5.2", upgrade = "never")
         shell: Rscript {0}
 
       - uses: r-lib/actions/check-r-package@v2
