@@ -20,20 +20,10 @@ jobs:
         config:
           - { os: macos-latest, r: "release" }
           - { os: windows-latest, r: "release" }
-          - {
-              os: ubuntu-latest,
-              r: "devel",
-              http-user-agent: "release",
-              rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest",
-            }
+          - { os: windows-latest, r: "4.2.0" }
           - {
               os: ubuntu-latest,
               r: "release",
-              rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest",
-            }
-          - {
-              os: ubuntu-latest,
-              r: "4.2.0",
               rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest",
             }
 
