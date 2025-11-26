@@ -490,7 +490,7 @@ test_wrapper(
 
 The little piece of code below shows an example of parameter estimation using this wrapper:
 
-```{r eval=TRUE, message=FALSE, warning=FALSE}
+```{r eval=TRUE, message=FALSE, warning=TRUE}
 library(CroptimizR)
 library(dplyr)
 
