@@ -20,7 +20,7 @@
 #'
 main_crit <- function(param_values, crit_options) {
   on.exit({
-    if (exists("obs_sim_list") && !is.na(obs_sim_list) &&
+    if (exists("obs_sim_list") &&
       is.list(obs_sim_list) && "obs_list" %in% names(obs_sim_list)) {
       .croptEnv$obs_var_list <- unique(
         unlist(lapply(
@@ -98,7 +98,7 @@ main_crit <- function(param_values, crit_options) {
       if (is.null(.croptEnv$sim_intersect)) {
         .croptEnv$sim_intersect <- vector("list", crit_options$tot_max_eval)
       }
-      if (exists("obs_sim_list") && !is.na(obs_sim_list) &&
+      if (exists("obs_sim_list") &&
         is.list(obs_sim_list) && "sim_list" %in% names(obs_sim_list)) {
         .croptEnv$sim_intersect[[.croptEnv$eval_count]] <- obs_sim_list$sim_list
       }
@@ -108,7 +108,7 @@ main_crit <- function(param_values, crit_options) {
       if (is.null(.croptEnv$obs_intersect)) {
         .croptEnv$obs_intersect <- vector("list", crit_options$tot_max_eval)
       }
-      if (exists("obs_sim_list") && !is.na(obs_sim_list) &&
+      if (exists("obs_sim_list") &&
         is.list(obs_sim_list) && "obs_list" %in% names(obs_sim_list)) {
         .croptEnv$obs_intersect[[.croptEnv$eval_count]] <- obs_sim_list$obs_list
       }
