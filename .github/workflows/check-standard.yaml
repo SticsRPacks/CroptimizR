@@ -2,9 +2,8 @@
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
   push:
-    #branches: [main, master]
+    branches: [main, master]
   pull_request:
-    #branches: [main, master]
 
 name: R-CMD-check
 
@@ -20,20 +19,10 @@ jobs:
         config:
           - { os: macos-latest, r: "release" }
           - { os: windows-latest, r: "release" }
-          - {
-              os: ubuntu-latest,
-              r: "devel",
-              http-user-agent: "release",
-              rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest",
-            }
+          - { os: windows-latest, r: "4.2.0" }
           - {
               os: ubuntu-latest,
               r: "release",
-              rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest",
-            }
-          - {
-              os: ubuntu-latest,
-              r: "4.1.0",
               rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest",
             }
 
@@ -42,7 +31,7 @@ jobs:
       R_KEEP_PKG_SOURCE: yes
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: r-hub/actions/setup-r-sysreqs@v1 # Install and setup R system dependencies on macOS.
         with:
           type: full
@@ -62,8 +51,8 @@ jobs:
 
       - name: Install custom R dependencies
         run: |
-          # Install dev version of SticsRFiles to be in sync for tests (packages are developed synchronously):
-          remotes::install_github("SticsRPacks/SticsRFiles@main", dependencies = FALSE, upgrade = "never", force=TRUE)
+          # Temporarily forcing ggplot2 to v3.5.2 on main branch (see https://github.com/SticsRPacks/CroPlotR/issues/84)
+          remotes::install_version("ggplot2", version = "3.5.2", upgrade = "never")
         shell: Rscript {0}
 
       - uses: r-lib/actions/check-r-package@v2
@@ -80,7 +69,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger
-        uses: peter-evans/repository-dispatch@v3
+        uses: peter-evans/repository-dispatch@v4
         with:
           token: ${{ secrets.TRIGGER_PAT }}
           repository: SticsRPacks/SticsRTests
