@@ -124,8 +124,6 @@ test_that("set_init_values: Case 1 with groups of situations per parameter", {
 })
 
 
-
-
 # Case 2 with groups of situations per parameter
 
 param_info <- list()
