@@ -36,9 +36,11 @@ Imports:
     Matrix,
     BayesianTools,
     crayon,
+    DEoptim,
     doParallel,
     dplyr,
     ggplot2,
+    graDiEnt,
     lhs,
     lifecycle,
     lubridate,
@@ -76,4 +78,4 @@ Encoding: UTF-8
 Language: en-US
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.3
