@@ -16,28 +16,30 @@
 #'
 
 wrap_nloptr <- function(optim_options, param_info, crit_options) {
-  if (is.null((nb_rep <- optim_options$nb_rep))) {
-    nb_rep <- 5
-  }
-  if (is.null((xtol_rel <- optim_options$xtol_rel))) {
-    xtol_rel <- 1e-4
-  }
-  if (is.null((ftol_rel <- optim_options$ftol_rel))) {
-    ftol_rel <- 1e-10
-  }
-  if (is.null((maxeval <- optim_options$maxeval))) {
-    maxeval <- 50000
-  }
-  if (is.null((ranseed <- optim_options$ranseed))) {
-    ranseed <- NULL
-  }
   if (!is.null((optim_options$algorithm))) {
     if (toupper(optim_options$algorithm) != "NLOPT_LN_NELDERMEAD") {
       warning("Only NLOPT_LN_NELDERMEAD algorithm is interfaced in CroptimizR for package nloptr.")
+      optim_options$algorithm <- "NLOPT_LN_NELDERMEAD"
     }
   }
-  algorithm <- "NLOPT_LN_NELDERMEAD"
 
+  # Extract nb_rep and remove it from optim_options
+  nb_rep <- optim_options$nb_rep
+  if (is.null(nb_rep)) nb_rep <- 5
+  optim_opts <- optim_options
+  optim_opts$nb_rep <- NULL
+
+  # Default values, overridden by optim_options if provided
+  defaults <- list(
+    algorithm = "NLOPT_LN_NELDERMEAD",
+    xtol_rel = 1e-4,
+    ftol_rel = 1e-10,
+    maxeval = 50000,
+    ranseed = NULL
+  )
+
+  # Merge defaults + user options (user options override defaults)
+  opts <- modifyList(defaults, optim_opts)
   # return requested information if only optim_options is given in argument
   if (nargs() == 1 & methods::hasArg(optim_options)) {
     return(list(
@@ -46,7 +48,7 @@ wrap_nloptr <- function(optim_options, param_info, crit_options) {
     ))
   }
 
-  crit_options$tot_max_eval <- nb_rep * maxeval
+  crit_options$tot_max_eval <- nb_rep * opts$maxeval
   param_names <- get_params_names(param_info)
   nb_params <- length(param_names)
   bounds <- get_params_bounds(param_info)
@@ -68,11 +70,7 @@ wrap_nloptr <- function(optim_options, param_info, crit_options) {
       x0 = as.numeric(init_values[irep, ]),
       eval_f = main_crit,
       lb = bounds$lb, ub = bounds$ub,
-      opts = list(
-        "algorithm" = algorithm,
-        "xtol_rel" = xtol_rel, "maxeval" = maxeval,
-        "ranseed" = ranseed
-      ),
+      opts = opts,
       crit_options = crit_options
     ))
 
