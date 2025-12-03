@@ -31,7 +31,7 @@ jobs:
       R_KEEP_PKG_SOURCE: yes
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: r-hub/actions/setup-r-sysreqs@v1 # Install and setup R system dependencies on macOS.
         with:
           type: full
