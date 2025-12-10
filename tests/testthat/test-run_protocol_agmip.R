@@ -368,7 +368,6 @@ test_that("Test efficiency of step7 in case a parameter is estimated late in ste
 })
 
 
-
 # Check that the weight computation is correct for complex cases such as:
 #  * use of the same variable in different steps
 #  * obs variable used in step7 but not in step6
@@ -578,8 +577,10 @@ test_that("Check use of several observed variables per group", {
   )
 
   # Check the order of the steps in the output
-  expect_equal(stats_yield$step, c("Default", "Step6.main_step", "Step6.dummy_step",
-                                          "Step7"))
+  expect_equal(stats_yield$step, c(
+    "Default", "Step6.main_step", "Step6.dummy_step",
+    "Step7"
+  ))
 })
 
 # Test using transform_sim and var

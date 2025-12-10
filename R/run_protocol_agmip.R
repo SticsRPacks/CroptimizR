@@ -358,7 +358,6 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
 }
 
 
-
 #' @title Compute statistics per group of variables
 #'
 #' @param stat_col Name of the column of stats_per_var containing the statistics to compute
