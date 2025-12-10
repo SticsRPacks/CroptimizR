@@ -1,7 +1,5 @@
 #' @title Summarizes results of multi-step procedure
 #'
-#' @inheritParams estim_param
-#'
 #' @param results_multi_step Results of the multi_step procedure as returned by post_treat_multi_step
 #'
 #' @param path_results Folder path where results of the multi-step optimization process can be found
@@ -45,13 +43,13 @@ summary_multi_step <- function(results_multi_step, path_results) {
 
 #' @title Post-treat results of multi-step procedure
 #'
-#' @inheritParams estim_param
+#' @param step List of steps of the multi-step procedure
 #'
-#' @param optim_results_list List of results returned for each step of the parameter estimation process
+#' @param optim_results_list List of results returned for each step of the multi-step parameter estimation process
 #'
 #' @return List of estimated and forced parameters values
 #'
-post_treat_multi_step <- function(optim_results_list) {
+post_treat_multi_step <- function(step, optim_results_list) {
   res <- list()
 
   # Concatenate the list of estimated values
@@ -64,6 +62,12 @@ post_treat_multi_step <- function(optim_results_list) {
 
   # Concatenate the list of observations used
   res$obs_var_list <- unique(unlist(lapply(optim_results_list, function(x) x$obs_var_list)))
+
+  # Store the definition and results of all steps
+  res$step <- step
+  lapply(seq(optim_results_list), function(x) {
+    res$step[[x]]$optim_results <<- optim_results_list[[x]]
+  })
 
   return(res)
 }

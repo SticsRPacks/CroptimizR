@@ -122,10 +122,7 @@ results.
 By default the wrapper is asked to simulate only the observed variables. However,
 it may be useful to simulate also other variables, typically when transform_sim
 and/or transform_obs functions are used. Note however that it is
-active only if the model_function used handles this argument.
-If it is the case, and if the obs_var argument is provided, then the list of observations
-used will be restricted to the list of variables given in the obs_var argument,
-plus the ones possibly computed by the transform_sim function.}
+active only if the model_function used handles this argument.}
 
 \item{info_level}{(optional) Integer that controls the level of information returned and stored
 by estim_param (in addition to the results automatically provided that depends on the method used).
@@ -165,7 +162,7 @@ longer supported, use \code{var_to_simulate} instead.}
 \value{
 prints, graphs and a list containing the results of the parameter estimation,
 which content depends on the method used and on the values of the \code{info_level} argument.
-All results are saved in the folder \code{optim_options$out_dir}.
+All results are saved in the folder \code{out_dir}.
 }
 \description{
 main function for parameter estimation

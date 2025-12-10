@@ -4,10 +4,12 @@
 \alias{post_treat_multi_step}
 \title{Post-treat results of multi-step procedure}
 \usage{
-post_treat_multi_step(optim_results_list)
+post_treat_multi_step(step, optim_results_list)
 }
 \arguments{
-\item{optim_results_list}{List of results returned for each step of the parameter estimation process}
+\item{step}{List of steps of the multi-step procedure}
+
+\item{optim_results_list}{List of results returned for each step of the multi-step parameter estimation process}
 }
 \value{
 List of estimated and forced parameters values
