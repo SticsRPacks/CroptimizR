@@ -37,7 +37,6 @@ wrap_BayesianTools <- function(optim_options, param_info, crit_options) {
   }
 
 
-
   crit_options$tot_max_eval <- optim_options$iterations +
     optim_options$startValue -
     optim_options$iterations %% optim_options$startValue

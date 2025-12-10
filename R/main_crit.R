@@ -20,7 +20,8 @@
 #'
 main_crit <- function(param_values, crit_options) {
   on.exit({
-    if (exists("obs_sim_list") && !is.null(obs_sim_list$obs_list)) {
+    if (exists("obs_sim_list") &&
+      is.list(obs_sim_list) && "obs_list" %in% names(obs_sim_list)) {
       .croptEnv$obs_var_list <- unique(
         unlist(lapply(
           obs_sim_list$obs_list,
@@ -97,7 +98,8 @@ main_crit <- function(param_values, crit_options) {
       if (is.null(.croptEnv$sim_intersect)) {
         .croptEnv$sim_intersect <- vector("list", crit_options$tot_max_eval)
       }
-      if (!is.null(obs_sim_list$sim_list)) {
+      if (exists("obs_sim_list") &&
+        is.list(obs_sim_list) && "sim_list" %in% names(obs_sim_list)) {
         .croptEnv$sim_intersect[[.croptEnv$eval_count]] <- obs_sim_list$sim_list
       }
     }
@@ -106,7 +108,8 @@ main_crit <- function(param_values, crit_options) {
       if (is.null(.croptEnv$obs_intersect)) {
         .croptEnv$obs_intersect <- vector("list", crit_options$tot_max_eval)
       }
-      if (!is.null(obs_sim_list$obs_list)) {
+      if (exists("obs_sim_list") &&
+        is.list(obs_sim_list) && "obs_list" %in% names(obs_sim_list)) {
         .croptEnv$obs_intersect[[.croptEnv$eval_count]] <- obs_sim_list$obs_list
       }
     }
@@ -302,8 +305,7 @@ main_crit <- function(param_values, crit_options) {
     obs_sim_list$obs_list
   )
   if (!is.list(obs_sim_list)) {
-    warning("Intersection of simulations and observations is empty (no date and/or variable in common)!")
-    return(NA)
+    stop("Intersection of simulations and observations is empty (no date and/or variable in common)!")
   }
 
   # check presence of Inf/NA in simulated results where obs is not NA

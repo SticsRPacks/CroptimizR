@@ -399,3 +399,44 @@ test_that("estim_param equality constraints", {
     tolerance = res$final_values[["rB"]] * 1e-8
   )
 })
+
+
+# Test that empty intersection between sim and obs lead to an error
+test_that("estim_param empty sim-obs intersection lead to an error", {
+  optim_options <- list(
+    nb_rep = 5, xtol_rel = 1e-2,
+    ranseed = 1234
+  )
+  param_info <- list(
+    rB = list(lb = 0, ub = 1, default = 0.1),
+    h = list(lb = 0, ub = 1, default = 0.5)
+  )
+  forced_param_values <- c(Bmax = 7)
+  obs_synth_new <- lapply(obs_synth, function(x) {
+    dplyr::mutate(x, biomass_NEW = biomass)
+  })
+  step <- list(
+    list(
+      param = c("rB"),
+      obs_var = c("biomass_NEW")
+    ),
+    list(
+      param = c("h"),
+      obs_var = c("yield")
+    )
+  )
+
+  expect_error(
+    res_final <- estim_param(
+      obs_list = obs_synth_new,
+      crit_function = crit_ols,
+      model_function = toymodel_wrapper,
+      model_options = model_options,
+      optim_options = optim_options,
+      param_info = param_info,
+      forced_param_values = forced_param_values,
+      step = step,
+      out_dir = tempdir()
+    )
+  )
+})
