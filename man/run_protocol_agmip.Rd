@@ -32,7 +32,7 @@ one column named Date with the dates (Date or POSIXct format) of the different o
 and one column per observed variables with either the measured values or NA, if
 the variable is not observed at the given date.
 See details section for more information on the list of observations actually
-used during the parameter estimation process.}
+used during the parameter estimation procedure.}
 
 \item{optim_options}{List of options of the parameter estimation method, containing:
 \itemize{
@@ -69,12 +69,12 @@ and square-root transformation on values of variable var2.}
 \item{forced_param_values}{Named vector or list, must contain the values (or
 arithmetic expression, see details section) for the model parameters to force. The corresponding
 values will be transferred to the model wrapper through its param_values argument
-during the estimation process.
+during the estimation procedure.
 Should not include values for estimated parameters (i.e. parameters defined in
 \code{param_info} argument), except if they are listed as candidate parameters (see
 argument \code{candidate_param}).}
 
-\item{step}{(optional) List that describes the steps of the parameter estimation process (see details section).
+\item{step}{(optional) List that describes the steps of the parameter estimation procedure (see details section).
 If \code{NULL}, a single default step will be created using the \code{estim_param} arguments}
 
 \item{param_info}{Information on the parameters to estimate.

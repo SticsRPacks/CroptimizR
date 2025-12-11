@@ -36,7 +36,7 @@ one column named Date with the dates (Date or POSIXct format) of the different o
 and one column per observed variables with either the measured values or NA, if
 the variable is not observed at the given date.
 See details section for more information on the list of observations actually
-used during the parameter estimation process.}
+used during the parameter estimation procedure.}
 
 \item{crit_function}{Function implementing the criterion to optimize
 (optional, see default value in the function signature). See
@@ -89,7 +89,7 @@ for an example),
 \item{forced_param_values}{Named vector or list, must contain the values (or
 arithmetic expression, see details section) for the model parameters to force. The corresponding
 values will be transferred to the model wrapper through its param_values argument
-during the estimation process.
+during the estimation procedure.
 Should not include values for estimated parameters (i.e. parameters defined in
 \code{param_info} argument), except if they are listed as candidate parameters (see
 argument \code{candidate_param}).}
@@ -151,7 +151,7 @@ ONLY AVAILABLE FOR THE MOMENT FOR crit_function==crit_ols.}
 of observed values and the name of the corresponding variable and that must return either a single value
 for the weights for the given variable or a vector of values of length the length of the vector of observed values given in input.}
 
-\item{step}{(optional) List that describes the steps of the parameter estimation process (see details section).
+\item{step}{(optional) List that describes the steps of the parameter estimation procedure (see details section).
 If \code{NULL}, a single default step will be created using the \code{estim_param} arguments}
 
 \item{out_dir}{Path to the directory where the optimization results will be written. (optional, default to \code{getwd()})}
@@ -172,12 +172,12 @@ In CroptimizR, parameter estimation is based on the comparison between the value
 of the observed and simulated variables at corresponding dates. Only the situations,
 variables and dates common to both observations (provided in \code{obs_list} argument),
 and simulations returned by the wrapper used, will be taken into account in
-the parameter estimation process.
+the parameter estimation procedure.
 In case where the value of an observed variable is NA for a given situation and
 date, it will not be taken into account. In case where the value of a simulated
 variable is NA (or Inf) for a given situation and date for which there is an
 observation, the optimized criterion will take the NA value, which may stop the
-process, and the user will be warned.
+procedure, and the user will be warned.
 
 If the candidate_param argument is given, a parameter selection procedure following
 the AgMIP calibration phaseIII protocol will be performed:
@@ -241,7 +241,7 @@ the parameters p5 and p6 must thus be part of the list of parameters to estimate
 described in the \code{param_info} argument.
 
 The argument \code{step} is a list of lists used to perform parameter estimation in multiple sequential steps.
-If provided, each step represents a separate stage in the estimation process,
+If provided, each step represents a separate stage in the estimation procedure,
 allowing different configurations for each step (e.g., different sets of parameters to estimate,
 different observed variables, different situations, etc.).
 
@@ -270,9 +270,9 @@ step[[2]] <- list(
 )
 }\if{html}{\out{</div>}}
 
-In this case, the parameter estimation process will proceed in \strong{two steps}:
+In this case, the parameter estimation procedure will proceed in \strong{two steps}:
 \itemize{
-\item \strong{Step 1}: Parameter \code{p1} is estimated, while \code{p2} is included in a parameter selection process.
+\item \strong{Step 1}: Parameter \code{p1} is estimated, while \code{p2} is included in a parameter selection procedure.
 Only observed variable \code{var1} (from \code{obs_list} defined in argument of \code{estim_param}) is used.
 \item \strong{Step 2}: Parameter \code{p3} is estimated, and only observed variable \code{var2} is used.
 Parameters \code{p1} (and possibly \code{p2}, if selected) are fixed at the values estimated in Step 1.
@@ -280,7 +280,7 @@ Information on the parameters to estimate (bounds, ...) can be defined within
 the same \code{param_info} list given in argument of \code{estim_param}.
 }
 
-The results of the parameter estimation process are stored in the folder \code{out_dir},
+The results of the parameter estimation procedure are stored in the folder \code{out_dir},
 with a separate subfolder for each step.
 }
 \seealso{

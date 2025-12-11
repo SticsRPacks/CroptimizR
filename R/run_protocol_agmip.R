@@ -29,14 +29,13 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
 
   on.exit({
     save(res, file = file.path(out_dir, "optim_results.Rdata"))
-    cat("\n---------------------\n")
-    cat(paste("End of AgMIP Phase IV protocol"))
-    cat("\n---------------------\n")
+    cat("\nEnd of AgMIP Phase IV protocol\n")
   })
 
-  cat("\n---------------------\n")
-  cat(paste("AgMIP Phase IV protocol"))
-  cat("\n---------------------\n")
+  cat("\nAgMIP Calibration Phase IV protocol: automatic calculation steps 6 and 7",
+    "\n(see doi.org/10.1016/j.envsoft.2024.106147 for a detailed description of the full protocol)\n",
+    sep = ""
+  )
 
   # Read the excel file describing the protocol to generate the step6 list if step is not provided
   if (is.null(step)) {
@@ -47,6 +46,12 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
   } else {
     steps <- step
   }
+  # Prefix the steps name by "Step6." for a clearer display of the steps names.
+  # In case the step has no name, names them Step6.Group1, Step6.Group2, ...
+  if (is.null(names(steps))) {
+    names(steps) <- paste0("Group", seq(steps))
+  }
+  names(steps) <- paste0("Step6.", names(steps))
 
   # Run model wrapper using the default values of the parameters
   tmp <- compute_simulations(
@@ -109,8 +114,7 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
 
 
   # Run step6
-  cat("\n---------------------\n")
-  cat(paste("Run AgMIP Phase IV protocol Step6"))
+  cat("\n", make_display_prefix(1, "title"), "Step6\n", sep = "")
   # Force nb_rep to c(10, 5) for step6 as defined in the AgMIP Phase IV protocol
   if (is.null(optim_options_given$nb_rep)) {
     optim_options$nb_rep <- c(10, 5)
@@ -157,7 +161,7 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
       sim$sim_list,
       obs = obs_transformed, stats = c("Bias2", "MSE", "rRMSE", "EF")
     ) %>%
-      dplyr::mutate(step = paste0("Step6.", names(res_step6$step)[istep])) %>%
+      dplyr::mutate(step = names(res_step6$step)[istep]) %>%
       dplyr::select(step, dplyr::everything(), -group, -situation)
 
     # Generate scatter plots for each sub-step of step6
@@ -170,6 +174,9 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
     )
   }
   stats_step6 <- dplyr::bind_rows(stats_step6)
+
+  cat("\n\n", make_display_prefix(1, "title"), "End of Step6\n", sep = "")
+
 
   # Compute weights for step7
 
@@ -242,8 +249,7 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
   }
 
   # Run step7
-  cat("\n---------------------\n")
-  cat(paste("Run AgMIP Phase IV protocol Step7"))
+  cat("\n", make_display_prefix(1, "title"), "Step7\n", sep = "")
   res_step7 <- estim_param(
     obs_list = obs_list,
     model_function = model_function,
@@ -302,9 +308,10 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
   ## Evolution of MSE and Bias2 for all steps and variables
   steps_by_var_tmp <- lapply(names(res_step6$step), function(step_name) {
     vars <- res_step6$step[[step_name]]$obs_var
-    setNames(rep(paste0("Step6.", step_name), length(vars)), vars)
+    setNames(rep(step_name, length(vars)), vars)
   })
   steps_by_var_all <- unlist(steps_by_var_tmp)
+  # Keep the last occurence of each variable (i.e., the step where it was last used)
   steps_by_var <- steps_by_var_all[!duplicated(names(steps_by_var_all), fromLast = TRUE)]
   p_evol <- plot_stats_evolution(stats_per_step, steps_by_var)
   ggsave(
@@ -317,11 +324,14 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
     width = 11, height = 8.5, units = "in"
   )
 
+  cat("\n\n", make_display_prefix(1, "title"), "End of Step7\n", sep = "")
+
   # Print results
-  cat(paste(
-    "\nAgMIP Phase IV protocol: Graphs and results can be found in ",
-    out_dir, "\n"
-  ))
+  cat(
+    "\nGraphs and results can be found in ",
+    out_dir, "\n",
+    sep = ""
+  )
 
   # Return results
   res$final_values <- res_step7$final_values

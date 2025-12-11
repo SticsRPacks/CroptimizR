@@ -13,7 +13,7 @@ one column named Date with the dates (Date or POSIXct format) of the different o
 and one column per observed variables with either the measured values or NA, if
 the variable is not observed at the given date.
 See details section for more information on the list of observations actually
-used during the parameter estimation process.}
+used during the parameter estimation procedure.}
 }
 \value{
 Vector of names of observed variables

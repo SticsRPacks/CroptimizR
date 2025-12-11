@@ -10,6 +10,7 @@
 #' previously used in parameter estimation
 #' @param info_crit_values Values of the information criterion obtained so far
 #'  for the different steps.
+#' @param indent Integer, level of indent of the printed messages as required by make_display_prefix
 #'
 #' @details This function implements the Forward Selection based on information
 #' criterion as described in AgMIP Calibration protocol phase III
@@ -34,7 +35,7 @@
 #' @keywords internal
 #'
 select_param_FwdRegAgMIP <- function(oblig_param_list, add_param_list, crt_list,
-                                     info_crit_values) {
+                                     info_crit_values, indent = 0) {
   res <- list()
   res$next_candidates <- NULL
   crt_info_crit <- tail(info_crit_values, 1)
@@ -42,12 +43,15 @@ select_param_FwdRegAgMIP <- function(oblig_param_list, add_param_list, crt_list,
     prev_info_crit <- head(info_crit_values, length(info_crit_values) - 1)
   }
 
-  cat(paste(
-    "\nCurrent value of the information criterion:",
+  cat(
+    "\n",
+    make_display_prefix(indent, "info"),
+    "Current value of the information criterion: ",
     format(crt_info_crit,
       scientific = FALSE, digits = 2, nsmall = 0
-    ), "\n"
-  ))
+    ),
+    sep = ""
+  )
 
   if (is.null(add_param_list)) {
     res$selected <- TRUE
@@ -83,13 +87,16 @@ select_param_FwdRegAgMIP <- function(oblig_param_list, add_param_list, crt_list,
     }
   }
 
-  cat(paste(
-    "Candidate parameter", crt_list[length(crt_list)]
-  ))
+  cat(
+    "\n",
+    make_display_prefix(indent, "info"),
+    "Candidate parameter ", crt_list[length(crt_list)],
+    sep = ""
+  )
   if (res$selected) {
-    cat(" is selected\n")
+    cat(" is selected", sep = "")
   } else {
-    cat(" is rejected\n")
+    cat(" is rejected", sep = "")
   }
 
   return(res)
@@ -170,27 +177,40 @@ post_treat_FwdRegAgMIP <- function(optim_results, crit_options, crt_list,
 #' @param optim_results Results list returned by the parameter estimation method
 #' wrapper used
 #'
+#' @param indent Integer, level of indent of the printed messages as required by make_display_prefix
+#'
 #' @return Print the results in standard output.
 #'
 #' @keywords internal
 #'
 summary_FwdRegAgMIP <- function(param_selection_steps,
-                                info_crit_list, path_results, optim_results) {
+                                info_crit_list, path_results, optim_results,
+                                indent = 0) {
+  cat(
+    "\n",
+    make_display_prefix(indent, "title"),
+    "Summary of the Parameter Selection procedure results\n",
+    sep = ""
+  )
+
   ind_min_infocrit <-
     which.min(param_selection_steps[[info_crit_list[[1]]()$name]])
-  cat("Selected step:", ind_min_infocrit, "\n")
+  cat("\n", make_display_prefix(indent, "info"), "Selected step:", ind_min_infocrit, sep = "")
   selected_param <-
     param_selection_steps$`Estimated parameters`[[ind_min_infocrit]]
-  cat("Selected parameters:", paste(selected_param, collapse = ","), "\n")
+  cat("\n", make_display_prefix(indent, "info"), "Selected parameters: ", paste(selected_param, collapse = ","), sep = "")
   param_values <- param_selection_steps$`Final values`[[ind_min_infocrit]]
   nb_params <- length(param_values)
   for (ipar in 1:nb_params) {
     cat(
-      "Estimated value for", selected_param[ipar],
+      "\n",
+      make_display_prefix(indent, "info"),
+      "Estimated value for ", selected_param[ipar],
       ": ", format(param_values[ipar],
         scientific = FALSE,
         digits = 2, nsmall = 2
-      ), "\n"
+      ),
+      sep = ""
     )
   }
 }
@@ -204,6 +224,7 @@ summary_FwdRegAgMIP <- function(param_selection_steps,
 #' parameter estimation steps as returned by the previous call to this function,
 #' NULL if it is the first step.
 #' @param path_results Path of the folder where to store the results
+#' @param indent Integer, level of indent of the printed messages as required by make_display_prefix
 #'
 #' @return Save param_selection_steps in a csv file in folder path_results
 #'
@@ -212,7 +233,7 @@ summary_FwdRegAgMIP <- function(param_selection_steps,
 #'
 #' @keywords internal
 #'
-save_results_FwdRegAgMIP <- function(res, param_selection_steps, path_results) {
+save_results_FwdRegAgMIP <- function(res, param_selection_steps, path_results, indent = 0) {
   tb <- purrr::modify_if(
     param_selection_steps,
     function(x) !is.list(x), as.list
@@ -245,16 +266,25 @@ save_results_FwdRegAgMIP <- function(res, param_selection_steps, path_results) {
     "optim_results.Rdata"
   ))
   cat(
-    "\nResults of the parameter selection process are stored in ",
-    file.path(path_results, "optim_results.Rdata"), "\n"
+    "\n",
+    make_display_prefix(indent, "info"),
+    "Results of the parameter selection procedure are stored in ",
+    file.path(path_results, "optim_results.Rdata"),
+    sep = ""
   )
   cat(
-    "\nA table summarizing the results obtained at the different steps ",
-    "is stored in ", file.path(path_results, "param_selection_steps.csv"), "\n"
+    "\n",
+    make_display_prefix(indent, "info"),
+    "A table summarizing the results obtained at the different steps ",
+    "is stored in ", file.path(path_results, "param_selection_steps.csv"),
+    sep = ""
   )
   cat(
+    "\n",
+    make_display_prefix(indent, "info"),
     "Graphs and detailed results obtained for the different parameter selection steps can be ",
-    "found in ", file.path(path_results, "param_select_step#"),
-    "folders.\n\n"
+    "found in ", file.path(path_results, "param_select_step# "),
+    "folders.",
+    sep = ""
   )
 }

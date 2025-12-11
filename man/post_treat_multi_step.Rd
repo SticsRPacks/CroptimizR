@@ -9,7 +9,7 @@ post_treat_multi_step(step, optim_results_list)
 \arguments{
 \item{step}{List of steps of the multi-step procedure}
 
-\item{optim_results_list}{List of results returned for each step of the multi-step parameter estimation process}
+\item{optim_results_list}{List of results returned for each step of the multi-step parameter estimation procedure}
 }
 \value{
 List of estimated and forced parameters values
