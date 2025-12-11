@@ -4,39 +4,46 @@
 #'
 #' @param optim_results Results list returned by frequentist method wrappers
 #'
+#' @param indent Integer, level of indent of the printed messages as required by make_display_prefix
+#'
 #' @return Prints results of frequentist methods
 #'
-summary_frequentist <- function(optim_options, param_info, optim_results, out_dir) {
+summary_frequentist <- function(optim_options, param_info, optim_results, out_dir, indent = 0) {
   param_names <- get_params_names(param_info)
   nb_params <- length(param_names)
   est_values <- optim_results$est_values
   ind_min_crit <- optim_results$ind_min_crit
   min_crit_value <- optim_results$min_crit_value
 
-  cat(paste(
-    "\nList of observed variables used:",
-    paste(optim_results$obs_var_list, collapse = ", ")
-  ))
-
   # Display of parameters values for the repetition which has the
   # smallest criterion
+  cat("\n")
   for (ipar in 1:nb_params) {
-    cat(paste(
-      "\nEstimated value for", param_names[ipar], ": ",
+    cat(
+      "\n",
+      make_display_prefix(indent, "info"),
+      "Estimated value for ", param_names[ipar], ": ",
       format(est_values[ind_min_crit, ipar],
         scientific = FALSE,
         digits = 2, nsmall = 0
-      )
-    ))
+      ),
+      sep = ""
+    )
   }
-  cat(paste(
-    "\nMinimum value of the criterion:",
-    format(min_crit_value, scientific = FALSE, digits = 2, nsmall = 0)
-  ))
-  cat(paste(
-    "\nComplementary graphs and results can be found in ", out_dir,
-    "\n"
-  ))
+  cat(
+    "\n",
+    make_display_prefix(indent, "info"),
+    "Minimum value of the criterion: ",
+    format(min_crit_value, scientific = FALSE, digits = 2, nsmall = 0),
+    sep = ""
+  )
+  cat(
+    "\n",
+    make_display_prefix(indent, "info"),
+    "Complementary graphs and results can be found in ", out_dir,
+    "\n",
+    sep = ""
+  )
 }
 
 

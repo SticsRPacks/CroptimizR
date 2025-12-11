@@ -78,7 +78,7 @@ wrap_nloptr <- function(optim_options, param_info, crit_options) {
     progress <- 1.0 * irep / nb_rep
     remaining <- elapsed / progress - elapsed
     cat(sprintf(
-      "Working: %.2f%%. Estimated remaining time: %.2f %s\n",
+      "\nWorking: %.2f%%. Estimated remaining time: %.2f %s",
       progress * 100, remaining, units(remaining)
     ))
   }

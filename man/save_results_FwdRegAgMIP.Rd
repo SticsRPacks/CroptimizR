@@ -5,7 +5,7 @@
 \title{Save the results of the Forward Selection algorithm proposed in
 AgMIP calibration phaseIII protocol}
 \usage{
-save_results_FwdRegAgMIP(res, param_selection_steps, path_results)
+save_results_FwdRegAgMIP(res, param_selection_steps, path_results, indent = 0)
 }
 \arguments{
 \item{res}{Results list returned by parameter estimation method wrappers}
@@ -15,6 +15,8 @@ parameter estimation steps as returned by the previous call to this function,
 NULL if it is the first step.}
 
 \item{path_results}{Path of the folder where to store the results}
+
+\item{indent}{Integer, level of indent of the printed messages as required by make_display_prefix}
 }
 \value{
 Save param_selection_steps in a csv file in folder path_results

@@ -10,7 +10,7 @@ compute_eq_const(forced_param_values, param_values)
 \item{forced_param_values}{Named vector or list, must contain the values (or
 arithmetic expression, see details section) for the model parameters to force. The corresponding
 values will be transferred to the model wrapper through its param_values argument
-during the estimation process.
+during the estimation procedure.
 Should not include values for estimated parameters (i.e. parameters defined in
 \code{param_info} argument), except if they are listed as candidate parameters (see
 argument \code{candidate_param}).}
