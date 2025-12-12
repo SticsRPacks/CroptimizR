@@ -65,7 +65,7 @@ jobs:
     name: Trigger SticsRTest check
     # Triggering for every branch when checks succeeded
     needs: R-CMD-check
-    if: github.event_name == 'push' || github.event_name == 'pull_request' && needs.R-CMD-check.result == 'success'
+    if: github.event_name == 'push' && needs.R-CMD-check.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: Trigger
