@@ -16,11 +16,13 @@
 #'
 
 optim_switch <- function(...) {
+  message("optim_switch nargs = ", nargs())
+  message("names(arguments) = ", paste(names(list(...)), collapse = ", "))
+
   # Store and save results at the end of the current optimization step
+  res <- list()
+  flag_error <- FALSE
   if (nargs() > 2) {
-    # Initialize res
-    res <- list()
-    flag_error <- FALSE
 
     on.exit({
       ####
@@ -213,13 +215,57 @@ optim_switch <- function(...) {
           out_dir = crit_options$out_dir
         )
       }
-    } else {
+    }  else if (optim_method == "cmaes") {
+
+
+      if (is.null(optim_options$n_particles) || is.na(optim_options$n_particles)) {
+        if (!is.null(optim_options$ctrl$options$PopSize) &&
+            !is.na(optim_options$ctrl$options$PopSize)) {
+          optim_options$n_particles <- as.integer(optim_options$ctrl$options$PopSize)
+        } else {
+          optim_options$n_particles <- 30L
+        }
+      }
+
+      wrap_args$optim_options <- optim_options
+
+      res <- do.call(wrap_cmaes, wrap_args)
+
+      if (nargs() > 2) {
+        res$obs_var_list <- .croptEnv$obs_var_list
+        res$obs_situation_list <- .croptEnv$obs_situation_list
+        if (arguments$crit_options$info_level >= 1) {
+          res$params_and_crit <- dplyr::bind_rows(.croptEnv$params_and_crit)
+        }
+        res <- post_treat_global_optim(
+          optim_options = optim_options,
+          param_info = param_info,
+          optim_results = res,
+          crit_options = crit_options
+        )
+        res$plots <- plot_global_optim(
+          optim_options = optim_options,
+          param_info = param_info,
+          optim_results = res,
+          out_dir = crit_options$out_dir
+        )
+        summary_global_optim(
+          optim_options = optim_options,
+          param_info = param_info,
+          optim_results = res,
+          out_dir = crit_options$out_dir
+        )
+      }}
+
+else {
       flag_unknown_method <- TRUE
     },
     error = function(cond) {
-      warning(cond)
-      flag_error <<- TRUE
+      message("=== ERROR CAUGHT IN optim_switch ===")
+      traceback(20)
+      stop(cond)
     }
+
   )
 
   if (flag_unknown_method) {
