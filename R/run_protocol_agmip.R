@@ -141,6 +141,10 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
     var_to_simulate = var_to_simulate, transform_sim = transform_sim,
     transform_obs = transform_obs, transform_var = transform_var
   )
+  if (length(steps) == 1) {
+    res_step6$step <- list(res_step6)
+    names(res_step6$step) <- names(steps)
+  }
 
   # Run the model with the parameters values estimated at each sub-step of step 6
   stats_step6 <- list()

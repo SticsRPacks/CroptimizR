@@ -701,3 +701,43 @@ test_that("Test using transform_sim and var", {
     )
   )
 })
+
+
+
+# Test with a single step
+test_that("Single step check", {
+  optim_options <- list(
+    nb_rep = 3, xtol_rel = 1e-2,
+    ranseed = 1234
+  )
+  param_info <- list(
+    rB = list(lb = 0, ub = 1, default = 0.1)
+  )
+  forced_param_values <- list(
+    Bmax = 7,
+    h = 0.55
+  )
+  steps <- list(
+    biomass = list(
+      param = c("rB"),
+      obs_var = c("biomass")
+    )
+  )
+
+  res <- run_protocol_agmip(
+    model_function = toymodel_wrapper,
+    model_options = model_options,
+    optim_options = optim_options,
+    obs_list = obs_synth,
+    out_dir = file.path(tempdir(), "Test1"),
+    step = steps,
+    forced_param_values = forced_param_values,
+    param_info = param_info
+  )
+
+  # Check that estimated values for parameters are close to true values
+  expect_equal(res$final_values[["rB"]],
+    param_true_values[["rB"]],
+    tolerance = param_true_values[["rB"]] * 1e-2
+  )
+})
