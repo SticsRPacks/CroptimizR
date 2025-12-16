@@ -18,32 +18,28 @@ wrap_cmaes <- function(optim_options, param_info = NULL, crit_options) {
     optim_options$return_trace <- TRUE
   }
   optim_options$ranseed <- NULL # ranseed is set to NULL because getAlgoParams doesn't regonise it
-  algorithm <- "parma_cmaes"
+  algorithm <- "cmaes"
 
   if (is.null(param_info) || is.null(crit_options)) {
-    init_nb <- if (!is.null(optim_options$n_particles)) optim_options$n_particles else NA_integer_
+
     return(list(
       package = "parma", family = "Global",
-      method = "cmaes", init_values_nb = init_nb
+      method = "cmaes", init_values_nb = init_nb <- if (!is.null(optim_options$ctrl$options$PopSize)) optim_options$ctrl$options$PopSize else NA_integer_
     ))
   }
-  param_names <- get_params_names(param_info, short_list = TRUE)
+  param_names <- get_params_names(param_info)
   nb_params <- length(param_names)
   bounds <- get_params_bounds(param_info)
   init_values <- get_init_values(param_info)
 
   control_params <- optim_options$ctrl
 
-  # base ctrl (toujours valide)
+
   ctrl <- parma::cmaes.control()
 
-  # si l'utilisateur a déjà fourni un ctrl complet (déjà construit)
-  if (!is.null(control_params) && !is.null(control_params$options) && !is.null(control_params$CMA) &&
-      !is.list(control_params$options)) {
-    # (cas rare) on ignore, car options devrait être une liste
-  }
 
-  # si l'utilisateur a fourni une liste ctrl = list(options=..., CMA=...)
+
+  # if ctrl = list(options=..., CMA=...) existe
   if (!is.null(control_params) && is.list(control_params) &&
       (!is.null(control_params$options) || !is.null(control_params$CMA))) {
 
@@ -59,7 +55,6 @@ wrap_cmaes <- function(optim_options, param_info = NULL, crit_options) {
       }
     }
 
-    # si l'utilisateur a fourni directement une liste d'options (sans options/CMA)
   } else if (!is.null(control_params) && is.list(control_params)) {
     for (nm in names(control_params)) {
       ctrl$options[[nm]] <- control_params[[nm]]
@@ -97,21 +92,21 @@ wrap_cmaes <- function(optim_options, param_info = NULL, crit_options) {
   }
   if (length(insigma) == 1L) insigma <- rep(insigma, nb_params)
 
-  # 🟩 parma::cmaes expects a numeric vector for 'pars' (length = nb_params)
+  #because parma::cmaes expects a numeric vector for 'pars' (length = nb_params)
   x0 <- init_values
 
-  # init_values can be a matrix/data.frame with several rows (nb_values x nb_params)
+  # init_values can be a matrix/data.frame with several rows (nb_values x nb_params) our case data frame
   if (is.data.frame(x0)) x0 <- as.matrix(x0)
 
   if (is.matrix(x0)) {
-    # take the first row as starting point (you can also use colMeans)
+    # take the first row as starting point
     x0 <- x0[1, , drop = TRUE]
   }
 
   x0 <- as.numeric(x0)
   names(x0) <- param_names
 
-  # safety: if still wrong length, fallback to mid-bounds
+  # safety: if still initial-value isn(t provided)
   if (length(x0) != nb_params) {
     x0 <- (bounds$lb + bounds$ub) / 2
     names(x0) <- param_names

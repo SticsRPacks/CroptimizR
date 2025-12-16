@@ -166,7 +166,7 @@ plot_global_optim <- function(optim_options, param_info, optim_results, out_dir)
       df = df_2d,
       param_info = param_info,
       iter_or_eval = "eval",
-      fill = "eval",
+      fill = "crit",
       crit_log = FALSE,
       lines = FALSE,
       rep_label = "end"
@@ -282,8 +282,6 @@ plot_valuesVSit_go <- function(df, param_info, iter_or_eval = c("iter", "eval"),
         )
     }
     for (iind in unique(df$ind)) {
-      p[[param_name]] <- p[[param_name]] +
-        geom_line(data = filter(df, ind == iind))
       if (ind_label[1] == "begin_end" || ind_label[1] == "begin") {
         p[[param_name]] <- p[[param_name]] +
           geom_label(aes(label = ind),
@@ -304,9 +302,10 @@ plot_valuesVSit_go <- function(df, param_info, iter_or_eval = c("iter", "eval"),
   }
 
   df$ind <- as.factor(df$ind)
-  p[["criterion"]] <- ggplot(df, aes_string(
-    x = iter_or_eval[1], y = "crit",
-    color = "ind"
+  p[["criterion"]] <- ggplot(df, aes(
+    x = !!rlang::sym(iter_or_eval[1]),
+    y = crit,
+    color = crit
   )) +
     labs(
       title = paste0(
@@ -315,21 +314,21 @@ plot_valuesVSit_go <- function(df, param_info, iter_or_eval = c("iter", "eval"),
       ),
       y = "Minimized criterion",
       x = paste(lab, "number"),
-      fill = "Individual"
+      color = "Criterion"
     ) +
     theme(plot.title = element_text(hjust = 0.5)) +
-    geom_point(alpha = 0.5)
+    geom_point(alpha = 0.6)
 
-  for (iind in unique(df$ind)) {
+  if (have_crit) {
     p[["criterion"]] <- p[["criterion"]] +
-      geom_line(data = filter(df, ind == iind)) +
-      geom_label(aes(label = ind),
-        data = filter(df, ind == iind) %>% filter(eval == min(.data$eval)),
-        size = 3
-      ) +
-      geom_label(aes(label = ind),
-        data = filter(df, ind == iind) %>% filter(eval == max(.data$eval))
+      scale_color_gradient2(
+        midpoint = mid, low = "blue", mid = "yellow",
+        high = "red", space = "Lab", trans = trans
       )
+  }
+
+  if (crit_log) {
+    p[["criterion"]] <- p[["criterion"]] + scale_y_log10()
   }
 
   if (crit_log) {

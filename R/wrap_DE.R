@@ -104,7 +104,12 @@ wrap_DEoptim <- function(optim_options, param_info, crit_options) {
       colnames(pop_it) <- param_names
       pop_it$ind <- seq_len(NP)
       pop_it$iter <- it
-      pop_it$crit <- bestvalit[it]
+      crit_pop <- apply(pop_it[, param_names, drop = FALSE], 1, function(par) {
+        par <- as.numeric(par)
+        names(par) <- param_names
+        main_crit(par, crit_options = crit_options)
+      })
+      pop_it$crit <- crit_pop
       idx <- seq_len(NP)
       pop_it$eval <- eval_counter + idx
       eval_counter <- eval_counter + NP

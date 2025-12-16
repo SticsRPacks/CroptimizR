@@ -149,6 +149,7 @@ wrap_graDiEnt <- function(optim_options, param_info, crit_options) {
       df$eval <- eval_counter + idx
       eval_counter <- eval_counter + n_pop
       df$method <- "graDiEnt"
+      df$rep <- 1L
       df_list[[it]] <- df
       }
     trace_df <- dplyr::bind_rows(df_list)
