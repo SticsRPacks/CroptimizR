@@ -32,6 +32,14 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
     cat("\nEnd of AgMIP Phase IV protocol\n")
   })
 
+  # Check input arguments
+  if (!is.obs(obs_list)) {
+    stop("Incorrect format for argument obs_list.")
+  }
+  if (is.null(protocol_file_path) && is.null(step)) {
+    stop("Either protocol_file_path or step arguments must be provided and non null.")
+  }
+
   cat("\nAgMIP Calibration Phase IV protocol: automatic calculation steps 6 and 7",
     "\n(see doi.org/10.1016/j.envsoft.2024.106147 for a detailed description of the full protocol)\n",
     sep = ""
@@ -218,6 +226,14 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
 
   ## Define weight function
   weights <- vapply(obs_var_names, function(var) {
+    if (n_obs[[var]] == p[[var]]) {
+      warning(paste(
+        "Number of observations for variable", var,
+        "is equal to the number of parameters (", p[[var]],
+        "). This lead to an infinite weight for step7.\n",
+        "This variable will thus not be taken into account in step7."
+      ))
+    }
     sqrt(SSE[[var]] / (n_obs[[var]] - p[[var]]))
   }, numeric(1))
   names(weights) <- obs_var_names
