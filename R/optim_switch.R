@@ -23,7 +23,6 @@ optim_switch <- function(...) {
   res <- list()
   flag_error <- FALSE
   if (nargs() > 2) {
-
     on.exit({
       ####
       if (!is.null(crit_options)) {
@@ -215,12 +214,10 @@ optim_switch <- function(...) {
           out_dir = crit_options$out_dir
         )
       }
-    }  else if (optim_method == "cmaes") {
-
-
+    } else if (optim_method == "cmaes") {
       if (is.null(optim_options$n_particles) || is.na(optim_options$n_particles)) {
         if (!is.null(optim_options$ctrl$options$PopSize) &&
-            !is.na(optim_options$ctrl$options$PopSize)) {
+          !is.na(optim_options$ctrl$options$PopSize)) {
           optim_options$n_particles <- as.integer(optim_options$ctrl$options$PopSize)
         } else {
           optim_options$n_particles <- 30L
@@ -255,9 +252,8 @@ optim_switch <- function(...) {
           optim_results = res,
           out_dir = crit_options$out_dir
         )
-      }}
-
-else {
+      }
+    } else {
       flag_unknown_method <- TRUE
     },
     error = function(cond) {
@@ -265,7 +261,6 @@ else {
       traceback(20)
       stop(cond)
     }
-
   )
 
   if (flag_unknown_method) {

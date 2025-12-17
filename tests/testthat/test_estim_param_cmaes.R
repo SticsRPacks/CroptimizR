@@ -133,7 +133,6 @@ teardown({
 })
 
 
-
 # Test estim_param with CMA-ES (parma)
 test_that("estim_param 1 step OLS criterion", {
   param_info <- list(
@@ -166,15 +165,15 @@ test_that("estim_param 1 step OLS criterion", {
   )
 
   expect_equal(res$final_values[["rB"]],
-               param_true_values[["rB"]],
-               tolerance = param_true_values[["rB"]] * 1e-2
+    param_true_values[["rB"]],
+    tolerance = param_true_values[["rB"]] * 1e-2
   )
   expect_equal(res$final_values[["h"]],
-               param_true_values[["h"]],
-               tolerance = param_true_values[["h"]] * 1e-2
+    param_true_values[["h"]],
+    tolerance = param_true_values[["h"]] * 1e-2
   )
   expect_equal(res$final_values[["Bmax"]],
-               param_true_values[["Bmax"]],
-               tolerance = param_true_values[["Bmax"]] * 1e-2
+    param_true_values[["Bmax"]],
+    tolerance = param_true_values[["Bmax"]] * 1e-2
   )
 })

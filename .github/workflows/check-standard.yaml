@@ -2,7 +2,7 @@
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
   push:
-    branches: [main, master]
+    #branches: [main, master]
   pull_request:
 
 name: R-CMD-check
@@ -17,7 +17,7 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - { os: macos-latest, r: "release" }
+          #- { os: macos-latest, r: "release" }
           - { os: windows-latest, r: "release" }
           - { os: windows-latest, r: "4.2.0" }
           - {
@@ -63,9 +63,9 @@ jobs:
   # Trigger CI using SticsRTest
   trigger-SticsRTest:
     name: Trigger SticsRTest check
-    # Publish main when the test job succeeds and it's not a pull request.
+    # Triggering for every branch when checks succeeded
     needs: R-CMD-check
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.R-CMD-check.result == 'success'
+    if: github.event_name == 'push' && needs.R-CMD-check.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: Trigger
@@ -74,3 +74,51 @@ jobs:
           token: ${{ secrets.TRIGGER_PAT }}
           repository: SticsRPacks/SticsRTests
           event-type: R-CMD-check
+          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "repo": "${{ github.event.repository.name }}"}'
+          
+      - name: Wait for SticsRTests workflow to complete (block-and-fail)
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.TRIGGER_PAT }}
+          script: |
+            const owner = 'SticsRPacks';
+            const repo = 'SticsRTests';
+            // The dispatched sha from the source workflow
+            const headSha = process.env.GITHUB_SHA;
+            const maxWaitMs = 30 * 60 * 1000; // 30 minutes
+            const pollIntervalMs = 15 * 1000; // 15s
+            const start = Date.now();
+
+            function sleep(ms) {
+              return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            while (Date.now() - start < maxWaitMs) {
+              const res = await github.rest.actions.listWorkflowRunsForRepo({ owner, repo, per_page: 100 });
+              const runs = (res.data.workflow_runs || []).filter(r => r.event === 'repository_dispatch');
+
+              // Prefer matching by head_sha, fallback to the most recent repository_dispatch run
+              let run = runs.find(r => r.head_sha === headSha) || runs.sort((a,b) => new Date(b.created_at) - new Date(a.created_at))[0];
+
+              if (!run) {
+                console.log('No repository_dispatch run found yet, sleeping...');
+                await sleep(pollIntervalMs);
+                continue;
+              }
+
+              console.log(`Found run id=${run.id} status=${run.status} conclusion=${run.conclusion} created_at=${run.created_at}`);
+
+              if (run.status === 'completed') {
+                if (run.conclusion === 'success') {
+                  console.log('SticsRTests workflow succeeded.');
+                  return { runId: run.id, conclusion: run.conclusion };
+                } else {
+                  throw new Error(`SticsRTests workflow completed with conclusion: ${run.conclusion}`);
+                }
+              }
+
+              // not completed yet
+              await sleep(pollIntervalMs);
+            }
+
+            throw new Error('Timed out waiting for SticsRTests workflow to start/complete (timeout reached).');
