@@ -184,7 +184,8 @@ plot_global_optim <- function(optim_options, param_info, optim_results, out_dir)
 #' @title Create plots of parameters and criterion values per iteration or
 #' evaluation number
 #'
-#' @inheritParams estim_param
+#' @param param_info List describing the parameters to estimate
+
 #' @param df Data.frame containing values of each individual and iteration parameters values (one column per
 #' estimated parameter), criterion (crit column), individual index (ind),
 #' iteration number (iter) and evaluation number (eval)
