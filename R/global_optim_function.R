@@ -281,22 +281,8 @@ plot_valuesVSit_go <- function(df, param_info, iter_or_eval = c("iter", "eval"),
           high = "red", space = "Lab", trans = trans
         )
     }
-    for (iind in unique(df$ind)) {
-      if (ind_label[1] == "begin_end" || ind_label[1] == "begin") {
-        p[[param_name]] <- p[[param_name]] +
-          geom_label(aes(label = ind),
-            data = filter(df, ind == iind) %>% filter(eval == min(.data$eval)),
-            size = 3
-          )
-      }
-      if (ind_label[1] == "begin_end" || ind_label[1] == "end") {
-        p[[param_name]] <- p[[param_name]] +
-          geom_label(aes(label = ind),
-            data = filter(df, ind == iind) %>% filter(eval == max(.data$eval)),
-            size = 3
-          )
-      }
-    }
+
+
     p[[param_name]] <- p[[param_name]] +
       ylim(minvalue[param_name], maxvalue[param_name])
   }
