@@ -46,6 +46,7 @@ Imports:
     lubridate,
     methods,
     nloptr,
+    parma,
     purrr,
     rlang,
     rstudioapi,
