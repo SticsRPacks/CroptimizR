@@ -7,38 +7,38 @@
 #' @keywords internal
 #'
 wrap_graDiEnt <- function(optim_options, param_info, crit_options) {
-  if(is.null((ranseed <- optim_options$ranseed))) {
-    ranseed = NULL
-    }
+  if (is.null((ranseed <- optim_options$ranseed))) {
+    ranseed <- NULL
+  }
   if (is.null((n_params <- optim_options$n_params))) {
     stop(
       "Optim_options$n_params is mandatory, please define it (e.g., 10 * number of parameters)"
     )
-    }
+  }
   if (is.null((trace <- optim_options$return_trace))) {
     optim_options$return_trace <- TRUE
-    }
+  }
   optim_options$ranseed <- NULL # ranseed is set to NULL because getAlgoParams doesn't regonise it
   algorithm <- "graDiEnt"
 
   # return requested information if only optim_options is given in argument
   if (nargs() == 1 && methods::hasArg(optim_options)) {
-     init_nb <- if (!is.null(optim_options$n_particles)) {
-       optim_options$n_particles
-       } else {
-         NA_integer_
-         }
-     return(list(
+    init_nb <- if (!is.null(optim_options$n_particles)) {
+      optim_options$n_particles
+    } else {
+      NA_integer_
+    }
+    return(list(
       package = "graDiEnt", family = "Global",
       method = "SQGDE", init_values_nb = init_nb
-     ))
-     }
+    ))
+  }
   param_names <- get_params_names(param_info)
   nb_params <- length(param_names)
   bounds <- get_params_bounds(param_info)
   init_values <- get_init_values(param_info)
 
-  control_params <- do.call(graDiEnt::GetAlgoParams,optim_options)
+  control_params <- do.call(graDiEnt::GetAlgoParams, optim_options)
   crit_options$tot_max_eval <- control_params$n_particles * control_params$n_iter
 
   start_time <- Sys.time()
@@ -59,7 +59,8 @@ wrap_graDiEnt <- function(optim_options, param_info, crit_options) {
     ),
     error = function(e) {
       warning(sprintf("GraDiEnt failed: %s", e$message))
-      NULL }
+      NULL
+    }
   )
   elapsed <- Sys.time() - start_time
 
@@ -76,7 +77,7 @@ wrap_graDiEnt <- function(optim_options, param_info, crit_options) {
   final_values <- bounds$lb + u_sol * range_bounds
   names(final_values) <- param_names
   min_crit_value <- SQGDE$solution_weight
-  if (is.null(min_crit_value) ) {
+  if (is.null(min_crit_value)) {
     min_crit_value <- main_crit(final_values, crit_options)
   }
   # Get the estimated values  ==> matrix of 1 * nb_params
@@ -84,11 +85,11 @@ wrap_graDiEnt <- function(optim_options, param_info, crit_options) {
     final_values,
     nrow = 1L,
     dimnames = list(NULL, param_names)
-    )
+  )
   colnames(est_values) <- param_names
   if (ncol(est_values) == nb_params) {
     colnames(est_values) <- param_names
-    }
+  }
 
   # Final solution
   if (!is.null(SQGDE$particles_trace)) {
@@ -101,28 +102,27 @@ wrap_graDiEnt <- function(optim_options, param_info, crit_options) {
         dimnames = list(NULL, param_names)
       )
     } else {
-      n_it     <- dim(tr)[1]
+      n_it <- dim(tr)[1]
       last_pop <- tr[n_it, , ]
-      est_u    <- as.matrix(last_pop)
+      est_u <- as.matrix(last_pop)
       colnames(est_u) <- param_names
 
       # transformation
       est_values <- sweep(est_u, 2, range_bounds, `*`)
       est_values <- sweep(est_values, 2, bounds$lb, `+`)
       colnames(est_values) <- param_names
-      }
-    } else {
-      est_values <- matrix(
+    }
+  } else {
+    est_values <- matrix(
       final_values,
       nrow = 1L,
       dimnames = list(NULL, param_names)
-      )
-      }
+    )
+  }
   trace_df <- NULL
-  if (!is.null(SQGDE$particles_trace) && length(dim(SQGDE$particles_trace)) == 3)
-    {
+  if (!is.null(SQGDE$particles_trace) && length(dim(SQGDE$particles_trace)) == 3) {
     tr <- SQGDE$particles_trace
-    n_it  <- dim(tr)[1]
+    n_it <- dim(tr)[1]
     n_pop <- dim(tr)[2]
     df_list <- vector("list", n_it)
     eval_counter <- 0
@@ -137,13 +137,12 @@ wrap_graDiEnt <- function(optim_options, param_info, crit_options) {
 
       df <- as.data.frame(pop_x)
 
-      df$ind  <- seq_len(n_pop)
+      df$ind <- seq_len(n_pop)
       df$iter <- it
       crit_pop <- apply(pop_x, 1, function(par) {
         names(par) <- param_names
         main_crit(par, crit_options = crit_options)
-        }
-        )
+      })
       df$crit <- crit_pop
       idx <- seq_len(n_pop)
       df$eval <- eval_counter + idx
@@ -151,9 +150,9 @@ wrap_graDiEnt <- function(optim_options, param_info, crit_options) {
       df$method <- "graDiEnt"
       df$rep <- 1L
       df_list[[it]] <- df
-      }
-    trace_df <- dplyr::bind_rows(df_list)
     }
+    trace_df <- dplyr::bind_rows(df_list)
+  }
   res <- list(
     final_values = final_values,
     init_values = init_values,
@@ -165,4 +164,3 @@ wrap_graDiEnt <- function(optim_options, param_info, crit_options) {
 
   return(res)
 }
-
