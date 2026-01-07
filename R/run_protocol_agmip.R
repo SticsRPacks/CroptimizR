@@ -22,7 +22,7 @@
 run_protocol_agmip <- function(model_function, model_options, obs_list, optim_options, protocol_file_path = NULL,
                                out_dir = getwd(), var_to_simulate = NULL, transform_sim = NULL,
                                transform_obs = NULL, transform_var = NULL, forced_param_values = NULL,
-                               step = NULL, param_info = NULL) {
+                               step = NULL, param_info = NULL, info_level = 0) {
   res <- NULL
   optim_options_given <- optim_options
   if (!dir.exists(out_dir)) dir.create(out_dir, recursive = TRUE)
@@ -139,7 +139,8 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
     step = steps,
     out_dir = file.path(out_dir, "AgMIP_protocol_step6"),
     var_to_simulate = var_to_simulate, transform_sim = transform_sim,
-    transform_obs = transform_obs, transform_var = transform_var
+    transform_obs = transform_obs, transform_var = transform_var,
+    info_level = info_level
   )
   if (length(steps) == 1) {
     res_step6$step <- list(res_step6)
@@ -281,7 +282,8 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
     weight = weight_step7,
     out_dir = file.path(out_dir, "AgMIP_protocol_step7"),
     var_to_simulate = var_to_simulate, transform_sim = transform_sim,
-    transform_obs = transform_obs, transform_var = transform_var
+    transform_obs = transform_obs, transform_var = transform_var,
+    info_level = info_level
   )
 
   # Compute diagnostics
