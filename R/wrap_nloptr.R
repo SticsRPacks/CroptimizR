@@ -107,11 +107,21 @@ wrap_nloptr <- function(optim_options, param_info, crit_options) {
 
   final_values <- est_values[ind_min_crit, ]
   names(final_values) <- param_names
+  min_crit_value <- nlo[[ind_min_crit]]$objective
+  # clean nlo for sake of memory usage (just keep status, message, iter and termination_conditions)
+  nlo <- lapply(nlo, function(x) {
+    list(
+      iter = x$iter,
+      termination_conditions = x$termination_conditions,
+      status = x$status,
+      message = x$message
+    )
+  })
   res <- list(
     final_values = final_values,
     init_values = init_values,
     est_values = est_values,
-    min_crit_value = nlo[[ind_min_crit]]$objective,
+    min_crit_value = min_crit_value,
     ind_min_crit = ind_min_crit,
     crit_values = crit,
     nlo = nlo
