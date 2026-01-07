@@ -112,7 +112,7 @@ optim_switch <- function(...) {
           optim_results = res,
           crit_options = crit_options
         )
-        res$plots <- plot_frequentist(
+        plot_frequentist(
           optim_options = optim_options,
           param_info = param_info,
           optim_results = res,
@@ -131,7 +131,7 @@ optim_switch <- function(...) {
       if (nargs() > 2) {
         res$obs_var_list <- .croptEnv$obs_var_list
         res$obs_situation_list <- .croptEnv$obs_situation_list
-        res$plots <- plot_bayesian(
+        plot_bayesian(
           optim_options = optim_options,
           param_info = param_info, optim_results = res,
           out_dir = crit_options$out_dir
@@ -157,7 +157,7 @@ optim_switch <- function(...) {
           optim_results = res,
           crit_options = crit_options
         )
-        res$plots <- plot_frequentist(
+        plot_frequentist(
           optim_options = optim_options,
           param_info = param_info, optim_results = res,
           out_dir = crit_options$out_dir
