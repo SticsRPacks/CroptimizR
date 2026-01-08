@@ -170,12 +170,12 @@ test_that("First AgMIP protocol test", {
   )
   steps <- list(
     biomass = list(
-      param = c("rB"),
+      major_param = c("rB"),
       candidate_param = c("Bmax"),
       obs_var = c("biomass")
     ),
     yield = list(
-      param = c("h"),
+      major_param = c("h"),
       obs_var = c("yield")
     )
   )
@@ -272,11 +272,11 @@ test_that("Test efficiency of step7 in case a parameter is estimated late in ste
   )
   steps <- list(
     biomass = list(
-      param = c("rB"),
+      major_param = c("rB"),
       obs_var = c("biomass")
     ),
     yield = list(
-      param = c("h"),
+      major_param = c("h"),
       candidate_param = c("Bmax"),
       obs_var = c("yield")
     )
@@ -384,11 +384,11 @@ test_that("Check use of the same variable in different steps and obs variable us
   )
   steps <- list(
     biomass_1 = list(
-      param = c("rB", "Bmax"),
+      major_param = c("rB", "Bmax"),
       obs_var = c("biomass")
     ),
     biomass_2 = list(
-      param = c("h"),
+      major_param = c("h"),
       obs_var = c("biomass")
     )
   )
@@ -489,12 +489,12 @@ test_that("Check use of several observed variables per group", {
   )
   steps <- list(
     main_step = list(
-      param = c("rB", "h"),
+      major_param = c("rB", "h"),
       candidate_param = c("Bmax"),
       obs_var = c("biomass", "yield")
     ),
     dummy_step = list( # just because the protocol does not work with only one step ...
-      param = c("dummy"),
+      major_param = c("dummy"),
       obs_var = c("biomass", "yield")
     )
   )
@@ -596,12 +596,12 @@ test_that("Test using transform_sim and var", {
   )
   steps <- list(
     biomass = list(
-      param = c("rB"),
+      major_param = c("rB"),
       candidate_param = c("Bmax"),
       obs_var = c("biomass")
     ),
     yield = list(
-      param = c("h"),
+      major_param = c("h"),
       obs_var = c("yield_kg")
     )
   )
@@ -719,7 +719,7 @@ test_that("Single step check", {
   )
   steps <- list(
     biomass = list(
-      param = c("rB"),
+      major_param = c("rB"),
       obs_var = c("biomass")
     )
   )

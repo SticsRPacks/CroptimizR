@@ -60,6 +60,7 @@
 #'
 #' @param candidate_param Names of the parameters, among those defined in the argument param_info,
 #' that must only be considered as candidate for parameter estimation (see details section).
+#' All parameters included in param_info that are not listed in candidate_param will be estimated.
 #'
 #' @param situation (optional) List of situations to take into account within obs_list.
 #' situation = NULL means that all situations in obs_list will be used.
@@ -122,6 +123,9 @@
 #'   longer supported, use `var_to_simulate` instead.
 #'
 #' @details
+#'
+#'   ## Observation used
+#'
 #'   In CroptimizR, parameter estimation is based on the comparison between the values
 #'   of the observed and simulated variables at corresponding dates. Only the situations,
 #'   variables and dates common to both observations (provided in `obs_list` argument),
@@ -132,6 +136,8 @@
 #'   variable is NA (or Inf) for a given situation and date for which there is an
 #'   observation, the optimized criterion will take the NA value, which may stop the
 #'   procedure, and the user will be warned.
+#'
+#'   ## Parameter selection procedure (argument `candidate_param`)
 #'
 #'   If the candidate_param argument is given, a parameter selection procedure following
 #'   the AgMIP calibration phaseIII protocol will be performed:
@@ -144,15 +150,7 @@
 #'
 #'   The result includes a summary of all the steps (data.frame param_selection_steps).
 #'
-#'   The optional argument `transform_obs` must be a function with 4 arguments:
-#'   - model_results: the list of simulated results returned by the mode_wrapper used
-#'   - obs_list: the list of observations as given to estim_param function
-#'   - param_values: a named vector containing the current parameters values proposed
-#'      by the estimation algorithm
-#'   - model_options: the list of model options as given to estim_param function
-#'
-#'   It must return a list of observations (same format as `obs_list` argument) that
-#'   will be used to compute the criterion to optimize.
+#'   ## Transformation of simulations and observations (arguments `transform_sim` and `transform_obs`)
 #'
 #'   The optional argument `transform_sim` must be a function with 4 arguments:
 #'   - model_results: the list of simulated results returned by the mode_wrapper used
@@ -164,6 +162,18 @@
 #'   It must return a list of simulated results (same format as this returned by the model wrapper used)
 #'   that will be used to compute the criterion to optimize.
 #'
+#'   The optional argument `transform_obs` must be a function with 4 arguments:
+#'   - model_results: the list of simulated results returned by the mode_wrapper used
+#'   - obs_list: the list of observations as given to estim_param function
+#'   - param_values: a named vector containing the current parameters values proposed
+#'      by the estimation algorithm
+#'   - model_options: the list of model options as given to estim_param function
+#'
+#'   It must return a list of observations (same format as `obs_list` argument) that
+#'   will be used to compute the criterion to optimize.
+#'
+#'   ## Constraints on estimated parameters (argument `satisfy_par_const`)
+#'
 #'   The optional argument `satisfy_par_const` must be a function with 2 arguments:
 #'   - param_values: a named vector containing the current parameters values proposed
 #'      by the estimation algorithm
@@ -171,6 +181,8 @@
 #'
 #'   It must return a logical indicating if the parameters values satisfies the constraints
 #'   (freely defined by the user in the function body) or not.
+#'
+#'   ## Model parameters to force (argument `forced_param_values`)
 #'
 #'   The optional argument `forced_param_values` may contain arithmetic expressions to
 #'   automatically compute the values of some parameters in function of the values of
@@ -186,6 +198,8 @@
 #'   the parameters p5 and p6 must thus be part of the list of parameters to estimate, i.e.
 #'   described in the `param_info` argument.
 #'
+#'   ## Multi-steps estimation procedure (argument `step`)
+#'
 #'   The argument `step` is a list of lists used to perform parameter estimation in multiple sequential steps.
 #'   If provided, each step represents a separate stage in the estimation procedure,
 #'   allowing different configurations for each step (e.g., different sets of parameters to estimate,
@@ -193,25 +207,35 @@
 #'
 #'   When multiple steps are defined, the parameter values estimated in one step
 #'   are used as fixed values in the subsequent step.
-#'   Each step is a named list containing only the elements that vary between steps.
-#'   **Any argument** of the `estim_param` function (e.g., `obs_var`, `candidate_param` ...)
-#'   can be defined within a step. Note that the element `param` can be used to define
-#'   the list of parameters to estimate at a given step.
+#'   Each step is a named list that may contain **any argument** of the `estim_param` function
+#'   (e.g. `obs_var`, `candidate_param`, ...). Only the arguments that
+#'   differ from those given to `estim_param` need to be specified: any element not explicitly
+#'   defined in a step inherits its value from the corresponding argument of `estim_param`.
 #'
-#'   Any element not explicitly defined in a step will inherit its value
-#'   from the corresponding argument of `estim_param` and remain identical across all steps.
-#'   If `NULL`, a single step is created using the function arguments.
+#'   When `step` is **not** used (`step = NULL`), a single-step estimation is performed using the arguments of `estim_param`.
+#'   In this case, the list of parameters to be estimated is
+#'   automatically deduced from the `param_info` argument: all parameters defined in
+#'   `param_info` are considered for estimation (possibly subject to selection if
+#'   `candidate_param` is used).
+#'
+#'   When `step` **is** used, the set of parameters to estimate usually differs between steps.
+#'   For sake of simplicity, a **single global** `param_info` list can be provided to `estim_param`
+#'   (containing bounds, etc. for all parameters that may ever be estimated),
+#'   and each step specifies explicitly which parameters are:
+#'
+#'   - `major_param`: the parameters that **must be estimated** at this step,
+#'   - `candidate_param` (optionnal): the parameters that are **candidates for estimation**.
 #'
 #'   Suppose the `step` argument is defined as follows:
 #'   ```r
 #'   step <- list()
 #'   step[[1]] <- list(
-#'     param = c("p1"),
+#'     major_param = c("p1"),
 #'     candidate_param = c("p2"),
 #'     obs_var = c("var1")
 #'   )
 #'   step[[2]] <- list(
-#'     param = c("p3"),
+#'     major_param = c("p3"),
 #'     obs_var = c("var2")
 #'   )
 #'  ```
@@ -221,8 +245,9 @@
 #'     Only observed variable `var1` (from `obs_list` defined in argument of `estim_param`) is used.
 #'   - **Step 2**: Parameter `p3` is estimated, and only observed variable `var2` is used.
 #'     Parameters `p1` (and possibly `p2`, if selected) are fixed at the values estimated in Step 1.
-#'  Information on the parameters to estimate (bounds, ...) can be defined within
-#'  the same `param_info` list given in argument of `estim_param`.
+#'
+#'  Technical information about parameters (bounds, default values, ...)
+#'  can be provided **once for all steps** via the global `param_info` argument of `estim_param`.
 #'
 #'  The results of the parameter estimation procedure are stored in the folder `out_dir`,
 #'  with a separate subfolder for each step.
@@ -337,7 +362,7 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
     )
 
     # Initializations before parameter selection loop
-    oblig_param_list <- setdiff(step[[istep]]$param, step[[istep]]$candidate_param)
+    oblig_param_list <- setdiff(step[[istep]]$major_param, step[[istep]]$candidate_param)
     if (length(oblig_param_list) == 0) {
       crt_candidates <- step[[istep]]$candidate_param[[1]] # in case there are only candidates ...
     } else {
@@ -637,7 +662,7 @@ fill_step_info <- function(step, mc, env) {
         }
       }
     }
-    if (!"param" %in% names(x)) x$param <- setdiff(get_params_names(x$param_info, short_list = TRUE), x$candidate_param)
+    if (!"major_param" %in% names(x)) x$major_param <- setdiff(get_params_names(x$param_info, short_list = TRUE), x$candidate_param)
 
     # Filter observations if necessary
     if (!identical(x[["obs_var"]], NULL)) {

@@ -201,12 +201,12 @@ test_that("estim_param 2 steps crit_ols", {
   )
   steps <- list(
     list(
-      param = c("rB"),
+      major_param = c("rB"),
       candidate_param = c("Bmax"),
       obs_var = c("biomass")
     ),
     list(
-      param = c("h"),
+      major_param = c("h"),
       obs_var = c("yield")
     )
   )
@@ -262,11 +262,11 @@ test_that("estim_param 2 steps without param selection", {
   forced_param_values <- c(Bmax = 7)
   step <- list(
     list(
-      param = c("rB"),
+      major_param = c("rB"),
       obs_var = c("biomass")
     ),
     list(
-      param = c("h"),
+      major_param = c("h"),
       obs_var = c("yield")
     )
   )
@@ -417,11 +417,11 @@ test_that("estim_param empty sim-obs intersection lead to an error", {
   })
   step <- list(
     list(
-      param = c("rB"),
+      major_param = c("rB"),
       obs_var = c("biomass_NEW")
     ),
     list(
-      param = c("h"),
+      major_param = c("h"),
       obs_var = c("yield")
     )
   )

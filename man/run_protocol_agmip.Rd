@@ -8,7 +8,7 @@ run_protocol_agmip(
   model_function,
   model_options,
   obs_list,
-  optim_options,
+  optim_options = list(),
   protocol_file_path = NULL,
   out_dir = getwd(),
   var_to_simulate = NULL,
@@ -17,7 +17,8 @@ run_protocol_agmip(
   transform_var = NULL,
   forced_param_values = NULL,
   step = NULL,
-  param_info = NULL
+  param_info = NULL,
+  info_level = 0
 )
 }
 \arguments{
@@ -98,6 +99,21 @@ for an example),
 \item \code{ub} and \code{lb}, vectors of upper and lower bounds (one value per group),
 \item \code{init_values}, the list of initial values per group  (data.frame, one column per group, optional).
 \item \code{default}, vector of default values per group (optional, the parameter is set to its default value when it is part of the \code{candidate_param} list and when it is not estimated ; the default value is also used as first initial value when the parameter is estimated)
+}}
+
+\item{info_level}{(optional) Integer that controls the level of information returned and stored
+by estim_param (in addition to the results automatically provided that depends on the method used).
+Higher code give more details.
+\itemize{
+\item \code{0} to add nothing,
+\item \code{1} to add criterion and parameters values, and constraint if satisfy_par_const is provided, for each evaluation
+(element params_and_crit in the returned list),
+\item \code{2} to add model results, after transformation if transform_sim is provided, and after intersection with observations,
+i.e. as used to compute the criterion for each evaluation (element sim_intersect in the returned list),
+\item \code{3} to add observations, after transformation if transform_obs is provided, and after intersection with simulations,
+i.e. as used to compute the criterion for each evaluation (element obs_intersect in the returned list),
+\item \code{4} to add all model wrapper results for each evaluation, and all transformations if transform_sim is provided.
+(elements sim and sim_transformed in the returned list).
 }}
 }
 \value{

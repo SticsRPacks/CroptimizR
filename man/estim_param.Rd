@@ -95,7 +95,8 @@ Should not include values for estimated parameters (i.e. parameters defined in
 argument \code{candidate_param}).}
 
 \item{candidate_param}{Names of the parameters, among those defined in the argument param_info,
-that must only be considered as candidate for parameter estimation (see details section).}
+that must only be considered as candidate for parameter estimation (see details section).
+All parameters included in param_info that are not listed in candidate_param will be estimated.}
 
 \item{situation}{(optional) List of situations to take into account within obs_list.
 situation = NULL means that all situations in obs_list will be used.}
@@ -168,6 +169,8 @@ All results are saved in the folder \code{out_dir}.
 main function for parameter estimation
 }
 \details{
+\subsection{Observation used}{
+
 In CroptimizR, parameter estimation is based on the comparison between the values
 of the observed and simulated variables at corresponding dates. Only the situations,
 variables and dates common to both observations (provided in \code{obs_list} argument),
@@ -178,6 +181,9 @@ date, it will not be taken into account. In case where the value of a simulated
 variable is NA (or Inf) for a given situation and date for which there is an
 observation, the optimized criterion will take the NA value, which may stop the
 procedure, and the user will be warned.
+}
+
+\subsection{Parameter selection procedure (argument \code{candidate_param})}{
 
 If the candidate_param argument is given, a parameter selection procedure following
 the AgMIP calibration phaseIII protocol will be performed:
@@ -191,18 +197,9 @@ then the current candidate parameter is added to the list of parameters to estim
 }
 
 The result includes a summary of all the steps (data.frame param_selection_steps).
-
-The optional argument \code{transform_obs} must be a function with 4 arguments:
-\itemize{
-\item model_results: the list of simulated results returned by the mode_wrapper used
-\item obs_list: the list of observations as given to estim_param function
-\item param_values: a named vector containing the current parameters values proposed
-by the estimation algorithm
-\item model_options: the list of model options as given to estim_param function
 }
 
-It must return a list of observations (same format as \code{obs_list} argument) that
-will be used to compute the criterion to optimize.
+\subsection{Transformation of simulations and observations (arguments \code{transform_sim} and \code{transform_obs})}{
 
 The optional argument \code{transform_sim} must be a function with 4 arguments:
 \itemize{
@@ -216,6 +213,21 @@ by the estimation algorithm
 It must return a list of simulated results (same format as this returned by the model wrapper used)
 that will be used to compute the criterion to optimize.
 
+The optional argument \code{transform_obs} must be a function with 4 arguments:
+\itemize{
+\item model_results: the list of simulated results returned by the mode_wrapper used
+\item obs_list: the list of observations as given to estim_param function
+\item param_values: a named vector containing the current parameters values proposed
+by the estimation algorithm
+\item model_options: the list of model options as given to estim_param function
+}
+
+It must return a list of observations (same format as \code{obs_list} argument) that
+will be used to compute the criterion to optimize.
+}
+
+\subsection{Constraints on estimated parameters (argument \code{satisfy_par_const})}{
+
 The optional argument \code{satisfy_par_const} must be a function with 2 arguments:
 \itemize{
 \item param_values: a named vector containing the current parameters values proposed
@@ -225,6 +237,9 @@ by the estimation algorithm
 
 It must return a logical indicating if the parameters values satisfies the constraints
 (freely defined by the user in the function body) or not.
+}
+
+\subsection{Model parameters to force (argument \code{forced_param_values})}{
 
 The optional argument \code{forced_param_values} may contain arithmetic expressions to
 automatically compute the values of some parameters in function of the values of
@@ -239,6 +254,9 @@ and will dynamically compute the value of p3 in function of the values of parame
 p5 and p6 iteratively provided by the parameter estimation algorithm. In this example,
 the parameters p5 and p6 must thus be part of the list of parameters to estimate, i.e.
 described in the \code{param_info} argument.
+}
+
+\subsection{Multi-steps estimation procedure (argument \code{step})}{
 
 The argument \code{step} is a list of lists used to perform parameter estimation in multiple sequential steps.
 If provided, each step represents a separate stage in the estimation procedure,
@@ -247,14 +265,25 @@ different observed variables, different situations, etc.).
 
 When multiple steps are defined, the parameter values estimated in one step
 are used as fixed values in the subsequent step.
-Each step is a named list containing only the elements that vary between steps.
-\strong{Any argument} of the \code{estim_param} function (e.g., \code{obs_var}, \code{candidate_param} ...)
-can be defined within a step. Note that the element \code{param} can be used to define
-the list of parameters to estimate at a given step.
+Each step is a named list that may contain \strong{any argument} of the \code{estim_param} function
+(e.g. \code{obs_var}, \code{candidate_param}, ...). Only the arguments that
+differ from those given to \code{estim_param} need to be specified: any element not explicitly
+defined in a step inherits its value from the corresponding argument of \code{estim_param}.
 
-Any element not explicitly defined in a step will inherit its value
-from the corresponding argument of \code{estim_param} and remain identical across all steps.
-If \code{NULL}, a single step is created using the function arguments.
+When \code{step} is \strong{not} used (\code{step = NULL}), a single-step estimation is performed using the arguments of \code{estim_param}.
+In this case, the list of parameters to be estimated is
+automatically deduced from the \code{param_info} argument: all parameters defined in
+\code{param_info} are considered for estimation (possibly subject to selection if
+\code{candidate_param} is used).
+
+When \code{step} \strong{is} used, the set of parameters to estimate usually differs between steps.
+For sake of simplicity, a \strong{single global} \code{param_info} list can be provided to \code{estim_param}
+(containing bounds, etc. for all parameters that may ever be estimated),
+and each step specifies explicitly which parameters are:
+\itemize{
+\item \code{major_param}: the parameters that \strong{must be estimated} at this step,
+\item \code{candidate_param} (optionnal): the parameters that are \strong{candidates for estimation}.
+}
 
 Suppose the \code{step} argument is defined as follows:
 
@@ -276,12 +305,14 @@ In this case, the parameter estimation procedure will proceed in \strong{two ste
 Only observed variable \code{var1} (from \code{obs_list} defined in argument of \code{estim_param}) is used.
 \item \strong{Step 2}: Parameter \code{p3} is estimated, and only observed variable \code{var2} is used.
 Parameters \code{p1} (and possibly \code{p2}, if selected) are fixed at the values estimated in Step 1.
-Information on the parameters to estimate (bounds, ...) can be defined within
-the same \code{param_info} list given in argument of \code{estim_param}.
 }
+
+Technical information about parameters (bounds, default values, ...)
+can be provided \strong{once for all steps} via the global \code{param_info} argument of \code{estim_param}.
 
 The results of the parameter estimation procedure are stored in the folder \code{out_dir},
 with a separate subfolder for each step.
+}
 }
 \seealso{
 For more details and examples, see the different vignettes in
