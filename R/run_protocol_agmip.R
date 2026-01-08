@@ -19,7 +19,7 @@
 #'
 #' @export
 #'
-run_protocol_agmip <- function(model_function, model_options, obs_list, optim_options, protocol_file_path = NULL,
+run_protocol_agmip <- function(model_function, model_options, obs_list, optim_options = list(), protocol_file_path = NULL,
                                out_dir = getwd(), var_to_simulate = NULL, transform_sim = NULL,
                                transform_obs = NULL, transform_var = NULL, forced_param_values = NULL,
                                step = NULL, param_info = NULL, info_level = 0) {
