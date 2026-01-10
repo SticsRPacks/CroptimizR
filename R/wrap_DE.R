@@ -54,7 +54,7 @@ wrap_DEoptim <- function(optim_options, param_info, crit_options) {
   start_time <- Sys.time()
 
   .trace_env <- new.env(parent = emptyenv())
-  .trace_env$x_list   <- list()
+  .trace_env$x_list <- list()
   .trace_env$crit_list <- list()
   .trace_env$k <- 0L
 
@@ -62,7 +62,7 @@ wrap_DEoptim <- function(optim_options, param_info, crit_options) {
   fn_de <- function(x) {
     val <- main_crit(x, crit_options = crit_options)
     .trace_env$k <- .trace_env$k + 1L
-    .trace_env$x_list[[.trace_env$k]]    <- as.numeric(x)
+    .trace_env$x_list[[.trace_env$k]] <- as.numeric(x)
     .trace_env$crit_list[[.trace_env$k]] <- val
     return(val)
   }
@@ -103,26 +103,26 @@ wrap_DEoptim <- function(optim_options, param_info, crit_options) {
   trace_df <- NULL
   if (!is.null(DE$member$storepop)) {
     storepop <- DE$member$storepop
-    itermax  <- length(storepop)
-    NP       <- nrow(storepop[[1]])
+    itermax <- length(storepop)
+    NP <- nrow(storepop[[1]])
 
     pop_all <- do.call(rbind, lapply(seq_len(itermax), function(it) {
       m <- as.data.frame(storepop[[it]])
       colnames(m) <- param_names
-      m$ind  <- seq_len(NP)
+      m$ind <- seq_len(NP)
       m$iter <- it
       m
-      }))
+    }))
     crit_vec <- as.numeric(unlist(.trace_env$crit_list))
     n <- min(nrow(pop_all), length(crit_vec))
     pop_all <- pop_all[seq_len(n), , drop = FALSE]
     pop_all$crit <- crit_vec[seq_len(n)]
 
-    pop_all$eval   <- seq_len(n)
-    pop_all$rep    <- 1L
+    pop_all$eval <- seq_len(n)
+    pop_all$rep <- 1L
     pop_all$method <- "DEoptim"
     trace_df <- pop_all
-    }
+  }
 
   res <- list(
     final_values = final_values,
