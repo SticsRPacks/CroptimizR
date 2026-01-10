@@ -16,14 +16,19 @@
 #'
 
 optim_switch <- function(...) {
-  # Store and save results at the end of the current optimization step
-  if (nargs() > 2) {
-    # Initialize res
-    res <- list()
-    flag_error <- FALSE
+  message("optim_switch nargs = ", nargs())
+  message("names(arguments) = ", paste(names(list(...)), collapse = ", "))
 
+  # Store and save results at the end of the current optimization step
+  res <- list()
+  flag_error <- FALSE
+  if (nargs() > 2) {
     on.exit({
-      res$forced_param_values <- crit_options$forced_param_values
+      ####
+      if (!is.null(crit_options)) {
+        res$forced_param_values <- crit_options$forced_param_values
+      }
+      #####
       if (!is.null(res$final_values)) {
         res$forced_param_values <- compute_eq_const(
           res$forced_param_values,
@@ -68,7 +73,8 @@ optim_switch <- function(...) {
         }
       }
 
-      if (!is.null(crit_options$out_dir) & length(res) > 0) {
+      # if (!is.null(crit_options$out_dir) & length(res) > 0) {
+      if (!is.null(crit_options) && !is.null(crit_options$out_dir) && length(res) > 0) {
         save(res, file = file.path(
           crit_options$out_dir,
           "optim_results.Rdata"
@@ -91,6 +97,19 @@ optim_switch <- function(...) {
   optim_method <- arguments$optim_method
   optim_options <- arguments$optim_options
   wrap_args <- within(arguments, rm("optim_method"))
+  ##########################
+  #
+  # param_info   <- NULL
+  # crit_options <- NULL
+
+  # if ("param_info" %in% names(arguments)) {
+  #   param_info <- arguments$param_info
+  # }
+  # if ("crit_options" %in% names(arguments)) {
+  #  crit_options <- arguments$crit_options
+  # }
+  ##########################
+
   if (nargs() > 2) {
     param_info <- arguments$param_info
     crit_options <- arguments$crit_options
@@ -132,7 +151,8 @@ optim_switch <- function(...) {
         res$obs_situation_list <- .croptEnv$obs_situation_list
         res$plots <- plot_bayesian(
           optim_options = optim_options,
-          param_info = param_info, optim_results = res,
+          param_info = param_info,
+          optim_results = res,
           out_dir = crit_options$out_dir
         )
         summary_bayesian(
@@ -141,27 +161,94 @@ optim_switch <- function(...) {
           out_dir = crit_options$out_dir
         )
       }
-    } else if (optim_method == "optim") {
-      res <- do.call(wrap_optim, wrap_args)
+    } else if (optim_method == "DEoptim") {
+      res <- do.call(wrap_DEoptim, wrap_args)
       if (nargs() > 2) {
         res$obs_var_list <- .croptEnv$obs_var_list
         res$obs_situation_list <- .croptEnv$obs_situation_list
         if (arguments$crit_options$info_level >= 1) {
           res$params_and_crit <- dplyr::bind_rows(.croptEnv$params_and_crit)
         }
-        res <- post_treat_frequentist(
+        res <- post_treat_global_optim(
           optim_options = optim_options,
           param_info = param_info,
           optim_results = res,
           crit_options = crit_options
         )
-        res$plots <- plot_frequentist(
+        res$plots <- plot_global_optim(
           optim_options = optim_options,
-          param_info = param_info, optim_results = res,
+          param_info = param_info,
+          optim_results = res,
           out_dir = crit_options$out_dir
         )
-        summary_frequentist(
+        summary_global_optim(
           optim_options = optim_options, param_info = param_info,
+          optim_results = res,
+          out_dir = crit_options$out_dir
+        )
+      }
+    } else if (optim_method == "graDiEnt") {
+      res <- do.call(wrap_graDiEnt, wrap_args)
+      if (nargs() > 2) {
+        res$obs_var_list <- .croptEnv$obs_var_list
+        res$obs_situation_list <- .croptEnv$obs_situation_list
+        if (arguments$crit_options$info_level >= 1) {
+          res$params_and_crit <- dplyr::bind_rows(.croptEnv$params_and_crit)
+        }
+        res <- post_treat_global_optim(
+          optim_options = optim_options,
+          param_info = param_info,
+          optim_results = res,
+          crit_options = crit_options
+        )
+        res$plots <- plot_global_optim(
+          optim_options = optim_options,
+          param_info = param_info,
+          optim_results = res,
+          out_dir = crit_options$out_dir
+        )
+        summary_global_optim(
+          optim_options = optim_options,
+          param_info = param_info,
+          optim_results = res,
+          out_dir = crit_options$out_dir
+        )
+      }
+    } else if (optim_method == "cmaes") {
+      if (is.null(optim_options$n_particles) || is.na(optim_options$n_particles)) {
+        if (!is.null(optim_options$ctrl$options$PopSize) &&
+          !is.na(optim_options$ctrl$options$PopSize)) {
+          optim_options$n_particles <- as.integer(optim_options$ctrl$options$PopSize)
+        } else {
+          optim_options$n_particles <- 30L
+        }
+      }
+
+      wrap_args$optim_options <- optim_options
+
+      res <- do.call(wrap_cmaes, wrap_args)
+
+      if (nargs() > 2) {
+        res$obs_var_list <- .croptEnv$obs_var_list
+        res$obs_situation_list <- .croptEnv$obs_situation_list
+        if (arguments$crit_options$info_level >= 1) {
+          res$params_and_crit <- dplyr::bind_rows(.croptEnv$params_and_crit)
+        }
+        res <- post_treat_global_optim(
+          optim_options = optim_options,
+          param_info = param_info,
+          optim_results = res,
+          crit_options = crit_options
+        )
+        res$plots <- plot_global_optim(
+          optim_options = optim_options,
+          param_info = param_info,
+          optim_results = res,
+          out_dir = crit_options$out_dir
+        )
+        summary_global_optim(
+          optim_options = optim_options,
+          param_info = param_info,
           optim_results = res,
           out_dir = crit_options$out_dir
         )
@@ -170,8 +257,9 @@ optim_switch <- function(...) {
       flag_unknown_method <- TRUE
     },
     error = function(cond) {
-      warning(cond)
-      flag_error <<- TRUE
+      message("=== ERROR CAUGHT IN optim_switch ===")
+      traceback(20)
+      stop(cond)
     }
   )
 
@@ -179,7 +267,7 @@ optim_switch <- function(...) {
     flag_error <- TRUE
     stop(paste0(
       "Unknown method ", optim_method,
-      ", please choose between nloptr.simplex, BayesianTools.dreamzs and optim."
+      ", please choose between nloptr.simplex, BayesianTools.dreamzs, DEoptim and graDiEnt."
     ))
   }
 
