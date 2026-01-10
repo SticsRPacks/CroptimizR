@@ -7,6 +7,7 @@
 #' @keywords internal
 #'
 wrap_graDiEnt <- function(optim_options, param_info, crit_options) {
+
   if (is.null((ranseed <- optim_options$ranseed))) {
     ranseed <- NULL
   }
@@ -43,6 +44,11 @@ wrap_graDiEnt <- function(optim_options, param_info, crit_options) {
 
   start_time <- Sys.time()
 
+  .trace_env <- new.env(parent = emptyenv())
+  .trace_env$par_list  <- list()
+  .trace_env$crit_list <- list()
+  .trace_env$k <- 0L
+
   if (!is.null(ranseed)) set.seed(ranseed)
   range_bounds <- bounds$ub - bounds$lb
   ObjFun <- function(u) {
@@ -50,7 +56,11 @@ wrap_graDiEnt <- function(optim_options, param_info, crit_options) {
     names(u) <- param_names
     x <- bounds$lb + u * range_bounds
     names(x) <- param_names
-    main_crit(x, crit_options = crit_options)
+    val <- main_crit(x, crit_options = crit_options)
+    .trace_env$k <- .trace_env$k + 1L
+    .trace_env$par_list[[.trace_env$k]]  <- x
+    .trace_env$crit_list[[.trace_env$k]] <- val
+    return(val)
   }
   SQGDE <- tryCatch(
     graDiEnt::optim_SQGDE(
@@ -120,39 +130,25 @@ wrap_graDiEnt <- function(optim_options, param_info, crit_options) {
     )
   }
   trace_df <- NULL
-  if (!is.null(SQGDE$particles_trace) && length(dim(SQGDE$particles_trace)) == 3) {
-    tr <- SQGDE$particles_trace
-    n_it <- dim(tr)[1]
-    n_pop <- dim(tr)[2]
-    df_list <- vector("list", n_it)
-    eval_counter <- 0
-    for (it in seq_len(n_it)) {
-      pop_u <- tr[it, , ]
-      pop_u <- as.matrix(pop_u)
-      colnames(pop_u) <- param_names
+  if (.trace_env$k > 0L) {
+    n_pop <- control_params$n_particles
+    k <- .trace_env$k
+    pars_mat <- do.call(rbind, lapply(.trace_env$par_list, function(v) as.numeric(v)))
+    colnames(pars_mat) <- param_names
+    crit_vec <- as.numeric(unlist(.trace_env$crit_list))
 
-      # transformation
-      pop_x <- sweep(pop_u, 2, range_bounds, `*`)
-      pop_x <- sweep(pop_x, 2, bounds$lb, `+`)
+    n_it_est <- ceiling(k / n_pop)
+    iter <- rep(seq_len(n_it_est), each = n_pop)[seq_len(k)]
+    ind  <- rep(seq_len(n_pop), times = n_it_est)[seq_len(k)]
 
-      df <- as.data.frame(pop_x)
-
-      df$ind <- seq_len(n_pop)
-      df$iter <- it
-      crit_pop <- apply(pop_x, 1, function(par) {
-        names(par) <- param_names
-        main_crit(par, crit_options = crit_options)
-      })
-      df$crit <- crit_pop
-      idx <- seq_len(n_pop)
-      df$eval <- eval_counter + idx
-      eval_counter <- eval_counter + n_pop
-      df$method <- "graDiEnt"
-      df$rep <- 1L
-      df_list[[it]] <- df
-    }
-    trace_df <- dplyr::bind_rows(df_list)
-  }
+    trace_df <- as.data.frame(pars_mat)
+    trace_df$ind <- ind
+    trace_df$iter <- iter
+    trace_df$crit <- crit_vec
+    trace_df$eval <- seq_len(k)
+    trace_df$method <- "graDiEnt"
+    trace_df$rep <- 1L
+        }
   res <- list(
     final_values = final_values,
     init_values = init_values,

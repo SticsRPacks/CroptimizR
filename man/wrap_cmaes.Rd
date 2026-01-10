@@ -2,7 +2,7 @@
 % Please edit documentation in R/wrap_cmaes.R
 \name{wrap_cmaes}
 \alias{wrap_cmaes}
-\title{A wrapper for parma::cmaes package (CMA-ES)}
+\title{Wrap CMA-ES using parma}
 \usage{
 wrap_cmaes(optim_options, param_info = NULL, crit_options)
 }
@@ -20,6 +20,6 @@ that must be passed to main_crit function by the methods wrappers.}
 list with final_values, init_values, est_values, GE, min_crit_value
 }
 \description{
-A wrapper for parma::cmaes package (CMA-ES)
+Wrap CMA-ES using parma
 }
 \keyword{internal}
