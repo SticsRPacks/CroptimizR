@@ -703,7 +703,6 @@ test_that("Test using transform_sim and var", {
 })
 
 
-
 # Test with a single step
 test_that("Single step check", {
   optim_options <- list(
