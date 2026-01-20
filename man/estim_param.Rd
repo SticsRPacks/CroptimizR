@@ -22,7 +22,7 @@ estim_param(
   satisfy_par_const = NULL,
   var_to_simulate = NULL,
   info_level = 1,
-  info_crit_func = list(CroptimizR::BIC, CroptimizR::AICc, CroptimizR::AIC),
+  info_crit_func = list(CroptimizR::AICc, CroptimizR::AIC, CroptimizR::BIC),
   weight = NULL,
   step = NULL,
   out_dir = getwd(),
@@ -289,12 +289,12 @@ Suppose the \code{step} argument is defined as follows:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{step <- list()
 step[[1]] <- list(
-  param = c("p1"),
+  major_param = c("p1"),
   candidate_param = c("p2"),
   obs_var = c("var1")
 )
 step[[2]] <- list(
-  param = c("p3"),
+  major_param = c("p3"),
   obs_var = c("var2")
 )
 }\if{html}{\out{</div>}}
