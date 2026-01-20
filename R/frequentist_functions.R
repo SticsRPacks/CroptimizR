@@ -448,10 +448,14 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
   }
 
   df$rep <- as.factor(df$rep)
-  p[["criterion"]] <- ggplot(df, aes_string(
-    x = iter_or_eval[1], y = "crit",
-    color = "rep"
-  )) +
+  p[["criterion"]] <- ggplot(
+    df,
+    aes(
+      x = .data[[iter_or_eval[1]]],
+      y = crit,
+      color = rep
+    )
+  ) +
     labs(
       title = paste0(
         "Evolution of the minimized criterion \n in function of the minimization ",
@@ -562,10 +566,14 @@ plot_valuesVSit_2D <- function(df, param_info, iter_or_eval = c("eval", "iter"),
   df_pairs <- utils::combn(param_names, 2)
 
   for (ipair in seq_len(ncol(df_pairs))) {
-    p[[ipair]] <- ggplot(df, aes_string(
-      x = df_pairs[1, ipair],
-      y = df_pairs[2, ipair], color = fill[1]
-    )) +
+    p[[ipair]] <- ggplot(
+      df,
+      aes(
+        x = .data[[df_pairs[1, ipair]]],
+        y = .data[[df_pairs[2, ipair]]],
+        color = .data[[fill[1]]]
+      )
+    ) +
       labs(
         title = paste0(
           "Evolution of ", df_pairs[1, ipair], " and ",
