@@ -143,8 +143,7 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
     info_level = info_level
   )
   if (length(steps) == 1) {
-    res_step6$step <- list(res_step6)
-    names(res_step6$step) <- names(steps)
+    res_step6[[names(steps)]] <- res_step6
   }
 
   # Run the model with the parameters values estimated at each sub-step of step 6
@@ -152,12 +151,13 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
   p_step6 <- list()
   for (istep in seq(steps)) {
     ## Run the model for the current step
+    step_name <- names(steps)[istep]
     tmp <- compute_simulations(
       model_function = model_function,
       model_options = model_options,
       param_values = c(
-        res_step6$step[[istep]]$optim_results$final_values,
-        res_step6$step[[istep]]$optim_results$forced_param_values
+        res_step6[[step_name]]$final_values,
+        res_step6[[step_name]]$forced_param_values
       ),
       situation = names(obs_list),
       var_to_simulate = var_to_simulate, obs_list = obs_list,
@@ -174,7 +174,7 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
       sim$sim_list,
       obs = obs_transformed, stats = c("Bias2", "MSE", "rRMSE", "EF")
     ) %>%
-      dplyr::mutate(step = names(res_step6$step)[istep]) %>%
+      dplyr::mutate(step = names(steps)[istep]) %>%
       dplyr::select(step, dplyr::everything(), -group, -situation)
 
     # Generate scatter plots for each sub-step of step6
@@ -183,7 +183,7 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
     save_plot_pdf(
       p_step6[[istep]],
       out_dir = out_dir,
-      file_name = paste0("scatter_plots_after_step6.", names(res$step6$step)[istep])
+      file_name = paste0("scatter_plots_after_step6.", names(steps)[istep])
     )
   }
   stats_step6 <- dplyr::bind_rows(stats_step6)
@@ -205,7 +205,7 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
   step_var_map <- lapply(obs_var_names, function(var) {
     unique(
       unlist(
-        lapply(res_step6$step, function(x) {
+        lapply(res_step6[names(steps)], function(x) {
           if (var %in% x$obs_var) x$obs_var else NULL
         })
       )
@@ -219,9 +219,9 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
 
   ## Compute number of estimated parameters per variable
   p <- vapply(obs_var_names, function(var) {
-    sum(sapply(res_step6$step, function(x) {
+    sum(sapply(res_step6[names(steps)], function(x) {
       if (var %in% x$obs_var) {
-        return(length(x$optim_results$final_values))
+        return(length(x$final_values))
       } else {
         return(0)
       }
@@ -328,8 +328,8 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
 
   # Plot diagnostics graphs
   ## Evolution of MSE and Bias2 for all steps and variables
-  steps_by_var_tmp <- lapply(names(res_step6$step), function(step_name) {
-    vars <- res_step6$step[[step_name]]$obs_var
+  steps_by_var_tmp <- lapply(names(steps), function(step_name) {
+    vars <- res_step6[[step_name]]$obs_var
     setNames(rep(step_name, length(vars)), vars)
   })
   steps_by_var_all <- unlist(steps_by_var_tmp)
@@ -370,11 +370,6 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
       step7 = res_step7$final_values
     )
   res$stats_per_step <- stats_per_step
-  res$scatter_plots <- list(
-    default = p_default,
-    step6 = p_step6,
-    step7 = p_step7
-  )
   res$step6 <- res_step6
   res$step7 <- res_step7
   res$step7$weights <- data.frame(
@@ -384,8 +379,6 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
     n = n_obs,
     p = p
   )
-  res$p_bar <- p_bar
-  res$p_evol <- p_evol
   return(res)
 }
 

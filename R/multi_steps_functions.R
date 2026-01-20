@@ -84,11 +84,13 @@ post_treat_multi_step <- function(step, optim_results_list) {
   # Concatenate the list of observations used
   res$obs_var_list <- unique(unlist(lapply(optim_results_list, function(x) x$obs_var_list)))
 
-  # Store the definition and results of all steps
-  res$step <- step
-  lapply(seq(optim_results_list), function(x) {
-    res$step[[x]]$optim_results <<- optim_results_list[[x]]
+  # Store (a selection of) the specification  and results of all steps
+  elements_to_keep <- c("major_param", "candidate_param")
+  selected_info_step <- lapply(step, function(sublist) {
+    sublist[elements_to_keep]
   })
-
+  new_elems <- Map(c, selected_info_step, optim_results_list)
+  names(new_elems) <- names(selected_info_step)
+  res[names(new_elems)] <- new_elems
   return(res)
 }
