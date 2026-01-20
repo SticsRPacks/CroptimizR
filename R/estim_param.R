@@ -270,8 +270,9 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
                         transform_sim = NULL, satisfy_par_const = NULL,
                         var_to_simulate = NULL, info_level = 1,
                         info_crit_func = list(
-                          CroptimizR::BIC, CroptimizR::AICc,
-                          CroptimizR::AIC
+                          CroptimizR::AICc,
+                          CroptimizR::AIC,
+                          CroptimizR::BIC
                         ),
                         weight = NULL,
                         step = NULL,
