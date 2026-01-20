@@ -427,7 +427,7 @@ test_that("estim_param empty sim-obs intersection lead to an error", {
   )
 
   expect_error(
-    res_final <- estim_param(
+    res_final <- suppressWarnings(estim_param(
       obs_list = obs_synth_new,
       crit_function = crit_ols,
       model_function = toymodel_wrapper,
@@ -437,6 +437,6 @@ test_that("estim_param empty sim-obs intersection lead to an error", {
       forced_param_values = forced_param_values,
       step = step,
       out_dir = tempdir()
-    )
+    ))
   )
 })
