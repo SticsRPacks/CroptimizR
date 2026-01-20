@@ -36,6 +36,7 @@ Imports:
     Matrix,
     BayesianTools,
     crayon,
+    CroPlotR,
     doParallel,
     dplyr,
     ggplot2,
@@ -45,15 +46,16 @@ Imports:
     methods,
     nloptr,
     purrr,
+	readxl,
     rlang,
     rstudioapi,
     tibble,
     tictoc,
+    tidyr,
     SticsRFiles (>= 1.1.3)
 Suggests:
     ApsimOnR,
     covr,
-    CroPlotR,
     devtools,
     gridExtra,
     knitr,
@@ -61,8 +63,7 @@ Suggests:
     spelling,
     SticsOnR,
     SticsRFiles,
-    testthat (>= 2.1.0),
-    tidyr
+    testthat (>= 2.1.0)
 VignetteBuilder: 
     knitr
 Remotes:
@@ -76,4 +77,4 @@ Encoding: UTF-8
 Language: en-US
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.3

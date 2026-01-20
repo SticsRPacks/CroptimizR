@@ -201,12 +201,12 @@ test_that("estim_param 2 steps crit_ols", {
   )
   steps <- list(
     list(
-      param = c("rB"),
+      major_param = c("rB"),
       candidate_param = c("Bmax"),
       obs_var = c("biomass")
     ),
     list(
-      param = c("h"),
+      major_param = c("h"),
       obs_var = c("yield")
     )
   )
@@ -223,15 +223,15 @@ test_that("estim_param 2 steps crit_ols", {
   )
 
   # Load results from step 1
-  load(file.path(tempdir(), "step1/optim_results.Rdata"))
+  load(file.path(tempdir(), "Step1/optim_results.Rdata"))
   res1 <- res
-  load(file.path(tempdir(), "step1/param_select_step1/optim_results.Rdata"))
+  load(file.path(tempdir(), "Step1/param_select_step1/optim_results.Rdata"))
   res1a <- res
-  load(file.path(tempdir(), "step1/param_select_step2/optim_results.Rdata"))
+  load(file.path(tempdir(), "Step1/param_select_step2/optim_results.Rdata"))
   res1b <- res
 
   # Load results from step 2
-  load(file.path(tempdir(), "step2/optim_results.Rdata"))
+  load(file.path(tempdir(), "Step2/optim_results.Rdata"))
   res2 <- res
 
   nb_eval_steps <- sum(sapply(list(res1a, res1b, res2), function(x) nrow(x$params_and_crit)))
@@ -262,11 +262,11 @@ test_that("estim_param 2 steps without param selection", {
   forced_param_values <- c(Bmax = 7)
   step <- list(
     list(
-      param = c("rB"),
+      major_param = c("rB"),
       obs_var = c("biomass")
     ),
     list(
-      param = c("h"),
+      major_param = c("h"),
       obs_var = c("yield")
     )
   )
@@ -417,17 +417,17 @@ test_that("estim_param empty sim-obs intersection lead to an error", {
   })
   step <- list(
     list(
-      param = c("rB"),
+      major_param = c("rB"),
       obs_var = c("biomass_NEW")
     ),
     list(
-      param = c("h"),
+      major_param = c("h"),
       obs_var = c("yield")
     )
   )
 
   expect_error(
-    res_final <- estim_param(
+    res_final <- suppressWarnings(estim_param(
       obs_list = obs_synth_new,
       crit_function = crit_ols,
       model_function = toymodel_wrapper,
@@ -437,6 +437,6 @@ test_that("estim_param empty sim-obs intersection lead to an error", {
       forced_param_values = forced_param_values,
       step = step,
       out_dir = tempdir()
-    )
+    ))
   )
 })

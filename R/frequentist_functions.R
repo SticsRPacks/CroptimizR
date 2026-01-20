@@ -4,39 +4,46 @@
 #'
 #' @param optim_results Results list returned by frequentist method wrappers
 #'
+#' @param indent Integer, level of indent of the printed messages as required by make_display_prefix
+#'
 #' @return Prints results of frequentist methods
 #'
-summary_frequentist <- function(optim_options, param_info, optim_results, out_dir) {
+summary_frequentist <- function(optim_options, param_info, optim_results, out_dir, indent = 0) {
   param_names <- get_params_names(param_info)
   nb_params <- length(param_names)
   est_values <- optim_results$est_values
   ind_min_crit <- optim_results$ind_min_crit
   min_crit_value <- optim_results$min_crit_value
 
-  cat(paste(
-    "\nList of observed variables used:",
-    paste(optim_results$obs_var_list, collapse = ", ")
-  ))
-
   # Display of parameters values for the repetition which has the
   # smallest criterion
+  cat("\n")
   for (ipar in 1:nb_params) {
-    cat(paste(
-      "\nEstimated value for", param_names[ipar], ": ",
+    cat(
+      "\n",
+      make_display_prefix(indent, "info"),
+      "Estimated value for ", param_names[ipar], ": ",
       format(est_values[ind_min_crit, ipar],
         scientific = FALSE,
         digits = 2, nsmall = 0
-      )
-    ))
+      ),
+      sep = ""
+    )
   }
-  cat(paste(
-    "\nMinimum value of the criterion:",
-    format(min_crit_value, scientific = FALSE, digits = 2, nsmall = 0)
-  ))
-  cat(paste(
-    "\nComplementary graphs and results can be found in ", out_dir,
-    "\n"
-  ))
+  cat(
+    "\n",
+    make_display_prefix(indent, "info"),
+    "Minimum value of the criterion: ",
+    format(min_crit_value, scientific = FALSE, digits = 2, nsmall = 0),
+    sep = ""
+  )
+  cat(
+    "\n",
+    make_display_prefix(indent, "info"),
+    "Complementary graphs and results can be found in ", out_dir,
+    "\n",
+    sep = ""
+  )
 }
 
 
@@ -73,14 +80,15 @@ post_treat_frequentist <- function(optim_options, param_info, optim_results,
   }
   optim_results$forced_param_values <- info_final$forced_param_values
 
-  sapply(info_crit_list, function(x) {
-    final_info_crit <- x(
+  info_crit_values <- vapply(info_crit_list, function(f) {
+    f(
       obs_list = info_final$obs_intersect,
       crit = info_final$crit,
       param_nb = nb_params
     )
-    optim_results[x()$name] <<- final_info_crit
-  })
+  }, FUN.VALUE = numeric(1))
+  names(info_crit_values) <- vapply(info_crit_list, function(f) f()$name, character(1))
+  optim_results$info_crit_values <- info_crit_values
 
   return(optim_results)
 }
@@ -286,8 +294,7 @@ plot_estimVSinit <- function(init_values, est_values, crit, lb, ub,
           " \n for the different repetitions"
         ),
         y = paste("Estimated value for", param_name),
-        x = paste("Initial value for", param_name),
-        fill = "Criterion"
+        x = paste("Initial value for", param_name)
       ) +
       theme(plot.title = element_text(hjust = 0.5))
 
@@ -410,8 +417,7 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
           " \n in function of the minimization ", lab
         ),
         y = param_name,
-        x = paste(lab, "number"),
-        fill = "Criterion"
+        x = paste(lab, "number")
       ) +
       theme(plot.title = element_text(hjust = 0.5)) +
       geom_point(alpha = 0.5) +
@@ -442,18 +448,21 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
   }
 
   df$rep <- as.factor(df$rep)
-  p[["criterion"]] <- ggplot(df, aes_string(
-    x = iter_or_eval[1], y = "crit",
-    color = "rep"
-  )) +
+  p[["criterion"]] <- ggplot(
+    df,
+    aes(
+      x = .data[[iter_or_eval[1]]],
+      y = crit,
+      color = rep
+    )
+  ) +
     labs(
       title = paste0(
         "Evolution of the minimized criterion \n in function of the minimization ",
         lab
       ),
       y = "Minimized criterion",
-      x = paste(lab, "number"),
-      fill = "Repetition"
+      x = paste(lab, "number")
     ) +
     theme(plot.title = element_text(hjust = 0.5)) +
     geom_point(alpha = 0.5)
@@ -557,10 +566,14 @@ plot_valuesVSit_2D <- function(df, param_info, iter_or_eval = c("eval", "iter"),
   df_pairs <- utils::combn(param_names, 2)
 
   for (ipair in seq_len(ncol(df_pairs))) {
-    p[[ipair]] <- ggplot(df, aes_string(
-      x = df_pairs[1, ipair],
-      y = df_pairs[2, ipair], color = fill[1]
-    )) +
+    p[[ipair]] <- ggplot(
+      df,
+      aes(
+        x = .data[[df_pairs[1, ipair]]],
+        y = .data[[df_pairs[2, ipair]]],
+        color = .data[[fill[1]]]
+      )
+    ) +
       labs(
         title = paste0(
           "Evolution of ", df_pairs[1, ipair], " and ",
@@ -568,8 +581,7 @@ plot_valuesVSit_2D <- function(df, param_info, iter_or_eval = c("eval", "iter"),
           lab
         ),
         y = paste("Estimated value for", df_pairs[2, ipair]),
-        x = paste("Estimated value for", df_pairs[1, ipair]),
-        fill = "Criterion"
+        x = paste("Estimated value for", df_pairs[1, ipair])
       ) +
       theme(plot.title = element_text(hjust = 0.5)) +
       geom_point(alpha = 0.5)

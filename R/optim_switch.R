@@ -80,7 +80,7 @@ optim_switch <- function(...) {
         return(res)
       } else if (length(res) > 0) {
         warning(paste(
-          "An error occured during the parameter estimation process (see other error and warning messages). Partial results saved in",
+          "An error occured during the parameter estimation procedure (see other error and warning messages). Partial results saved in",
           file.path(crit_options$out_dir, "optim_results.Rdata")
         ))
       }
@@ -112,7 +112,7 @@ optim_switch <- function(...) {
           optim_results = res,
           crit_options = crit_options
         )
-        res$plots <- plot_frequentist(
+        plot_frequentist(
           optim_options = optim_options,
           param_info = param_info,
           optim_results = res,
@@ -121,7 +121,8 @@ optim_switch <- function(...) {
         summary_frequentist(
           optim_options = optim_options, param_info = param_info,
           optim_results = res,
-          out_dir = crit_options$out_dir
+          out_dir = crit_options$out_dir,
+          indent = crit_options$indent
         )
       }
     } else if (optim_method == "BayesianTools.dreamzs" ||
@@ -130,7 +131,7 @@ optim_switch <- function(...) {
       if (nargs() > 2) {
         res$obs_var_list <- .croptEnv$obs_var_list
         res$obs_situation_list <- .croptEnv$obs_situation_list
-        res$plots <- plot_bayesian(
+        plot_bayesian(
           optim_options = optim_options,
           param_info = param_info, optim_results = res,
           out_dir = crit_options$out_dir
@@ -138,7 +139,8 @@ optim_switch <- function(...) {
         summary_bayesian(
           optim_options = optim_options, param_info = param_info,
           optim_results = res,
-          out_dir = crit_options$out_dir
+          out_dir = crit_options$out_dir,
+          indent = crit_options$indent
         )
       }
     } else if (optim_method == "optim") {
@@ -155,7 +157,7 @@ optim_switch <- function(...) {
           optim_results = res,
           crit_options = crit_options
         )
-        res$plots <- plot_frequentist(
+        plot_frequentist(
           optim_options = optim_options,
           param_info = param_info, optim_results = res,
           out_dir = crit_options$out_dir
@@ -163,7 +165,8 @@ optim_switch <- function(...) {
         summary_frequentist(
           optim_options = optim_options, param_info = param_info,
           optim_results = res,
-          out_dir = crit_options$out_dir
+          out_dir = crit_options$out_dir,
+          indent = crit_options$indent
         )
       }
     } else {
