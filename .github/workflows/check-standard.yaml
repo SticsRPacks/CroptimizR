@@ -77,7 +77,7 @@ jobs:
           client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "repo": "${{ github.event.repository.name }}"}'
           
       - name: Wait for SticsRTests workflow to complete (block-and-fail)
-        uses: actions/github-script@v6
+        uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.TRIGGER_PAT }}
           script: |
