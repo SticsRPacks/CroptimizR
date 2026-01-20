@@ -294,8 +294,7 @@ plot_estimVSinit <- function(init_values, est_values, crit, lb, ub,
           " \n for the different repetitions"
         ),
         y = paste("Estimated value for", param_name),
-        x = paste("Initial value for", param_name),
-        fill = "Criterion"
+        x = paste("Initial value for", param_name)
       ) +
       theme(plot.title = element_text(hjust = 0.5))
 
@@ -418,8 +417,7 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
           " \n in function of the minimization ", lab
         ),
         y = param_name,
-        x = paste(lab, "number"),
-        fill = "Criterion"
+        x = paste(lab, "number")
       ) +
       theme(plot.title = element_text(hjust = 0.5)) +
       geom_point(alpha = 0.5) +
@@ -460,8 +458,7 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
         lab
       ),
       y = "Minimized criterion",
-      x = paste(lab, "number"),
-      fill = "Repetition"
+      x = paste(lab, "number")
     ) +
     theme(plot.title = element_text(hjust = 0.5)) +
     geom_point(alpha = 0.5)
@@ -576,8 +573,7 @@ plot_valuesVSit_2D <- function(df, param_info, iter_or_eval = c("eval", "iter"),
           lab
         ),
         y = paste("Estimated value for", df_pairs[2, ipair]),
-        x = paste("Estimated value for", df_pairs[1, ipair]),
-        fill = "Criterion"
+        x = paste("Estimated value for", df_pairs[1, ipair])
       ) +
       theme(plot.title = element_text(hjust = 0.5)) +
       geom_point(alpha = 0.5)
