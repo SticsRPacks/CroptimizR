@@ -126,7 +126,7 @@ select_param_FwdRegAgMIP <- function(oblig_param_list, add_param_list, crt_list,
 post_treat_FwdRegAgMIP <- function(optim_results, crit_options, crt_list,
                                    param_selection_steps) {
   info_crit_func <- crit_options$info_crit_list[[1]]
-  final_info_crit <- optim_results[[info_crit_func()$name]]
+  final_info_crit <- optim_results$info_crit_values[[info_crit_func()$name]]
 
   ## RE-compute main_crit with the initial values of the parameters
   init_crit <- main_crit(

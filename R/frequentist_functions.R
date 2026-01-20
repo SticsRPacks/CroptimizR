@@ -80,14 +80,15 @@ post_treat_frequentist <- function(optim_options, param_info, optim_results,
   }
   optim_results$forced_param_values <- info_final$forced_param_values
 
-  sapply(info_crit_list, function(x) {
-    final_info_crit <- x(
+  info_crit_values <- vapply(info_crit_list, function(f) {
+    f(
       obs_list = info_final$obs_intersect,
       crit = info_final$crit,
       param_nb = nb_params
     )
-    optim_results[x()$name] <<- final_info_crit
-  })
+  }, FUN.VALUE = numeric(1))
+  names(info_crit_values) <- vapply(info_crit_list, function(f) f()$name, character(1))
+  optim_results$info_crit_values <- info_crit_values
 
   return(optim_results)
 }
