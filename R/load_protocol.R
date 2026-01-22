@@ -1,6 +1,6 @@
 #' @title Load the protocol description as given in xls file `protocol_file_path`
 #'
-#' @inheritParams run_protocol_agmip
+#' @param protocol_file_path Path to the Excel file describing the AgMIP PhaseIV protocol.
 #'
 #' @details
 #' The AgMIP PhaseIV protocol is thoroughly detailed in Wallach et al., 2024
