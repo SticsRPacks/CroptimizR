@@ -1,17 +1,216 @@
-#' @title Run the AgMIP PhaseIV protocol
+#' @title Automate the AgMIP Phase IV Calibration protocol
 #'
 #' @inheritParams estim_param
 #'
+#' @param obs_list List of observed values to use in the protocol, in `cropr` format.
+#' A named list (names = situation names) of data.frames, each containing:
+#' - one column named `Date` with the observation dates (in `Date` or `POSIXct` format),
+#' - and one column per observed variable, containing either the measured values or `NA`
+#'   if the variable is not observed at the given date.
+#'
+#' @param optim_options (optional) List of options controlling the minimization method
+#' (Nelder–Mead simplex), containing:
+#' - `ranseed`: random seed used to make results reproducible. If `NULL`, the seed is not
+#'   fixed and results may differ between runs. Otherwise, set it to an integer value
+#'   (e.g. `1234`). Default is `NULL`.
+#' - `nb_rep`: number of multi-start repetitions of the minimization.
+#'   If provided, this value is used for all minimizations in both step6 and step7.
+#'   The same setting is therefore applied to the whole protocol.
+#'   By default, this is set to `c(10, 5)` for step6 (respectively for major-parameter estimation
+#'   and for each candidate-parameter addition) and to `c(20)` for step7.
+#' - `maxeval`: maximum number of evaluations of the minimized criterion per minimization
+#'   (default: `50000`).
+#' - `xtol_rel`: relative tolerance threshold on parameter values. Minimization stops when
+#'   parameter values change by less than `xtol_rel` times the absolute value of the parameter
+#'   between two successive iterations (default: `1e-4`).
+#' - additional options can be provided; see `?nl.opts` for a complete list.
+#'
+#' @param param_info Information about the parameters to estimate.
+#' A list containing:
+#' - `ub` and `lb`: named numeric vectors of upper and lower bounds,
+#' - `default`: named numeric vector of default values (optional).
+#'
+#' The names correspond to the parameter names.
+#' Default values are used when a parameter is not estimated in the current step
+#' (e.g. major or candidate parameter estimated in a subsequent step, candidate parameter
+#' that was not selected, etc.), and also as one of the initial values when the parameter is estimated.
+#'
+#' @param forced_param_values Named vector or list specifying parameter values to force in
+#' the model.
+#' It may also contain arithmetic expressions to define equality constraints between parameters
+#' (see the Details section of `estim_param`). In this case, the values to force are computed before
+#' each call to the model wrapper and passed through its `param_values` argument during the estimation procedure.
+#' This argument should not include values for parameters that are estimated (i.e. parameters
+#' defined in `param_info`).
+#'
+#' @param transform_obs User-defined function to transform observations before each criterion
+#' evaluation (optional). See the Details section of `estim_param` for more information.
+#'
+#' @param transform_sim User-defined function to transform simulations before each criterion
+#' evaluation (optional). See the Details section of `estim_param` for more information.
+#'
+#' @param satisfy_par_const User-defined function to enforce inequality constraints on estimated
+#' parameters (optional). See the Details section of `estim_param` for more information.
+#'
+#' @param info_crit_func Function or list of functions used to compute information criteria
+#' (optional; see the default value in the function signature and
+#' https://sticsrpacks.github.io/CroptimizR/reference/information_criteria.html
+#' for the list of available criteria).
+#'
+#' The values of all provided information criteria are stored in the returned object.
+#' If parameter selection is activated (i.e. if `candidate_param` is provided in at least one
+#' step of step6), the first information criterion in the list is used for parameter selection.
+#'
+#' @param step A list defining the sub-steps for step 6 of the AgMIP Calibration protocol (see Details section).
 #'
 #' @details
 #'
-#' The AgMIP PhaseIV protocol is thoroughly detailed in Wallach et al. (2024)
+#' ## The AgMIP Phase IV Calibration protocol
+#'
+#' The AgMIP Phase IV Calibration protocol is thoroughly described in Wallach et al. (2024)
 #' and Wallach et al. (2025).
 #'
-#' @return prints, graphs and a list containing the results of the AgMIP PhaseIV protocol.
-#' All results are saved in the folder `out_dir`.
+#' This protocol consists of two successive steps, called step6 and step7.
 #'
-#' @seealso Wallach et al. (2024), Wallach et al. (2025), and the `estim_param` function.
+#' Step6 consists in a sequential parameter estimation by groups of variables.
+#' For each group of variables, parameters are estimated by ordinary least squares (OLS)
+#' using a multi-start Nelder–Mead optimization (i.e. several minimizations starting from
+#' different initial values).
+#' Once estimated, parameters are fixed to their estimated values for the subsequent steps.
+#'
+#' For each group of variables, the user defines:
+#' - a set of *major parameters*, supposed to mainly reduce bias for these variables,
+#' - and a set of *candidate parameters*, expected to explain variability between environments.
+#'
+#' Candidate parameters should be ordered, as far as possible, by decreasing expected importance.
+#' For each group of variables, candidate parameters are progressively added to the list of
+#' parameters to estimate, and are retained only if they improve an information criterion
+#' (corrected Akaike Information Criterion by default).
+#' If a candidate parameter is not selected, it is fixed to its default value.
+#'
+#' By default, the estimation of the major parameters for a given step is performed using
+#' 10 multi-start repetitions. When candidate parameters are considered, 5 additional
+#' multi-start repetitions are performed each time a new candidate parameter is added to
+#' the set of parameters to estimate.
+#'
+#' Step7 consists in re-estimating all parameters selected during step6 using all available
+#' observations, by weighted least squares (WLS). The weights are set to the estimated standard
+#' deviation of the model error for each variable, as obtained at the end of step6.
+#'
+#' The WLS minimization is performed using a multi-start Nelder–Mead simplex algorithm with
+#' 20 repetitions by default. The first two repetitions are initialized respectively from:
+#' (i) the parameter values estimated at the end of step6, and
+#' (ii) the default parameter values.
+#' The remaining repetitions are initialized from parameter values randomly drawn within
+#' their respective bounds.
+#'
+#' ## Describing step6 (argument `step`)
+#'
+#' The argument `step` is a list of lists describing the successive sub-steps to apply in step6
+#' of the AgMIP protocol. Each sub-step corresponds to a group of variables (e.g. phenology,
+#' biomass, etc.).
+#'
+#' Each element of `step` is a named list that must contain:
+#' - `obs_var`: a character vector giving the names of the observed variables to use at this step,
+#' - optionally, `major_param`: a character vector giving the names of the major parameters to estimate at this step,
+#' - optionally, `candidate_param`: a character vector giving the names of the candidate parameters.
+#'
+#' At least one of `major_param` or `candidate_param` must be provided.
+#' If `candidate_param` is not provided, only the major parameters are estimated for this step.
+#' If `major_param` is not provided, the step only performs candidate-parameter selection.
+#'
+#' The name of each list element is optional, but it is recommended to use the name of the
+#' corresponding group of variables. This name is used in printed outputs and in the results.
+#'
+#' Technical information about parameters (bounds, default values, ...), the observation list
+#' in `cropr` format, optimization options, forced parameter values, transformation functions,
+#' functions defining equality constraints, the information criterion function, etc., can be
+#' provided **once for all steps** via the corresponding arguments of `run_protocol_agmip`
+#' (`param_info`, `obs_list`, ...).
+#'
+#' If the user wants this information to be specific to a given step, it can also be provided
+#' inside the corresponding step description, using the same argument names.
+#'
+#' For example:
+#'
+#' ```r
+#' param_info <- list(
+#'   p1 = list(lb = 0, ub = 1, default = 0.1),
+#'   p2 = list(lb = 0, ub = 1, default = 0.5),
+#'   p3 = list(lb = 5, ub = 15, default = 15)
+#' )
+#'
+#' steps <- list(
+#'   group1 = list(
+#'     obs_var = c("var1", "var2"),
+#'     major_param = c("p1"),
+#'     candidate_param = c("p2")
+#'   ),
+#'   group2 = list(
+#'     obs_var = c("var3"),
+#'     major_param = c("p3")
+#'   )
+#' )
+#'
+#' res <- run_protocol_agmip(
+#'   obs_list = obs_list,
+#'   model_function = my_model_wrapper,
+#'   model_options = model_options,
+#'   param_info = param_info,
+#'   step = steps
+#' )
+#' ```
+#'
+#' In this example, step6 of the AgMIP protocol will be run in two successive steps called
+#' "group1" and "group2".
+#' In the first step, variables "var1" and "var2" are used to estimate parameter "p1"
+#' (major parameter), and candidate parameter "p2" is considered in the automatic parameter
+#' selection procedure.
+#' The observations for variables "var1" and "var2", as well as the information about
+#' parameters "p1" and "p2", are automatically extracted from `obs_list` and `param_info`,
+#' which contain the information for all steps.
+#'
+#' ## Observations used in step7
+#'
+#' Note that in step7, all observations included in `obs_list` are used, regardless of the
+#' `obs_var` variables defined for step6.
+#' Thus, observations for variables not used in step6 (e.g. because no parameter is directly
+#' associated with these variables) can still be used in step7, where all parameters selected
+#' during step6 are re-estimated using all observed variables (WLS step).
+#'
+#' @return
+#' Prints, graphs, and a list containing the results of the AgMIP Phase IV Calibration protocol.
+#' All results are saved in the folder specified by `out_dir`.
+#'
+#' During execution, a console display indicates the description of the step currently being run.
+#'
+#' The generated plots include:
+#' - diagnostics recommended in Wallach et al. (2025): MSE, bias², rRMSE, and Efficiency
+#'   for each variable at each step (files `barplot_rRMSE_EF_per_step.pdf` and
+#'   `plot_MSE_Bias2_per_step.pdf`),
+#' - scatter plots of simulations versus observations before and after each step
+#'   (files `scatter_plots_*.pdf`),
+#' - diagnostic plots for each minimization performed (see subfolders `AgMIP_protocol_step6`,
+#'   `AgMIP_protocol_step7`, and their contents).
+#'
+#' The returned object is a list containing:
+#' - `final_values`: a named vector with the estimated parameter values,
+#' - `forced_param_values`: a named vector with the values of forced parameters,
+#' - `obs_var_list`: a character vector with the names of observed variables used in the protocol,
+#' - `values_per_step`: a data.frame containing the default parameter values (from `param_info$default`, or `NA` if not provided) and the estimated
+#'   values after step6 and step7,
+#' - `stats_per_step`: a data.frame containing statistics (MSE, bias², rRMSE, and Efficiency)
+#'   for each variable, before and after each step,
+#' - `step6`: a list with detailed results for step6,
+#' - `step7`: a list with detailed results for step7.
+#'
+#'
+#' @seealso
+#'   * Wallach et al. (2024) and Wallach et al. (2025) for a detailed description of the AgMIP
+#'     calibration protocol,
+#'   * the `estim_param` function for basic parameter estimation using CroptimizR,
+#'   * the `load_protocol_agmip` function to extract `step` and `param_info` from a structured
+#'     Excel file.
 #'
 #' @importFrom CroPlotR save_plot_pdf
 #' @importFrom dplyr bind_rows mutate
@@ -48,8 +247,8 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
   }
 
   cat("\nAgMIP Calibration Phase IV protocol: automatic calculation steps 6 and 7",
-    "\n(see doi.org/10.1016/j.envsoft.2024.106147 for a detailed description of the full protocol)\n",
-    sep = ""
+      "\n(see doi.org/10.1016/j.envsoft.2024.106147 for a detailed description of the full protocol)\n",
+      sep = ""
   )
 
   # Prefix the steps name by "Step6." for a clearer display of the steps names.
@@ -105,7 +304,7 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
 
   # Compute stats for default values of the parameters
   stats_default <- summary(sim_default$sim_list,
-    obs = obs_transformed, stats = c("Bias2", "MSE", "rRMSE", "EF")
+                           obs = obs_transformed, stats = c("Bias2", "MSE", "rRMSE", "EF")
   ) %>%
     dplyr::mutate(step = "Default") %>%
     dplyr::select(step, dplyr::everything(), -group, -situation)
@@ -197,7 +396,7 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
 
   ## Compute SSE and number of observations for each observed variable
   stats_tmp <- summary(sim$sim_list,
-    obs = obs_transformed, stats = c("n_obs", "SS_res")
+                       obs = obs_transformed, stats = c("n_obs", "SS_res")
   )
 
   ## Sum SSE and number of observations per group of variables
@@ -312,7 +511,7 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
   }
   ## Compute goodness-of-fit stats after step7
   stats_step7 <- summary(sim_after_step7$sim_list,
-    obs = obs_transformed, stats = c("Bias2", "MSE", "rRMSE", "EF")
+                         obs = obs_transformed, stats = c("Bias2", "MSE", "rRMSE", "EF")
   ) %>%
     dplyr::mutate(step = "Step7") %>%
     dplyr::select(step, dplyr::everything(), -group, -situation)
