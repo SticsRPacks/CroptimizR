@@ -369,7 +369,11 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
     data.frame(
       name = names(res_step7$final_values),
       default = sapply(names(res_step7$final_values), function(x) {
-        default_values[[x]]
+        if (is.null(default_values[[x]])) {
+          return(NA)
+        } else {
+          return(default_values[[x]])
+        }
       }),
       step6 = res_step6$final_values,
       step7 = res_step7$final_values
