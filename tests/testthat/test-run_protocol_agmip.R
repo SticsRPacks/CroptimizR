@@ -728,7 +728,7 @@ test_that("Single step check", {
     model_options = model_options,
     optim_options = optim_options,
     obs_list = obs_synth,
-    out_dir = file.path(tempdir(), "Test1"),
+    out_dir = file.path(tempdir(), "Test6"),
     step = steps,
     forced_param_values = forced_param_values,
     param_info = param_info
@@ -738,5 +738,136 @@ test_that("Single step check", {
   expect_equal(res$final_values[["rB"]],
     param_true_values[["rB"]],
     tolerance = param_true_values[["rB"]] * 1e-2
+  )
+})
+
+
+# Test AgMIP protocol without major param
+test_that("Test AgMIP protocol without major param", {
+  optim_options <- list(
+    nb_rep = 3, xtol_rel = 1e-2,
+    ranseed = 1234
+  )
+  param_info <- list(
+    rB = list(lb = 0, ub = 1, default = 0.1),
+    h = list(lb = 0, ub = 1, default = 0.5)
+  )
+  forced_param_values <- list(
+    Bmax = 7
+  )
+  steps <- list(
+    biomass = list(
+      major_param = NULL,
+      candidate_param = c("rB"),
+      obs_var = c("biomass")
+    ),
+    yield = list(
+      major_param = NULL,
+      candidate_param = c("h"),
+      obs_var = c("yield")
+    )
+  )
+
+  res <- run_protocol_agmip(
+    model_function = toymodel_wrapper,
+    model_options = model_options,
+    optim_options = optim_options,
+    obs_list = obs_synth,
+    out_dir = file.path(tempdir(), "Test7"),
+    step = steps,
+    param_info = param_info,
+    forced_param_values = forced_param_values
+  )
+
+  # Check that estimated values for parameters are close to true values
+  expect_equal(res$final_values[["rB"]],
+    param_true_values[["rB"]],
+    tolerance = param_true_values[["rB"]] * 1e-2
+  )
+  expect_equal(res$final_values[["h"]],
+    param_true_values[["h"]],
+    tolerance = param_true_values[["h"]] * 1e-2
+  )
+})
+
+
+# Test with obs not used in steps and param_info for all parameters although their are not used in steps
+test_that("Test with obs not used in steps", {
+  optim_options <- list(
+    nb_rep = 3, xtol_rel = 1e-2,
+    ranseed = 1234
+  )
+  param_info <- list(
+    rB = list(lb = 0, ub = 1, default = 0.1),
+    h = list(lb = 0, ub = 1, default = 0.5),
+    Bmax = list(lb = 5, ub = 15, default = 7)
+  )
+  steps <- list(
+    biomass = list(
+      major_param = c("rB"),
+      obs_var = c("biomass")
+    )
+  )
+
+  res <- run_protocol_agmip(
+    model_function = toymodel_wrapper,
+    model_options = model_options,
+    optim_options = optim_options,
+    obs_list = obs_synth,
+    out_dir = file.path(tempdir(), "Test8"),
+    step = steps,
+    param_info = param_info
+  )
+
+  # Check that estimated parameters only include rB
+  expect_equal(names(res$final_values), c("rB"))
+  # Check that obs used include Yield for step7
+  expect_true("yield" %in% res$step7$obs_var_list)
+  # Check that obs used for step6 is biomass
+  expect_equal(res$step6$obs_var_list, "biomass")
+})
+
+
+# Test AgMIP protocol without default values for the parameters
+test_that("Test AgMIP protocol without param default values", {
+  optim_options <- list(
+    nb_rep = 3, xtol_rel = 1e-2,
+    ranseed = 1234
+  )
+  param_info <- list(
+    rB = list(lb = 0, ub = 1),
+    h = list(lb = 0, ub = 1),
+    Bmax = list(lb = 5, ub = 15)
+  )
+  steps <- list(
+    biomass = list(
+      major_param = c("rB"),
+      candidate_param = c("Bmax"),
+      obs_var = c("biomass")
+    ),
+    yield = list(
+      major_param = c("h"),
+      obs_var = c("yield")
+    )
+  )
+
+  res <- run_protocol_agmip(
+    model_function = toymodel_wrapper,
+    model_options = model_options,
+    optim_options = optim_options,
+    obs_list = obs_synth,
+    out_dir = file.path(tempdir(), "Test9"),
+    step = steps,
+    param_info = param_info
+  )
+
+  # Check that estimated values for parameters are close to true values
+  expect_equal(res$final_values[["rB"]],
+    param_true_values[["rB"]],
+    tolerance = param_true_values[["rB"]] * 1e-2
+  )
+  expect_equal(res$final_values[["h"]],
+    param_true_values[["h"]],
+    tolerance = param_true_values[["h"]] * 1e-2
   )
 })

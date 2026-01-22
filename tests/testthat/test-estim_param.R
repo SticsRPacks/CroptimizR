@@ -427,7 +427,7 @@ test_that("estim_param empty sim-obs intersection lead to an error", {
   )
 
   expect_error(
-    res_final <- suppressWarnings(estim_param(
+    suppressWarnings(estim_param(
       obs_list = obs_synth_new,
       crit_function = crit_ols,
       model_function = toymodel_wrapper,
@@ -438,5 +438,211 @@ test_that("estim_param empty sim-obs intersection lead to an error", {
       step = step,
       out_dir = tempdir()
     ))
+  )
+})
+
+# Test 2 steps without defining major_param
+test_that("estim_param 2 steps without major_param", {
+  optim_options <- list(
+    nb_rep = 5, xtol_rel = 1e-2,
+    ranseed = 1234
+  )
+  param_info <- list(
+    rB = list(lb = 0, ub = 1, default = 0.1),
+    h = list(lb = 0, ub = 1, default = 0.5)
+  )
+  forced_param_values <- c(Bmax = 7)
+  step <- list(
+    list(
+      obs_var = c("biomass")
+    ),
+    list(
+      obs_var = c("yield")
+    )
+  )
+
+  expect_error(
+    suppressWarnings(estim_param(
+      obs_list = obs_synth,
+      crit_function = crit_ols,
+      model_function = toymodel_wrapper,
+      model_options = model_options,
+      optim_options = optim_options,
+      param_info = param_info,
+      forced_param_values = forced_param_values,
+      step = step,
+      out_dir = tempdir()
+    ))
+  )
+})
+
+# Test an error is catched when major and candidate param have common parameter
+test_that("estim_param with common major and candidate param", {
+  optim_options <- list(
+    nb_rep = 5, xtol_rel = 1e-2,
+    ranseed = 1234
+  )
+  param_info <- list(
+    rB = list(lb = 0, ub = 1, default = 0.1),
+    h = list(lb = 0, ub = 1, default = 0.5)
+  )
+  forced_param_values <- c(Bmax = 7)
+
+  # common major params
+  step <- list(
+    list(
+      major_param = c("rB"),
+      obs_var = c("biomass")
+    ),
+    list(
+      major_param = c("rB"),
+      obs_var = c("yield")
+    )
+  )
+  expect_error(
+    suppressWarnings(estim_param(
+      obs_list = obs_synth,
+      crit_function = crit_ols,
+      model_function = toymodel_wrapper,
+      model_options = model_options,
+      optim_options = optim_options,
+      param_info = param_info,
+      forced_param_values = forced_param_values,
+      step = step,
+      out_dir = tempdir()
+    )),
+    regexp = "major parameter"
+  )
+
+  # common candidate params
+  step <- list(
+    list(
+      major_param = c("rB"),
+      candidate_param = c("Bmax"),
+      obs_var = c("biomass")
+    ),
+    list(
+      major_param = c("h"),
+      candidate_param = c("Bmax"),
+      obs_var = c("yield")
+    )
+  )
+  expect_error(
+    suppressWarnings(estim_param(
+      obs_list = obs_synth,
+      crit_function = crit_ols,
+      model_function = toymodel_wrapper,
+      model_options = model_options,
+      optim_options = optim_options,
+      param_info = param_info,
+      forced_param_values = forced_param_values,
+      step = step,
+      out_dir = tempdir()
+    )),
+    regexp = "candidate parameter"
+  )
+
+  # common params between major and candidate
+  step <- list(
+    list(
+      major_param = c("rB"),
+      candidate_param = c("rB"),
+      obs_var = c("biomass")
+    )
+  )
+  expect_error(
+    suppressWarnings(estim_param(
+      obs_list = obs_synth,
+      crit_function = crit_ols,
+      model_function = toymodel_wrapper,
+      model_options = model_options,
+      optim_options = optim_options,
+      param_info = param_info,
+      forced_param_values = forced_param_values,
+      step = step,
+      out_dir = tempdir()
+    )),
+    regexp = "major and candidate parameters"
+  )
+})
+
+
+# Test without major param
+test_that("estim_param without major param", {
+  optim_options <- list(
+    nb_rep = 5, xtol_rel = 1e-2,
+    ranseed = 1234
+  )
+  param_info <- list(
+    rB = list(lb = 0, ub = 1, default = 0.1)
+  )
+  forced_param_values <- c(Bmax = 7)
+
+  # major param not defined
+  step <- list(
+    list(
+      candidate_param = c("rB"),
+      obs_var = c("biomass")
+    )
+  )
+  expect_error(
+    suppressWarnings(estim_param(
+      obs_list = obs_synth,
+      crit_function = crit_ols,
+      model_function = toymodel_wrapper,
+      model_options = model_options,
+      optim_options = optim_options,
+      param_info = param_info,
+      forced_param_values = forced_param_values,
+      step = step,
+      out_dir = tempdir()
+    )),
+    regexp = "major_param"
+  )
+
+  # No major and no candidate
+  step <- list(
+    list(
+      major_param = NULL,
+      obs_var = c("biomass")
+    )
+  )
+  expect_error(
+    suppressWarnings(estim_param(
+      obs_list = obs_synth,
+      crit_function = crit_ols,
+      model_function = toymodel_wrapper,
+      model_options = model_options,
+      optim_options = optim_options,
+      param_info = param_info,
+      forced_param_values = forced_param_values,
+      step = step,
+      out_dir = tempdir()
+    )),
+    regexp = "major_param"
+  )
+
+  # major param set to NULL
+  step <- list(
+    list(
+      major_param = NULL,
+      candidate_param = c("rB"),
+      obs_var = c("biomass")
+    )
+  )
+  res_final <- estim_param(
+    obs_list = obs_synth,
+    crit_function = crit_ols,
+    model_function = toymodel_wrapper,
+    model_options = model_options,
+    optim_options = optim_options,
+    param_info = param_info,
+    forced_param_values = forced_param_values,
+    step = step,
+    out_dir = tempdir()
+  )
+  expect_equal(res_final$final_values[["rB"]],
+    param_true_values[["rB"]],
+    tolerance = param_true_values[["rB"]] * 1e-2
   )
 })
