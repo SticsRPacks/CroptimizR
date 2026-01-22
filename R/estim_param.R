@@ -705,44 +705,44 @@ fill_step_info <- function(step, mc, env) {
 #'
 #' @param step A list containing the characteristics of a given step.
 #'
-#' @param istep The index of the step in the list of steps.
+#' @param step_name The name of the step.
 #'
 #' @return The validated step with possibly updated information.
 #'
 #' @keywords internal
-validate_step <- function(step, istep) {
+validate_step <- function(step, step_name) {
   ## obs_list
   if (!is.obs(step$obs_list)) {
-    stop(paste("Step", names(step)[istep], ": Incorrect format for argument obs_list."))
+    stop(paste("Step", step_name, ": Incorrect format for argument obs_list."))
   }
 
   ## crit_function
   if (!is.function(step$crit_function)) {
-    stop(paste("Step", names(step)[istep], ": Incorrect format for argument crit_function. Should be a function."))
+    stop(paste("Step", step_name, ": Incorrect format for argument crit_function. Should be a function."))
   }
 
   ## model_function
   if (!is.function(step$model_function)) {
-    stop(paste("Step", names(step)[istep], ": Incorrect format for argument model_function. Should be a function."))
+    stop(paste("Step", step_name, ": Incorrect format for argument model_function. Should be a function."))
   }
 
   ## optim_method
   if (!is.character(step$optim_method)) {
-    stop(paste("Step", names(step)[istep], ": Incorrect format for argument optim_method. Should be of type character and contain the name of the parameter estimation method to use."))
+    stop(paste("Step", step_name, ": Incorrect format for argument optim_method. Should be of type character and contain the name of the parameter estimation method to use."))
   }
 
   ## param_info
   if (!is.list(step$param_info)) {
-    stop(paste("Step", names(step)[istep], ": Incorrect format for argument param_info. Should be a list."))
+    stop(paste("Step", step_name, ": Incorrect format for argument param_info. Should be a list."))
   } else if (!all(is.element(c("lb", "ub"), names(step$param_info))) &&
     !all(sapply(step$param_info, function(x) all(is.element(c("lb", "ub"), names(x)))))) {
-    stop(paste("Step", names(step)[istep], ": Incorrect format for argument param_info. Should contain 'lb' and 'ub' vectors."))
+    stop(paste("Step", step_name, ": Incorrect format for argument param_info. Should contain 'lb' and 'ub' vectors."))
   }
 
   ## Handling of `sit_list` in param_info
   if (any(sapply(step$param_info, function(x) is.element("sit_list", names(x))))) {
     if (!all(sapply(step$param_info, function(x) is.element("sit_list", names(x))))) {
-      stop(paste("Step", names(step)[istep], ": `sit_list` is defined for at least one parameter in param_info but not for all."))
+      stop(paste("Step", step_name, ": `sit_list` is defined for at least one parameter in param_info but not for all."))
     }
 
     step$param_info <- lapply(step$param_info, function(x) {
@@ -755,12 +755,12 @@ validate_step <- function(step, istep) {
   ## forced_param_values
   if (!is.null(step$forced_param_values)) {
     if (!is.vector(step$forced_param_values)) {
-      stop(paste("Step", names(step)[istep], ": Incorrect format for argument forced_param_values, should be a vector."))
+      stop(paste("Step", step_name, ": Incorrect format for argument forced_param_values, should be a vector."))
     }
     if (any(names(step$forced_param_values) %in% setdiff(step$param, step$candidate_param))) {
       tmp <- intersect(names(step$forced_param_values), setdiff(step$param, step$candidate_param))
       warning(paste(
-        "Step", names(step)[istep], ": The following parameters are defined both in forced_param_values and param_info",
+        "Step", step_name, ": The following parameters are defined both in forced_param_values and param_info",
         "arguments of estim_param function while they should not (a parameter cannot",
         "be both forced and estimated except if it is part of the `candidate` parameters):",
         paste(tmp, collapse = ","),
@@ -779,14 +779,14 @@ validate_step <- function(step, istep) {
   } else if (is.list(step$info_crit_func)) {
     step$info_crit_list <- step$info_crit_func
   } else if (!is.null(step$info_crit_func)) {
-    stop(paste("Step", names(step)[istep], ": Argument info_crit_func should be NULL, a function, or a list of functions."))
+    stop(paste("Step", step_name, ": Argument info_crit_func should be NULL, a function, or a list of functions."))
   }
 
   if (!is.null(step$info_crit_func)) {
     sapply(step$info_crit_list, function(x) {
       if ((!is.function(x)) || (is.null(x()$name))) {
         stop(paste(
-          "Step", names(step)[istep], ": info_crit_func argument may be badly defined:\n",
+          "Step", step_name, ": info_crit_func argument may be badly defined:\n",
           "The information functions should return a named list including an element called 'name' containing the name of the function when called without arguments."
         ))
       }
@@ -794,13 +794,18 @@ validate_step <- function(step, istep) {
   }
   if (length(step$info_crit_list) == 0) step$info_crit_list <- NULL
 
+  ## Check major_param is an element of step (although it can be NULL)
+  if (!"major_param" %in% names(step)) {
+    stop(paste("Step", step_name, ": major_param argument must be provided in step definition (if this step does not have a major parameter, set major_param to NULL)."))
+  }
+
   ## candidate_param
   if (!is.null(step$candidate_param) && is.null(step$info_crit_list)) {
-    stop(paste("Step", names(step)[istep], ": The argument candidate_param can only be used if info_crit_list is provided and compatible with crit_function."))
+    stop(paste("Step", step_name, ": The argument candidate_param can only be used if info_crit_list is provided and compatible with crit_function."))
   }
   if (!all(step$candidate_param %in% get_params_names(step$param_info, short_list = TRUE))) {
     stop(paste(
-      "Step", names(step)[istep], ": candidate parameter(s)",
+      "Step", step_name, ": candidate parameter(s)",
       paste(setdiff(
         step$candidate_param,
         get_params_names(step$param_info, short_list = TRUE)
@@ -809,9 +814,14 @@ validate_step <- function(step, istep) {
     ))
   }
 
+  ## Check there is at least one major or one candidate per step
+  if (is.null(step$major_param) && is.null(step$candidate_param)) {
+    stop(paste("Step", step_name, ": At least one of major_param or candidate_param must be provided in step definition."))
+  }
+
   ## weight
   if (!is.function(step$weight) && !is.null(step$weight)) {
-    stop(paste("Step", names(step)[istep], ": Incorrect format for argument weight: should be a function or NULL."))
+    stop(paste("Step", step_name, ": Incorrect format for argument weight: should be a function or NULL."))
   }
 
   return(step)
@@ -827,8 +837,35 @@ validate_step <- function(step, istep) {
 #' @keywords internal
 validate_steps <- function(step_list) {
   step <- lapply(seq_along(step_list), function(i) {
-    validate_step(step_list[[i]], i)
+    validate_step(step_list[[i]], names(step_list)[i])
   })
   names(step) <- names(step_list)
+  ## Check that there are no major params that appear in different steps, if so, give the list of duplicated ones
+  all_major_param <- unlist(lapply(step, function(x) x$major_param))
+  duplicated_major_param <- all_major_param[duplicated(all_major_param)]
+  if (length(duplicated_major_param) > 0) {
+    stop(paste(
+      "The following major parameter(s) appear in different steps, which is not allowed:",
+      paste(unique(duplicated_major_param), collapse = ", ")
+    ))
+  }
+  ## Check that there are no candidate params that appear in different steps, if so, give the list of duplicated ones
+  all_candidate_param <- unlist(lapply(step, function(x) x$candidate_param))
+  duplicated_candidate_param <- all_candidate_param[duplicated(all_candidate_param)]
+  if (length(duplicated_candidate_param) > 0) {
+    stop(paste(
+      "The following candidate parameter(s) appear in different steps, which is not allowed:",
+      paste(unique(duplicated_candidate_param), collapse = ", ")
+    ))
+  }
+  ## Check that there are no common params between major and candidate params over all steps
+  common_param <- intersect(all_major_param, all_candidate_param)
+  if (length(common_param) > 0) {
+    stop(paste(
+      "The following parameter(s) are defined both as major and candidate parameters, which is not allowed:",
+      paste(common_param, collapse = ", ")
+    ))
+  }
+
   return(step)
 }
