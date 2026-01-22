@@ -369,7 +369,8 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
     } else {
       crt_candidates <- oblig_param_list
     }
-    count <- 1
+    i_selection_step <- 1
+    i_candidate <- 1
     param_selection_steps <- NULL
     method_description <- optim_switch(
       optim_method = step[[istep]]$optim_method,
@@ -393,8 +394,9 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
         if (length(crt_candidates) > length(oblig_param_list)) {
           param_selection_step_name <- paste0(
             names(step)[istep], ".Candidate",
-            count - 1
+            i_candidate
           )
+          i_candidate <- i_candidate + 1
         } else {
           param_selection_step_name <- paste0(
             names(step)[istep], ".Major(s)"
@@ -437,7 +439,7 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
       ## Initialize parameters
       ## nb_rep may be different for the different parameter selection steps
       ## ... quite ugly ... should be improved ...
-      init_values_nb <- method_description$init_values_nb[min(length(method_description$init_values_nb), count)]
+      init_values_nb <- method_description$init_values_nb[min(length(method_description$init_values_nb), i_selection_step)]
       param_info_cur <- complete_init_values(param_info_cur,
         nb_values = init_values_nb,
         satisfy_par_const = step[[istep]]$satisfy_par_const
@@ -466,7 +468,7 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
       if (param_selection_activated) {
         out_dir_cur_optim <- file.path(
           out_dir_cur_step,
-          paste0("param_select_step", count)
+          paste0("param_select_step", i_selection_step)
         )
       } else {
         out_dir_cur_optim <- out_dir_cur_step
@@ -528,7 +530,7 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
         if (res_select_param$selected) {
           res[[istep]] <- res_tmp
         }
-        count <- count + 1
+        i_selection_step <- i_selection_step + 1
       } else {
         crt_candidates <- NULL
         res[[istep]] <- res_tmp
@@ -614,6 +616,9 @@ fill_step_info <- function(step, mc, env) {
   # Check step format
   if (is.null(step)) {
     step <- list(list())
+    flag_null_step <- TRUE
+  } else {
+    flag_null_step <- FALSE
   }
   if (!is.list(step)) {
     stop("Incorrect format for argument step. Should be a list.")
@@ -621,6 +626,13 @@ fill_step_info <- function(step, mc, env) {
   if (!all(sapply(step, function(x) is.list(x)))) {
     stop("Incorrect format for argument step. Should be a list of lists.")
   }
+  # Initialize the names of the steps if not yet defined
+  if (is.null(names(step))) {
+    names(step) <- paste0("Step", seq_along(step))
+  } else if (length(names(step)) != length(step)) {
+    stop("Incorrect format for argument step. Should be a list of lists with names for each step (or without any name).")
+  }
+
   # Gather and evaluate estim_param arguments (both given and default values)
   arg_names <- names(mc[-1]) # remove the function name
   arg_names <- setdiff(arg_names, "step") # remove step as it is handled separately
@@ -663,7 +675,9 @@ fill_step_info <- function(step, mc, env) {
         }
       }
     }
-    if (!"major_param" %in% names(x)) x$major_param <- setdiff(get_params_names(x$param_info, short_list = TRUE), x$candidate_param)
+    if (!"major_param" %in% names(x) && flag_null_step) {
+      x$major_param <- setdiff(get_params_names(x$param_info, short_list = TRUE), x$candidate_param)
+    }
 
     # Filter observations if necessary
     if (!identical(x[["obs_var"]], NULL)) {
@@ -681,15 +695,6 @@ fill_step_info <- function(step, mc, env) {
 
     return(x)
   })
-
-  # Initialize the names of the steps if not yet defined
-  if (is.null(names(step))) {
-    if (length(step) > 1) {
-      names(step) <- paste0("Step", seq_along(step))
-    }
-  } else if (length(names(step)) != length(step)) {
-    stop("Incorrect format for argument step. Should be a list of lists with names for each step (or without any name).")
-  }
 
   return(step)
 }

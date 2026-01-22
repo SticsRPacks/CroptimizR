@@ -41,6 +41,8 @@ select_param_FwdRegAgMIP <- function(oblig_param_list, add_param_list, crt_list,
   crt_info_crit <- tail(info_crit_values, 1)
   if (length(info_crit_values) > 1) {
     prev_info_crit <- head(info_crit_values, length(info_crit_values) - 1)
+  } else {
+    prev_info_crit <- Inf
   }
 
   cat(
