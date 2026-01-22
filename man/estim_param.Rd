@@ -6,9 +6,9 @@
 \usage{
 estim_param(
   obs_list,
-  crit_function = crit_log_cwss,
   model_function,
   model_options = NULL,
+  crit_function = crit_log_cwss,
   optim_method = "nloptr.simplex",
   optim_options = NULL,
   param_info,
@@ -21,11 +21,11 @@ estim_param(
   transform_sim = NULL,
   satisfy_par_const = NULL,
   var_to_simulate = NULL,
-  info_level = 1,
   info_crit_func = list(CroptimizR::AICc, CroptimizR::AIC, CroptimizR::BIC),
   weight = NULL,
   step = NULL,
   out_dir = getwd(),
+  info_level = 1,
   var = lifecycle::deprecated()
 )
 }
@@ -38,15 +38,15 @@ the variable is not observed at the given date.
 See details section for more information on the list of observations actually
 used during the parameter estimation procedure.}
 
-\item{crit_function}{Function implementing the criterion to optimize
-(optional, see default value in the function signature). See
-\href{https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html}{here}
-for more details about the list of proposed criteria.}
-
 \item{model_function}{Crop Model wrapper function to use.}
 
 \item{model_options}{List of options for the Crop Model wrapper (see help of
 the Crop Model wrapper function used).}
+
+\item{crit_function}{Function implementing the criterion to optimize
+(optional, see default value in the function signature). See
+\href{https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html}{here}
+for more details about the list of proposed criteria.}
 
 \item{optim_method}{Name of the parameter estimation method to use (optional,
 see default value in the function signature). For the moment, can be "simplex"
@@ -125,21 +125,6 @@ it may be useful to simulate also other variables, typically when transform_sim
 and/or transform_obs functions are used. Note however that it is
 active only if the model_function used handles this argument.}
 
-\item{info_level}{(optional) Integer that controls the level of information returned and stored
-by estim_param (in addition to the results automatically provided that depends on the method used).
-Higher code give more details.
-\itemize{
-\item \code{0} to add nothing,
-\item \code{1} to add criterion and parameters values, and constraint if satisfy_par_const is provided, for each evaluation
-(element params_and_crit in the returned list),
-\item \code{2} to add model results, after transformation if transform_sim is provided, and after intersection with observations,
-i.e. as used to compute the criterion for each evaluation (element sim_intersect in the returned list),
-\item \code{3} to add observations, after transformation if transform_obs is provided, and after intersection with simulations,
-i.e. as used to compute the criterion for each evaluation (element obs_intersect in the returned list),
-\item \code{4} to add all model wrapper results for each evaluation, and all transformations if transform_sim is provided.
-(elements sim and sim_transformed in the returned list).
-}}
-
 \item{info_crit_func}{Function (or list of functions) to compute information criteria.
 (optional, see default value in the function signature and \href{https://sticsrpacks.github.io/CroptimizR/reference/information_criteria.html}{here}
 for more details about the list of proposed information criteria.).
@@ -156,6 +141,21 @@ for the weights for the given variable or a vector of values of length the lengt
 If \code{NULL}, a single default step will be created using the \code{estim_param} arguments}
 
 \item{out_dir}{Path to the directory where the optimization results will be written. (optional, default to \code{getwd()})}
+
+\item{info_level}{(optional) Integer that controls the level of information returned and stored
+by estim_param (in addition to the results automatically provided that depends on the method used).
+Higher code give more details.
+\itemize{
+\item \code{0} to add nothing,
+\item \code{1} to add criterion and parameters values, and constraint if satisfy_par_const is provided, for each evaluation
+(element params_and_crit in the returned list),
+\item \code{2} to add model results, after transformation if transform_sim is provided, and after intersection with observations,
+i.e. as used to compute the criterion for each evaluation (element sim_intersect in the returned list),
+\item \code{3} to add observations, after transformation if transform_obs is provided, and after intersection with simulations,
+i.e. as used to compute the criterion for each evaluation (element obs_intersect in the returned list),
+\item \code{4} to add all model wrapper results for each evaluation, and all transformations if transform_sim is provided.
+(elements sim and sim_transformed in the returned list).
+}}
 
 \item{var}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} \code{var} is no
 longer supported, use \code{var_to_simulate} instead.}
@@ -282,7 +282,7 @@ For sake of simplicity, a \strong{single global} \code{param_info} list can be p
 and each step specifies explicitly which parameters are:
 \itemize{
 \item \code{major_param}: the parameters that \strong{must be estimated} at this step,
-\item \code{candidate_param} (optionnal): the parameters that are \strong{candidates for estimation}.
+\item \code{candidate_param} (optional): the parameters that are \strong{candidates for estimation}.
 }
 
 Suppose the \code{step} argument is defined as follows:

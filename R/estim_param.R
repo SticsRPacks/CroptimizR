@@ -8,15 +8,15 @@
 #' See details section for more information on the list of observations actually
 #' used during the parameter estimation procedure.
 #'
-#' @param crit_function Function implementing the criterion to optimize
-#' (optional, see default value in the function signature). See
-#' [here](https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html)
-#' for more details about the list of proposed criteria.
-#'
 #' @param model_function Crop Model wrapper function to use.
 #'
 #' @param model_options List of options for the Crop Model wrapper (see help of
 #' the Crop Model wrapper function used).
+#'
+#' @param crit_function Function implementing the criterion to optimize
+#' (optional, see default value in the function signature). See
+#' [here](https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html)
+#' for more details about the list of proposed criteria.
 #'
 #' @param optim_method Name of the parameter estimation method to use (optional,
 #' see default value in the function signature). For the moment, can be "simplex"
@@ -89,19 +89,6 @@
 #' and/or transform_obs functions are used. Note however that it is
 #' active only if the model_function used handles this argument.
 #'
-#' @param info_level (optional) Integer that controls the level of information returned and stored
-#' by estim_param (in addition to the results automatically provided that depends on the method used).
-#' Higher code give more details.
-#'   - `0` to add nothing,
-#'   - `1` to add criterion and parameters values, and constraint if satisfy_par_const is provided, for each evaluation
-#' (element params_and_crit in the returned list),
-#'   - `2` to add model results, after transformation if transform_sim is provided, and after intersection with observations,
-#' i.e. as used to compute the criterion for each evaluation (element sim_intersect in the returned list),
-#'   - `3` to add observations, after transformation if transform_obs is provided, and after intersection with simulations,
-#' i.e. as used to compute the criterion for each evaluation (element obs_intersect in the returned list),
-#'   - `4` to add all model wrapper results for each evaluation, and all transformations if transform_sim is provided.
-#' (elements sim and sim_transformed in the returned list).
-#'
 #' @param info_crit_func Function (or list of functions) to compute information criteria.
 #' (optional, see default value in the function signature and [here](https://sticsrpacks.github.io/CroptimizR/reference/information_criteria.html)
 #' for more details about the list of proposed information criteria.).
@@ -118,6 +105,19 @@
 #' If `NULL`, a single default step will be created using the `estim_param` arguments
 #'
 #' @param out_dir Path to the directory where the optimization results will be written. (optional, default to `getwd()`)
+#'
+#' @param info_level (optional) Integer that controls the level of information returned and stored
+#' by estim_param (in addition to the results automatically provided that depends on the method used).
+#' Higher code give more details.
+#'   - `0` to add nothing,
+#'   - `1` to add criterion and parameters values, and constraint if satisfy_par_const is provided, for each evaluation
+#' (element params_and_crit in the returned list),
+#'   - `2` to add model results, after transformation if transform_sim is provided, and after intersection with observations,
+#' i.e. as used to compute the criterion for each evaluation (element sim_intersect in the returned list),
+#'   - `3` to add observations, after transformation if transform_obs is provided, and after intersection with simulations,
+#' i.e. as used to compute the criterion for each evaluation (element obs_intersect in the returned list),
+#'   - `4` to add all model wrapper results for each evaluation, and all transformations if transform_sim is provided.
+#' (elements sim and sim_transformed in the returned list).
 #'
 #' @param var `r lifecycle::badge("deprecated")` `var` is no
 #'   longer supported, use `var_to_simulate` instead.
@@ -224,7 +224,7 @@
 #'   and each step specifies explicitly which parameters are:
 #'
 #'   - `major_param`: the parameters that **must be estimated** at this step,
-#'   - `candidate_param` (optionnal): the parameters that are **candidates for estimation**.
+#'   - `candidate_param` (optional): the parameters that are **candidates for estimation**.
 #'
 #'   Suppose the `step` argument is defined as follows:
 #'   ```r
@@ -263,12 +263,12 @@
 #'
 #'
 
-estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
-                        model_options = NULL, optim_method = "nloptr.simplex",
+estim_param <- function(obs_list, model_function,
+                        model_options = NULL, crit_function = crit_log_cwss, optim_method = "nloptr.simplex",
                         optim_options = NULL, param_info, forced_param_values = NULL,
                         candidate_param = NULL, situation = NULL, obs_var = NULL, transform_var = NULL, transform_obs = NULL,
                         transform_sim = NULL, satisfy_par_const = NULL,
-                        var_to_simulate = NULL, info_level = 1,
+                        var_to_simulate = NULL,
                         info_crit_func = list(
                           CroptimizR::AICc,
                           CroptimizR::AIC,
@@ -277,6 +277,7 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
                         weight = NULL,
                         step = NULL,
                         out_dir = getwd(),
+                        info_level = 1,
                         var = lifecycle::deprecated()) {
   # Managing parameter names changes between versions:
   if (rlang::has_name(optim_options, "out_dir")) {
