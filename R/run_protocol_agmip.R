@@ -2,7 +2,6 @@
 #'
 #' @inheritParams estim_param
 #'
-#' @param protocol_file_path Path to the Excel file describing the AgMIP PhaseIV protocol.
 #'
 #' @details
 #'
@@ -19,10 +18,16 @@
 #'
 #' @export
 #'
-run_protocol_agmip <- function(model_function, model_options, obs_list, optim_options = list(), protocol_file_path = NULL,
-                               out_dir = getwd(), var_to_simulate = NULL, transform_sim = NULL,
-                               transform_obs = NULL, transform_var = NULL, forced_param_values = NULL,
-                               step = NULL, param_info = NULL, info_level = 0) {
+run_protocol_agmip <- function(obs_list, model_function, model_options, optim_options = list(),
+                               param_info = NULL, forced_param_values = NULL, transform_var = NULL,
+                               transform_obs = NULL, transform_sim = NULL, satisfy_par_const = NULL,
+                               var_to_simulate = NULL,
+                               info_crit_func = list(
+                                 CroptimizR::AICc,
+                                 CroptimizR::AIC,
+                                 CroptimizR::BIC
+                               ),
+                               step, out_dir = getwd(), info_level = 0) {
   res <- NULL
   optim_options_given <- optim_options
   if (!dir.exists(out_dir)) dir.create(out_dir, recursive = TRUE)
@@ -36,8 +41,10 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
   if (!is.obs(obs_list)) {
     stop("Incorrect format for argument obs_list.")
   }
-  if (is.null(protocol_file_path) && is.null(step)) {
-    stop("Either protocol_file_path or step arguments must be provided and non null.")
+  if (is.null(step)) {
+    stop("step argument must not be null.")
+  } else {
+    steps <- step
   }
 
   cat("\nAgMIP Calibration Phase IV protocol: automatic calculation steps 6 and 7",
@@ -45,15 +52,6 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
     sep = ""
   )
 
-  # Read the excel file describing the protocol to generate the step6 list if step is not provided
-  if (is.null(step)) {
-    tmp <- load_protocol_agmip(protocol_file_path)
-    steps <- tmp$step
-    param_info <- tmp$param_info
-    forced_param_values <- tmp$forced_param_values
-  } else {
-    steps <- step
-  }
   # Prefix the steps name by "Step6." for a clearer display of the steps names.
   # In case the step has no name, names them Step6.Group1, Step6.Group2, ...
   if (is.null(names(steps))) {
@@ -136,10 +134,14 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
     optim_options = optim_options,
     param_info = param_info,
     forced_param_values = forced_param_values,
+    transform_var = transform_var,
+    transform_obs = transform_obs,
+    transform_sim = transform_sim,
+    satisfy_par_const = satisfy_par_const,
+    var_to_simulate = var_to_simulate,
+    info_crit_func = info_crit_func,
     step = steps,
     out_dir = file.path(out_dir, "AgMIP_protocol_step6"),
-    var_to_simulate = var_to_simulate, transform_sim = transform_sim,
-    transform_obs = transform_obs, transform_var = transform_var,
     info_level = info_level
   )
   if (length(steps) == 1) {
@@ -279,10 +281,13 @@ run_protocol_agmip <- function(model_function, model_options, obs_list, optim_op
     optim_options = optim_options,
     param_info = param_info_step7,
     forced_param_values = forced_param_values_step7,
+    transform_var = transform_var,
+    transform_obs = transform_obs,
+    transform_sim = transform_sim,
+    satisfy_par_const = satisfy_par_const,
+    var_to_simulate = var_to_simulate,
     weight = weight_step7,
     out_dir = file.path(out_dir, "AgMIP_protocol_step7"),
-    var_to_simulate = var_to_simulate, transform_sim = transform_sim,
-    transform_obs = transform_obs, transform_var = transform_var,
     info_level = info_level
   )
 
