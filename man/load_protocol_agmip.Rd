@@ -2,20 +2,30 @@
 % Please edit documentation in R/load_protocol.R
 \name{load_protocol_agmip}
 \alias{load_protocol_agmip}
-\title{Load the protocol description as given in xls file \code{protocol_file_path}}
+\title{Load a protocol description file for AgMIP PhaseIV calibration}
 \usage{
 load_protocol_agmip(protocol_file_path)
 }
 \arguments{
-\item{protocol_file_path}{Path to the Excel file describing the AgMIP PhaseIV protocol.}
+\item{protocol_file_path}{Character string. Path to the Excel file describing the AgMIP PhaseIV calibration protocol.}
 }
 \value{
-A list including:
+A list with the following elements:
+\describe{
+\item{step}{A list of groups, each containing major parameters, candidate parameters, and observed variables.}
+\item{param_info}{A list containing parameter bounds (\code{lb}, \code{ub}) and default/initial values (\code{init_values}, \code{default}).}
+\item{forced_param_values}{Named vector of parameter values or formulas to fix, if specified in the protocol file, otherwise NULL.}
+}
 }
 \description{
-Load the protocol description as given in xls file \code{protocol_file_path}
+Load a protocol description file for AgMIP PhaseIV calibration
 }
 \details{
-The AgMIP PhaseIV protocol is thoroughly detailed in Wallach et al., 2024
-and Wallach et al. 2025.
+Reads an AgMIP PhaseIV protocol file in Excel format and verifies its structure.
+The function loads the variables, major and candidate parameters, and optional
+constraints, and returns them in a structured list. The elements of the returned
+structure can be used directly in the run_protocol_agmip() function to automate
+the AgMIP calibration protocol.
+
+The protocol specification is detailed in Wallach et al., 2024 and Wallach et al., 2025.
 }

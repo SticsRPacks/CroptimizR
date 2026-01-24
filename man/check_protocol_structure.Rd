@@ -2,21 +2,22 @@
 % Please edit documentation in R/load_protocol.R
 \name{check_protocol_structure}
 \alias{check_protocol_structure}
-\title{Check the protocol description file structure}
+\title{Verify the structure of a protocol description file}
 \usage{
 check_protocol_structure(protocol_file_path)
 }
 \arguments{
-\item{protocol_file_path}{Path to the Excel file describing the AgMIP PhaseIV protocol.}
+\item{protocol_file_path}{Character string. Path to the protocol description file.}
 }
 \value{
-Stop if protocol structure is not as expected
+Invisibly returns TRUE if the structure is valid. Stops execution with an error otherwise.
 }
 \description{
-Check the protocol description file structure
+Verify the structure of a protocol description file
 }
 \details{
-Check that the protocol description as given in xls file \code{protocol_file_path}
-include the required sheets and columns.
+Checks that the protocol description file contains all required sheets and that each sheet
+includes the expected columns. The function is case-insensitive for sheet names.
+Stops with an informative error message if any sheet or column is missing.
 }
 \keyword{internal}

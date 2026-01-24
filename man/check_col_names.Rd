@@ -2,27 +2,27 @@
 % Please edit documentation in R/load_protocol.R
 \name{check_col_names}
 \alias{check_col_names}
-\title{Check the columns names in the protocol description file}
+\title{Verify column names in a protocol sheet}
 \usage{
-check_col_names(protocol_file_path, expected_cols, cols, sheet)
+check_col_names(protocol_file_path, expected_cols, actual_cols, sheet)
 }
 \arguments{
-\item{protocol_file_path}{Path to the Excel file describing the AgMIP PhaseIV protocol.}
+\item{protocol_file_path}{Character string. Path to the protocol description file.}
 
-\item{expected_cols}{List of expected column names for a given sheet}
+\item{expected_cols}{Character vector. List of expected column names for the given sheet.}
 
-\item{cols}{List of column names as read in the protocol description file for a given sheet}
+\item{actual_cols}{Character vector. Column names as read from the sheet in the protocol file.}
 
-\item{sheet}{Name of the sheet read in the protocol description file}
+\item{sheet}{Character string. Name of the sheet being checked.}
 }
 \value{
-Stop if column names are not as expected
+Invisibly returns TRUE if all columns are present. Stops execution with an error otherwise.
 }
 \description{
-Check the columns names in the protocol description file
+Verify column names in a protocol sheet
 }
 \details{
-Check that the columns listed in \code{expected_cols} are included in columns listed in \code{cols}
-for sheet \code{sheet}
+Checks that all columns listed in \code{expected_cols} are present in \code{actual_cols} for the specified sheet.
+If any expected columns are missing, the function stops with an informative error message.
 }
 \keyword{internal}
