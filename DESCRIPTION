@@ -59,6 +59,7 @@ Suggests:
     devtools,
     gridExtra,
     knitr,
+	openxlsx,
     rmarkdown,
     spelling,
     SticsOnR,

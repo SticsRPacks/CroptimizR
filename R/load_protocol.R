@@ -1,18 +1,22 @@
-#' @title Load the protocol description as given in xls file `protocol_file_path`
+#' @title Load a protocol description file for AgMIP PhaseIV calibration
 #'
-#' @param protocol_file_path Path to the Excel file describing the AgMIP PhaseIV protocol.
+#' @param protocol_file_path Character string. Path to the Excel file describing the AgMIP PhaseIV calibration protocol.
 #'
 #' @details
-#' The AgMIP PhaseIV protocol is thoroughly detailed in Wallach et al., 2024
-#' and Wallach et al. 2025.
+#' Reads an AgMIP PhaseIV protocol file in Excel format and verifies its structure.
+#' The function loads the variables, major and candidate parameters, and optional
+#' constraints, and returns them in a structured list. The elements of the returned
+#' structure can be used directly in the run_protocol_agmip() function to automate
+#' the AgMIP calibration protocol.
 #'
-#' @return A list including:
-#   - sitNames_corresp: correspondence between observed and simulated situation names
-#   - varNames_corresp: correspondence between simulated and observed variables names
-#   - simVar_units: units of simulated variables
-#   - param_info: bounds of parameters to estimate
-#   - default_param_values: default values of parameters to estimate and parameters to set
-#   - param_group: list of major and candidate parameters to estimate
+#' The protocol specification is detailed in Wallach et al., 2024 and Wallach et al., 2025.
+#'
+#' @return A list with the following elements:
+#'   \describe{
+#'     \item{step}{A list of groups, each containing major parameters, candidate parameters, and observed variables.}
+#'     \item{param_info}{A list containing parameter bounds (`lb`, `ub`) and default/initial values (`init_values`, `default`).}
+#'     \item{forced_param_values}{Named vector of parameter values or formulas to fix, if specified in the protocol file, otherwise NULL.}
+#'   }
 #'
 #' @importFrom readxl excel_sheets read_excel
 #' @importFrom dplyr filter
@@ -20,355 +24,283 @@
 #' @export
 #'
 load_protocol_agmip <- function(protocol_file_path) {
-  if (is.null(protocol_file_path)) {
-    return(NULL)
-  }
 
+  # Basic path check
+  if (is.null(protocol_file_path) || !is.character(protocol_file_path) || length(protocol_file_path) != 1) {
+    stop("`protocol_file_path` must be a single character string giving the path to the protocol description file.")
+  }
+  if (!file.exists(protocol_file_path)) {
+    stop(paste0("Protocol file not found: ", protocol_file_path))
+  }
+  protocol_file_path <- normalizePath(protocol_file_path, mustWork = TRUE)
+
+  # Check the protocol file structure (sheets and required columns)
   check_protocol_structure(protocol_file_path)
 
+  # Read the necessary sheets
   sheets <- readxl::excel_sheets(protocol_file_path)
 
-  # Correspondance between situation Number and name
-  sitNames_corresp_df <- readxl::read_excel(protocol_file_path, sheet = grep(tolower("situation names"), sheets))
-  sitNames_corresp <- setNames(
-    object = sitNames_corresp_df$`Situation Name`,
-    nm = sitNames_corresp_df$Number
-  )
+  # Variables
+  i <- grep("variables", tolower(sheets))
+  variables_df <- readxl::read_excel(protocol_file_path, sheet = sheets[i])
+  var_group_map <- setNames(variables_df$group, variables_df$variable)
+  groups <- unique(variables_df$group)  # order is defined here
 
-  # Correspondance between names of observed or required and simulated variables
-  variables_df <- readxl::read_excel(protocol_file_path, sheet = grep(tolower("variables"), sheets))
-  varNames_corresp_df <- variables_df %>%
-    filter(`Name of the simulated variable` != "NA", `Name of the simulated variable` != "na")
-  varNames_corresp <- setNames(
-    object = varNames_corresp_df$`Name of the simulated variable`,
-    nm = varNames_corresp_df$`Name of the observed or required variable`
-  )
-
-  # Group of the observed variables
-  tmp <- variables_df %>% filter(`Group for calibration` != "NA")
-  obsVar_group <- setNames(
-    object = tmp$`Group for calibration`,
-    nm = tmp$`Name of the observed or required variable`
-  )
-
-  # Unit of simulated variables
-  simVar_units <- setNames(
-    object = varNames_corresp_df$`Unit of the simulated variable`,
-    nm = varNames_corresp_df$`Name of the simulated variable`
-  )
-
-  # Building param_info
-  major_params_df <- readxl::read_excel(protocol_file_path,
-    sheet = grep(tolower("major parameters"), sheets)
-  )
-  if (!is.numeric(major_params_df$`default value`)) {
-    stop(paste("Default values of major parameters must be numeric. Please check file", protocol_file_path))
-  }
-  if (!is.numeric(major_params_df$`lower bound`)) {
-    stop(paste("Lower bounds of major parameters must be numeric. Please check file", protocol_file_path))
-  }
-  if (!is.numeric(major_params_df$`upper bound`)) {
-    stop(paste("Upper bounds of major parameters must be numeric. Please check file", protocol_file_path))
-  }
-  # Check variable groups
-  if (!all(major_params_df$group %in% obsVar_group)) {
-    stop(paste(
-      "Group(s)", paste(major_params_df$group[!(major_params_df$group %in% obsVar_group)],
-        collapse = ","
-      ),
-      "defined in \"major parameters\" sheet of the protocol description file, are not included in the list of groups defined in the \"variables\" sheet.",
-      "\nPlease check column \"group\" of \"major parameters\" sheet in file", protocol_file_path
-    ))
+  # Major parameters
+  i <- grep("major parameters", tolower(sheets))
+  major_params_df <- readxl::read_excel(protocol_file_path, sheet = sheets[i])
+  if (nrow(major_params_df) > 0) {
+    if (!is.numeric(major_params_df$`default value`)) stop("Default values of major parameters must be numeric.")
+    if (!is.numeric(major_params_df$`lower bound`))   stop("Lower bounds of major parameters must be numeric.")
+    if (!is.numeric(major_params_df$`upper bound`))   stop("Upper bounds of major parameters must be numeric.")
   }
 
-
-  candidate_params_df <- readxl::read_excel(protocol_file_path,
-    sheet = grep(tolower("candidate parameters"), sheets)
-  )
-  if (!is.numeric(candidate_params_df$`default value`)) {
-    stop(paste("Default values of candidate parameters must be numeric. Please check file", protocol_file_path))
-  }
-  if (!is.numeric(candidate_params_df$`lower bound`)) {
-    stop(paste("Lower bounds of candidate parameters must be numeric. Please check file", protocol_file_path))
-  }
-  if (!is.numeric(candidate_params_df$`upper bound`)) {
-    stop(paste("Upper bounds of candidate parameters must be numeric. Please check file", protocol_file_path))
-  }
-  if (any(grepl(tolower("parameters to fix or calculate"), sheets))) {
-    constraints_df <- readxl::read_excel(protocol_file_path,
-      sheet = grep(tolower("parameters to fix or calculate"), sheets)
-    )
-  } else {
-    constraints_df <- NULL
-  }
-  forced_param_values <- setNames(
-    object = constraints_df$`value or formula`,
-    nm = constraints_df$`name of the parameter`
-  )
-
-  # Check variable groups
-  if (!all(candidate_params_df$group %in% obsVar_group)) {
-    stop(paste(
-      "Group(s)", paste(candidate_params_df$group[!(candidate_params_df$group %in% obsVar_group)],
-        collapse = ","
-      ),
-      "defined in \"candidate parameters\" sheet of the protocol description file, are not included in the list of groups defined in the \"variables\" sheet.",
-      "\nPlease check column \"group\" of \"candidate parameters\" sheet in file", protocol_file_path
-    ))
+  # Candidate parameters
+  i <- grep("candidate parameters", tolower(sheets))
+  candidate_params_df <- readxl::read_excel(protocol_file_path, sheet = sheets[i])
+  if (nrow(candidate_params_df) > 0) {
+    if (!is.numeric(candidate_params_df$`default value`)) stop("Default values of candidate parameters must be numeric.")
+    if (!is.numeric(candidate_params_df$`lower bound`))   stop("Lower bounds of candidate parameters must be numeric.")
+    if (!is.numeric(candidate_params_df$`upper bound`))   stop("Upper bounds of candidate parameters must be numeric.")
   }
 
-
-  # Check default values and bounds
-  if (any(major_params_df$`default value` < major_params_df$`lower bound` |
-    major_params_df$`default value` > major_params_df$`upper bound`)) {
-    stop(paste(
-      "Default value of parameter(s))",
-      paste(major_params_df$`name of the parameter`[major_params_df$`default value` < major_params_df$`lower bound` | major_params_df$`default value` > major_params_df$`upper bound`],
-        collapse = ","
-      ),
-      "out of bounds. Please check default values and bounds of major parameters in file", protocol_file_path
-    ))
-  }
-  if (any(candidate_params_df$`default value` < candidate_params_df$`lower bound` |
-    candidate_params_df$`default value` > candidate_params_df$`upper bound`)) {
-    stop(paste(
-      "Default value of parameter(s))",
-      paste(candidate_params_df$`name of the parameter`[candidate_params_df$`default value` < candidate_params_df$`lower bound` | candidate_params_df$`default value` > candidate_params_df$`upper bound`],
-        collapse = ","
-      ),
-      "out of bounds. Please check default values and bounds of candidate parameters in file", protocol_file_path
-    ))
-  }
-  if (any(major_params_df$`lower bound` >= major_params_df$`upper bound`)) {
-    stop(paste(
-      "Bounds of parameter(s))",
-      paste(major_params_df$`name of the parameter`[major_params_df$`lower bound` >= major_params_df$`upper bound`],
-        collapse = ","
-      ),
-      "are not well defined (lower bound >= upper bound. Please check bounds of major parameters in file", protocol_file_path
-    ))
-  }
-  if (any(candidate_params_df$`lower bound` >= candidate_params_df$`upper bound`)) {
-    stop(paste(
-      "Bounds of parameter(s))",
-      paste(candidate_params_df$`name of the parameter`[candidate_params_df$`lower bound` >= candidate_params_df$`upper bound`],
-        collapse = ","
-      ),
-      "are not well defined (lower bound >= upper bound. Please check bounds of candidate parameters in file", protocol_file_path
-    ))
-  }
-
-  param_info <- list(
-    lb = setNames(
-      object = c(
-        major_params_df$`lower bound`,
-        candidate_params_df$`lower bound`
-      ),
-      nm = c(
-        major_params_df$`name of the parameter`,
-        candidate_params_df$`name of the parameter`
-      )
-    ),
-    ub = setNames(
-      object = c(
-        major_params_df$`upper bound`,
-        candidate_params_df$`upper bound`
-      ),
-      nm = c(
-        major_params_df$`name of the parameter`,
-        candidate_params_df$`name of the parameter`
-      )
-    ),
-    init_values = setNames(
-      object = c(
-        major_params_df$`default value`,
-        candidate_params_df$`default value`
-      ),
-      nm = c(
-        major_params_df$`name of the parameter`,
-        candidate_params_df$`name of the parameter`
-      )
-    ),
-    default = setNames(
-      object = c(
-        major_params_df$`default value`,
-        candidate_params_df$`default value`
-      ),
-      nm = c(
-        major_params_df$`name of the parameter`,
-        candidate_params_df$`name of the parameter`
-      )
-    )
-  )
-
-  # Parameters per group of observed variables
-  param_group <- lapply(unique(major_params_df$group), function(x) {
-    res <- list(
-      obligatory = filter(major_params_df, group == x)$`name of the parameter`,
-      candidates = filter(candidate_params_df, group == x)$`name of the parameter`
-    )
-    if (length(res$candidates) == 0) {
-      res$candidates <- NULL
+  # Check that groups are known
+  if (nrow(major_params_df) > 0) {
+    unknown_groups <- setdiff(unique(major_params_df$group), groups)
+    if (length(unknown_groups) > 0) {
+      stop(paste0(
+        "The following group(s) defined in sheet 'major parameters' are not present in sheet 'variables': ",
+        paste(unknown_groups, collapse = ", ")
+      ))
     }
-    return(res)
-  })
-  names(param_group) <- unique(major_params_df$group)
-  param_group <- param_group[intersect(unique(obsVar_group), names(param_group))] # use ordering of the groups as defined in tab Variables
+  }
+  if (nrow(candidate_params_df) > 0) {
+    unknown_groups <- setdiff(unique(candidate_params_df$group), groups)
+    if (length(unknown_groups) > 0) {
+      stop(paste0(
+        "The following group(s) defined in sheet 'candidate parameters' are not present in sheet 'variables': ",
+        paste(unknown_groups, collapse = ", ")
+      ))
+    }
+  }
 
-  # Check protocol content
-  check_protocol_content(
-    protocol_file_path, variables_df, varNames_corresp,
-    simVar_units, param_group,
-    obsVar_group, sitNames_corresp
+  # Read constraints if present
+  forced_param_values <- NULL
+  if (any(grepl("parameters to fix or calculate", tolower(sheets)))) {
+    i <- grep("parameters to fix or calculate", tolower(sheets))
+    constraints_df <- readxl::read_excel(protocol_file_path, sheet = sheets[i])
+    if (nrow(constraints_df) > 0) {
+      forced_param_values <- setNames(constraints_df$`value or formula`, constraints_df$parameter)
+    }
+  }
+
+  # Bounds & default checks (only if rows exist)
+  if (nrow(major_params_df) > 0) {
+    idx <- which(major_params_df$`default value` < major_params_df$`lower bound` |
+                   major_params_df$`default value` > major_params_df$`upper bound`)
+    if (length(idx) > 0) {
+      stop(paste0(
+        "Default value out of bounds for major parameter(s): ",
+        paste(major_params_df$parameter[idx], collapse = ", "),
+        ". Please check default value, lower bound and upper bound."
+      ))
+    }
+
+    idx <- which(major_params_df$`lower bound` >= major_params_df$`upper bound`)
+    if (length(idx) > 0) {
+      stop(paste0(
+        "Invalid bounds for major parameter(s): ",
+        paste(major_params_df$parameter[idx], collapse = ", "),
+        ". Lower bound is greater than or equal to upper bound."
+      ))
+    }
+  }
+
+  if (nrow(candidate_params_df) > 0) {
+    idx <- which(candidate_params_df$`default value` < candidate_params_df$`lower bound` |
+                   candidate_params_df$`default value` > candidate_params_df$`upper bound`)
+    if (length(idx) > 0) {
+      stop(paste0(
+        "Default value out of bounds for candidate parameter(s): ",
+        paste(candidate_params_df$parameter[idx], collapse = ", "),
+        ". Please check default value, lower bound and upper bound."
+      ))
+    }
+
+    idx <- which(candidate_params_df$`lower bound` >= candidate_params_df$`upper bound`)
+    if (length(idx) > 0) {
+      stop(paste0(
+        "Invalid bounds for candidate parameter(s): ",
+        paste(candidate_params_df$parameter[idx], collapse = ", "),
+        ". Lower bound is greater than or equal to upper bound."
+      ))
+    }
+  }
+
+  # Build param_info
+  param_info <- list(
+    lb = setNames(c(major_params_df$`lower bound`, candidate_params_df$`lower bound`),
+                  c(major_params_df$parameter, candidate_params_df$parameter)),
+    ub = setNames(c(major_params_df$`upper bound`, candidate_params_df$`upper bound`),
+                  c(major_params_df$parameter, candidate_params_df$parameter)),
+    init_values = setNames(c(major_params_df$`default value`, candidate_params_df$`default value`),
+                           c(major_params_df$parameter, candidate_params_df$parameter)),
+    default = setNames(c(major_params_df$`default value`, candidate_params_df$`default value`),
+                       c(major_params_df$parameter, candidate_params_df$parameter))
   )
 
-  # Define step structure
-  step <- lapply(names(param_group), function(x) {
-    res <- list(
-      param = param_group[[x]]$obligatory,
-      candidate_param = param_group[[x]]$candidates,
-      obs_var = varNames_corresp[names(obsVar_group)[obsVar_group == x]]
-    )
-    # if (is.null(res$candidate_param)) {
-    #   res$candidate_param <- character(0)
-    # }
-    return(res)
-  })
-  names(step) <- names(param_group)
+  # Build step structure
+  step <- lapply(groups, function(group) {
 
-  return(list(step = step, param_info = param_info, forced_param_values = forced_param_values))
+    major <- if (nrow(major_params_df) > 0) major_params_df$parameter[major_params_df$group == group] else NULL
+    if (length(major) == 0) major <- NULL
+
+    candidate <- if (nrow(candidate_params_df) > 0) candidate_params_df$parameter[candidate_params_df$group == group] else NULL
+    if (length(candidate) == 0) candidate <- NULL
+
+    if (is.null(major) && is.null(candidate)) {
+      stop(paste0(
+        "Group '", group,
+        "' has neither major nor candidate parameters. Each group must have at least one of the two (major OR candidate parameters, not necessarily both)."
+      ))
+    }
+
+    obs <- names(var_group_map)[var_group_map == group]
+
+    list(
+      major_param = major,
+      candidate_param = candidate,
+      obs_var = obs
+    )
+  })
+  names(step) <- groups
+
+  # Return the result
+  list(
+    step = step,
+    param_info = param_info,
+    forced_param_values = forced_param_values
+  )
 }
 
-#' @title Check the protocol description file structure
+#' @title Verify the structure of a protocol description file
 #'
-#' @inheritParams load_protocol_agmip
+#' @param protocol_file_path Character string. Path to the protocol description file.
 #'
 #' @details
-#'   Check that the protocol description as given in xls file `protocol_file_path`
-#'   include the required sheets and columns.
+#' Checks that the protocol description file contains all required sheets and that each sheet
+#' includes the expected columns. The function is case-insensitive for sheet names.
+#' Stops with an informative error message if any sheet or column is missing.
 #'
-#' @return Stop if protocol structure is not as expected
+#' @return Invisibly returns TRUE if the structure is valid. Stops execution with an error otherwise.
 #'
 #' @importFrom readxl excel_sheets read_excel
 #'
 #' @keywords internal
 #'
 check_protocol_structure <- function(protocol_file_path) {
+
+  # Verify that the file exists
+  if (!file.exists(protocol_file_path)) {
+    stop(paste0("Protocol file not found: ", protocol_file_path))
+  }
+
+  # Get the available sheets
   sheets <- readxl::excel_sheets(protocol_file_path)
-  expected_sheets <- c(
-    "variables", "major parameters", "candidate parameters",
-    "parameters to fix or calculate", "situation names"
+  sheets_lower <- tolower(sheets)
+
+  # Mandatory sheets
+  mandatory_sheets <- c(
+    "variables",
+    "major parameters",
+    "candidate parameters"
   )
-  if (!all(sapply(expected_sheets, function(x) {
-    tolower(x) %in% tolower(expected_sheets)
-  }))) {
+
+  # Optional sheets
+  optional_sheets <- c(
+    "parameters to fix or calculate"
+  )
+
+  # Check that all mandatory sheets exist
+  missing_sheets <- setdiff(mandatory_sheets, sheets_lower)
+  if (length(missing_sheets) > 0) {
     stop(paste0(
-      "Sheet(s) \"", paste(setdiff(tolower(expected_sheets), tolower(sheets)), collapse = "\", \""),
-      "\" not found in ", protocol_file_path, "\nPlease add it (them)."
+      "Sheet(s) missing in protocol file: \"",
+      paste(missing_sheets, collapse = "\", \""),
+      "\" in ", protocol_file_path,
+      "\nPlease add the missing sheet(s)."
     ))
   }
 
+  # Expected columns for each sheet
   expected_cols_ls <- list(
-    `variables` = c("Name of the observed or required variable", "Name of the simulated variable"),
-    `major parameters` = c("name of the parameter", "group", "default value", "lower bound", "upper bound"),
-    `candidate parameters` = c("name of the parameter", "group", "default value", "lower bound", "upper bound"),
-    `parameters to fix or calculate` = c("name of the parameter", "value or formula"),
-    `situation names` = c("Number", "Situation Name")
+    `variables` = c("variable", "group"),
+    `major parameters` = c("parameter", "group", "default value", "lower bound", "upper bound"),
+    `candidate parameters` = c("parameter", "group", "default value", "lower bound", "upper bound"),
+    `parameters to fix or calculate` = c("parameter", "value or formula")
   )
+
+  # Sheets to check = mandatory ones + optional ones that are present
+  sheets_to_check <- c(
+    mandatory_sheets,
+    intersect(optional_sheets, sheets_lower)
+  )
+
+  # Verify columns in each sheet
   invisible(
-    lapply(names(expected_cols_ls), function(x) {
-      df <- readxl::read_excel(protocol_file_path, sheet = grep(tolower(x), sheets))
-      check_col_names(protocol_file_path, expected_cols_ls[[x]], names(df), x)
+    lapply(sheets_to_check, function(sheet_name) {
+
+      # Find the actual sheet (case-insensitive)
+      idx <- which(sheets_lower == sheet_name)
+      if (length(idx) != 1) {
+        stop(paste0(
+          "Sheet '", sheet_name, "' not found or ambiguous in file ", protocol_file_path
+        ))
+      }
+
+      # Read the sheet
+      df <- readxl::read_excel(protocol_file_path, sheet = sheets[idx])
+
+      # Check the columns
+      check_col_names(
+        protocol_file_path,
+        expected_cols_ls[[sheet_name]],
+        names(df),
+        sheet_name
+      )
     })
   )
+
+  invisible(TRUE)
 }
 
-#' @title Check the columns names in the protocol description file
+#' @title Verify column names in a protocol sheet
 #'
-#' @inheritParams load_protocol_agmip
+#' @param protocol_file_path Character string. Path to the protocol description file.
 #'
-#' @param expected_cols List of expected column names for a given sheet
+#' @param expected_cols Character vector. List of expected column names for the given sheet.
 #'
-#' @param cols List of column names as read in the protocol description file for a given sheet
+#' @param actual_cols Character vector. Column names as read from the sheet in the protocol file.
 #'
-#' @param sheet Name of the sheet read in the protocol description file
+#' @param sheet Character string. Name of the sheet being checked.
 #'
 #' @details
-#' Check that the columns listed in `expected_cols` are included in columns listed in `cols`
-#' for sheet `sheet`
+#' Checks that all columns listed in `expected_cols` are present in `actual_cols` for the specified sheet.
+#' If any expected columns are missing, the function stops with an informative error message.
 #'
-#' @return Stop if column names are not as expected
-#'
-#' @keywords internal
-#'
-check_col_names <- function(protocol_file_path, expected_cols, cols, sheet) {
-  if (!all(sapply(expected_cols, function(x) {
-    x %in% cols
-  }))) {
-    stop(paste0(
-      "Column(s) \"", paste(setdiff(expected_cols, cols), collapse = "\", \""),
-      "\" not found in sheet \"", sheet, "\" of file ",
-      protocol_file_path, "\nPlease add it (them)."
-    ))
-  }
-}
-
-#' @title Check the content of a protocol description file
-#'
-#' @inheritParams load_protocol_agmip
-#'
-#' @param variables_df to be defined ...
-#'
-#' @param varNames_corresp to be defined ...
-#'
-#' @param simVar_units to be defined ...
-#'
-#' @param param_group to be defined ...
-#'
-#' @param obsVar_group to be defined ...
-#'
-#' @param sitNames_corresp to be defined ...
-#'
-#' @return Stop if the content of the protocol description file is not as expected
+#' @return Invisibly returns TRUE if all columns are present. Stops execution with an error otherwise.
 #'
 #' @keywords internal
 #'
-check_protocol_content <- function(protocol_file_path, variables_df, varNames_corresp,
-                                   simVar_units, param_group,
-                                   obsVar_group, sitNames_corresp) {
-  # Check situation names were provided
-  if (any(is.na(sitNames_corresp))) {
-    stop(paste(
-      "Missing (one or several) situation name(s). Please check tab sheet \"Situation names\" in file", protocol_file_path,
-      "\nA situation name your model_wrapper is able to handle, i.e. is able to run the corresponding situation from its name, must be given for each situation number."
-    ))
-  }
-
-  # Check that there is at least one "major param" when there are candidates
-  invisible(lapply(names(param_group), function(x) {
-    if (is.null(param_group[[x]]$obligatory)) {
-      stop(paste("\"major parameters\" must be defined for group", x, "\n Please correct file", protocol_file_path))
-    }
-  }))
-
-  # Check that there is observations for the groups defined in the parameters (major)
-  invisible(lapply(names(param_group), function(x) {
-    if (!(x %in% unique(obsVar_group[names(varNames_corresp)]))) {
-      stop(paste(
-        "\"major parameters\" are defined for group", x,
-        "but there is either no observed or simulated variables defined for this group in the \"variables\" sheet.\n Please correct file", protocol_file_path
-      ))
-    }
-  }))
-
-  if (!all(sort(names(simVar_units)) == sort(varNames_corresp))) {
+check_col_names <- function(protocol_file_path, expected_cols, actual_cols, sheet) {
+  # Verify that all expected columns are present in a sheet
+  missing_cols <- setdiff(expected_cols, actual_cols)
+  if (length(missing_cols) > 0) {
     stop(paste0(
-      "Incorrect definition of simVar_units or varNames_corresp. ",
-      "Please check that they include the same variables.\n",
-      paste(setdiff(varNames_corresp, names(simVar_units)), collapse = ","),
-      " included in varNames_corresp but not in simVar_units.\n",
-      paste(setdiff(names(simVar_units), varNames_corresp), collapse = ","),
-      " included in simVar_units but not in varNames_corresp.\n"
+      "Column(s) missing in sheet '", sheet, "': \"",
+      paste(missing_cols, collapse = "\", \""),
+      "\" in file ", protocol_file_path,
+      "\nPlease add the missing column(s)."
     ))
   }
 }
