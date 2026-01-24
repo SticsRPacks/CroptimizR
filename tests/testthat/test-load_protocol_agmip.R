@@ -191,6 +191,8 @@ test_that("Constraints sheet is loaded correctly", {
 
   expect_true("p3" %in% names(res$forced_param_values))
   expect_equal(res$forced_param_values[["p3"]], "2 * p1")
+  expect_equal(compute_eq_const(res$forced_param_values, param_values = c(p1 = 2)),
+               c(p3 = 4))
 })
 
 # ------------------------------------------------------------------------
