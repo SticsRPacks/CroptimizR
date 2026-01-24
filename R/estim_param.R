@@ -682,6 +682,21 @@ fill_step_info <- function(step, mc, env) {
       x$major_param <- setdiff(get_params_names(x$param_info, short_list = TRUE), x$candidate_param)
     }
 
+    # Handle deprecation of param argument
+    if ("param" %in% names(x)) {
+      lifecycle::deprecate_warn(
+        when = "1.0.0",
+        what = "step[[i]]$param",
+        with = "step[[i]]$major_param"
+      )
+      if (is.null(x$major_param)) {
+        x$major_param <- x$param
+      } else {
+        warning("Both `param` and `major_param` are defined in a step. The `param` argument will be ignored.")
+      }
+      x$param <- NULL
+    }
+
     # Filter observations if necessary
     if (!identical(x[["obs_var"]], NULL)) {
       x$obs_list <- filter_obs(x$obs_list,
