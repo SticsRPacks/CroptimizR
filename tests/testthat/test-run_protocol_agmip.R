@@ -197,7 +197,7 @@ test_that("Basic test AgMIP protocol", {
   expect_equal(res$step7$weights$p, c(1, 1))
   expect_equal(res$step7$weights$n, c(74, 74))
 
-  # Check that initial values used for parameter estimation at step7 are equal to estimated values at end of step6 and default values
+  # Check that initial values used for parameter estimation at step6 include default values
   expect_equal(
     param_info$rB$default,
     res$step6$Step6.biomass$init_values[["rB"]][1]
@@ -206,7 +206,7 @@ test_that("Basic test AgMIP protocol", {
     param_info$h$default,
     res$step6$Step6.yield$init_values[["h"]][1]
   )
-  # Check that initial values used for parameter estimation at step7 are equal to estimated values at end of step6 and default values
+  # Check that initial values used for parameter estimation at step7 include estimated values at end of step6 and default values
   expect_equal(
     c(res$step6$final_values[["rB"]], param_info$rB$default),
     res$step7$init_values[["rB"]][c(1, 2)]
@@ -891,4 +891,70 @@ test_that("Test AgMIP protocol without param default values", {
     param_true_values[["h"]],
     tolerance = param_true_values[["h"]] * 1e-2
   )
+})
+
+# ------------------------------------------------------------------------
+
+test_that("Test AgMIP protocol with provided initial values", {
+  optim_options <- list(
+    nb_rep = 3, xtol_rel = 1e-2,
+    ranseed = 1234
+  )
+  param_info <- list(
+    rB = list(lb = 0, ub = 1, init_values = c(0.2, 0.6), default = 0.1),
+    h = list(lb = 0, ub = 1, init_values = c(0.2, 0.6), default = 0.5),
+    Bmax = list(lb = 5, ub = 15, init_values = c(6, 14), default = 7)
+  )
+  steps <- list(
+    biomass = list(
+      major_param = c("rB"),
+      candidate_param = c("Bmax"),
+      obs_var = c("biomass")
+    ),
+    yield = list(
+      major_param = c("h"),
+      obs_var = c("yield")
+    )
+  )
+
+  res <- run_protocol_agmip(
+    model_function = toymodel_wrapper,
+    model_options = model_options,
+    optim_options = optim_options,
+    obs_list = obs_synth,
+    out_dir = file.path(tempdir(), "Test10"),
+    step = steps,
+    param_info = param_info,
+    info_level = 1
+  )
+
+  # Check that estimated values for parameters are close to true values
+  expect_equal(res$final_values[["rB"]],
+               param_true_values[["rB"]],
+               tolerance = param_true_values[["rB"]] * 1e-2
+  )
+  expect_equal(res$final_values[["h"]],
+               param_true_values[["h"]],
+               tolerance = param_true_values[["h"]] * 1e-2
+  )
+
+  # Check that initial values used for parameter estimation at step6 include the ones provided by the used
+  expect_equal(
+    param_info$rB$init_values,
+    res$step6$Step6.biomass$init_values[["rB"]][1:2]
+  )
+  expect_equal(
+    param_info$h$init_values,
+    res$step6$Step6.yield$init_values[["h"]][1:2]
+  )
+  # Check that initial values used for parameter estimation at step7 include estimated values at end of step6 and default values
+  expect_equal(
+    c(res$step6$final_values[["rB"]], param_info$rB$default),
+    res$step7$init_values[["rB"]][c(1, 2)]
+  )
+  expect_equal(
+    c(res$step6$final_values[["h"]], param_info$h$default),
+    res$step7$init_values[["h"]][c(1, 2)]
+  )
+
 })
