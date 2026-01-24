@@ -28,10 +28,10 @@ plot_stats_bars <- function(stats_per_steps) {
   # Conserver l'ordre des steps tel qu'il apparait dans le data.frame
   df_long$step <- factor(df_long$step, levels = unique(stats_per_steps$step))
 
-  # Conserver l'ordre des variables tel qu'il apparait (optionnel)
+  # Conserver l'ordre des variables tel qu'il apparait
   df_long$variable <- factor(df_long$variable, levels = unique(stats_per_steps$variable))
 
-  ggplot(df_long, aes(x = variable, y = value, fill = step)) +
+  ggplot(df_long, aes(x = .data$variable, y = .data$value, fill = .data$step)) +
     geom_col(position = position_dodge(width = 0.8)) +
     facet_wrap(~statistic, ncol = 1, scales = "free_y") +
     labs(x = "Variable", y = "Value", fill = "Step") +

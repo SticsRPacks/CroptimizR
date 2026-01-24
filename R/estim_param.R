@@ -662,7 +662,9 @@ fill_step_info <- function(step, mc, env) {
       arg # keep as it if no default value
     }
   })
-  args_total <- modifyList(args_default, args_given)
+
+  args_total <- utils::modifyList(args_default, args_given)
+
   # Fill step with the arguments from estim_param if not already present
   step <- lapply(step, function(x) {
     for (arg_name in names(args_total)) {
@@ -700,14 +702,14 @@ fill_step_info <- function(step, mc, env) {
     # Filter observations if necessary
     if (!identical(x[["obs_var"]], NULL)) {
       x$obs_list <- filter_obs(x$obs_list,
-        var = x$obs_var,
-        include = TRUE
+                               var = x$obs_var,
+                               include = TRUE
       )
     }
     if (!identical(x[["situation"]], NULL)) {
       x$obs_list <- filter_obs(x$obs_list,
-        situation = x$situation,
-        include = TRUE
+                               situation = x$situation,
+                               include = TRUE
       )
     }
 

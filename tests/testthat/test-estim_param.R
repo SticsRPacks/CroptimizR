@@ -1,5 +1,7 @@
 context("Test the estim_param function using a toy model")
 
+library(testthat)
+
 # Define a toy model and its wrapper
 toymodel <- function(nb_days, rB = 0.1, Bmin = 0.1, Bmax = 10, h = 0.5, Bini = 0.01) {
   # Simulate biomass and yield with a simple logistic model
@@ -105,7 +107,7 @@ toymodel_wrapper <- function(param_values = NULL, situation,
 # Use setup() to define shared data for all tests in this file
 setup({
   # These variables will be available in all tests
-  .GlobalEnv$model_options <- tibble(
+  .GlobalEnv$model_options <- dplyr::tibble(
     situation = c("sit1_2000", "sit1_2001", "sit2_2003", "sit2_2004"),
     begin_date = as.Date(c("2000-05-01", "2001-05-12", "2003-05-05", "2004-05-15")),
     end_date = as.Date(c("2000-11-05", "2001-11-20", "2003-11-15", "2004-11-18"))

@@ -307,7 +307,7 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
                            obs = obs_transformed, stats = c("Bias2", "MSE", "rRMSE", "EF")
   ) %>%
     dplyr::mutate(step = "Default") %>%
-    dplyr::select(step, dplyr::everything(), -group, -situation)
+    dplyr::select(step, dplyr::everything(), -dplyr::any_of(c("group", "situation")))
   # Generate scatter plots from default values of parameters
   p_default <- plot(sim_default$sim_list, obs = obs_transformed, type = "scatter")
   # Save the plots in the out_dir
@@ -388,7 +388,7 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
       obs = obs_transformed, stats = c("Bias2", "MSE", "rRMSE", "EF")
     ) %>%
       dplyr::mutate(step = names(steps)[istep]) %>%
-      dplyr::select(step, dplyr::everything(), -group, -situation)
+      dplyr::select(step, dplyr::everything(), -dplyr::any_of(c("group", "situation")))
 
     # Generate scatter plots for each sub-step of step6
     p_step6[[istep]] <- plot(sim$sim_list, obs = obs_transformed, type = "scatter")
@@ -526,7 +526,7 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
                          obs = obs_transformed, stats = c("Bias2", "MSE", "rRMSE", "EF")
   ) %>%
     dplyr::mutate(step = "Step7") %>%
-    dplyr::select(step, dplyr::everything(), -group, -situation)
+    dplyr::select(step, dplyr::everything(), -dplyr::any_of(c("group", "situation")))
 
   ## Generate scatter plots from default values of parameters, estimated values after step6 and estimated values after step7
   p_step7 <- plot(sim_after_step7$sim_list, obs = obs_transformed, type = "scatter")
@@ -619,7 +619,7 @@ compute_stat_per_group <- function(stat_col, step_var_map, stats_per_var) {
   if (is.null(names(stats_per_var)) || length(names(stats_per_var)) == 0) {
     stop(paste(
       "stats_per_var must be a data frame with named columns. \n While str(stats_per_var)=",
-      paste(str(stats_per_var), collapse = ", ")
+      paste(utils::str(stats_per_var), collapse = ", ")
     ))
   }
   if (!stat_col %in% names(stats_per_var)) {

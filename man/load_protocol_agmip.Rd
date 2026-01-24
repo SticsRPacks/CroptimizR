@@ -13,7 +13,7 @@ load_protocol_agmip(protocol_file_path)
 A list with the following elements:
 \describe{
 \item{step}{A list of groups, each containing major parameters, candidate parameters, and observed variables.}
-\item{param_info}{A list containing parameter bounds (\code{lb}, \code{ub}) and default/initial values (\code{init_values}, \code{default}).}
+\item{param_info}{A list containing parameter bounds (\code{lb}, \code{ub}) and default values (\code{default}).}
 \item{forced_param_values}{Named vector of parameter values or formulas to fix, if specified in the protocol file, otherwise NULL.}
 }
 }

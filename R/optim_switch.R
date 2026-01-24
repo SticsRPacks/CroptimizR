@@ -1,10 +1,13 @@
 #' @title Call the required parameter estimation method
 #'
-#' @param optim_method see description in estim_param
-#' @param optim_options see description in estim_param
-#' @param param_info see description in estim_param
-#' @param crit_options List containing several arguments given to `estim_param`
-#'  function: `param_names`, `obs_list`, `crit_function`, `model_function`,
+#' @param ... Arguments passed to the selected parameter estimation method. Should include:
+#' `optim_method`, `optim_options`, `param_info`, `crit_options`
+#'
+#'  - optim_method see description in estim_param
+#'  - optim_options see description in estim_param
+#'  - param_info see description in estim_param
+#'  - crit_options List containing several arguments given to `estim_param` function:
+#'  `param_names`, `obs_list`, `crit_function`, `model_function`,
 #'  `model_options`, `param_info`, `transform_obs`, `transform_sim`, `out_dir`
 #' that must be passed to main_crit function by the methods wrappers.
 #'

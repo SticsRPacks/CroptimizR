@@ -39,7 +39,7 @@ wrap_nloptr <- function(optim_options, param_info, crit_options) {
   )
 
   # Merge defaults + user options (user options override defaults)
-  opts <- modifyList(defaults, optim_opts)
+  opts <- utils::modifyList(defaults, optim_opts)
   # return requested information if only optim_options is given in argument
   if (nargs() == 1 & methods::hasArg(optim_options)) {
     return(list(

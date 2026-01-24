@@ -380,7 +380,7 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
 
   lab <- "evaluations"
   if (iter_or_eval[1] == "iter") {
-    df <- filter(df, !is.na(.data$iter))
+    df <- dplyr::filter(df, !is.na(.data$iter))
     lab <- "iterations"
   }
   trans <- "identity"
@@ -389,14 +389,14 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
     if (all(df$crit > 0)) {
       trans <- "log10"
       mid <- (max(log10(df$crit)) -
-        min(log10(df$crit))) / 2 + min(log10(df$crit))
+                min(log10(df$crit))) / 2 + min(log10(df$crit))
     } else {
       warning("The criterion takes negative values, log transformation will not be done.")
       crit_log <- FALSE
     }
   }
 
-  tmp <- rbind(bounds$lb, bounds$ub, select(df, all_of(param_names)))
+  tmp <- rbind(bounds$lb, bounds$ub, dplyr::select(df, dplyr::all_of(param_names)))
   tmp[tmp == Inf | tmp == -Inf] <- NA
   minvalue <- apply(tmp, 2, min, na.rm = TRUE)
   maxvalue <- apply(tmp, 2, max, na.rm = TRUE)
@@ -409,7 +409,7 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
     p[[param_name]] <- ggplot(df, aes(
       x = !!rlang::sym(iter_or_eval[1]),
       y = !!rlang::sym(param_name),
-      color = crit
+      color = .data$crit
     )) +
       labs(
         title = paste0(
@@ -428,19 +428,19 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
 
     for (irep in unique(df$rep)) {
       p[[param_name]] <- p[[param_name]] +
-        geom_line(data = filter(df, rep == irep))
-      if (rep_label[1] == "begin_end" || rep_label[1] == "begin") {
+        geom_line(data = dplyr::filter(df, .data$rep == irep))
+      if (rep_label[1] %in% c("begin_end", "begin")) {
         p[[param_name]] <- p[[param_name]] +
-          geom_label(aes(label = rep),
-            data = filter(df, rep == irep) %>% filter(eval == min(.data$eval)),
-            size = 3
+          geom_label(aes(label = .data$rep),
+                     data = dplyr::filter(df, .data$rep == irep) %>% dplyr::filter(.data$eval == min(.data$eval)),
+                     size = 3
           )
       }
-      if (rep_label[1] == "begin_end" || rep_label[1] == "end") {
+      if (rep_label[1] %in% c("begin_end", "end")) {
         p[[param_name]] <- p[[param_name]] +
-          geom_label(aes(label = rep),
-            data = filter(df, rep == irep) %>% filter(eval == max(.data$eval)),
-            size = 3
+          geom_label(aes(label = .data$rep),
+                     data = dplyr::filter(df, .data$rep == irep) %>% dplyr::filter(.data$eval == max(.data$eval)),
+                     size = 3
           )
       }
     }
@@ -452,8 +452,8 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
     df,
     aes(
       x = .data[[iter_or_eval[1]]],
-      y = crit,
-      color = rep
+      y = .data$crit,
+      color = .data$rep
     )
   ) +
     labs(
@@ -469,13 +469,13 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
 
   for (irep in unique(df$rep)) {
     p[["criterion"]] <- p[["criterion"]] +
-      geom_line(data = filter(df, rep == irep)) +
-      geom_label(aes(label = rep),
-        data = filter(df, rep == irep) %>% filter(eval == min(.data$eval)),
-        size = 3
+      geom_line(data = dplyr::filter(df, .data$rep == irep)) +
+      geom_label(aes(label = .data$rep),
+                 data = dplyr::filter(df, .data$rep == irep) %>% dplyr::filter(.data$eval == min(.data$eval)),
+                 size = 3
       ) +
-      geom_label(aes(label = rep),
-        data = filter(df, rep == irep) %>% filter(eval == max(.data$eval))
+      geom_label(aes(label = .data$rep),
+                 data = dplyr::filter(df, .data$rep == irep) %>% dplyr::filter(.data$eval == max(.data$eval))
       )
   }
 
@@ -520,7 +520,7 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
 #'
 #' @importFrom ggplot2 ggplot aes_string theme element_text geom_point labs
 #' xlim ylim geom_path scale_y_log10
-#' @importFrom dplyr select filter %>%
+#' @importFrom dplyr select filter %>% all_of
 #'
 #' @export
 #'
