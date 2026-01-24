@@ -676,7 +676,9 @@ fill_step_info <- function(step, mc, env) {
         }
       }
     }
-    if (!"major_param" %in% names(x) && flag_null_step) {
+    # If step was not defined, define major_param as all parameters in param_info except candidate_param
+    # to keep consistence with standard use of estim_param before introducing step argument
+    if (flag_null_step) {
       x$major_param <- setdiff(get_params_names(x$param_info, short_list = TRUE), x$candidate_param)
     }
 
