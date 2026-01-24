@@ -2,7 +2,6 @@ context("Test the run_protocol_agmip function using a toy model")
 
 library(testthat)
 library(CroPlotR)
-library(tibble)
 
 # ------------------------------------------------------------------------
 
@@ -116,7 +115,7 @@ toymodel_wrapper <- function(param_values = NULL, situation,
 # Use setup() to define shared data for all tests in this file
 setup({
   # These variables will be available in all tests
-  .GlobalEnv$model_options <- tibble(
+  .GlobalEnv$model_options <- dplyr::tibble(
     situation = c("sit1_2000", "sit1_2001", "sit2_2003", "sit2_2004"),
     begin_date = as.Date(c("2000-05-01", "2001-05-12", "2003-05-05", "2004-05-15")),
     end_date = as.Date(c("2000-11-05", "2001-11-20", "2003-11-15", "2004-11-18"))
@@ -198,7 +197,16 @@ test_that("Basic test AgMIP protocol", {
   expect_equal(res$step7$weights$p, c(1, 1))
   expect_equal(res$step7$weights$n, c(74, 74))
 
-  # Check that initial values used for parameter estimation at step7 are equal to estimated values at end of step6
+  # Check that initial values used for parameter estimation at step7 are equal to estimated values at end of step6 and default values
+  expect_equal(
+    param_info$rB$default,
+    res$step6$Step6.biomass$init_values[["rB"]][1]
+  )
+  expect_equal(
+    param_info$h$default,
+    res$step6$Step6.yield$init_values[["h"]][1]
+  )
+  # Check that initial values used for parameter estimation at step7 are equal to estimated values at end of step6 and default values
   expect_equal(
     c(res$step6$final_values[["rB"]], param_info$rB$default),
     res$step7$init_values[["rB"]][c(1, 2)]
@@ -849,7 +857,7 @@ test_that("Test AgMIP protocol without param default values", {
   )
   param_info <- list(
     rB = list(lb = 0, ub = 1),
-    h = list(lb = 0, ub = 1),
+    h = list(lb = 0, ub = 1, default = 0.3),
     Bmax = list(lb = 5, ub = 15)
   )
   steps <- list(

@@ -283,23 +283,20 @@ test_that("Returned structure from load_protocol_agmip has correct fields and va
   }
 
   # Check param_info contains required fields
-  expect_named(res$param_info, c("lb", "ub", "init_values", "default"))
+  expect_named(res$param_info, c("lb", "ub", "default"))
 
   # Check all parameters are included
   all_params <- c(major$parameter, candidate$parameter)
   expect_setequal(names(res$param_info$lb), all_params)
   expect_setequal(names(res$param_info$ub), all_params)
-  expect_setequal(names(res$param_info$init_values), all_params)
   expect_setequal(names(res$param_info$default), all_params)
 
   # Check that the values match
   expect_equal(res$param_info$lb[[major$parameter]], major$`lower bound`)
   expect_equal(res$param_info$ub[[major$parameter]], major$`upper bound`)
-  expect_equal(res$param_info$init_values[[major$parameter]], major$`default value`)
   expect_equal(res$param_info$default[[major$parameter]], major$`default value`)
 
   expect_equal(res$param_info$lb[[candidate$parameter]], candidate$`lower bound`)
   expect_equal(res$param_info$ub[[candidate$parameter]], candidate$`upper bound`)
-  expect_equal(res$param_info$init_values[[candidate$parameter]], candidate$`default value`)
   expect_equal(res$param_info$default[[candidate$parameter]], candidate$`default value`)
 })

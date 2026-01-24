@@ -325,6 +325,18 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
     optim_options$nb_rep <- c(10, 5)
   }
 
+  # Define initial values for step6 if not done by the user:
+  # default values for 1st rep., the values for the other rep. and randomly sampled in estim_param
+  if (is.null(get_init_values(param_info))) {
+    default <- get_params_default(param_info)
+    if (!is.null(default)) {
+      param_info <- set_init_values(
+        param_info,
+        dplyr::bind_rows(default)
+      )
+    }
+  }
+
   res_step6 <- estim_param(
     obs_list = obs_list,
     model_function = model_function,
@@ -461,7 +473,7 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
     param_info_step7,
     dplyr::bind_rows(
       as.data.frame(t(res_step6$final_values)),
-      get_params_default(param_info)[names(res_step6$final_values)]
+      get_params_default(param_info_step7)
     )
   )
 
@@ -568,10 +580,10 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
     data.frame(
       name = names(res_step7$final_values),
       default = sapply(names(res_step7$final_values), function(x) {
-        if (is.null(default_values[[x]])) {
-          return(NA)
-        } else {
+        if (x %in% names(default_values)) {
           return(default_values[[x]])
+        } else {
+          return(NA)
         }
       }),
       step6 = res_step6$final_values,

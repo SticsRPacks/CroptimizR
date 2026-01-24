@@ -14,7 +14,7 @@
 #' @return A list with the following elements:
 #'   \describe{
 #'     \item{step}{A list of groups, each containing major parameters, candidate parameters, and observed variables.}
-#'     \item{param_info}{A list containing parameter bounds (`lb`, `ub`) and default/initial values (`init_values`, `default`).}
+#'     \item{param_info}{A list containing parameter bounds (`lb`, `ub`) and default values (`default`).}
 #'     \item{forced_param_values}{Named vector of parameter values or formulas to fix, if specified in the protocol file, otherwise NULL.}
 #'   }
 #'
@@ -143,8 +143,6 @@ load_protocol_agmip <- function(protocol_file_path) {
                   c(major_params_df$parameter, candidate_params_df$parameter)),
     ub = setNames(c(major_params_df$`upper bound`, candidate_params_df$`upper bound`),
                   c(major_params_df$parameter, candidate_params_df$parameter)),
-    init_values = setNames(c(major_params_df$`default value`, candidate_params_df$`default value`),
-                           c(major_params_df$parameter, candidate_params_df$parameter)),
     default = setNames(c(major_params_df$`default value`, candidate_params_df$`default value`),
                        c(major_params_df$parameter, candidate_params_df$parameter))
   )
