@@ -211,10 +211,10 @@ set_init_values <- function(param_info, init_values) {
     lapply(
       names(param_info),
       function(x) {
-        if (x %in% names(init_values)) {
-          param_info[[x]]$init_values <<- init_values[, x]
+        if (all(get_params_names(param_info[x]) %in% names(init_values))) {
+         param_info[[x]]$init_values <<- init_values[, get_params_names(param_info[x])]
         } else {
-          param_info[[x]]$init_values <<- NA
+         param_info[[x]]$init_values <<- NA
         }
       }
     )
