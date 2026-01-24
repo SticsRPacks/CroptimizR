@@ -1,8 +1,10 @@
 context("Test the run_protocol_agmip function using a toy model")
 
-# seems that testthat is not able to load the package automatically
-# which prevent the use of CroPlotR summary function in run_protocol_agmip
+library(testthat)
 library(CroPlotR)
+library(tibble)
+
+# ------------------------------------------------------------------------
 
 # Define a toy model and its wrapper
 toymodel <- function(nb_days, year, rB = 0.1, Bmin = 0.1, Bmax = 10, h = 0.5, Bini = 0.01) {
@@ -140,8 +142,9 @@ teardown({
   if (exists("obs_synth", envir = .GlobalEnv)) rm(obs_synth, envir = .GlobalEnv)
 })
 
-# Test the wrapper
-test_that("Wrapper OK", {
+# ------------------------------------------------------------------------
+
+test_that("Test the wrapper", {
   res <- test_wrapper(
     model_function = toymodel_wrapper,
     model_options = model_options,
@@ -151,14 +154,15 @@ test_that("Wrapper OK", {
   expect_true(all(res$test_results))
 })
 
-# Test synthetic observations
-test_that("Synthetic obs", {
+# ------------------------------------------------------------------------
+
+test_that("Test synthetic observations", {
   expect_true(CroptimizR:::is.obs(obs_synth))
 })
 
+# ------------------------------------------------------------------------
 
-# First AgMIP protocol test
-test_that("First AgMIP protocol test", {
+test_that("Basic test AgMIP protocol", {
   optim_options <- list(
     nb_rep = 3, xtol_rel = 1e-2,
     ranseed = 1234
@@ -255,6 +259,7 @@ test_that("First AgMIP protocol test", {
   )
 })
 
+# ------------------------------------------------------------------------
 
 # Same but Bmax is set as candidate in second step and with a default value far from its true value
 # so that i) in step6 the estimated value for rB compensate this error,
@@ -367,6 +372,7 @@ test_that("Test efficiency of step7 in case a parameter is estimated late in ste
   )
 })
 
+# ------------------------------------------------------------------------
 
 # Check that the weight computation is correct for complex cases such as:
 #  * use of the same variable in different steps
@@ -473,6 +479,7 @@ test_that("Check use of the same variable in different steps and obs variable us
   )
 })
 
+# ------------------------------------------------------------------------
 
 # Check that the weight computation is correct for complex cases such as:
 #  * several observed variables per group
@@ -702,6 +709,7 @@ test_that("Test using transform_sim and var", {
   )
 })
 
+# ------------------------------------------------------------------------
 
 # Test with a single step
 test_that("Single step check", {
@@ -741,9 +749,9 @@ test_that("Single step check", {
   )
 })
 
+# ------------------------------------------------------------------------
 
-# Test AgMIP protocol without major param
-test_that("Test AgMIP protocol without major param", {
+test_that("Test AgMIP protocol with major param or candidate param set to NULL", {
   optim_options <- list(
     nb_rep = 3, xtol_rel = 1e-2,
     ranseed = 1234
@@ -762,8 +770,8 @@ test_that("Test AgMIP protocol without major param", {
       obs_var = c("biomass")
     ),
     yield = list(
-      major_param = NULL,
-      candidate_param = c("h"),
+      major_param = c("h"),
+      candidate_param = NULL,
       obs_var = c("yield")
     )
   )
@@ -779,6 +787,9 @@ test_that("Test AgMIP protocol without major param", {
     forced_param_values = forced_param_values
   )
 
+  # Check that estimated parameters only include rB and h
+  expect_equal(names(res$final_values), c("rB","h"))
+
   # Check that estimated values for parameters are close to true values
   expect_equal(res$final_values[["rB"]],
     param_true_values[["rB"]],
@@ -790,9 +801,10 @@ test_that("Test AgMIP protocol without major param", {
   )
 })
 
+# ------------------------------------------------------------------------
 
-# Test with obs not used in steps and param_info for all parameters although their are not used in steps
-test_that("Test with obs not used in steps", {
+# Test obs variables included in obs_list but not used in step6 are used in step7
+test_that("Test obs variables not used in step6 are used in step7", {
   optim_options <- list(
     nb_rep = 3, xtol_rel = 1e-2,
     ranseed = 1234
@@ -827,6 +839,7 @@ test_that("Test with obs not used in steps", {
   expect_equal(res$step6$obs_var_list, "biomass")
 })
 
+# ------------------------------------------------------------------------
 
 # Test AgMIP protocol without default values for the parameters
 test_that("Test AgMIP protocol without param default values", {
