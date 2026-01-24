@@ -641,6 +641,7 @@ test_that("estim_param without major param", {
     step = step,
     out_dir = tempdir()
   )
+  expect_identical(names(res_final$final_values), "rB")
   expect_equal(res_final$final_values[["rB"]],
     param_true_values[["rB"]],
     tolerance = param_true_values[["rB"]] * 1e-2
