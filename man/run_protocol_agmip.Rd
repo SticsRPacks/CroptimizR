@@ -200,6 +200,20 @@ The remaining repetitions are initialized from parameter values randomly drawn w
 their respective bounds.
 }
 
+\subsection{Loading protocol definitions from Excel}{
+
+Protocol definitions (\code{step}, \code{param_info}, \code{forced_param_values}) can either be:
+\itemize{
+\item Created directly in R (as detailed in sections and examples below), or
+\item Loaded from an Excel file using \code{\link{load_protocol_agmip}}.
+}
+
+Helper functions \code{\link{get_agmip_protocol_template}} and \code{\link{get_agmip_protocol_example}}
+are provided to obtain a ready-to-use template or a fully worked example of an AgMIP
+calibration protocol, respectively. See the vignette \emph{agmip_calibration_protocol} for
+a complete, step-by-step workflow.
+}
+
 \subsection{Describing step6 (argument \code{step})}{
 
 The argument \code{step} is a list of lists describing the successive sub-steps to apply in step6
@@ -279,10 +293,11 @@ during step6 are re-estimated using all observed variables (WLS step).
 }
 \seealso{
 \itemize{
-\item Wallach et al. (2024) and Wallach et al. (2025) for a detailed description of the AgMIP
-calibration protocol,
-\item the \code{estim_param} function for basic parameter estimation using CroptimizR,
-\item the \code{load_protocol_agmip} function to extract \code{step} and \code{param_info} from a structured
-Excel file.
+\item \code{\link{load_protocol_agmip}} to extract \code{step}, \code{param_info} and \code{forced_param_values} from a structured Excel file,
+\item \code{\link{get_agmip_protocol_template}} and \code{\link{get_agmip_protocol_example}} to obtain
+template and example protocol files,
+\item The vignette \emph{agmip_calibration_protocol} for a complete example workflow,
+\item Wallach et al. (2024, 2025) for detailed AgMIP protocol description and examples,
+\item \code{\link{estim_param}} for basic parameter estimation using CroptimizR.
 }
 }

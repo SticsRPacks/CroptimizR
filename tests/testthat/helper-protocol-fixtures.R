@@ -24,17 +24,17 @@ make_protocol_xlsx <- function(
     major = data.frame(
       parameter = c("p1"),
       group = c("G1"),
-      `default value` = 1,
-      `lower bound` = 0,
-      `upper bound` = 2,
+      default_value = 1,
+      lower_bound = 0,
+      upper_bound = 2,
       check.names = FALSE
     ),
     candidate = data.frame(
       parameter = c("p2"),
       group = c("G2"),
-      `default value` = 5,
-      `lower bound` = 0,
-      `upper bound` = 10,
+      default_value = 5,
+      lower_bound = 0,
+      upper_bound = 10,
       check.names = FALSE
     ),
     constraints = NULL,
@@ -45,15 +45,15 @@ make_protocol_xlsx <- function(
   openxlsx::addWorksheet(wb, "variables")
   openxlsx::writeData(wb, "variables", variables)
 
-  openxlsx::addWorksheet(wb, "major parameters")
-  openxlsx::writeData(wb, "major parameters", major)
+  openxlsx::addWorksheet(wb, "major_parameters")
+  openxlsx::writeData(wb, "major_parameters", major)
 
-  openxlsx::addWorksheet(wb, "candidate parameters")
-  openxlsx::writeData(wb, "candidate parameters", candidate)
+  openxlsx::addWorksheet(wb, "candidate_parameters")
+  openxlsx::writeData(wb, "candidate_parameters", candidate)
 
   if (!is.null(constraints)) {
-    openxlsx::addWorksheet(wb, "parameters to fix or calculate")
-    openxlsx::writeData(wb, "parameters to fix or calculate", constraints)
+    openxlsx::addWorksheet(wb, "fixed_or_computed_parameters")
+    openxlsx::writeData(wb, "fixed_or_computed_parameters", constraints)
   }
 
   if (length(extra_sheets) > 0) {

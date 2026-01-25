@@ -2,7 +2,7 @@
 % Please edit documentation in R/load_protocol.R
 \name{check_protocol_structure}
 \alias{check_protocol_structure}
-\title{Verify the structure of a protocol description file}
+\title{Verify the structure of a protocol Excel file}
 \usage{
 check_protocol_structure(protocol_file_path)
 }
@@ -13,11 +13,15 @@ check_protocol_structure(protocol_file_path)
 Invisibly returns TRUE if the structure is valid. Stops execution with an error otherwise.
 }
 \description{
-Verify the structure of a protocol description file
+Verify the structure of a protocol Excel file
 }
 \details{
-Checks that the protocol description file contains all required sheets and that each sheet
+Checks that the protocol Excel file contains all required sheets and that each sheet
 includes the expected columns. The function is case-insensitive for sheet names.
-Stops with an informative error message if any sheet or column is missing.
+Stops with an informative error if any sheet or column is missing.
+
+Mandatory sheets: \code{variables}, \code{major_parameters}, \code{candidate_parameters}
+Optional sheet: \code{fixed_or_computed_parameters}
+Column \code{description} in major/candidate parameters and \code{parameter_description} or \code{constraint_description} in constraints are optional.
 }
 \keyword{internal}

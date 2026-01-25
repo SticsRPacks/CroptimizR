@@ -22,10 +22,20 @@ test_that("Non-character path triggers error", {
 
 # ------------------------------------------------------------------------
 
-test_that("Test no error in reading the Agmip description file used for the vignette", {
+test_that("Test no error in reading the Agmip protocol file used for the vignette", {
   protocol_file_path <- file.path(
     system.file(package = "CroptimizR"), "extdata","AgMIP_protocol",
-    "protocol_descr_synth_STICS.xlsx"
+    "agmip_protocol_vignette.xlsx"
+  )
+  expect_no_error(load_protocol_agmip(protocol_file_path))
+})
+
+# ------------------------------------------------------------------------
+
+test_that("Test no error in reading the example protocol file", {
+  protocol_file_path <- file.path(
+    system.file(package = "CroptimizR"), "extdata",
+    "agmip_protocol_example.xlsx"
   )
   expect_no_error(load_protocol_agmip(protocol_file_path))
 })
@@ -68,18 +78,18 @@ test_that("Group order follows variables sheet", {
   major <- data.frame(
     parameter = "p1",
     group = "A",
-    `default value` = 1,
-    `lower bound` = 0,
-    `upper bound` = 2,
+    default_value = 1,
+    lower_bound = 0,
+    upper_bound = 2,
     check.names = FALSE
   )
 
   candidate <- data.frame(
     parameter = "p2",
     group = "B1",
-    `default value` = 5,
-    `lower bound` = 0,
-    `upper bound` = 10,
+    default_value = 5,
+    lower_bound = 0,
+    upper_bound = 10,
     check.names = FALSE
   )
 
@@ -99,9 +109,9 @@ test_that("Unknown group in major triggers error", {
   major <- data.frame(
     parameter = "p1",
     group = "UNKNOWN",
-    `default value` = 1,
-    `lower bound` = 0,
-    `upper bound` = 2,
+    default_value = 1,
+    lower_bound = 0,
+    upper_bound = 2,
     check.names = FALSE
   )
 
@@ -127,18 +137,18 @@ test_that("Group with no major and no candidate triggers error", {
   major <- data.frame(
     parameter = "p1",
     group = "G1",
-    `default value` = 0.5,
-    `lower bound` = 0,
-    `upper bound` = 1,
+    default_value = 0.5,
+    lower_bound = 0,
+    upper_bound = 1,
     check.names = FALSE
   )
 
   candidate <- data.frame(
     parameter = character(0),
     group = character(0),
-    `default value` = numeric(0),
-    `lower bound` = numeric(0),
-    `upper bound` = numeric(0),
+    default_value = numeric(0),
+    lower_bound = numeric(0),
+    upper_bound = numeric(0),
     check.names = FALSE
   )
 
@@ -159,9 +169,9 @@ test_that("Default value out of bounds triggers error", {
   major <- data.frame(
     parameter = "p1",
     group = "G1",
-    `default value` = 10,
-    `lower bound` = 0,
-    `upper bound` = 2,
+    default_value = 10,
+    lower_bound = 0,
+    upper_bound = 2,
     check.names = FALSE
   )
 
@@ -181,7 +191,7 @@ test_that("Constraints sheet is loaded correctly", {
 
   constraints <- data.frame(
     parameter = c("p3"),
-    `value or formula` = c("2 * p1"),
+    value_or_formula = c("2 * p1"),
     check.names = FALSE
   )
 
@@ -210,18 +220,18 @@ test_that("major_param is NULL when no major parameters exist for a group", {
   major <- data.frame(
     parameter = character(0),
     group = character(0),
-    `default value` = numeric(0),
-    `lower bound` = numeric(0),
-    `upper bound` = numeric(0),
+    default_value = numeric(0),
+    lower_bound = numeric(0),
+    upper_bound = numeric(0),
     check.names = FALSE
   )
 
   candidate <- data.frame(
     parameter = c("p1"),
     group = c("G1"),
-    `default value` = 0.5,
-    `lower bound` = 0,
-    `upper bound` = 1,
+    default_value = 0.5,
+    lower_bound = 0,
+    upper_bound = 1,
     check.names = FALSE
   )
 
@@ -253,18 +263,18 @@ test_that("Returned structure from load_protocol_agmip has correct fields and va
   major <- data.frame(
     parameter = c("p1"),
     group = c("G1"),
-    `default value` = 0.5,
-    `lower bound` = 0,
-    `upper bound` = 1,
+    default_value = 0.5,
+    lower_bound = 0,
+    upper_bound = 1,
     check.names = FALSE
   )
 
   candidate <- data.frame(
     parameter = c("p2"),
     group = c("G2"),
-    `default value` = 5,
-    `lower bound` = 0,
-    `upper bound` = 10,
+    default_value = 5,
+    lower_bound = 0,
+    upper_bound = 10,
     check.names = FALSE
   )
 
@@ -294,11 +304,11 @@ test_that("Returned structure from load_protocol_agmip has correct fields and va
   expect_setequal(names(res$param_info$default), all_params)
 
   # Check that the values match
-  expect_equal(res$param_info$lb[[major$parameter]], major$`lower bound`)
-  expect_equal(res$param_info$ub[[major$parameter]], major$`upper bound`)
-  expect_equal(res$param_info$default[[major$parameter]], major$`default value`)
+  expect_equal(res$param_info$lb[[major$parameter]], major$lower_bound)
+  expect_equal(res$param_info$ub[[major$parameter]], major$upper_bound)
+  expect_equal(res$param_info$default[[major$parameter]], major$default_value)
 
-  expect_equal(res$param_info$lb[[candidate$parameter]], candidate$`lower bound`)
-  expect_equal(res$param_info$ub[[candidate$parameter]], candidate$`upper bound`)
-  expect_equal(res$param_info$default[[candidate$parameter]], candidate$`default value`)
+  expect_equal(res$param_info$lb[[candidate$parameter]], candidate$lower_bound)
+  expect_equal(res$param_info$ub[[candidate$parameter]], candidate$upper_bound)
+  expect_equal(res$param_info$default[[candidate$parameter]], candidate$default_value)
 })

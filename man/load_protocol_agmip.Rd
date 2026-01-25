@@ -2,12 +2,12 @@
 % Please edit documentation in R/load_protocol.R
 \name{load_protocol_agmip}
 \alias{load_protocol_agmip}
-\title{Load a protocol description file for AgMIP PhaseIV calibration}
+\title{Load an AgMIP calibration protocol Excel file}
 \usage{
 load_protocol_agmip(protocol_file_path)
 }
 \arguments{
-\item{protocol_file_path}{Character string. Path to the Excel file describing the AgMIP PhaseIV calibration protocol.}
+\item{protocol_file_path}{Character string. Path to the Excel file describing an AgMIP calibration protocol.}
 }
 \value{
 A list with the following elements:
@@ -18,14 +18,35 @@ A list with the following elements:
 }
 }
 \description{
-Load a protocol description file for AgMIP PhaseIV calibration
+Load an AgMIP calibration protocol Excel file
 }
 \details{
-Reads an AgMIP PhaseIV protocol file in Excel format and verifies its structure.
-The function loads the variables, major and candidate parameters, and optional
-constraints, and returns them in a structured list. The elements of the returned
-structure can be used directly in the run_protocol_agmip() function to automate
-the AgMIP calibration protocol.
+Reads an AgMIP calibration protocol file in Excel format and verifies its structure.
+The Excel file must follow the AgMIP protocol template structure provided by CroptimizR.
 
-The protocol specification is detailed in Wallach et al., 2024 and Wallach et al., 2025.
+The function loads the following sheets: variables, major_parameters, candidate_parameters,
+and the optional fixed_or_computed_parameters sheet. It returns them as a structured list
+suitable for use in \code{\link{run_protocol_agmip}}.
+
+The protocol specification follows the AgMIP methodology (Wallach et al., 2024; Wallach et al., 2025).
+}
+\section{Excel template and example}{
+
+CroptimizR provides helper functions to access a ready-to-use Excel template and
+a fully worked example:
+\itemize{
+\item \code{\link{get_agmip_protocol_template}} to obtain the official Excel template of the AgMIP protocol.
+This template must be filled by the user before being used with \code{load_protocol_agmip()}.
+\item \code{\link{get_agmip_protocol_example}} to access a complete example used for demonstration and testing.
+}
+
+Both functions can either return the path to the file shipped with the package or copy
+it to a user-defined location for editing.
+}
+
+\examples{
+# Load the example protocol shipped with the package
+protocol_file <- get_agmip_protocol_example()
+protocol <- load_protocol_agmip(protocol_file)
+
 }
