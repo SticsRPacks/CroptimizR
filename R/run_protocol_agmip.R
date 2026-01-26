@@ -582,6 +582,18 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
     sep = ""
   )
 
+  vars <- setdiff(res_step7$obs_var_list, res_step6$obs_var_list)
+  if (length(vars) > 0) {
+    warning(
+      paste(
+        "Some observed variables provided in `obs_list` are not used in Step 6 of the AgMIP protocol, but will be used in Step 7:",
+        paste(vars, collapse = ", "),
+        "Please check that this is intentional and that no variable was forgotten in the Step 6 sub-steps definitions."
+      ),
+      call. = FALSE
+    )
+  }
+
   # Return results
   res$final_values <- res_step7$final_values
   res$forced_param_values <- res_step7$forced_param_values

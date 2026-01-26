@@ -829,14 +829,17 @@ test_that("Test obs variables not used in step6 are used in step7", {
     )
   )
 
-  res <- run_protocol_agmip(
-    model_function = toymodel_wrapper,
-    model_options = model_options,
-    optim_options = optim_options,
-    obs_list = obs_synth,
-    out_dir = file.path(tempdir(), "Test8"),
-    step = steps,
-    param_info = param_info
+  expect_warning(
+    res <- run_protocol_agmip(
+      model_function = toymodel_wrapper,
+      model_options = model_options,
+      optim_options = optim_options,
+      obs_list = obs_synth,
+      out_dir = file.path(tempdir(), "Test8"),
+      step = steps,
+      param_info = param_info
+    ),
+    regexp = "not used in Step 6"
   )
 
   # Check that estimated parameters only include rB
