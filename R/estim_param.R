@@ -699,17 +699,49 @@ fill_step_info <- function(step, mc, env) {
       x$param <- NULL
     }
 
-    # Filter observations if necessary
+    # Check that requested variables exist in obs_list and filter obs
     if (!identical(x[["obs_var"]], NULL)) {
-      x$obs_list <- filter_obs(x$obs_list,
-                               var = x$obs_var,
-                               include = TRUE
+
+      available_vars <- get_obs_var(x$obs_list)
+      missing_vars <- setdiff(x$obs_var, available_vars)
+
+      if (length(missing_vars) > 0) {
+        stop(
+          paste(
+            "The following variables are referenced in `step$obs_var` but not found in `obs_list`:",
+            paste(missing_vars, collapse = ", ")
+          ),
+          call. = FALSE
+        )
+      }
+
+      x$obs_list <- filter_obs(
+        x$obs_list,
+        var = x$obs_var,
+        include = TRUE
       )
     }
+
+    # Check that requested situations exist in obs_list and filter them
     if (!identical(x[["situation"]], NULL)) {
-      x$obs_list <- filter_obs(x$obs_list,
-                               situation = x$situation,
-                               include = TRUE
+
+      available_situations <- names(x$obs_list)
+      missing_situations <- setdiff(x$situation, available_situations)
+
+      if (length(missing_situations) > 0) {
+        stop(
+          paste(
+            "The following situations are referenced in `step$situation` but not found in `obs_list`:",
+            paste(missing_situations, collapse = ", ")
+          ),
+          call. = FALSE
+        )
+      }
+
+      x$obs_list <- filter_obs(
+        x$obs_list,
+        situation = x$situation,
+        include = TRUE
       )
     }
 
