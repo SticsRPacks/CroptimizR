@@ -109,55 +109,30 @@ step of step6), the first information criterion in the list is used for paramete
 
 \item{out_dir}{Path to the directory where the optimization results will be written. (optional, default to \code{getwd()})}
 
-\item{info_level}{(optional) Integer that controls the level of information returned and stored
-by estim_param (in addition to the results automatically provided that depends on the method used).
-Higher code give more details.
-\itemize{
-\item \code{0} to add nothing,
-\item \code{1} to add criterion and parameters values, and constraint if satisfy_par_const is provided, for each evaluation
-(element params_and_crit in the returned list),
-\item \code{2} to add model results, after transformation if transform_sim is provided, and after intersection with observations,
-i.e. as used to compute the criterion for each evaluation (element sim_intersect in the returned list),
-\item \code{3} to add observations, after transformation if transform_obs is provided, and after intersection with simulations,
-i.e. as used to compute the criterion for each evaluation (element obs_intersect in the returned list),
-\item \code{4} to add all model wrapper results for each evaluation, and all transformations if transform_sim is provided.
-(elements sim and sim_transformed in the returned list).
-}}
-}
-\value{
-Prints, graphs, and a list containing the results of the AgMIP Phase IV Calibration protocol.
-All results are saved in the folder specified by \code{out_dir}.
+\item{info_level}{(optional) Integer controlling how much information is stored during each call
+to \code{estim_param()} inside the AgMIP calibration protocol.
 
-During execution, a console display indicates the description of the step currently being run.
+This argument is a direct pass-through to the \code{info_level} argument of \code{estim_param()},
+and therefore controls the amount of diagnostic information kept in memory during the optimization steps.
 
-The generated plots include:
+Because the AgMIP protocol may involve a large number of successive calibrations,
+the default value is set to \code{0} in order to limit memory usage and disk storage.
+
+However, note that:
 \itemize{
-\item diagnostics recommended in Wallach et al. (2025): MSE, bias², rRMSE, and Efficiency
-for each variable at each step (files \code{barplot_rRMSE_EF_per_step.pdf} and
-\code{plot_MSE_Bias2_per_step.pdf}),
-\item scatter plots of simulations versus observations before and after each step
-(files \code{scatter_plots_*.pdf}),
-\item diagnostic plots for each minimization performed (see subfolders \code{AgMIP_protocol_step6},
-\code{AgMIP_protocol_step7}, and their contents).
+\item Setting \code{info_level = 0} disables the storage of intermediate values of the simplex
+and therefore prevents the generation of diagnostic plots such as
+\code{ValuesVSIt.pdf} and \code{ValuesVSIt_2D.pdf}.
+\item A value of at least \code{1} is required to enable these diagnostic outputs.
 }
 
-The returned object is a list containing:
-\itemize{
-\item \code{final_values}: a named vector with the estimated parameter values,
-\item \code{forced_param_values}: a named vector with the values of forced parameters,
-\item \code{obs_var_list}: a character vector with the names of observed variables used in the protocol,
-\item \code{values_per_step}: a data.frame containing the default parameter values (from \code{param_info$default}, or \code{NA} if not provided) and the estimated
-values after step6 and step7,
-\item \code{stats_per_step}: a data.frame containing statistics (MSE, bias², rRMSE, and Efficiency)
-for each variable, before and after each step,
-\item \code{step6}: a list with detailed results for step6,
-\item \code{step7}: a list with detailed results for step7.
-}
-}
-\description{
-Automate the AgMIP Phase IV Calibration protocol
-}
-\details{
+Higher values provide increasingly detailed information (simulations, observations, full model outputs)
+for each evaluation, but may lead to very large memory consumption and should therefore be used
+with caution inside the AgMIP protocol.
+
+See \code{\link{estim_param}} for a detailed description of the different levels.
+
+#' @details
 \subsection{The AgMIP Phase IV Calibration protocol}{
 
 The AgMIP Phase IV Calibration protocol is thoroughly described in Wallach et al. (2024)
@@ -289,7 +264,40 @@ Note that in step7, all observations included in \code{obs_list} are used, regar
 Thus, observations for variables not used in step6 (e.g. because no parameter is directly
 associated with these variables) can still be used in step7, where all parameters selected
 during step6 are re-estimated using all observed variables (WLS step).
+}}
 }
+\value{
+Prints, graphs, and a list containing the results of the AgMIP Phase IV Calibration protocol.
+All results are saved in the folder specified by \code{out_dir}.
+
+During execution, a console display indicates the description of the step currently being run.
+
+The generated plots include:
+\itemize{
+\item diagnostics recommended in Wallach et al. (2025): MSE, bias², rRMSE, and Efficiency
+for each variable at each step (files \code{barplot_rRMSE_EF_per_step.pdf} and
+\code{plot_MSE_Bias2_per_step.pdf}),
+\item scatter plots of simulations versus observations before and after each step
+(files \code{scatter_plots_*.pdf}),
+\item diagnostic plots for each minimization performed (see subfolders \code{AgMIP_protocol_step6},
+\code{AgMIP_protocol_step7}, and their contents).
+}
+
+The returned object is a list containing:
+\itemize{
+\item \code{final_values}: a named vector with the estimated parameter values,
+\item \code{forced_param_values}: a named vector with the values of forced parameters,
+\item \code{obs_var_list}: a character vector with the names of observed variables used in the protocol,
+\item \code{values_per_step}: a data.frame containing the default parameter values (from \code{param_info$default}, or \code{NA} if not provided) and the estimated
+values after step6 and step7,
+\item \code{stats_per_step}: a data.frame containing statistics (MSE, bias², rRMSE, and Efficiency)
+for each variable, before and after each step,
+\item \code{step6}: a list with detailed results for step6,
+\item \code{step7}: a list with detailed results for step7.
+}
+}
+\description{
+Automate the AgMIP Phase IV Calibration protocol
 }
 \seealso{
 \itemize{

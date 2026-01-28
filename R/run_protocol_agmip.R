@@ -35,7 +35,7 @@
 #' (e.g. major or candidate parameter estimated in a subsequent step, candidate parameter
 #' that was not selected, etc.), and also as one of the initial values when the parameter is estimated.
 #'
-#' @param forced_param_values Named vector or list specifying parameter values to force in
+#' @param forced_param_values (optional)  Named vector or list specifying parameter values to force in
 #' the model.
 #' It may also contain arithmetic expressions to define equality constraints between parameters
 #' (see the Details section of `estim_param`). In this case, the values to force are computed before
@@ -43,14 +43,14 @@
 #' This argument should not include values for parameters that are estimated (i.e. parameters
 #' defined in `param_info`).
 #'
-#' @param transform_obs User-defined function to transform observations before each criterion
-#' evaluation (optional). See the Details section of `estim_param` for more information.
+#' @param transform_obs (optional) User-defined function to transform observations before each criterion
+#' evaluation. See the Details section of `estim_param` for more information.
 #'
-#' @param transform_sim User-defined function to transform simulations before each criterion
-#' evaluation (optional). See the Details section of `estim_param` for more information.
+#' @param transform_sim (optional) User-defined function to transform simulations before each criterion
+#' evaluation. See the Details section of `estim_param` for more information.
 #'
-#' @param satisfy_par_const User-defined function to enforce inequality constraints on estimated
-#' parameters (optional). See the Details section of `estim_param` for more information.
+#' @param satisfy_par_const (optional) User-defined function to enforce inequality constraints on estimated
+#' parameters. See the Details section of `estim_param` for more information.
 #'
 #' @param info_crit_func Function or list of functions used to compute information criteria
 #' (optional; see the default value in the function signature and
@@ -62,6 +62,29 @@
 #' step of step6), the first information criterion in the list is used for parameter selection.
 #'
 #' @param step A list defining the sub-steps for step 6 of the AgMIP Calibration protocol (see Details section).
+#'
+#' @param info_level (optional) Integer controlling how much information is stored during each call
+#' to \code{estim_param()} inside the AgMIP calibration protocol.
+#'
+#' This argument is a direct pass-through to the \code{info_level} argument of \code{estim_param()},
+#' and therefore controls the amount of diagnostic information kept in memory during the optimization steps.
+#'
+#' Because the AgMIP protocol may involve a large number of successive calibrations,
+#' the default value is set to \code{0} in order to limit memory usage and disk storage.
+#'
+#' However, note that:
+#' \itemize{
+#'   \item Setting \code{info_level = 0} disables the storage of intermediate values of the simplex
+#'         and therefore prevents the generation of diagnostic plots such as
+#'         \code{ValuesVSIt.pdf} and \code{ValuesVSIt_2D.pdf}.
+#'   \item A value of at least \code{1} is required to enable these diagnostic outputs.
+#' }
+#'
+#' Higher values provide increasingly detailed information (simulations, observations, full model outputs)
+#' for each evaluation, but may lead to very large memory consumption and should therefore be used
+#' with caution inside the AgMIP protocol.
+#'
+#' See \code{\link{estim_param}} for a detailed description of the different levels.
 #'
 #' @details
 #'
