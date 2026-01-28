@@ -434,8 +434,10 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
     )
     # Check results
     if (all(is.na(tmp))) {
-      stop(paste("Simulation error detected during model runs using values of the parameters estimated at step.",
-                 step_name, "Please review earlier warnings."))
+      stop(paste(
+        "Simulation error detected during model runs using values of the parameters estimated at step.",
+        step_name, "Please review earlier warnings."
+      ))
     }
     if (!is.null(tmp$sim_transformed)) {
       sim <- tmp$sim_transformed
@@ -583,8 +585,10 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
   )
   # Check results
   if (all(is.na(tmp))) {
-    stop(paste("Simulation error detected during model runs using values of the parameters estimated at step7.",
-               "Please review earlier warnings."))
+    stop(paste(
+      "Simulation error detected during model runs using values of the parameters estimated at step7.",
+      "Please review earlier warnings."
+    ))
   }
   if (!is.null(tmp$sim_transformed)) {
     sim_after_step7 <- tmp$sim_transformed

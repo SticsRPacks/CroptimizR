@@ -1003,7 +1003,6 @@ test_that("Test AgMIP protocol with provided initial values", {
 })
 
 
-
 # ------------------------------------------------------------------------
 
 test_that("Test AgMIP protocol with model crash", {
