@@ -165,28 +165,28 @@ plot_frequentist <- function(optim_options, param_info, optim_results, out_dir) 
 
   # ValuesVSit plot
 
-  tryCatch(
-    {
-      grDevices::pdf(
-        file = file.path(out_dir, "ValuesVSit.pdf"),
-        width = 9, height = 9
-      )
-    },
-    error = function(cond) {
-      filename <- paste0("ValuesVSit_new.pdf")
-      warning(
-        "Error trying to create ", out_dir,
-        "/ValuesVSit.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
-        filename
-      )
-      grDevices::pdf(
-        file = file.path(out_dir, filename),
-        width = 9, height = 9
-      )
-    }
-  )
-
   if (!is.null(optim_results$params_and_crit)) {
+    tryCatch(
+      {
+        grDevices::pdf(
+          file = file.path(out_dir, "ValuesVSit.pdf"),
+          width = 9, height = 9
+        )
+      },
+      error = function(cond) {
+        filename <- paste0("ValuesVSit_new.pdf")
+        warning(
+          "Error trying to create ", out_dir,
+          "/ValuesVSit.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
+          filename
+        )
+        grDevices::pdf(
+          file = file.path(out_dir, filename),
+          width = 9, height = 9
+        )
+      }
+    )
+
     p <- plot_valuesVSit(optim_results$params_and_crit, param_info)
     for (plot in p) {
       print(plot)
@@ -197,28 +197,28 @@ plot_frequentist <- function(optim_options, param_info, optim_results, out_dir) 
 
   # ValuesVSit_2D plot
 
-  tryCatch(
-    {
-      grDevices::pdf(
-        file = file.path(out_dir, "ValuesVSit_2D.pdf"),
-        width = 9, height = 9
-      )
-    },
-    error = function(cond) {
-      filename <- paste0("ValuesVSit_2D_new.pdf")
-      warning(
-        "Error trying to create ", out_dir,
-        "/ValuesVSit_2D.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
-        filename
-      )
-      grDevices::pdf(
-        file = file.path(out_dir, filename),
-        width = 9, height = 9
-      )
-    }
-  )
-
   if (!is.null(optim_results$params_and_crit)) {
+    tryCatch(
+      {
+        grDevices::pdf(
+          file = file.path(out_dir, "ValuesVSit_2D.pdf"),
+          width = 9, height = 9
+        )
+      },
+      error = function(cond) {
+        filename <- paste0("ValuesVSit_2D_new.pdf")
+        warning(
+          "Error trying to create ", out_dir,
+          "/ValuesVSit_2D.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
+          filename
+        )
+        grDevices::pdf(
+          file = file.path(out_dir, filename),
+          width = 9, height = 9
+        )
+      }
+    )
+
     p <- plot_valuesVSit_2D(optim_results$params_and_crit, param_info)
     for (plot in p) {
       print(plot)
@@ -389,7 +389,7 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
     if (all(df$crit > 0)) {
       trans <- "log10"
       mid <- (max(log10(df$crit)) -
-                min(log10(df$crit))) / 2 + min(log10(df$crit))
+        min(log10(df$crit))) / 2 + min(log10(df$crit))
     } else {
       warning("The criterion takes negative values, log transformation will not be done.")
       crit_log <- FALSE
@@ -432,15 +432,15 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
       if (rep_label[1] %in% c("begin_end", "begin")) {
         p[[param_name]] <- p[[param_name]] +
           geom_label(aes(label = .data$rep),
-                     data = dplyr::filter(df, .data$rep == irep) %>% dplyr::filter(.data$eval == min(.data$eval)),
-                     size = 3
+            data = dplyr::filter(df, .data$rep == irep) %>% dplyr::filter(.data$eval == min(.data$eval)),
+            size = 3
           )
       }
       if (rep_label[1] %in% c("begin_end", "end")) {
         p[[param_name]] <- p[[param_name]] +
           geom_label(aes(label = .data$rep),
-                     data = dplyr::filter(df, .data$rep == irep) %>% dplyr::filter(.data$eval == max(.data$eval)),
-                     size = 3
+            data = dplyr::filter(df, .data$rep == irep) %>% dplyr::filter(.data$eval == max(.data$eval)),
+            size = 3
           )
       }
     }
@@ -471,11 +471,11 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
     p[["criterion"]] <- p[["criterion"]] +
       geom_line(data = dplyr::filter(df, .data$rep == irep)) +
       geom_label(aes(label = .data$rep),
-                 data = dplyr::filter(df, .data$rep == irep) %>% dplyr::filter(.data$eval == min(.data$eval)),
-                 size = 3
+        data = dplyr::filter(df, .data$rep == irep) %>% dplyr::filter(.data$eval == min(.data$eval)),
+        size = 3
       ) +
       geom_label(aes(label = .data$rep),
-                 data = dplyr::filter(df, .data$rep == irep) %>% dplyr::filter(.data$eval == max(.data$eval))
+        data = dplyr::filter(df, .data$rep == irep) %>% dplyr::filter(.data$eval == max(.data$eval))
       )
   }
 
