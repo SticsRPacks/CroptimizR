@@ -9,7 +9,8 @@
 #' should be returned. Typically a list containing the observations to which
 #' simulations should be compared.
 #'
-#' @return List of model and transformed results, in the cropr_simulation format.
+#' @return A list containing the model outputs and transformed results, in the cropr_simulation format.
+#' Returns NA if an error occurs during the simulations.
 #'
 #' @export
 #'
@@ -17,8 +18,6 @@ compute_simulations <- function(model_function, model_options, param_values,
                                 situation, var_to_simulate, obs_list,
                                 transform_sim = NULL, transform_var = NULL,
                                 sit_var_dates_mask = NULL) {
-  #### QUE RETOURNER EN CAS D'ERREUR ?
-  ################################################
 
   if (is.null(var_to_simulate)) var_to_simulate <- setdiff(unique(unlist(lapply(obs_list, names))), "Date")
 
@@ -29,9 +28,7 @@ compute_simulations <- function(model_function, model_options, param_values,
     sit_var_dates_mask = sit_var_dates_mask
   )
 
-  ### A METTRE AU DEBUT DANS TEST WRAPPER !!!!!!!!!!!!!!!!!!!
-  ################################################################
-
+  # Could be done only at the beginning in test_wrapper
   if (("sit_names" %in% names(formals(model_function))) |
     ("var_names" %in% names(formals(model_function)))) {
     lifecycle::deprecate_warn(

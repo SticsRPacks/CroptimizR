@@ -58,7 +58,8 @@ should be returned. Typically a list containing the observations to which
 simulations should be compared.}
 }
 \value{
-List of model and transformed results, in the cropr_simulation format.
+A list containing the model outputs and transformed results, in the cropr_simulation format.
+Returns NA if an error occurs during the simulations.
 }
 \description{
 Compute simulated variables by running the model wrapper and applying

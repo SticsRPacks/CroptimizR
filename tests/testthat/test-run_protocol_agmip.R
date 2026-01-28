@@ -42,8 +42,11 @@ toymodel_wrapper <- function(param_values = NULL, situation,
   #   - situation: Vector of situations names for which results must be
   #     returned.
   #     In this case, the names of the situations are coded as "year_suffix"
-  #   - model_options: a tibble containing the begin and end date of simulation
-  #     for each situation.
+  #   - model_options:
+  #        - model_inputs : a tibble containing the begin and end date of simulation
+  #                         for each situation
+  #        - fail_at_call (number of calls after which stopping in error) for testing purposes
+  #        - stop_or_return_error : TRUE to stop in error, FALSE to return error flag
   #   - ...: mandatory since CroptimizR will give additional arguments not used
   #     here
   #
@@ -62,6 +65,33 @@ toymodel_wrapper <- function(param_values = NULL, situation,
   )
   attr(results$sim_list, "class") <- "cropr_simulation"
 
+  # Increment global call counter
+  .toymodel_state$call_counter <- .toymodel_state$call_counter + 1L
+
+  # Look for a fail_at_call option in model_options
+  # (can be a column, or a single value repeated)
+  if ("fail_at_call" %in% names(model_options)) {
+    fail_at <- unique(model_options$fail_at_call)
+
+    # Be tolerant: only trigger if a single non-NA value is provided
+    if (length(fail_at) == 1 && !is.na(fail_at)) {
+      if (.toymodel_state$call_counter >= fail_at) {
+        if (model_options$stop_or_return_error) {
+          stop(
+            sprintf(
+              "Intentional failure in toymodel_wrapper at call %d (for testing purposes).",
+              .toymodel_state$call_counter
+            ),
+            call. = FALSE
+          )
+        } else {
+          results$error <- TRUE
+          return(results)
+        }
+      }
+    }
+  }
+
   # Remove dummy in param_values, just here for specific tests
   if (!is.null(param_values) && "dummy" %in% names(param_values)) {
     param_values <- param_values[!names(param_values) %in% "dummy"]
@@ -69,9 +99,9 @@ toymodel_wrapper <- function(param_values = NULL, situation,
 
   for (sit in situation) {
     # Retrieve begin and end date from situation name
-    begin_date <- dplyr::filter(model_options, situation == sit) %>%
+    begin_date <- dplyr::filter(model_options$model_inputs, situation == sit) %>%
       dplyr::select(begin_date)
-    end_date <- dplyr::filter(model_options, situation == sit) %>%
+    end_date <- dplyr::filter(model_options$model_inputs, situation == sit) %>%
       dplyr::select(end_date)
     year <- as.numeric(strsplit(sit, "_")[[1]][[2]])
 
@@ -108,6 +138,15 @@ toymodel_wrapper <- function(param_values = NULL, situation,
   return(results)
 }
 
+# Initialize a state environment to keep track of number of calls for tests with wrapper crash
+.toymodel_state <- new.env(parent = emptyenv())
+.toymodel_state$call_counter <- 0L
+
+# Provide a function to reset the call counter
+reset_toymodel_counter <- function() {
+  .toymodel_state$call_counter <- 0L
+}
+
 # To make these function accessible to the test environment
 .GlobalEnv$toymodel <- toymodel
 .GlobalEnv$toymodel_wrapper <- toymodel_wrapper
@@ -115,7 +154,7 @@ toymodel_wrapper <- function(param_values = NULL, situation,
 # Use setup() to define shared data for all tests in this file
 setup({
   # These variables will be available in all tests
-  .GlobalEnv$model_options <- dplyr::tibble(
+  .GlobalEnv$model_options$model_inputs <- dplyr::tibble(
     situation = c("sit1_2000", "sit1_2001", "sit2_2003", "sit2_2004"),
     begin_date = as.Date(c("2000-05-01", "2001-05-12", "2003-05-05", "2004-05-15")),
     end_date = as.Date(c("2000-11-05", "2001-11-20", "2003-11-15", "2004-11-18"))
@@ -407,7 +446,8 @@ test_that("Check use of the same variable in different steps and obs variable us
     )
   )
 
-  res <- run_protocol_agmip(
+  # suppressWarnings used here because using the same variable in different steps cause an expected warning ...
+  res <- suppressWarnings(run_protocol_agmip(
     model_function = toymodel_wrapper,
     model_options = model_options,
     optim_options = optim_options,
@@ -415,7 +455,7 @@ test_that("Check use of the same variable in different steps and obs variable us
     out_dir = file.path(tempdir(), "Test3"),
     step = steps,
     param_info = param_info
-  )
+  ))
 
   # Check the number of parameters and observations taken into account for weight computation
   expect_equal(res$step7$weights$p, c(3, 0))
@@ -739,7 +779,8 @@ test_that("Single step check", {
     )
   )
 
-  res <- run_protocol_agmip(
+  # suppressWarnings used here because some variables not listed in step6 are used in step7 cause an expected warning ...
+  res <- suppressWarnings(run_protocol_agmip(
     model_function = toymodel_wrapper,
     model_options = model_options,
     optim_options = optim_options,
@@ -748,7 +789,7 @@ test_that("Single step check", {
     step = steps,
     forced_param_values = forced_param_values,
     param_info = param_info
-  )
+  ))
 
   # Check that estimated values for parameters are close to true values
   expect_equal(res$final_values[["rB"]],
@@ -958,5 +999,73 @@ test_that("Test AgMIP protocol with provided initial values", {
   expect_equal(
     c(res$step6$final_values[["h"]], param_info$h$default),
     res$step7$init_values[["h"]][c(1, 2)]
+  )
+})
+
+
+
+# ------------------------------------------------------------------------
+
+test_that("Test AgMIP protocol with model crash", {
+  optim_options <- list(
+    nb_rep = 3, xtol_rel = 1e-2,
+    ranseed = 1234
+  )
+  param_info <- list(
+    rB = list(lb = 0, ub = 1, default = 0.1),
+    h = list(lb = 0, ub = 1, default = 0.5),
+    Bmax = list(lb = 5, ub = 15, default = 7)
+  )
+  steps <- list(
+    biomass = list(
+      major_param = c("rB"),
+      candidate_param = c("Bmax"),
+      obs_var = c("biomass")
+    ),
+    yield = list(
+      major_param = c("h"),
+      obs_var = c("yield")
+    )
+  )
+  model_options$fail_at_call <- 4L
+  model_options$stop_or_return_error <- TRUE
+  reset_toymodel_counter()
+
+  testthat::expect_error(
+    suppressWarnings(
+      run_protocol_agmip(
+        model_function = toymodel_wrapper,
+        model_options = model_options,
+        optim_options = optim_options,
+        obs_list = obs_synth,
+        out_dir = file.path(tempdir(), "Test10"),
+        step = steps,
+        param_info = param_info,
+        info_level = 1
+      )
+    ),
+    regexp = "There was an error during the parameter estimation procedure",
+    fixed = TRUE
+  )
+
+  model_options$fail_at_call <- 4L
+  model_options$stop_or_return_error <- FALSE
+  reset_toymodel_counter()
+
+  testthat::expect_error(
+    suppressWarnings(
+      run_protocol_agmip(
+        model_function = toymodel_wrapper,
+        model_options = model_options,
+        optim_options = optim_options,
+        obs_list = obs_synth,
+        out_dir = file.path(tempdir(), "Test10"),
+        step = steps,
+        param_info = param_info,
+        info_level = 1
+      )
+    ),
+    regexp = "There was an error during the parameter estimation procedure",
+    fixed = TRUE
   )
 })

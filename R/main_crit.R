@@ -251,6 +251,12 @@ main_crit <- function(param_values, crit_options) {
     transform_sim = transform_sim, transform_var = transform_var,
     sit_var_dates_mask = sit_var_dates_mask
   )
+  # Check results, return NA if incorrect
+  if (all(is.na(tmp))) {
+    warning("Simulation error detected. Please review earlier warnings. As a result, the optimized criterion is set to NA.")
+    return(NA)
+  }
+
   model_results <- tmp$model_results
   sim_transformed <- tmp$sim_transformed
   if (!is.null(sim_transformed)) {
