@@ -18,7 +18,6 @@ compute_simulations <- function(model_function, model_options, param_values,
                                 situation, var_to_simulate, obs_list,
                                 transform_sim = NULL, transform_var = NULL,
                                 sit_var_dates_mask = NULL) {
-
   if (is.null(var_to_simulate)) var_to_simulate <- setdiff(unique(unlist(lapply(obs_list, names))), "Date")
 
   arglist <- list(
