@@ -10,7 +10,8 @@ select_param_FwdRegAgMIP(
   oblig_param_list,
   add_param_list,
   crt_list,
-  info_crit_values
+  info_crit_values,
+  indent = 0
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ previously used in parameter estimation}
 
 \item{info_crit_values}{Values of the information criterion obtained so far
 for the different steps.}
+
+\item{indent}{Integer, level of indent of the printed messages as required by make_display_prefix}
 }
 \value{
 A list that contains:
