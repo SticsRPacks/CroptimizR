@@ -51,7 +51,9 @@ and for each candidate-parameter addition) and to \code{c(20)} for step7.
 (default: \code{50000}).
 \item \code{xtol_rel}: relative tolerance threshold on parameter values. Minimization stops when
 parameter values change by less than \code{xtol_rel} times the absolute value of the parameter
-between two successive iterations (default: \code{1e-4}).
+between two successive iterations.
+The default value is \code{1e-3}, which provides a good compromise between computational cost
+and numerical accuracy for most applications of the AgMIP protocol.
 \item additional options can be provided; see \code{?nl.opts} for a complete list.
 }
 
