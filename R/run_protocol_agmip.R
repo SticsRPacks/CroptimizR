@@ -22,8 +22,16 @@
 #'   (default: `50000`).
 #' - `xtol_rel`: relative tolerance threshold on parameter values. Minimization stops when
 #'   parameter values change by less than `xtol_rel` times the absolute value of the parameter
-#'   between two successive iterations (default: `1e-4`).
+#'   between two successive iterations.
+#'   The default value is `1e-3`, which provides a good compromise between computational cost
+#'   and numerical accuracy for most applications of the AgMIP protocol.
 #' - additional options can be provided; see `?nl.opts` for a complete list.
+#'
+#' For debugging or testing purposes (i.e. to simply check that the protocol executes correctly
+#' without aiming at meaningful results), the user can use very small values, for example
+#' \code{nb_rep = 1} and \code{maxeval = 2}, in order to obtain a fast "dry run" of the whole protocol.
+#' Such settings must of course be removed for any real calibration experiment.
+#'
 #'
 #' @param param_info Information about the parameters to estimate.
 #' A list containing:
@@ -228,8 +236,14 @@
 #'   `AgMIP_protocol_step7`, and their contents).
 #'
 #' The returned object is a list containing:
-#' - `final_values`: a named vector with the estimated parameter values,
-#' - `forced_param_values`: a named vector with the values of forced parameters,
+#' - `final_values`: a named vector with the values of all parameters that were finally estimated.
+#'   This includes all parameters selected during step6 and re-estimated in step7.
+#' - `forced_param_values`: a named vector with the values of all parameters that were *not* estimated
+#'   in the final calibration step 7. This includes in particular:
+#'   \itemize{
+#'     \item candidate parameters that were tested during step6 but not selected,
+#'     \item parameters defined through equality constraints or forced by the user (see input argument `forced_param_values`).
+#'   }
 #' - `obs_var_list`: a character vector with the names of observed variables used in the protocol,
 #' - `values_per_step`: a data.frame containing the default parameter values (from `param_info$default`, or `NA` if not provided) and the estimated
 #'   values after step6 and step7,
@@ -357,6 +371,10 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
   # Force nb_rep to c(10, 5) for step6 as defined in the AgMIP Phase IV protocol
   if (is.null(optim_options_given$nb_rep)) {
     optim_options$nb_rep <- c(10, 5)
+  }
+  # Force xtol_rel to 1e-3 for step6
+  if (is.null(optim_options_given$xtol_rel)) {
+    optim_options$xtol_rel <- 1e-3
   }
 
   # Define initial values for step6 if not done by the user:
@@ -514,6 +532,10 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
   # Force nb_rep to 20 for step7 as defined in the AgMIP Phase IV protocol
   if (is.null(optim_options_given$nb_rep)) {
     optim_options$nb_rep <- 20
+  }
+  # Force xtol_rel to 1e-3 for step7
+  if (is.null(optim_options_given$xtol_rel)) {
+    optim_options$xtol_rel <- 1e-3
   }
 
   # Run step7

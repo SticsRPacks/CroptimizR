@@ -53,7 +53,12 @@ and for each candidate-parameter addition) and to \code{c(20)} for step7.
 parameter values change by less than \code{xtol_rel} times the absolute value of the parameter
 between two successive iterations (default: \code{1e-4}).
 \item additional options can be provided; see \code{?nl.opts} for a complete list.
-}}
+}
+
+For debugging or testing purposes (i.e. to simply check that the protocol executes correctly
+without aiming at meaningful results), the user can use very small values, for example
+\code{nb_rep = 1} and \code{maxeval = 2}, in order to obtain a fast "dry run" of the whole protocol.
+Such settings must of course be removed for any real calibration experiment.}
 
 \item{param_info}{Information about the parameters to estimate.
 A list containing:
@@ -67,7 +72,7 @@ Default values are used when a parameter is not estimated in the current step
 (e.g. major or candidate parameter estimated in a subsequent step, candidate parameter
 that was not selected, etc.), and also as one of the initial values when the parameter is estimated.}
 
-\item{forced_param_values}{Named vector or list specifying parameter values to force in
+\item{forced_param_values}{(optional)  Named vector or list specifying parameter values to force in
 the model.
 It may also contain arithmetic expressions to define equality constraints between parameters
 (see the Details section of \code{estim_param}). In this case, the values to force are computed before
@@ -80,14 +85,14 @@ observed variables. \code{transform_var=c(var1=log, var2=sqrt)} will for example
 apply log-transformation on simulated and observed values of variable var1,
 and square-root transformation on values of variable var2.}
 
-\item{transform_obs}{User-defined function to transform observations before each criterion
-evaluation (optional). See the Details section of \code{estim_param} for more information.}
+\item{transform_obs}{(optional) User-defined function to transform observations before each criterion
+evaluation. See the Details section of \code{estim_param} for more information.}
 
-\item{transform_sim}{User-defined function to transform simulations before each criterion
-evaluation (optional). See the Details section of \code{estim_param} for more information.}
+\item{transform_sim}{(optional) User-defined function to transform simulations before each criterion
+evaluation. See the Details section of \code{estim_param} for more information.}
 
-\item{satisfy_par_const}{User-defined function to enforce inequality constraints on estimated
-parameters (optional). See the Details section of \code{estim_param} for more information.}
+\item{satisfy_par_const}{(optional) User-defined function to enforce inequality constraints on estimated
+parameters. See the Details section of \code{estim_param} for more information.}
 
 \item{var_to_simulate}{(optional) List of variables for which the model wrapper must return
 results.
@@ -130,9 +135,48 @@ Higher values provide increasingly detailed information (simulations, observatio
 for each evaluation, but may lead to very large memory consumption and should therefore be used
 with caution inside the AgMIP protocol.
 
-See \code{\link{estim_param}} for a detailed description of the different levels.
+See \code{\link{estim_param}} for a detailed description of the different levels.}
+}
+\value{
+Prints, graphs, and a list containing the results of the AgMIP Phase IV Calibration protocol.
+All results are saved in the folder specified by \code{out_dir}.
 
-#' @details
+During execution, a console display indicates the description of the step currently being run.
+
+The generated plots include:
+\itemize{
+\item diagnostics recommended in Wallach et al. (2025): MSE, bias², rRMSE, and Efficiency
+for each variable at each step (files \code{barplot_rRMSE_EF_per_step.pdf} and
+\code{plot_MSE_Bias2_per_step.pdf}),
+\item scatter plots of simulations versus observations before and after each step
+(files \code{scatter_plots_*.pdf}),
+\item diagnostic plots for each minimization performed (see subfolders \code{AgMIP_protocol_step6},
+\code{AgMIP_protocol_step7}, and their contents).
+}
+
+The returned object is a list containing:
+\itemize{
+\item \code{final_values}: a named vector with the values of all parameters that were finally estimated.
+This includes all parameters selected during step6 and re-estimated in step7.
+\item \code{forced_param_values}: a named vector with the values of all parameters that were \emph{not} estimated
+in the final calibration step 7. This includes in particular:
+\itemize{
+\item candidate parameters that were tested during step6 but not selected,
+\item parameters defined through equality constraints or forced by the user (see input argument \code{forced_param_values}).
+}
+\item \code{obs_var_list}: a character vector with the names of observed variables used in the protocol,
+\item \code{values_per_step}: a data.frame containing the default parameter values (from \code{param_info$default}, or \code{NA} if not provided) and the estimated
+values after step6 and step7,
+\item \code{stats_per_step}: a data.frame containing statistics (MSE, bias², rRMSE, and Efficiency)
+for each variable, before and after each step,
+\item \code{step6}: a list with detailed results for step6,
+\item \code{step7}: a list with detailed results for step7.
+}
+}
+\description{
+Automate the AgMIP Phase IV Calibration protocol
+}
+\details{
 \subsection{The AgMIP Phase IV Calibration protocol}{
 
 The AgMIP Phase IV Calibration protocol is thoroughly described in Wallach et al. (2024)
@@ -264,40 +308,7 @@ Note that in step7, all observations included in \code{obs_list} are used, regar
 Thus, observations for variables not used in step6 (e.g. because no parameter is directly
 associated with these variables) can still be used in step7, where all parameters selected
 during step6 are re-estimated using all observed variables (WLS step).
-}}
 }
-\value{
-Prints, graphs, and a list containing the results of the AgMIP Phase IV Calibration protocol.
-All results are saved in the folder specified by \code{out_dir}.
-
-During execution, a console display indicates the description of the step currently being run.
-
-The generated plots include:
-\itemize{
-\item diagnostics recommended in Wallach et al. (2025): MSE, bias², rRMSE, and Efficiency
-for each variable at each step (files \code{barplot_rRMSE_EF_per_step.pdf} and
-\code{plot_MSE_Bias2_per_step.pdf}),
-\item scatter plots of simulations versus observations before and after each step
-(files \code{scatter_plots_*.pdf}),
-\item diagnostic plots for each minimization performed (see subfolders \code{AgMIP_protocol_step6},
-\code{AgMIP_protocol_step7}, and their contents).
-}
-
-The returned object is a list containing:
-\itemize{
-\item \code{final_values}: a named vector with the estimated parameter values,
-\item \code{forced_param_values}: a named vector with the values of forced parameters,
-\item \code{obs_var_list}: a character vector with the names of observed variables used in the protocol,
-\item \code{values_per_step}: a data.frame containing the default parameter values (from \code{param_info$default}, or \code{NA} if not provided) and the estimated
-values after step6 and step7,
-\item \code{stats_per_step}: a data.frame containing statistics (MSE, bias², rRMSE, and Efficiency)
-for each variable, before and after each step,
-\item \code{step6}: a list with detailed results for step6,
-\item \code{step7}: a list with detailed results for step7.
-}
-}
-\description{
-Automate the AgMIP Phase IV Calibration protocol
 }
 \seealso{
 \itemize{
