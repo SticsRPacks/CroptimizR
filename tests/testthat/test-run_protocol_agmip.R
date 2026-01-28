@@ -796,7 +796,7 @@ test_that("Test AgMIP protocol with major param or candidate param set to NULL",
   )
 
   # Check that estimated parameters only include rB and h
-  expect_equal(names(res$final_values), c("rB","h"))
+  expect_equal(names(res$final_values), c("rB", "h"))
 
   # Check that estimated values for parameters are close to true values
   expect_equal(res$final_values[["rB"]],
@@ -933,12 +933,12 @@ test_that("Test AgMIP protocol with provided initial values", {
 
   # Check that estimated values for parameters are close to true values
   expect_equal(res$final_values[["rB"]],
-               param_true_values[["rB"]],
-               tolerance = param_true_values[["rB"]] * 1e-2
+    param_true_values[["rB"]],
+    tolerance = param_true_values[["rB"]] * 1e-2
   )
   expect_equal(res$final_values[["h"]],
-               param_true_values[["h"]],
-               tolerance = param_true_values[["h"]] * 1e-2
+    param_true_values[["h"]],
+    tolerance = param_true_values[["h"]] * 1e-2
   )
 
   # Check that initial values used for parameter estimation at step6 include the ones provided by the used
@@ -959,5 +959,4 @@ test_that("Test AgMIP protocol with provided initial values", {
     c(res$step6$final_values[["h"]], param_info$h$default),
     res$step7$init_values[["h"]][c(1, 2)]
   )
-
 })

@@ -24,7 +24,7 @@ test_that("Non-character path triggers error", {
 
 test_that("Test no error in reading the Agmip protocol file used for the vignette", {
   protocol_file_path <- file.path(
-    system.file(package = "CroptimizR"), "extdata","AgMIP_protocol",
+    system.file(package = "CroptimizR"), "extdata", "AgMIP_protocol",
     "agmip_protocol_vignette.xlsx"
   )
   expect_no_error(load_protocol_agmip(protocol_file_path))
@@ -43,7 +43,6 @@ test_that("Test no error in reading the example protocol file", {
 # ------------------------------------------------------------------------
 
 test_that("Valid protocol loads correctly", {
-
   file <- tempfile(fileext = ".xlsx")
   make_protocol_xlsx(file)
 
@@ -67,7 +66,6 @@ test_that("Valid protocol loads correctly", {
 # ------------------------------------------------------------------------
 
 test_that("Group order follows variables sheet", {
-
   file <- tempfile(fileext = ".xlsx")
 
   variables <- data.frame(
@@ -103,7 +101,6 @@ test_that("Group order follows variables sheet", {
 # ------------------------------------------------------------------------
 
 test_that("Unknown group in major triggers error", {
-
   file <- tempfile(fileext = ".xlsx")
 
   major <- data.frame(
@@ -126,12 +123,11 @@ test_that("Unknown group in major triggers error", {
 # ------------------------------------------------------------------------
 
 test_that("Group with no major and no candidate triggers error", {
-
   file <- tempfile(fileext = ".xlsx")
 
   variables <- data.frame(
-    variable = c("v1","V2"),
-    group = c("G1","G2")
+    variable = c("v1", "V2"),
+    group = c("G1", "G2")
   )
 
   major <- data.frame(
@@ -163,7 +159,6 @@ test_that("Group with no major and no candidate triggers error", {
 # ------------------------------------------------------------------------
 
 test_that("Default value out of bounds triggers error", {
-
   file <- tempfile(fileext = ".xlsx")
 
   major <- data.frame(
@@ -186,7 +181,6 @@ test_that("Default value out of bounds triggers error", {
 # ------------------------------------------------------------------------
 
 test_that("Constraints sheet is loaded correctly", {
-
   file <- tempfile(fileext = ".xlsx")
 
   constraints <- data.frame(
@@ -201,14 +195,15 @@ test_that("Constraints sheet is loaded correctly", {
 
   expect_true("p3" %in% names(res$forced_param_values))
   expect_equal(res$forced_param_values[["p3"]], "2 * p1")
-  expect_equal(compute_eq_const(res$forced_param_values, param_values = c(p1 = 2)),
-               c(p3 = 4))
+  expect_equal(
+    compute_eq_const(res$forced_param_values, param_values = c(p1 = 2)),
+    c(p3 = 4)
+  )
 })
 
 # ------------------------------------------------------------------------
 
 test_that("major_param is NULL when no major parameters exist for a group", {
-
   file <- tempfile(fileext = ".xlsx")
 
   # Define variables and candidate parameters only
@@ -251,7 +246,6 @@ test_that("major_param is NULL when no major parameters exist for a group", {
 # ------------------------------------------------------------------------
 
 test_that("Returned structure from load_protocol_agmip has correct fields and values", {
-
   file <- tempfile(fileext = ".xlsx")
 
   # Sample protocol
@@ -287,7 +281,7 @@ test_that("Returned structure from load_protocol_agmip has correct fields and va
   expect_named(res$step, c("G1", "G2"))
 
   # Check each group's fields
-  for(group in names(res$step)) {
+  for (group in names(res$step)) {
     expect_named(res$step[[group]], c("major_param", "candidate_param", "obs_var"))
     expect_true(is.null(res$step[[group]]$major_param) || is.character(res$step[[group]]$major_param))
     expect_true(is.null(res$step[[group]]$candidate_param) || is.character(res$step[[group]]$candidate_param))

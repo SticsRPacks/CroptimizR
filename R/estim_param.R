@@ -701,7 +701,6 @@ fill_step_info <- function(step, mc, env) {
 
     # Check that requested variables exist in obs_list and filter obs
     if (!identical(x[["obs_var"]], NULL)) {
-
       available_vars <- get_obs_var(x$obs_list)
       missing_vars <- setdiff(x$obs_var, available_vars)
 
@@ -724,7 +723,6 @@ fill_step_info <- function(step, mc, env) {
 
     # Check that requested situations exist in obs_list and filter them
     if (!identical(x[["situation"]], NULL)) {
-
       available_situations <- names(x$obs_list)
       missing_situations <- setdiff(x$situation, available_situations)
 

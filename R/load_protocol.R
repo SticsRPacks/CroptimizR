@@ -41,7 +41,6 @@
 #'
 #' @export
 load_protocol_agmip <- function(protocol_file_path) {
-
   # Path checks
   if (is.null(protocol_file_path) || !is.character(protocol_file_path) || length(protocol_file_path) != 1) {
     stop("`protocol_file_path` must be a single character string giving the path to the protocol description file.")
@@ -103,17 +102,22 @@ load_protocol_agmip <- function(protocol_file_path) {
 
   # Build param_info
   param_info <- list(
-    lb = setNames(c(major_params_df$lower_bound, candidate_params_df$lower_bound),
-                  c(major_params_df$parameter, candidate_params_df$parameter)),
-    ub = setNames(c(major_params_df$upper_bound, candidate_params_df$upper_bound),
-                  c(major_params_df$parameter, candidate_params_df$parameter)),
-    default = setNames(c(major_params_df$default_value, candidate_params_df$default_value),
-                       c(major_params_df$parameter, candidate_params_df$parameter))
+    lb = setNames(
+      c(major_params_df$lower_bound, candidate_params_df$lower_bound),
+      c(major_params_df$parameter, candidate_params_df$parameter)
+    ),
+    ub = setNames(
+      c(major_params_df$upper_bound, candidate_params_df$upper_bound),
+      c(major_params_df$parameter, candidate_params_df$parameter)
+    ),
+    default = setNames(
+      c(major_params_df$default_value, candidate_params_df$default_value),
+      c(major_params_df$parameter, candidate_params_df$parameter)
+    )
   )
 
   # Build step structure
   step <- lapply(groups, function(group) {
-
     major <- if (nrow(major_params_df) > 0) major_params_df$parameter[major_params_df$group == group] else NULL
     if (length(major) == 0) major <- NULL
 
@@ -164,7 +168,6 @@ load_protocol_agmip <- function(protocol_file_path) {
 #'
 #' @keywords internal
 check_protocol_structure <- function(protocol_file_path) {
-
   # Verify that the file exists
   if (!file.exists(protocol_file_path)) {
     stop(paste0("Protocol file not found: ", protocol_file_path))
@@ -214,7 +217,6 @@ check_protocol_structure <- function(protocol_file_path) {
   # Verify columns in each sheet
   invisible(
     lapply(sheets_to_check, function(sheet_name) {
-
       # Find the actual sheet (case-insensitive)
       idx <- which(sheets_lower == sheet_name)
       if (length(idx) != 1) {
@@ -289,7 +291,9 @@ check_col_names <- function(protocol_file_path, expected_cols, actual_cols, shee
 #' @keywords internal
 check_bounds_df <- function(df, param_type) {
   # Return immediately if no rows
-  if (nrow(df) == 0) return(NULL)
+  if (nrow(df) == 0) {
+    return(NULL)
+  }
 
   # Ensure numeric columns
   numeric_cols <- c("default_value", "lower_bound", "upper_bound")
@@ -319,4 +323,3 @@ check_bounds_df <- function(df, param_type) {
     ))
   }
 }
-

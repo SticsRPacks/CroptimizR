@@ -11,7 +11,6 @@
 #'   copied file).
 #' @export
 get_agmip_protocol_example <- function(path = NULL, overwrite = FALSE) {
-
   src <- system.file(
     "extdata",
     "agmip_protocol_example.xlsx",
@@ -57,7 +56,6 @@ get_agmip_protocol_example <- function(path = NULL, overwrite = FALSE) {
 #'   copied file).
 #' @export
 get_agmip_protocol_template <- function(path = ".", overwrite = FALSE) {
-
   src <- system.file(
     "extdata",
     "agmip_protocol_template.xlsx",
@@ -88,4 +86,3 @@ get_agmip_protocol_template <- function(path = ".", overwrite = FALSE) {
 
   normalizePath(dest)
 }
-

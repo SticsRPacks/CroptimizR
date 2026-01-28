@@ -15,30 +15,30 @@
 #'
 #' @keywords internal
 make_protocol_xlsx <- function(
-    path,
-    variables = data.frame(
-      variable = c("v1", "v2", "v3"),
-      group = c("G1", "G1", "G2"),
-      check.names = FALSE
-    ),
-    major = data.frame(
-      parameter = c("p1"),
-      group = c("G1"),
-      default_value = 1,
-      lower_bound = 0,
-      upper_bound = 2,
-      check.names = FALSE
-    ),
-    candidate = data.frame(
-      parameter = c("p2"),
-      group = c("G2"),
-      default_value = 5,
-      lower_bound = 0,
-      upper_bound = 10,
-      check.names = FALSE
-    ),
-    constraints = NULL,
-    extra_sheets = list()
+  path,
+  variables = data.frame(
+    variable = c("v1", "v2", "v3"),
+    group = c("G1", "G1", "G2"),
+    check.names = FALSE
+  ),
+  major = data.frame(
+    parameter = c("p1"),
+    group = c("G1"),
+    default_value = 1,
+    lower_bound = 0,
+    upper_bound = 2,
+    check.names = FALSE
+  ),
+  candidate = data.frame(
+    parameter = c("p2"),
+    group = c("G2"),
+    default_value = 5,
+    lower_bound = 0,
+    upper_bound = 10,
+    check.names = FALSE
+  ),
+  constraints = NULL,
+  extra_sheets = list()
 ) {
   wb <- openxlsx::createWorkbook()
 

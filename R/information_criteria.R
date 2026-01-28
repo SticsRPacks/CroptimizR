@@ -11,7 +11,9 @@
 #' @export
 #'
 AIC <- function(obs_list, crit_value, param_nb) {
-  if (nargs() == 0) return(list(name = "AIC"))
+  if (nargs() == 0) {
+    return(list(name = "AIC"))
+  }
 
   n <- sum(sapply(
     obs_list,
@@ -36,7 +38,9 @@ AIC <- function(obs_list, crit_value, param_nb) {
 #' @export
 #'
 AICc <- function(obs_list, crit_value, param_nb) {
-  if (nargs() == 0) return(list(name = "AICc"))
+  if (nargs() == 0) {
+    return(list(name = "AICc"))
+  }
 
   n <- sum(sapply(
     obs_list,
@@ -68,7 +72,9 @@ AICc <- function(obs_list, crit_value, param_nb) {
 #' @export
 #'
 BIC <- function(obs_list, crit_value, param_nb) {
-  if (nargs() == 0) return(list(name = "BIC"))
+  if (nargs() == 0) {
+    return(list(name = "BIC"))
+  }
 
   n <- sum(sapply(
     obs_list,

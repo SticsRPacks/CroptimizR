@@ -57,8 +57,8 @@ plot_stats_evolution <- function(stats_per_step, steps_by_var, step_levels = NUL
 
   df_long <- df_long %>%
     mutate(variable = factor(.data$variable,
-                             levels = order_vars$variable,
-                             ordered = TRUE
+      levels = order_vars$variable,
+      ordered = TRUE
     ))
 
   # Connection segments between the two lines (pre/post phase)
@@ -90,7 +90,7 @@ plot_stats_evolution <- function(stats_per_step, steps_by_var, step_levels = NUL
       ),
       alpha = 0.25, inherit.aes = FALSE
     ) +
-    facet_wrap(~.data$variable, scales = "free_y") +
+    facet_wrap(~ .data$variable, scales = "free_y") +
     scale_alpha_manual(values = c(pre = 0.25, post = 1), guide = "none") +
     labs(x = "step", y = "bias^2 or MSE") +
     theme_bw() +

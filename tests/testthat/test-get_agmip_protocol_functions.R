@@ -1,5 +1,4 @@
 test_that("Protocol example and template helper functions work as expected", {
-
   ## ---- Test get_agmip_protocol_example() ----
 
   example_path <- get_agmip_protocol_example()
@@ -35,12 +34,11 @@ test_that("Protocol example and template helper functions work as expected", {
   ## ---- Test: overwrite = TRUE works ----
 
   info1 <- file.info(dest1)
-  Sys.sleep(1)  # ensure mtime can change on most filesystems
+  Sys.sleep(1) # ensure mtime can change on most filesystems
 
   dest2 <- get_agmip_protocol_template(path = tmp_dir, overwrite = TRUE)
   info2 <- file.info(dest2)
 
   expect_identical(dest1, dest2)
   expect_true(info2$mtime >= info1$mtime)
-
 })
