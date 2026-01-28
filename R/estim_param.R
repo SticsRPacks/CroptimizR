@@ -6,17 +6,17 @@
 #' and one column per observed variables with either the measured values or NA, if
 #' the variable is not observed at the given date.
 #' See details section for more information on the list of observations actually
-#' used during the parameter estimation process.
-#'
-#' @param crit_function Function implementing the criterion to optimize
-#' (optional, see default value in the function signature). See
-#' [here](https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html)
-#' for more details about the list of proposed criteria.
+#' used during the parameter estimation procedure.
 #'
 #' @param model_function Crop Model wrapper function to use.
 #'
 #' @param model_options List of options for the Crop Model wrapper (see help of
 #' the Crop Model wrapper function used).
+#'
+#' @param crit_function Function implementing the criterion to optimize
+#' (optional, see default value in the function signature). See
+#' [here](https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html)
+#' for more details about the list of proposed criteria.
 #'
 #' @param optim_method Name of the parameter estimation method to use (optional,
 #' see default value in the function signature). For the moment, can be "simplex"
@@ -53,13 +53,14 @@
 #' @param forced_param_values Named vector or list, must contain the values (or
 #' arithmetic expression, see details section) for the model parameters to force. The corresponding
 #' values will be transferred to the model wrapper through its param_values argument
-#' during the estimation process.
+#' during the estimation procedure.
 #' Should not include values for estimated parameters (i.e. parameters defined in
 #' `param_info` argument), except if they are listed as candidate parameters (see
 #' argument `candidate_param`).
 #'
 #' @param candidate_param Names of the parameters, among those defined in the argument param_info,
 #' that must only be considered as candidate for parameter estimation (see details section).
+#' All parameters included in param_info that are not listed in candidate_param will be estimated.
 #'
 #' @param situation (optional) List of situations to take into account within obs_list.
 #' situation = NULL means that all situations in obs_list will be used.
@@ -87,9 +88,23 @@
 #' it may be useful to simulate also other variables, typically when transform_sim
 #' and/or transform_obs functions are used. Note however that it is
 #' active only if the model_function used handles this argument.
-#' If it is the case, and if the obs_var argument is provided, then the list of observations
-#' used will be restricted to the list of variables given in the obs_var argument,
-#' plus the ones possibly computed by the transform_sim function.
+#'
+#' @param info_crit_func Function (or list of functions) to compute information criteria.
+#' (optional, see default value in the function signature and [here](https://sticsrpacks.github.io/CroptimizR/reference/information_criteria.html)
+#' for more details about the list of proposed information criteria.).
+#' Values of the information criteria will be stored in the returned list.
+#' In case parameter selection is activated (i.e. if the argument candidate_param
+#' is defined (see details section)), the first information criterion given will be used.
+#' ONLY AVAILABLE FOR THE MOMENT FOR crit_function==crit_ols.
+#'
+#' @param weight Weights to use in the criterion to optimize. A function that takes in input a vector
+#' of observed values and the name of the corresponding variable and that must return either a single value
+#' for the weights for the given variable or a vector of values of length the length of the vector of observed values given in input.
+#'
+#' @param step (optional) List that describes the steps of the parameter estimation procedure (see details section).
+#' If `NULL`, a single default step will be created using the `estim_param` arguments
+#'
+#' @param out_dir Path to the directory where the optimization results will be written. (optional, default to `getwd()`)
 #'
 #' @param info_level (optional) Integer that controls the level of information returned and stored
 #' by estim_param (in addition to the results automatically provided that depends on the method used).
@@ -104,37 +119,25 @@
 #'   - `4` to add all model wrapper results for each evaluation, and all transformations if transform_sim is provided.
 #' (elements sim and sim_transformed in the returned list).
 #'
-#' @param info_crit_func Function (or list of functions) to compute information criteria.
-#' (optional, see default value in the function signature and [here](https://sticsrpacks.github.io/CroptimizR/reference/information_criteria.html)
-#' for more details about the list of proposed information criteria.).
-#' Values of the information criteria will be stored in the returned list.
-#' In case parameter selection is activated (i.e. if the argument candidate_param
-#' is defined (see details section)), the first information criterion given will be used.
-#' ONLY AVAILABLE FOR THE MOMENT FOR crit_function==crit_ols.
-#'
-#' @param weight Weights to use in the criterion to optimize. A function that takes in input a vector
-#' of observed values and the name of the corresponding variable and that must return either a single value
-#' for the weights for the given variable or a vector of values of length the length of the vector of observed values given in input.
-#'
-#' @param step (optional) List that describes the steps of the parameter estimation process (see details section).
-#' If `NULL`, a single default step will be created using the `estim_param` arguments
-#'
-#' @param out_dir Path to the directory where the optimization results will be written. (optional, default to `getwd()`)
-#'
 #' @param var `r lifecycle::badge("deprecated")` `var` is no
 #'   longer supported, use `var_to_simulate` instead.
 #'
 #' @details
+#'
+#'   ## Observation used
+#'
 #'   In CroptimizR, parameter estimation is based on the comparison between the values
 #'   of the observed and simulated variables at corresponding dates. Only the situations,
 #'   variables and dates common to both observations (provided in `obs_list` argument),
 #'   and simulations returned by the wrapper used, will be taken into account in
-#'   the parameter estimation process.
+#'   the parameter estimation procedure.
 #'   In case where the value of an observed variable is NA for a given situation and
 #'   date, it will not be taken into account. In case where the value of a simulated
 #'   variable is NA (or Inf) for a given situation and date for which there is an
 #'   observation, the optimized criterion will take the NA value, which may stop the
-#'   process, and the user will be warned.
+#'   procedure, and the user will be warned.
+#'
+#'   ## Parameter selection procedure (argument `candidate_param`)
 #'
 #'   If the candidate_param argument is given, a parameter selection procedure following
 #'   the AgMIP calibration phaseIII protocol will be performed:
@@ -147,15 +150,7 @@
 #'
 #'   The result includes a summary of all the steps (data.frame param_selection_steps).
 #'
-#'   The optional argument `transform_obs` must be a function with 4 arguments:
-#'   - model_results: the list of simulated results returned by the mode_wrapper used
-#'   - obs_list: the list of observations as given to estim_param function
-#'   - param_values: a named vector containing the current parameters values proposed
-#'      by the estimation algorithm
-#'   - model_options: the list of model options as given to estim_param function
-#'
-#'   It must return a list of observations (same format as `obs_list` argument) that
-#'   will be used to compute the criterion to optimize.
+#'   ## Transformation of simulations and observations (arguments `transform_sim` and `transform_obs`)
 #'
 #'   The optional argument `transform_sim` must be a function with 4 arguments:
 #'   - model_results: the list of simulated results returned by the mode_wrapper used
@@ -167,6 +162,18 @@
 #'   It must return a list of simulated results (same format as this returned by the model wrapper used)
 #'   that will be used to compute the criterion to optimize.
 #'
+#'   The optional argument `transform_obs` must be a function with 4 arguments:
+#'   - model_results: the list of simulated results returned by the mode_wrapper used
+#'   - obs_list: the list of observations as given to estim_param function
+#'   - param_values: a named vector containing the current parameters values proposed
+#'      by the estimation algorithm
+#'   - model_options: the list of model options as given to estim_param function
+#'
+#'   It must return a list of observations (same format as `obs_list` argument) that
+#'   will be used to compute the criterion to optimize.
+#'
+#'   ## Constraints on estimated parameters (argument `satisfy_par_const`)
+#'
 #'   The optional argument `satisfy_par_const` must be a function with 2 arguments:
 #'   - param_values: a named vector containing the current parameters values proposed
 #'      by the estimation algorithm
@@ -174,6 +181,8 @@
 #'
 #'   It must return a logical indicating if the parameters values satisfies the constraints
 #'   (freely defined by the user in the function body) or not.
+#'
+#'   ## Model parameters to force (argument `forced_param_values`)
 #'
 #'   The optional argument `forced_param_values` may contain arithmetic expressions to
 #'   automatically compute the values of some parameters in function of the values of
@@ -189,50 +198,63 @@
 #'   the parameters p5 and p6 must thus be part of the list of parameters to estimate, i.e.
 #'   described in the `param_info` argument.
 #'
+#'   ## Multi-steps estimation procedure (argument `step`)
+#'
 #'   The argument `step` is a list of lists used to perform parameter estimation in multiple sequential steps.
-#'   If provided, each step represents a separate stage in the estimation process,
+#'   If provided, each step represents a separate stage in the estimation procedure,
 #'   allowing different configurations for each step (e.g., different sets of parameters to estimate,
 #'   different observed variables, different situations, etc.).
 #'
 #'   When multiple steps are defined, the parameter values estimated in one step
 #'   are used as fixed values in the subsequent step.
-#'   Each step is a named list containing only the elements that vary between steps.
-#'   **Any argument** of the `estim_param` function (e.g., `obs_var`, `candidate_param` ...)
-#'   can be defined within a step. Note that the element `param` can be used to define
-#'   the list of parameters to estimate at a given step.
+#'   Each step is a named list that may contain **any argument** of the `estim_param` function
+#'   (e.g. `obs_var`, `candidate_param`, ...). Only the arguments that
+#'   differ from those given to `estim_param` need to be specified: any element not explicitly
+#'   defined in a step inherits its value from the corresponding argument of `estim_param`.
 #'
-#'   Any element not explicitly defined in a step will inherit its value
-#'   from the corresponding argument of `estim_param` and remain identical across all steps.
-#'   If `NULL`, a single step is created using the function arguments.
+#'   When `step` is **not** used (`step = NULL`), a single-step estimation is performed using the arguments of `estim_param`.
+#'   In this case, the list of parameters to be estimated is
+#'   automatically deduced from the `param_info` argument: all parameters defined in
+#'   `param_info` are considered for estimation (possibly subject to selection if
+#'   `candidate_param` is used).
+#'
+#'   When `step` **is** used, the set of parameters to estimate usually differs between steps.
+#'   For sake of simplicity, a **single global** `param_info` list can be provided to `estim_param`
+#'   (containing bounds, etc. for all parameters that may ever be estimated),
+#'   and each step specifies explicitly which parameters are:
+#'
+#'   - `major_param`: the parameters that **must be estimated** at this step,
+#'   - `candidate_param` (optional): the parameters that are **candidates for estimation**.
 #'
 #'   Suppose the `step` argument is defined as follows:
 #'   ```r
 #'   step <- list()
 #'   step[[1]] <- list(
-#'     param = c("p1"),
+#'     major_param = c("p1"),
 #'     candidate_param = c("p2"),
 #'     obs_var = c("var1")
 #'   )
 #'   step[[2]] <- list(
-#'     param = c("p3"),
+#'     major_param = c("p3"),
 #'     obs_var = c("var2")
 #'   )
 #'  ```
 #'
-#'  In this case, the parameter estimation process will proceed in **two steps**:
-#'   - **Step 1**: Parameter `p1` is estimated, while `p2` is included in a parameter selection process.
+#'  In this case, the parameter estimation procedure will proceed in **two steps**:
+#'   - **Step 1**: Parameter `p1` is estimated, while `p2` is included in a parameter selection procedure.
 #'     Only observed variable `var1` (from `obs_list` defined in argument of `estim_param`) is used.
 #'   - **Step 2**: Parameter `p3` is estimated, and only observed variable `var2` is used.
 #'     Parameters `p1` (and possibly `p2`, if selected) are fixed at the values estimated in Step 1.
-#'  Information on the parameters to estimate (bounds, ...) can be defined within
-#'  the same `param_info` list given in argument of `estim_param`.
 #'
-#'  The results of the parameter estimation process are stored in the folder `out_dir`,
+#'  Technical information about parameters (bounds, default values, ...)
+#'  can be provided **once for all steps** via the global `param_info` argument of `estim_param`.
+#'
+#'  The results of the parameter estimation procedure are stored in the folder `out_dir`,
 #'  with a separate subfolder for each step.
 #'
 #' @return prints, graphs and a list containing the results of the parameter estimation,
 #' which content depends on the method used and on the values of the `info_level` argument.
-#' All results are saved in the folder `optim_options$out_dir`.
+#' All results are saved in the folder `out_dir`.
 #'
 #' @seealso For more details and examples, see the different vignettes in
 #' [CroptimizR website](https://sticsrpacks.github.io/CroptimizR/)
@@ -241,19 +263,21 @@
 #'
 #'
 
-estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
-                        model_options = NULL, optim_method = "nloptr.simplex",
+estim_param <- function(obs_list, model_function,
+                        model_options = NULL, crit_function = crit_log_cwss, optim_method = "nloptr.simplex",
                         optim_options = NULL, param_info, forced_param_values = NULL,
                         candidate_param = NULL, situation = NULL, obs_var = NULL, transform_var = NULL, transform_obs = NULL,
                         transform_sim = NULL, satisfy_par_const = NULL,
-                        var_to_simulate = NULL, info_level = 1,
+                        var_to_simulate = NULL,
                         info_crit_func = list(
-                          CroptimizR::BIC, CroptimizR::AICc,
-                          CroptimizR::AIC
+                          CroptimizR::AICc,
+                          CroptimizR::AIC,
+                          CroptimizR::BIC
                         ),
                         weight = NULL,
                         step = NULL,
                         out_dir = getwd(),
+                        info_level = 1,
                         var = lifecycle::deprecated()) {
   # Managing parameter names changes between versions:
   if (rlang::has_name(optim_options, "out_dir")) {
@@ -269,10 +293,13 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
     var_to_simulate <- var
   }
 
+  # Create out_dir if it does not exist
+  if (!dir.exists(out_dir)) dir.create(out_dir, recursive = TRUE)
+
   # Initialize res
   res <- list()
 
-  # Create an environment accessible by all functions for storing information during the estimation process
+  # Create an environment accessible by all functions for storing information during the estimation procedure
   parent <- eval(parse(text = ".GlobalEnv"))
   .croptEnv <- new.env(parent)
   assign(
@@ -282,7 +309,7 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
   )
   .croptEnv$total_eval_count <- 0
 
-  # Remove CroptimizR environment before exiting and save stored results (even if the process crashes)
+  # Remove CroptimizR environment before exiting and save stored results (even if the procedure crashes)
   on.exit({
     if (exists(".croptEnv")) {
       rm(".croptEnv")
@@ -307,36 +334,44 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
   set.seed(optim_options$ranseed)
 
   estimated_param_values <- NULL
+  indent_base <- 1
 
   # Loop over the different steps
   for (istep in 1:nb_steps) {
+    ## Initializations and print information about the current step
     if (nb_steps > 1) {
       out_dir_cur_step <- file.path(
-        out_dir, paste0("step", istep)
+        out_dir, names(step)[istep]
       )
+      ### Print step name
+      indent_step <- indent_base + 1
+      cat("\n", make_display_prefix(indent_step, "title"), names(step)[istep], "\n", sep = "")
     } else {
+      indent_step <- indent_base
       out_dir_cur_step <- out_dir
     }
+
 
     # Add already estimated parameters values and default values of non-estimated ones to forced_param_values
     default_values <- get_params_default(step[[istep]]$param_info)
     forced_param_values_istep <- c(
-      step[[istep]]$forced_param_values,
       estimated_param_values,
       default_values[setdiff(
         names(default_values),
         names(estimated_param_values)
-      )]
+      )],
+      step[[istep]]$forced_param_values
     )
 
     # Initializations before parameter selection loop
-    oblig_param_list <- setdiff(step[[istep]]$param, step[[istep]]$candidate_param)
+    oblig_param_list <- setdiff(step[[istep]]$major_param, step[[istep]]$candidate_param)
     if (length(oblig_param_list) == 0) {
       crt_candidates <- step[[istep]]$candidate_param[[1]] # in case there are only candidates ...
     } else {
       crt_candidates <- oblig_param_list
     }
-    count <- 1
+    i_selection_step <- 1
+    i_candidate <- 1
     param_selection_steps <- NULL
     method_description <- optim_switch(
       optim_method = step[[istep]]$optim_method,
@@ -349,44 +384,63 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
       ## Filter information about the parameters to estimate
       param_info_cur <- filter_param_info(step[[istep]]$param_info, crt_candidates)
       bounds <- get_params_bounds(param_info_cur)
-      forced_param_values_cur <- forced_param_values_istep
-      forced_param_values_cur <- forced_param_values_cur[!names(forced_param_values_cur) %in% crt_candidates]
+      if (is.null(forced_param_values_istep) || all(names(forced_param_values_istep) %in% crt_candidates)) {
+        forced_param_values_cur <- NULL
+      } else {
+        forced_param_values_cur <- forced_param_values_istep[!names(forced_param_values_istep) %in% crt_candidates]
+      }
 
-      ## Print information about the current step
-      cat("\n---------------------\n")
-      if (nb_steps > 1) {
-        cat(paste("Step", istep, "\n"))
-      }
       if (param_selection_activated) {
-        cat(paste("Parameter automatic selection process: step", count, "\n"))
-        cat(paste("Major parameter(s):", paste(oblig_param_list, collapse = " "), "\n"))
+        indent_select <- indent_step + 1
         if (length(crt_candidates) > length(oblig_param_list)) {
-          cat(paste("Current candidate parameter evaluated: ", crt_candidates[length(crt_candidates)], "\n"))
+          param_selection_step_name <- paste0(
+            names(step)[istep], ".Candidate",
+            i_candidate
+          )
+          i_candidate <- i_candidate + 1
+        } else {
+          param_selection_step_name <- paste0(
+            names(step)[istep], ".Major(s)"
+          )
         }
+        cat("\n\n", make_display_prefix(indent_select, "title"), "Parameter automatic selection procedure: ",
+          param_selection_step_name, "\n",
+          sep = ""
+        )
+
+        cat("\n", make_display_prefix(indent_select, "info"), "Major parameter(s): ", paste(oblig_param_list, collapse = " "), sep = "")
+        if (length(crt_candidates) > length(oblig_param_list)) {
+          cat("\n", make_display_prefix(indent_select, "info"), "Current candidate parameter evaluated: ",
+            crt_candidates[length(crt_candidates)],
+            sep = ""
+          )
+        }
+      } else {
+        indent_select <- indent_step
       }
-      cat(paste("Estimated parameter(s):", paste(crt_candidates, collapse = " "), "\n"))
+      cat("\n", make_display_prefix(indent_select, "info"), "Estimated parameter(s): ", paste(crt_candidates, collapse = " "), sep = "")
       if (length(forced_param_values_cur) > 0) {
-        cat(paste("Forced parameter(s):", paste(names(forced_param_values_cur), format(
+        cat("\n", make_display_prefix(indent_select, "info"), "Forced parameter(s): ", paste(names(forced_param_values_cur), format(
           forced_param_values_cur,
           scientific = FALSE,
           digits = 2, nsmall = 2
-        ), sep = "=", collapse = ", ")), "\n")
+        ), sep = "=", collapse = ", "), sep = "")
       } else {
-        cat("Forced parameter(s): none\n")
+        cat("\n", make_display_prefix(indent_select, "info"), "Forced parameter(s): none", sep = "")
       }
-      cat(paste("Observed variable(s) used:", paste(unique(
-        unlist(lapply(
-          step[[istep]]$obs_list,
-          function(x) setdiff(names(x), c("Date", "Plant"))
-        ))
-      ), collapse = ", "), "\n"))
-      cat("---------------------\n")
-
+      cat("\n", make_display_prefix(indent_select, "info"), "Observed variable(s) used: ",
+        paste(
+          get_obs_var(step[[istep]]$obs_list),
+          collapse = ", "
+        ),
+        "\n",
+        sep = ""
+      )
 
       ## Initialize parameters
       ## nb_rep may be different for the different parameter selection steps
       ## ... quite ugly ... should be improved ...
-      init_values_nb <- method_description$init_values_nb[min(length(method_description$init_values_nb), count)]
+      init_values_nb <- method_description$init_values_nb[min(length(method_description$init_values_nb), i_selection_step)]
       param_info_cur <- complete_init_values(param_info_cur,
         nb_values = init_values_nb,
         satisfy_par_const = step[[istep]]$satisfy_par_const
@@ -415,7 +469,7 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
       if (param_selection_activated) {
         out_dir_cur_optim <- file.path(
           out_dir_cur_step,
-          paste0("param_select_step", count)
+          paste0("param_select_step", i_selection_step)
         )
       } else {
         out_dir_cur_optim <- out_dir_cur_step
@@ -438,7 +492,8 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
         forced_param_values = forced_param_values_cur,
         info_level = step[[istep]]$info_level,
         info_crit_list = step[[istep]]$info_crit_list,
-        weight = step[[istep]]$weight
+        weight = step[[istep]]$weight,
+        indent = indent_select
       )
 
       ## Run the estimation
@@ -449,15 +504,15 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
         crit_options = crit_options
       )
 
-      ## In case no results, there was an error during the estimation process => stop
+      ## In case no results, there was an error during the estimation procedure => stop
       if (!("final_values" %in% names(res_tmp))) {
         stop(
-          "There was an error during the parameter estimation process.
+          "There was an error during the parameter estimation procedure.
            Please check warnings and messages displayed above and/or by running warnings()."
         )
       }
 
-      ## If the parameter selection process is activated, compute the next candidate parameters to estimate
+      ## If the parameter selection procedure is activated, compute the next candidate parameters to estimate
       if (param_selection_activated) {
         ### Update results in param_selection_steps
         param_selection_steps <- post_treat_FwdRegAgMIP(
@@ -469,13 +524,14 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
         res_select_param <- select_param_FwdRegAgMIP(
           oblig_param_list, step[[istep]]$candidate_param,
           crt_candidates,
-          param_selection_steps[[step[[istep]]$info_crit_list[[1]]()$name]]
+          param_selection_steps[[step[[istep]]$info_crit_list[[1]]()$name]],
+          indent = indent_select
         )
         crt_candidates <- res_select_param$next_candidates
         if (res_select_param$selected) {
           res[[istep]] <- res_tmp
         }
-        count <- count + 1
+        i_selection_step <- i_selection_step + 1
       } else {
         crt_candidates <- NULL
         res[[istep]] <- res_tmp
@@ -484,19 +540,18 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
 
     # Print and store results of parameter estimation steps if parameter selection was activated
     if (param_selection_activated) {
-      cat("----------------------\n")
-      if (nb_steps > 1) {
-        cat(paste("Step", istep, "\n"))
-      }
-      cat("End of parameter selection process\n")
-      cat("----------------------\n\n")
+      cat("\n\n", make_display_prefix(indent_select, "title"), "End of parameter selection procedure\n", sep = "")
 
       summary_FwdRegAgMIP(
         param_selection_steps, step[[istep]]$info_crit_list, out_dir_cur_step,
-        res
+        res,
+        indent = indent_step
       )
       res[[istep]]$param_selection_steps <- param_selection_steps
-      save_results_FwdRegAgMIP(res[[istep]], param_selection_steps, out_dir_cur_step)
+      save_results_FwdRegAgMIP(res[[istep]], param_selection_steps,
+        out_dir_cur_step,
+        indent = indent_step
+      )
     }
 
     # Gather estimated values in a single vector for next steps
@@ -504,15 +559,15 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
       estimated_param_values,
       res[[istep]]$final_values
     )
+
+    if (nb_steps > 1) {
+      cat("\n\n", make_display_prefix(indent_step, "title"), "End of Step ", names(step)[istep], "\n", sep = "")
+    }
   } # End loop over the different steps
 
   if (nb_steps > 1) {
-    cat("\n----------------------\n")
-    cat("End of multi-step parameter estimation process\n")
-    cat("----------------------\n")
-
-    res <- post_treat_multi_step(res)
-    summary_multi_step(res, out_dir)
+    res <- post_treat_multi_step(step, res)
+    summary_multi_step(res, out_dir, indent = indent_base)
   } else {
     res <- res[[1]]
   }
@@ -522,19 +577,21 @@ estim_param <- function(obs_list, crit_function = crit_log_cwss, model_function,
   timings <- unlist(lapply(log.lst, function(x) x$toc - x$tic))
   res$model_total_time <- as.numeric(format(sum(timings), scientific = FALSE, digits = 1, nsmall = 0))
   res$model_average_time <- as.numeric(format(mean(timings), scientific = FALSE, digits = 2, nsmall = 0))
-  cat(paste(
-    "Average time for the model to simulate all required situations:", res$model_average_time,
-    "sec elapsed\n"
-  ))
+  cat(
+    "\n",
+    make_display_prefix(indent_base, "info"),
+    "Average time for the model to simulate all required situations: ", res$model_average_time,
+    "sec elapsed",
+    sep = ""
+  )
   res$total_eval_count <- .croptEnv$total_eval_count
-  cat(paste("Total number of criterion evaluation:", res$total_eval_count, "\n"))
-  cat(paste("Total time of model simulations:", res$model_total_time, "sec elapsed\n"))
+  cat("\n", make_display_prefix(indent_base, "info"), "Total number of criterion evaluation: ", res$total_eval_count, sep = "")
+  cat("\n", make_display_prefix(indent_base, "info"), "Total time of model simulations: ", res$model_total_time, "sec elapsed", sep = "")
   tictoc::tic.clearlog()
   tictoc::toc(quiet = TRUE, log = TRUE)
   log.lst <- tictoc::tic.log(format = FALSE)
   res$total_time <- as.numeric(format(log.lst[[1]]$toc - log.lst[[1]]$tic, scientific = FALSE, digits = 1, nsmall = 0))
-  cat(paste("Total time of parameter estimation process:", res$total_time, "sec elapsed\n"))
-  cat("----------------------\n")
+  cat("\n", make_display_prefix(indent_base, "info"), "Total time of parameter estimation procedure: ", res$total_time, "sec elapsed", sep = "")
   tictoc::tic.clearlog()
 
   return(res)
@@ -560,6 +617,9 @@ fill_step_info <- function(step, mc, env) {
   # Check step format
   if (is.null(step)) {
     step <- list(list())
+    flag_null_step <- TRUE
+  } else {
+    flag_null_step <- FALSE
   }
   if (!is.list(step)) {
     stop("Incorrect format for argument step. Should be a list.")
@@ -567,6 +627,13 @@ fill_step_info <- function(step, mc, env) {
   if (!all(sapply(step, function(x) is.list(x)))) {
     stop("Incorrect format for argument step. Should be a list of lists.")
   }
+  # Initialize the names of the steps if not yet defined
+  if (is.null(names(step))) {
+    names(step) <- paste0("Step", seq_along(step))
+  } else if (length(names(step)) != length(step)) {
+    stop("Incorrect format for argument step. Should be a list of lists with names for each step (or without any name).")
+  }
+
   # Gather and evaluate estim_param arguments (both given and default values)
   arg_names <- names(mc[-1]) # remove the function name
   arg_names <- setdiff(arg_names, "step") # remove step as it is handled separately
@@ -595,7 +662,9 @@ fill_step_info <- function(step, mc, env) {
       arg # keep as it if no default value
     }
   })
-  args_total <- modifyList(args_default, args_given)
+
+  args_total <- utils::modifyList(args_default, args_given)
+
   # Fill step with the arguments from estim_param if not already present
   step <- lapply(step, function(x) {
     for (arg_name in names(args_total)) {
@@ -609,17 +678,66 @@ fill_step_info <- function(step, mc, env) {
         }
       }
     }
-    if (!"param" %in% names(x)) x$param <- setdiff(get_params_names(x$param_info, short_list = TRUE), x$candidate_param)
+    # If step was not defined, define major_param as all parameters in param_info except candidate_param
+    # to keep consistence with standard use of estim_param before introducing step argument
+    if (flag_null_step) {
+      x$major_param <- setdiff(get_params_names(x$param_info, short_list = TRUE), x$candidate_param)
+    }
 
-    # Filter observations if necessary
+    # Handle deprecation of param argument
+    if ("param" %in% names(x)) {
+      lifecycle::deprecate_warn(
+        when = "1.0.0",
+        what = "step[[i]]$param",
+        with = "step[[i]]$major_param"
+      )
+      if (is.null(x$major_param)) {
+        x$major_param <- x$param
+      } else {
+        warning("Both `param` and `major_param` are defined in a step. The `param` argument will be ignored.")
+      }
+      x$param <- NULL
+    }
+
+    # Check that requested variables exist in obs_list and filter obs
     if (!identical(x[["obs_var"]], NULL)) {
-      x$obs_list <- filter_obs(x$obs_list,
+      available_vars <- get_obs_var(x$obs_list)
+      missing_vars <- setdiff(x$obs_var, available_vars)
+
+      if (length(missing_vars) > 0) {
+        stop(
+          paste(
+            "The following variables are referenced in `step$obs_var` but not found in `obs_list`:",
+            paste(missing_vars, collapse = ", ")
+          ),
+          call. = FALSE
+        )
+      }
+
+      x$obs_list <- filter_obs(
+        x$obs_list,
         var = x$obs_var,
         include = TRUE
       )
     }
+
+    # Check that requested situations exist in obs_list and filter them
     if (!identical(x[["situation"]], NULL)) {
-      x$obs_list <- filter_obs(x$obs_list,
+      available_situations <- names(x$obs_list)
+      missing_situations <- setdiff(x$situation, available_situations)
+
+      if (length(missing_situations) > 0) {
+        stop(
+          paste(
+            "The following situations are referenced in `step$situation` but not found in `obs_list`:",
+            paste(missing_situations, collapse = ", ")
+          ),
+          call. = FALSE
+        )
+      }
+
+      x$obs_list <- filter_obs(
+        x$obs_list,
         situation = x$situation,
         include = TRUE
       )
@@ -636,44 +754,44 @@ fill_step_info <- function(step, mc, env) {
 #'
 #' @param step A list containing the characteristics of a given step.
 #'
-#' @param istep The index of the step in the list of steps.
+#' @param step_name The name of the step.
 #'
 #' @return The validated step with possibly updated information.
 #'
 #' @keywords internal
-validate_step <- function(step, istep) {
+validate_step <- function(step, step_name) {
   ## obs_list
   if (!is.obs(step$obs_list)) {
-    stop(paste("Step", istep, ": Incorrect format for argument obs_list."))
+    stop(paste("Step", step_name, ": Incorrect format for argument obs_list."))
   }
 
   ## crit_function
   if (!is.function(step$crit_function)) {
-    stop(paste("Step", istep, ": Incorrect format for argument crit_function. Should be a function."))
+    stop(paste("Step", step_name, ": Incorrect format for argument crit_function. Should be a function."))
   }
 
   ## model_function
   if (!is.function(step$model_function)) {
-    stop(paste("Step", istep, ": Incorrect format for argument model_function. Should be a function."))
+    stop(paste("Step", step_name, ": Incorrect format for argument model_function. Should be a function."))
   }
 
   ## optim_method
   if (!is.character(step$optim_method)) {
-    stop(paste("Step", istep, ": Incorrect format for argument optim_method. Should be of type character and contain the name of the parameter estimation method to use."))
+    stop(paste("Step", step_name, ": Incorrect format for argument optim_method. Should be of type character and contain the name of the parameter estimation method to use."))
   }
 
   ## param_info
   if (!is.list(step$param_info)) {
-    stop(paste("Step", istep, ": Incorrect format for argument param_info. Should be a list."))
+    stop(paste("Step", step_name, ": Incorrect format for argument param_info. Should be a list."))
   } else if (!all(is.element(c("lb", "ub"), names(step$param_info))) &&
     !all(sapply(step$param_info, function(x) all(is.element(c("lb", "ub"), names(x)))))) {
-    stop(paste("Step", istep, ": Incorrect format for argument param_info. Should contain 'lb' and 'ub' vectors."))
+    stop(paste("Step", step_name, ": Incorrect format for argument param_info. Should contain 'lb' and 'ub' vectors."))
   }
 
   ## Handling of `sit_list` in param_info
   if (any(sapply(step$param_info, function(x) is.element("sit_list", names(x))))) {
     if (!all(sapply(step$param_info, function(x) is.element("sit_list", names(x))))) {
-      stop(paste("Step", istep, ": `sit_list` is defined for at least one parameter in param_info but not for all."))
+      stop(paste("Step", step_name, ": `sit_list` is defined for at least one parameter in param_info but not for all."))
     }
 
     step$param_info <- lapply(step$param_info, function(x) {
@@ -686,12 +804,12 @@ validate_step <- function(step, istep) {
   ## forced_param_values
   if (!is.null(step$forced_param_values)) {
     if (!is.vector(step$forced_param_values)) {
-      stop(paste("Step", istep, ": Incorrect format for argument forced_param_values, should be a vector."))
+      stop(paste("Step", step_name, ": Incorrect format for argument forced_param_values, should be a vector."))
     }
     if (any(names(step$forced_param_values) %in% setdiff(step$param, step$candidate_param))) {
       tmp <- intersect(names(step$forced_param_values), setdiff(step$param, step$candidate_param))
       warning(paste(
-        "Step", istep, ": The following parameters are defined both in forced_param_values and param_info",
+        "Step", step_name, ": The following parameters are defined both in forced_param_values and param_info",
         "arguments of estim_param function while they should not (a parameter cannot",
         "be both forced and estimated except if it is part of the `candidate` parameters):",
         paste(tmp, collapse = ","),
@@ -710,14 +828,14 @@ validate_step <- function(step, istep) {
   } else if (is.list(step$info_crit_func)) {
     step$info_crit_list <- step$info_crit_func
   } else if (!is.null(step$info_crit_func)) {
-    stop(paste("Step", istep, ": Argument info_crit_func should be NULL, a function, or a list of functions."))
+    stop(paste("Step", step_name, ": Argument info_crit_func should be NULL, a function, or a list of functions."))
   }
 
   if (!is.null(step$info_crit_func)) {
     sapply(step$info_crit_list, function(x) {
       if ((!is.function(x)) || (is.null(x()$name))) {
         stop(paste(
-          "Step", istep, ": info_crit_func argument may be badly defined:\n",
+          "Step", step_name, ": info_crit_func argument may be badly defined:\n",
           "The information functions should return a named list including an element called 'name' containing the name of the function when called without arguments."
         ))
       }
@@ -725,13 +843,18 @@ validate_step <- function(step, istep) {
   }
   if (length(step$info_crit_list) == 0) step$info_crit_list <- NULL
 
+  ## Check major_param is an element of step (although it can be NULL)
+  if (!"major_param" %in% names(step)) {
+    stop(paste("Step", step_name, ": major_param argument must be provided in step definition (if this step does not have a major parameter, set major_param to NULL)."))
+  }
+
   ## candidate_param
   if (!is.null(step$candidate_param) && is.null(step$info_crit_list)) {
-    stop(paste("Step", istep, ": The argument candidate_param can only be used if info_crit_list is provided and compatible with crit_function."))
+    stop(paste("Step", step_name, ": The argument candidate_param can only be used if info_crit_list is provided and compatible with crit_function."))
   }
   if (!all(step$candidate_param %in% get_params_names(step$param_info, short_list = TRUE))) {
     stop(paste(
-      "Step", istep, ": candidate parameter(s)",
+      "Step", step_name, ": candidate parameter(s)",
       paste(setdiff(
         step$candidate_param,
         get_params_names(step$param_info, short_list = TRUE)
@@ -740,9 +863,14 @@ validate_step <- function(step, istep) {
     ))
   }
 
+  ## Check there is at least one major or one candidate per step
+  if (is.null(step$major_param) && is.null(step$candidate_param)) {
+    stop(paste("Step", step_name, ": At least one of major_param or candidate_param must be provided in step definition."))
+  }
+
   ## weight
   if (!is.function(step$weight) && !is.null(step$weight)) {
-    stop(paste("Step", istep, ": Incorrect format for argument weight: should be a function or NULL."))
+    stop(paste("Step", step_name, ": Incorrect format for argument weight: should be a function or NULL."))
   }
 
   return(step)
@@ -757,7 +885,36 @@ validate_step <- function(step, istep) {
 #'
 #' @keywords internal
 validate_steps <- function(step_list) {
-  lapply(seq_along(step_list), function(i) {
-    validate_step(step_list[[i]], i)
+  step <- lapply(seq_along(step_list), function(i) {
+    validate_step(step_list[[i]], names(step_list)[i])
   })
+  names(step) <- names(step_list)
+  ## Check that there are no major params that appear in different steps, if so, give the list of duplicated ones
+  all_major_param <- unlist(lapply(step, function(x) x$major_param))
+  duplicated_major_param <- all_major_param[duplicated(all_major_param)]
+  if (length(duplicated_major_param) > 0) {
+    stop(paste(
+      "The following major parameter(s) appear in different steps, which is not allowed:",
+      paste(unique(duplicated_major_param), collapse = ", ")
+    ))
+  }
+  ## Check that there are no candidate params that appear in different steps, if so, give the list of duplicated ones
+  all_candidate_param <- unlist(lapply(step, function(x) x$candidate_param))
+  duplicated_candidate_param <- all_candidate_param[duplicated(all_candidate_param)]
+  if (length(duplicated_candidate_param) > 0) {
+    stop(paste(
+      "The following candidate parameter(s) appear in different steps, which is not allowed:",
+      paste(unique(duplicated_candidate_param), collapse = ", ")
+    ))
+  }
+  ## Check that there are no common params between major and candidate params over all steps
+  common_param <- intersect(all_major_param, all_candidate_param)
+  if (length(common_param) > 0) {
+    stop(paste(
+      "The following parameter(s) are defined both as major and candidate parameters, which is not allowed:",
+      paste(common_param, collapse = ", ")
+    ))
+  }
+
+  return(step)
 }

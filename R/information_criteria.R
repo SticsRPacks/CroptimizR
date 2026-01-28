@@ -15,10 +15,9 @@ AIC <- function(obs_list, crit_value, param_nb) {
     return(list(name = "AIC"))
   }
 
-  # Total number of observations
   n <- sum(sapply(
     obs_list,
-    function(x) sum(!is.na(x %>% select(-Date)))
+    function(x) sum(!is.na(x %>% select(-.data$Date)))
   ))
 
   return(n * log(crit_value / n) + 2 * param_nb)
@@ -43,23 +42,21 @@ AICc <- function(obs_list, crit_value, param_nb) {
     return(list(name = "AICc"))
   }
 
-  # Total number of observations
   n <- sum(sapply(
     obs_list,
-    function(x) sum(!is.na(x %>% select(-Date)))
+    function(x) sum(!is.na(x %>% select(-.data$Date)))
   ))
 
   p <- param_nb
 
   if ((n - p - 1) == 0) {
     warning("AICc takes Inf value since n-p-1==0,
-         where n is the number of observation and p the number of parameters.")
+             where n is the number of observation and p the number of parameters.")
     return(Inf)
   }
 
   return(n * log(crit_value / n) + 2 * p + 2 * p * (p + 1) / (n - p - 1))
 }
-
 
 #' @title Computes BIC for ordinary least squares
 #'
@@ -79,10 +76,9 @@ BIC <- function(obs_list, crit_value, param_nb) {
     return(list(name = "BIC"))
   }
 
-  # Total number of observations
   n <- sum(sapply(
     obs_list,
-    function(x) sum(!is.na(x %>% select(-Date)))
+    function(x) sum(!is.na(x %>% select(-.data$Date)))
   ))
 
   return(n * log(crit_value / n) + param_nb * log(n))

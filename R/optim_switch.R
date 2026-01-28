@@ -1,10 +1,13 @@
 #' @title Call the required parameter estimation method
 #'
-#' @param optim_method see description in estim_param
-#' @param optim_options see description in estim_param
-#' @param param_info see description in estim_param
-#' @param crit_options List containing several arguments given to `estim_param`
-#'  function: `param_names`, `obs_list`, `crit_function`, `model_function`,
+#' @param ... Arguments passed to the selected parameter estimation method. Should include:
+#' `optim_method`, `optim_options`, `param_info`, `crit_options`
+#'
+#'  - optim_method see description in estim_param
+#'  - optim_options see description in estim_param
+#'  - param_info see description in estim_param
+#'  - crit_options List containing several arguments given to `estim_param` function:
+#'  `param_names`, `obs_list`, `crit_function`, `model_function`,
 #'  `model_options`, `param_info`, `transform_obs`, `transform_sim`, `out_dir`
 #' that must be passed to main_crit function by the methods wrappers.
 #'
@@ -80,7 +83,7 @@ optim_switch <- function(...) {
         return(res)
       } else if (length(res) > 0) {
         warning(paste(
-          "An error occured during the parameter estimation process (see other error and warning messages). Partial results saved in",
+          "An error occured during the parameter estimation procedure (see other error and warning messages). Partial results saved in",
           file.path(crit_options$out_dir, "optim_results.Rdata")
         ))
       }
@@ -112,7 +115,7 @@ optim_switch <- function(...) {
           optim_results = res,
           crit_options = crit_options
         )
-        res$plots <- plot_frequentist(
+        plot_frequentist(
           optim_options = optim_options,
           param_info = param_info,
           optim_results = res,
@@ -121,7 +124,8 @@ optim_switch <- function(...) {
         summary_frequentist(
           optim_options = optim_options, param_info = param_info,
           optim_results = res,
-          out_dir = crit_options$out_dir
+          out_dir = crit_options$out_dir,
+          indent = crit_options$indent
         )
       }
     } else if (optim_method == "BayesianTools.dreamzs" ||
@@ -130,7 +134,7 @@ optim_switch <- function(...) {
       if (nargs() > 2) {
         res$obs_var_list <- .croptEnv$obs_var_list
         res$obs_situation_list <- .croptEnv$obs_situation_list
-        res$plots <- plot_bayesian(
+        plot_bayesian(
           optim_options = optim_options,
           param_info = param_info, optim_results = res,
           out_dir = crit_options$out_dir
@@ -138,7 +142,8 @@ optim_switch <- function(...) {
         summary_bayesian(
           optim_options = optim_options, param_info = param_info,
           optim_results = res,
-          out_dir = crit_options$out_dir
+          out_dir = crit_options$out_dir,
+          indent = crit_options$indent
         )
       }
     } else if (optim_method == "optim") {
@@ -155,7 +160,7 @@ optim_switch <- function(...) {
           optim_results = res,
           crit_options = crit_options
         )
-        res$plots <- plot_frequentist(
+        plot_frequentist(
           optim_options = optim_options,
           param_info = param_info, optim_results = res,
           out_dir = crit_options$out_dir
@@ -163,7 +168,8 @@ optim_switch <- function(...) {
         summary_frequentist(
           optim_options = optim_options, param_info = param_info,
           optim_results = res,
-          out_dir = crit_options$out_dir
+          out_dir = crit_options$out_dir,
+          indent = crit_options$indent
         )
       }
     } else {
