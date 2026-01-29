@@ -49,7 +49,7 @@ test_that("Valid protocol loads correctly", {
   res <- load_protocol_agmip(file)
 
   expect_type(res, "list")
-  expect_named(res, c("step", "param_info", "forced_param_values"))
+  expect_named(res, c("step", "param_info"))
 
   expect_named(res$step, c("G1", "G2"))
 
@@ -306,3 +306,4 @@ test_that("Returned structure from load_protocol_agmip has correct fields and va
   expect_equal(res$param_info$ub[[candidate$parameter]], candidate$upper_bound)
   expect_equal(res$param_info$default[[candidate$parameter]], candidate$default_value)
 })
+

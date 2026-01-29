@@ -150,6 +150,8 @@ load_protocol_agmip <- function(protocol_file_path) {
   if (!is.null(forced_param_values)) {
     res$forced_param_values <- forced_param_values
   }
+
+  return(res)
 }
 
 #' @title Verify the structure of a protocol Excel file
