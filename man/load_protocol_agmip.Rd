@@ -14,7 +14,7 @@ A list with the following elements:
 \describe{
 \item{step}{A list of groups, each containing major parameters, candidate parameters, and observed variables.}
 \item{param_info}{A list containing parameter bounds (\code{lb}, \code{ub}) and default values (\code{default}).}
-\item{forced_param_values}{Named vector of parameter values or formulas to fix, if specified in the protocol file, otherwise NULL.}
+\item{forced_param_values}{(Optional) Named vector of parameter values or formulas to fix, if defined in the protocol file. This element is present only if the protocol defines fixed or computed parameters.}
 }
 }
 \description{

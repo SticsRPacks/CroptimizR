@@ -28,7 +28,7 @@
 #'   \describe{
 #'     \item{step}{A list of groups, each containing major parameters, candidate parameters, and observed variables.}
 #'     \item{param_info}{A list containing parameter bounds (`lb`, `ub`) and default values (`default`).}
-#'     \item{forced_param_values}{Named vector of parameter values or formulas to fix, if specified in the protocol file, otherwise NULL.}
+#'     \item{forced_param_values}{(Optional) Named vector of parameter values or formulas to fix, if defined in the protocol file. This element is present only if the protocol defines fixed or computed parameters.}
 #'   }
 #'
 #' @examples
@@ -142,11 +142,14 @@ load_protocol_agmip <- function(protocol_file_path) {
   names(step) <- groups
 
   # Return
-  list(
+  res <- list(
     step = step,
-    param_info = param_info,
-    forced_param_values = forced_param_values
+    param_info = param_info
   )
+
+  if (!is.null(forced_param_values)) {
+    res$forced_param_values <- forced_param_values
+  }
 }
 
 #' @title Verify the structure of a protocol Excel file
