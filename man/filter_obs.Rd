@@ -21,7 +21,7 @@ one column named Date with the dates (Date or POSIXct format) of the different o
 and one column per observed variables with either the measured values or NA, if
 the variable is not observed at the given date.
 See details section for more information on the list of observations actually
-used during the parameter estimation process.}
+used during the parameter estimation procedure.}
 
 \item{var}{(optional, if not given all variables will be kept) Vector containing the names of the variables to include or exclude}
 

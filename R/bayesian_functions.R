@@ -4,18 +4,23 @@
 #'
 #' @param optim_results Results list returned by bayesian method wrappers
 #'
+#' @param indent Integer, level of indent of the printed messages as required by make_display_prefix
+#'
 #' @return Prints results of bayesian methods
 #' @keywords internal
 #'
-summary_bayesian <- function(optim_options, param_info, optim_results, out_dir) {
+summary_bayesian <- function(optim_options, param_info, optim_results, out_dir, indent = 0) {
   param_names <- get_params_names(param_info)
   nb_params <- length(param_names)
   out <- optim_results$out
 
-  cat(paste(
-    "\nList of observed variables used:",
-    paste(optim_results$obs_var_list, collapse = ", "), "\n"
-  ))
+  cat(
+    "\n",
+    make_display_prefix(indent, "info"),
+    "List of observed variables used: ",
+    paste(optim_results$obs_var_list, collapse = ", "),
+    sep = ""
+  )
 
   ## Print results
   codaObject <- getSample(out, start = 1, coda = TRUE)
@@ -25,10 +30,14 @@ summary_bayesian <- function(optim_options, param_info, optim_results, out_dir) 
   } else {
     print(tmp)
   }
-  cat(paste(
+  cat(
+    "\n",
+    make_display_prefix(indent, "info"),
     "Complementary graphs and results can be found in ",
-    out_dir, "\n\n"
-  ))
+    out_dir,
+    "\n",
+    sep = ""
+  )
 }
 
 
