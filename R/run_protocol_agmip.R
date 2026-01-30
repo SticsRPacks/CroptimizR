@@ -615,6 +615,7 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
   stats_per_step <- dplyr::bind_rows(stats_default, stats_step6, stats_step7)
   ## Arrange it per variable name
   stats_per_step <- stats_per_step[order(stats_per_step$variable), ]
+  rownames(stats_per_step) <- NULL
 
   # Plot diagnostics graphs
   ## Evolution of MSE and Bias2 for all steps and variables
@@ -673,7 +674,8 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
         }
       }),
       step6 = res_step6$final_values,
-      step7 = res_step7$final_values
+      step7 = res_step7$final_values,
+      row.names = NULL
     )
   res$stats_per_step <- stats_per_step
   res$step6 <- res_step6
