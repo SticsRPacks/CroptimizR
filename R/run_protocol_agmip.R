@@ -288,8 +288,8 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
   if (!is.obs(obs_list)) {
     stop("Incorrect format for argument obs_list.")
   }
-  if (is.null(step)) {
-    stop("step argument must not be null.")
+  if (is.null(step) || length(step) == 0) {
+    stop("step argument must not be null nor empty.")
   } else {
     steps <- step
   }
