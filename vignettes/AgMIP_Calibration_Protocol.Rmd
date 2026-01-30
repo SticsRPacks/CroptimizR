@@ -236,9 +236,11 @@ txt <- readChar(log_file, file.info(log_file)$size)
 txt <- gsub("\r", "", txt)
 
 # display HTML with scroll
-cat("<pre style='border:1px solid #ccc; padding:10px; max-height:300px; overflow:auto; background:#f8f8f8;'>",
-    txt,
-    "</pre>")
+cat(
+  "<pre style='border:1px solid #ccc; padding:10px; max-height:300px; overflow:auto; background:#f8f8f8;'>",
+  txt,
+  "</pre>"
+)
 ```
 
 ## Exploring the results
@@ -255,7 +257,7 @@ Readers can refer to the `system.file("extdata", "AgMIP_protocol", "results", pa
 
 ```{r load_res, eval=!params$recompute_full_protocol, echo=FALSE, include=FALSE, results='asis'}
 load(file.path(system.file(
-  file.path("extdata", "AgMIP_protocol","results"),
+  file.path("extdata", "AgMIP_protocol", "results"),
   package = "CroptimizR"
 ), "optim_results.Rdata"))
 ```
@@ -355,7 +357,6 @@ load(file.path(system.file(
   file.path("extdata", "AgMIP_protocol", "vignette_data"),
   package = "CroptimizR"
 ), "sim_post_calib.Rdata"))
-
 ```
 
 ```{r eval=TRUE, message=FALSE, warning=FALSE, fig.width=8, fig.height=5}
