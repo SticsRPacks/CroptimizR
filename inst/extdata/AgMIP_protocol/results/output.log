@@ -1,0 +1,573 @@
+AgMIP Calibration Phase IV protocol: automatic calculation steps 6 and 7
+(see doi.org/10.1016/j.envsoft.2024.106147 for a detailed description of the full protocol)
+
+-- Step6
+
+---- Step6.phenology
+
+
+------ Parameter automatic selection procedure: Step6.phenology.Major(s)
+
+       Major parameter(s): stlevamf stamflax stdrpmat
+       Estimated parameter(s): stlevamf stamflax stdrpmat
+       Forced parameter(s): efcroiveg=  5.30000, efcroirepro=  3.50000, cgrain=  0.03240, vitircarbT=  0.00031, jvc= 58.36400, sensrsec=  0.80000, belong=  0.02280, jvcmini= 11.80000, stressdev=  0.60000, dlaimaxbrut=  0.00319, durvieF=260.00000, vlaimax=  2.38000, psisto= 12.60000, psiturg= 10.60000, nbjgrain= 36.00000, pgrainmaxi=  0.05528, cgrainv0=  0.04200
+       Observed variable(s) used: iamfs, ilaxs, imats
+
+Working: 10.00%. Estimated remaining time: 60.10 mins
+Working: 20.00%. Estimated remaining time: 44.22 mins
+Working: 30.00%. Estimated remaining time: 35.92 mins
+Working: 40.00%. Estimated remaining time: 33.53 mins
+Working: 50.00%. Estimated remaining time: 27.02 mins
+Working: 60.00%. Estimated remaining time: 22.63 mins
+Working: 70.00%. Estimated remaining time: 16.87 mins
+Working: 80.00%. Estimated remaining time: 11.20 mins
+Working: 90.00%. Estimated remaining time: 5.35 mins
+Working: 100.00%. Estimated remaining time: 0.00 mins
+
+       Estimated value for stlevamf: 192
+       Estimated value for stamflax: 256
+       Estimated value for stdrpmat: 500
+       Minimum value of the criterion: 785
+       Complementary graphs and results can be found in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step6/Step6.phenology/param_select_step1
+
+       Current value of the information criterion: 130
+
+------ Parameter automatic selection procedure: Step6.phenology.Candidate1
+
+       Major parameter(s): stlevamf stamflax stdrpmat
+       Current candidate parameter evaluated: jvc
+       Estimated parameter(s): stlevamf stamflax stdrpmat jvc
+       Forced parameter(s): efcroiveg=  5.30000, efcroirepro=  3.50000, cgrain=  0.03240, vitircarbT=  0.00031, sensrsec=  0.80000, belong=  0.02280, jvcmini= 11.80000, stressdev=  0.60000, dlaimaxbrut=  0.00319, durvieF=260.00000, vlaimax=  2.38000, psisto= 12.60000, psiturg= 10.60000, nbjgrain= 36.00000, pgrainmaxi=  0.05528, cgrainv0=  0.04200
+       Observed variable(s) used: iamfs, ilaxs, imats
+
+Working: 20.00%. Estimated remaining time: 17.98 mins
+Working: 40.00%. Estimated remaining time: 13.30 mins
+Working: 60.00%. Estimated remaining time: 9.31 mins
+Working: 80.00%. Estimated remaining time: 4.79 mins
+Working: 100.00%. Estimated remaining time: 0.00 mins
+
+       Estimated value for stlevamf: 210
+       Estimated value for stamflax: 254
+       Estimated value for stdrpmat: 500
+       Estimated value for jvc: 36
+       Minimum value of the criterion: 683
+       Complementary graphs and results can be found in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step6/Step6.phenology/param_select_step2
+
+       Current value of the information criterion: 126
+       Candidate parameter jvc is selected
+
+------ Parameter automatic selection procedure: Step6.phenology.Candidate2
+
+       Major parameter(s): stlevamf stamflax stdrpmat
+       Current candidate parameter evaluated: sensrsec
+       Estimated parameter(s): stlevamf stamflax stdrpmat jvc sensrsec
+       Forced parameter(s): efcroiveg=  5.30000, efcroirepro=  3.50000, cgrain=  0.03240, vitircarbT=  0.00031, belong=  0.02280, jvcmini= 11.80000, stressdev=  0.60000, dlaimaxbrut=  0.00319, durvieF=260.00000, vlaimax=  2.38000, psisto= 12.60000, psiturg= 10.60000, nbjgrain= 36.00000, pgrainmaxi=  0.05528, cgrainv0=  0.04200
+       Observed variable(s) used: iamfs, ilaxs, imats
+
+Working: 20.00%. Estimated remaining time: 25.94 mins
+Working: 40.00%. Estimated remaining time: 17.26 mins
+Working: 60.00%. Estimated remaining time: 10.64 mins
+Working: 80.00%. Estimated remaining time: 5.42 mins
+Working: 100.00%. Estimated remaining time: 0.00 mins
+
+       Estimated value for stlevamf: 216
+       Estimated value for stamflax: 253
+       Estimated value for stdrpmat: 500
+       Estimated value for jvc: 28
+       Estimated value for sensrsec: 0.91
+       Minimum value of the criterion: 626
+       Complementary graphs and results can be found in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step6/Step6.phenology/param_select_step3
+
+       Current value of the information criterion: 125
+       Candidate parameter sensrsec is selected
+
+------ Parameter automatic selection procedure: Step6.phenology.Candidate3
+
+       Major parameter(s): stlevamf stamflax stdrpmat
+       Current candidate parameter evaluated: belong
+       Estimated parameter(s): stlevamf stamflax stdrpmat jvc sensrsec belong
+       Forced parameter(s): efcroiveg=  5.30000, efcroirepro=  3.50000, cgrain=  0.03240, vitircarbT=  0.00031, jvcmini= 11.80000, stressdev=  0.60000, dlaimaxbrut=  0.00319, durvieF=260.00000, vlaimax=  2.38000, psisto= 12.60000, psiturg= 10.60000, nbjgrain= 36.00000, pgrainmaxi=  0.05528, cgrainv0=  0.04200
+       Observed variable(s) used: iamfs, ilaxs, imats
+
+Working: 20.00%. Estimated remaining time: 23.38 mins
+Working: 40.00%. Estimated remaining time: 19.12 mins
+Working: 60.00%. Estimated remaining time: 12.34 mins
+Working: 80.00%. Estimated remaining time: 5.93 mins
+Working: 100.00%. Estimated remaining time: 0.00 mins
+
+       Estimated value for stlevamf: 216
+       Estimated value for stamflax: 256
+       Estimated value for stdrpmat: 500
+       Estimated value for jvc: 29
+       Estimated value for sensrsec: 0.98
+       Estimated value for belong: 0.011
+       Minimum value of the criterion: 616
+       Complementary graphs and results can be found in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step6/Step6.phenology/param_select_step4
+
+       Current value of the information criterion: 127
+       Candidate parameter belong is rejected
+
+------ Parameter automatic selection procedure: Step6.phenology.Candidate4
+
+       Major parameter(s): stlevamf stamflax stdrpmat
+       Current candidate parameter evaluated: jvcmini
+       Estimated parameter(s): stlevamf stamflax stdrpmat jvc sensrsec jvcmini
+       Forced parameter(s): efcroiveg=  5.30000, efcroirepro=  3.50000, cgrain=  0.03240, vitircarbT=  0.00031, belong=  0.02280, stressdev=  0.60000, dlaimaxbrut=  0.00319, durvieF=260.00000, vlaimax=  2.38000, psisto= 12.60000, psiturg= 10.60000, nbjgrain= 36.00000, pgrainmaxi=  0.05528, cgrainv0=  0.04200
+       Observed variable(s) used: iamfs, ilaxs, imats
+
+Working: 20.00%. Estimated remaining time: 19.37 mins
+Working: 40.00%. Estimated remaining time: 18.16 mins
+Working: 60.00%. Estimated remaining time: 12.11 mins
+Working: 80.00%. Estimated remaining time: 5.82 mins
+Working: 100.00%. Estimated remaining time: 0.00 mins
+
+       Estimated value for stlevamf: 230
+       Estimated value for stamflax: 257
+       Estimated value for stdrpmat: 503
+       Estimated value for jvc: 29
+       Estimated value for sensrsec: 0.94
+       Estimated value for jvcmini: 3.4
+       Minimum value of the criterion: 579
+       Complementary graphs and results can be found in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step6/Step6.phenology/param_select_step5
+
+       Current value of the information criterion: 125
+       Candidate parameter jvcmini is selected
+
+------ Parameter automatic selection procedure: Step6.phenology.Candidate5
+
+       Major parameter(s): stlevamf stamflax stdrpmat
+       Current candidate parameter evaluated: stressdev
+       Estimated parameter(s): stlevamf stamflax stdrpmat jvc sensrsec jvcmini stressdev
+       Forced parameter(s): efcroiveg=  5.30000, efcroirepro=  3.50000, cgrain=  0.03240, vitircarbT=  0.00031, belong=  0.02280, dlaimaxbrut=  0.00319, durvieF=260.00000, vlaimax=  2.38000, psisto= 12.60000, psiturg= 10.60000, nbjgrain= 36.00000, pgrainmaxi=  0.05528, cgrainv0=  0.04200
+       Observed variable(s) used: iamfs, ilaxs, imats
+
+Working: 20.00%. Estimated remaining time: 34.43 mins
+Working: 40.00%. Estimated remaining time: 24.73 mins
+Working: 60.00%. Estimated remaining time: 18.72 mins
+Working: 80.00%. Estimated remaining time: 9.16 mins
+Working: 100.00%. Estimated remaining time: 0.00 mins
+
+       Estimated value for stlevamf: 225
+       Estimated value for stamflax: 277
+       Estimated value for stdrpmat: 518
+       Estimated value for jvc: 34
+       Estimated value for sensrsec: 0.99
+       Estimated value for jvcmini: 3.3
+       Estimated value for stressdev: 0.51
+       Minimum value of the criterion: 448
+       Complementary graphs and results can be found in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step6/Step6.phenology/param_select_step6
+
+       Current value of the information criterion: 117
+       Candidate parameter stressdev is selected
+
+------ End of parameter selection procedure
+
+---- Summary of the Parameter Selection procedure results
+
+     Selected step:6
+     Selected parameters: stlevamf,stamflax,stdrpmat,jvc,sensrsec,jvcmini,stressdev
+     Estimated value for stlevamf: 224.72
+     Estimated value for stamflax: 277.26
+     Estimated value for stdrpmat: 517.96
+     Estimated value for jvc: 34.37
+     Estimated value for sensrsec: 0.99
+     Estimated value for jvcmini: 3.35
+     Estimated value for stressdev: 0.51
+     Results of the parameter selection procedure are stored in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step6/Step6.phenology/optim_results.Rdata
+     A table summarizing the results obtained at the different steps is stored in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step6/Step6.phenology/param_selection_steps.csv
+     Graphs and detailed results obtained for the different parameter selection steps can be found in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step6/Step6.phenology/param_select_step# folders.
+
+---- End of Step Step6.phenology
+
+---- Step6.plant_biomass
+
+
+------ Parameter automatic selection procedure: Step6.plant_biomass.Major(s)
+
+       Major parameter(s): efcroiveg efcroirepro
+       Estimated parameter(s): efcroiveg efcroirepro
+       Forced parameter(s): stlevamf=224.71943, stamflax=277.26244, stdrpmat=517.96341, jvc= 34.37244, sensrsec=  0.98633, jvcmini=  3.34810, stressdev=  0.51269, cgrain=  0.03240, vitircarbT=  0.00031, belong=  0.02280, dlaimaxbrut=  0.00319, durvieF=260.00000, vlaimax=  2.38000, psisto= 12.60000, psiturg= 10.60000, nbjgrain= 36.00000, pgrainmaxi=  0.05528, cgrainv0=  0.04200
+       Observed variable(s) used: masec_n
+
+Working: 10.00%. Estimated remaining time: 21.64 mins
+Working: 20.00%. Estimated remaining time: 17.33 mins
+Working: 30.00%. Estimated remaining time: 17.18 mins
+Working: 40.00%. Estimated remaining time: 14.79 mins
+Working: 50.00%. Estimated remaining time: 11.67 mins
+Working: 60.00%. Estimated remaining time: 9.87 mins
+Working: 70.00%. Estimated remaining time: 7.56 mins
+Working: 80.00%. Estimated remaining time: 4.93 mins
+Working: 90.00%. Estimated remaining time: 2.46 mins
+Working: 100.00%. Estimated remaining time: 0.00 mins
+
+       Estimated value for efcroiveg: 3
+       Estimated value for efcroirepro: 4.3
+       Minimum value of the criterion: 7.1
+       Complementary graphs and results can be found in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step6/Step6.plant_biomass/param_select_step1
+
+       Current value of the information criterion: -76
+
+------ Parameter automatic selection procedure: Step6.plant_biomass.Candidate1
+
+       Major parameter(s): efcroiveg efcroirepro
+       Current candidate parameter evaluated: dlaimaxbrut
+       Estimated parameter(s): efcroiveg efcroirepro dlaimaxbrut
+       Forced parameter(s): stlevamf=224.71943, stamflax=277.26244, stdrpmat=517.96341, jvc= 34.37244, sensrsec=  0.98633, jvcmini=  3.34810, stressdev=  0.51269, cgrain=  0.03240, vitircarbT=  0.00031, belong=  0.02280, durvieF=260.00000, vlaimax=  2.38000, psisto= 12.60000, psiturg= 10.60000, nbjgrain= 36.00000, pgrainmaxi=  0.05528, cgrainv0=  0.04200
+       Observed variable(s) used: masec_n
+
+Working: 20.00%. Estimated remaining time: 24.35 mins
+Working: 40.00%. Estimated remaining time: 16.90 mins
+Working: 60.00%. Estimated remaining time: 10.37 mins
+Working: 80.00%. Estimated remaining time: 5.19 mins
+Working: 100.00%. Estimated remaining time: 0.00 mins
+
+       Estimated value for efcroiveg: 4.6
+       Estimated value for efcroirepro: 4.2
+       Estimated value for dlaimaxbrut: 0.00029
+       Minimum value of the criterion: 0.82
+       Complementary graphs and results can be found in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step6/Step6.plant_biomass/param_select_step2
+
+       Current value of the information criterion: -169
+       Candidate parameter dlaimaxbrut is selected
+
+------ Parameter automatic selection procedure: Step6.plant_biomass.Candidate2
+
+       Major parameter(s): efcroiveg efcroirepro
+       Current candidate parameter evaluated: durvieF
+       Estimated parameter(s): efcroiveg efcroirepro dlaimaxbrut durvieF
+       Forced parameter(s): stlevamf=224.71943, stamflax=277.26244, stdrpmat=517.96341, jvc= 34.37244, sensrsec=  0.98633, jvcmini=  3.34810, stressdev=  0.51269, cgrain=  0.03240, vitircarbT=  0.00031, belong=  0.02280, vlaimax=  2.38000, psisto= 12.60000, psiturg= 10.60000, nbjgrain= 36.00000, pgrainmaxi=  0.05528, cgrainv0=  0.04200
+       Observed variable(s) used: masec_n
+
+Working: 20.00%. Estimated remaining time: 20.23 mins
+Working: 40.00%. Estimated remaining time: 18.50 mins
+Working: 60.00%. Estimated remaining time: 12.44 mins
+Working: 80.00%. Estimated remaining time: 6.10 mins
+Working: 100.00%. Estimated remaining time: 0.00 mins
+
+       Estimated value for efcroiveg: 4.6
+       Estimated value for efcroirepro: 4.6
+       Estimated value for dlaimaxbrut: 0.00029
+       Estimated value for durvieF: 265
+       Minimum value of the criterion: 0.82
+       Complementary graphs and results can be found in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step6/Step6.plant_biomass/param_select_step3
+
+       Current value of the information criterion: -166
+       Candidate parameter durvieF is rejected
+
+------ Parameter automatic selection procedure: Step6.plant_biomass.Candidate3
+
+       Major parameter(s): efcroiveg efcroirepro
+       Current candidate parameter evaluated: vlaimax
+       Estimated parameter(s): efcroiveg efcroirepro dlaimaxbrut vlaimax
+       Forced parameter(s): stlevamf=224.71943, stamflax=277.26244, stdrpmat=517.96341, jvc= 34.37244, sensrsec=  0.98633, jvcmini=  3.34810, stressdev=  0.51269, cgrain=  0.03240, vitircarbT=  0.00031, belong=  0.02280, durvieF=260.00000, psisto= 12.60000, psiturg= 10.60000, nbjgrain= 36.00000, pgrainmaxi=  0.05528, cgrainv0=  0.04200
+       Observed variable(s) used: masec_n
+
+Working: 20.00%. Estimated remaining time: 28.14 mins
+Working: 40.00%. Estimated remaining time: 19.31 mins
+Working: 60.00%. Estimated remaining time: 15.82 mins
+Working: 80.00%. Estimated remaining time: 7.44 mins
+Working: 100.00%. Estimated remaining time: 0.00 mins
+
+       Estimated value for efcroiveg: 4.5
+       Estimated value for efcroirepro: 4.3
+       Estimated value for dlaimaxbrut: 0.00031
+       Estimated value for vlaimax: 2.5
+       Minimum value of the criterion: 0.81
+       Complementary graphs and results can be found in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step6/Step6.plant_biomass/param_select_step4
+
+       Current value of the information criterion: -167
+       Candidate parameter vlaimax is rejected
+
+------ Parameter automatic selection procedure: Step6.plant_biomass.Candidate4
+
+       Major parameter(s): efcroiveg efcroirepro
+       Current candidate parameter evaluated: psisto
+       Estimated parameter(s): efcroiveg efcroirepro dlaimaxbrut psisto
+       Forced parameter(s): stlevamf=224.71943, stamflax=277.26244, stdrpmat=517.96341, jvc= 34.37244, sensrsec=  0.98633, jvcmini=  3.34810, stressdev=  0.51269, cgrain=  0.03240, vitircarbT=  0.00031, belong=  0.02280, durvieF=260.00000, vlaimax=  2.38000, psiturg= 10.60000, nbjgrain= 36.00000, pgrainmaxi=  0.05528, cgrainv0=  0.04200
+       Observed variable(s) used: masec_n
+
+Working: 20.00%. Estimated remaining time: 34.45 mins
+Working: 40.00%. Estimated remaining time: 23.67 mins
+Working: 60.00%. Estimated remaining time: 15.43 mins
+Working: 80.00%. Estimated remaining time: 7.46 mins
+Working: 100.00%. Estimated remaining time: 0.00 mins
+
+       Estimated value for efcroiveg: 4.6
+       Estimated value for efcroirepro: 4.7
+       Estimated value for dlaimaxbrut: 0.00029
+       Estimated value for psisto: 11
+       Minimum value of the criterion: 0.82
+       Complementary graphs and results can be found in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step6/Step6.plant_biomass/param_select_step5
+
+       Current value of the information criterion: -166
+       Candidate parameter psisto is rejected
+
+------ Parameter automatic selection procedure: Step6.plant_biomass.Candidate5
+
+       Major parameter(s): efcroiveg efcroirepro
+       Current candidate parameter evaluated: psiturg
+       Estimated parameter(s): efcroiveg efcroirepro dlaimaxbrut psiturg
+       Forced parameter(s): stlevamf=224.71943, stamflax=277.26244, stdrpmat=517.96341, jvc= 34.37244, sensrsec=  0.98633, jvcmini=  3.34810, stressdev=  0.51269, cgrain=  0.03240, vitircarbT=  0.00031, belong=  0.02280, durvieF=260.00000, vlaimax=  2.38000, psisto= 12.60000, nbjgrain= 36.00000, pgrainmaxi=  0.05528, cgrainv0=  0.04200
+       Observed variable(s) used: masec_n
+
+Working: 20.00%. Estimated remaining time: 31.24 mins
+Working: 40.00%. Estimated remaining time: 21.11 mins
+Working: 60.00%. Estimated remaining time: 14.82 mins
+Working: 80.00%. Estimated remaining time: 7.40 mins
+Working: 100.00%. Estimated remaining time: 0.00 mins
+
+       Estimated value for efcroiveg: 4.6
+       Estimated value for efcroirepro: 4.5
+       Estimated value for dlaimaxbrut: 0.00029
+       Estimated value for psiturg: 2.1
+       Minimum value of the criterion: 0.82
+       Complementary graphs and results can be found in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step6/Step6.plant_biomass/param_select_step6
+
+       Current value of the information criterion: -166
+       Candidate parameter psiturg is rejected
+
+------ End of parameter selection procedure
+
+---- Summary of the Parameter Selection procedure results
+
+     Selected step:2
+     Selected parameters: efcroiveg,efcroirepro,dlaimaxbrut
+     Estimated value for efcroiveg: 4.62
+     Estimated value for efcroirepro: 4.25
+     Estimated value for dlaimaxbrut: 0.00029
+     Results of the parameter selection procedure are stored in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step6/Step6.plant_biomass/optim_results.Rdata
+     A table summarizing the results obtained at the different steps is stored in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step6/Step6.plant_biomass/param_selection_steps.csv
+     Graphs and detailed results obtained for the different parameter selection steps can be found in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step6/Step6.plant_biomass/param_select_step# folders.
+
+---- End of Step Step6.plant_biomass
+
+---- Step6.grain_number
+
+
+------ Parameter automatic selection procedure: Step6.grain_number.Major(s)
+
+       Major parameter(s): cgrain
+       Estimated parameter(s): cgrain
+       Forced parameter(s): stlevamf=224.71943, stamflax=277.26244, stdrpmat=517.96341, jvc= 34.37244, sensrsec=  0.98633, jvcmini=  3.34810, stressdev=  0.51269, efcroiveg=  4.61917, efcroirepro=  4.24638, dlaimaxbrut=  0.00029, vitircarbT=  0.00031, belong=  0.02280, durvieF=260.00000, vlaimax=  2.38000, psisto= 12.60000, psiturg= 10.60000, nbjgrain= 36.00000, pgrainmaxi=  0.05528, cgrainv0=  0.04200
+       Observed variable(s) used: chargefruit
+
+Working: 10.00%. Estimated remaining time: 12.72 mins
+Working: 20.00%. Estimated remaining time: 11.29 mins
+Working: 30.00%. Estimated remaining time: 9.88 mins
+Working: 40.00%. Estimated remaining time: 8.47 mins
+Working: 50.00%. Estimated remaining time: 7.54 mins
+Working: 60.00%. Estimated remaining time: 5.97 mins
+Working: 70.00%. Estimated remaining time: 4.50 mins
+Working: 80.00%. Estimated remaining time: 2.97 mins
+Working: 90.00%. Estimated remaining time: 1.51 mins
+Working: 100.00%. Estimated remaining time: 0.00 mins
+
+       Estimated value for cgrain: 0.035
+       Minimum value of the criterion: 61347299
+       Complementary graphs and results can be found in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step6/Step6.grain_number/param_select_step1
+
+       Current value of the information criterion: 202
+
+------ Parameter automatic selection procedure: Step6.grain_number.Candidate1
+
+       Major parameter(s): cgrain
+       Current candidate parameter evaluated: nbjgrain
+       Estimated parameter(s): cgrain nbjgrain
+       Forced parameter(s): stlevamf=224.71943, stamflax=277.26244, stdrpmat=517.96341, jvc= 34.37244, sensrsec=  0.98633, jvcmini=  3.34810, stressdev=  0.51269, efcroiveg=  4.61917, efcroirepro=  4.24638, dlaimaxbrut=  0.00029, vitircarbT=  0.00031, belong=  0.02280, durvieF=260.00000, vlaimax=  2.38000, psisto= 12.60000, psiturg= 10.60000, pgrainmaxi=  0.05528, cgrainv0=  0.04200
+       Observed variable(s) used: chargefruit
+
+Working: 20.00%. Estimated remaining time: 12.97 mins
+Working: 40.00%. Estimated remaining time: 10.53 mins
+Working: 60.00%. Estimated remaining time: 6.91 mins
+Working: 80.00%. Estimated remaining time: 3.31 mins
+Working: 100.00%. Estimated remaining time: 0.00 mins
+
+       Estimated value for cgrain: 0.034
+       Estimated value for nbjgrain: 34
+       Minimum value of the criterion: 60622215
+       Complementary graphs and results can be found in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step6/Step6.grain_number/param_select_step2
+
+       Current value of the information criterion: 205
+       Candidate parameter nbjgrain is rejected
+
+------ End of parameter selection procedure
+
+---- Summary of the Parameter Selection procedure results
+
+     Selected step:1
+     Selected parameters: cgrain
+     Estimated value for cgrain: 0.035
+     Results of the parameter selection procedure are stored in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step6/Step6.grain_number/optim_results.Rdata
+     A table summarizing the results obtained at the different steps is stored in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step6/Step6.grain_number/param_selection_steps.csv
+     Graphs and detailed results obtained for the different parameter selection steps can be found in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step6/Step6.grain_number/param_select_step# folders.
+
+---- End of Step Step6.grain_number
+
+---- Step6.yield
+
+
+------ Parameter automatic selection procedure: Step6.yield.Major(s)
+
+       Major parameter(s): vitircarbT
+       Estimated parameter(s): vitircarbT
+       Forced parameter(s): stlevamf=224.71943, stamflax=277.26244, stdrpmat=517.96341, jvc= 34.37244, sensrsec=  0.98633, jvcmini=  3.34810, stressdev=  0.51269, efcroiveg=  4.61917, efcroirepro=  4.24638, dlaimaxbrut=  0.00029, cgrain=  0.03496, belong=  0.02280, durvieF=260.00000, vlaimax=  2.38000, psisto= 12.60000, psiturg= 10.60000, nbjgrain= 36.00000, pgrainmaxi=  0.05528, cgrainv0=  0.04200
+       Observed variable(s) used: mafruit
+
+Working: 10.00%. Estimated remaining time: 13.81 mins
+Working: 20.00%. Estimated remaining time: 11.79 mins
+Working: 30.00%. Estimated remaining time: 11.27 mins
+Working: 40.00%. Estimated remaining time: 9.71 mins
+Working: 50.00%. Estimated remaining time: 7.94 mins
+Working: 60.00%. Estimated remaining time: 5.45 mins
+Working: 70.00%. Estimated remaining time: 4.34 mins
+Working: 80.00%. Estimated remaining time: 3.08 mins
+Working: 90.00%. Estimated remaining time: 1.39 mins
+Working: 100.00%. Estimated remaining time: 0.00 mins
+
+       Estimated value for vitircarbT: 0.0009
+       Minimum value of the criterion: 27
+       Complementary graphs and results can be found in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step6/Step6.yield/param_select_step1
+
+       Current value of the information criterion: 12
+
+------ Parameter automatic selection procedure: Step6.yield.Candidate1
+
+       Major parameter(s): vitircarbT
+       Current candidate parameter evaluated: pgrainmaxi
+       Estimated parameter(s): vitircarbT pgrainmaxi
+       Forced parameter(s): stlevamf=224.71943, stamflax=277.26244, stdrpmat=517.96341, jvc= 34.37244, sensrsec=  0.98633, jvcmini=  3.34810, stressdev=  0.51269, efcroiveg=  4.61917, efcroirepro=  4.24638, dlaimaxbrut=  0.00029, cgrain=  0.03496, belong=  0.02280, durvieF=260.00000, vlaimax=  2.38000, psisto= 12.60000, psiturg= 10.60000, nbjgrain= 36.00000, cgrainv0=  0.04200
+       Observed variable(s) used: mafruit
+
+Working: 20.00%. Estimated remaining time: 6.80 mins
+Working: 40.00%. Estimated remaining time: 8.91 mins
+Working: 60.00%. Estimated remaining time: 6.54 mins
+Working: 80.00%. Estimated remaining time: 2.88 mins
+Working: 100.00%. Estimated remaining time: 0.00 mins
+
+       Estimated value for vitircarbT: 0.00095
+       Estimated value for pgrainmaxi: 0.039
+       Minimum value of the criterion: 22
+       Complementary graphs and results can be found in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step6/Step6.yield/param_select_step2
+
+       Current value of the information criterion: 12
+       Candidate parameter pgrainmaxi is rejected
+
+------ Parameter automatic selection procedure: Step6.yield.Candidate2
+
+       Major parameter(s): vitircarbT
+       Current candidate parameter evaluated: cgrainv0
+       Estimated parameter(s): vitircarbT cgrainv0
+       Forced parameter(s): stlevamf=224.71943, stamflax=277.26244, stdrpmat=517.96341, jvc= 34.37244, sensrsec=  0.98633, jvcmini=  3.34810, stressdev=  0.51269, efcroiveg=  4.61917, efcroirepro=  4.24638, dlaimaxbrut=  0.00029, cgrain=  0.03496, belong=  0.02280, durvieF=260.00000, vlaimax=  2.38000, psisto= 12.60000, psiturg= 10.60000, nbjgrain= 36.00000, pgrainmaxi=  0.05528
+       Observed variable(s) used: mafruit
+
+Working: 20.00%. Estimated remaining time: 6.93 mins
+Working: 40.00%. Estimated remaining time: 5.21 mins
+Working: 60.00%. Estimated remaining time: 3.46 mins
+Working: 80.00%. Estimated remaining time: 1.73 mins
+Working: 100.00%. Estimated remaining time: 0.00 mins
+
+       Estimated value for vitircarbT: 0.0009
+       Estimated value for cgrainv0: 0.046
+       Minimum value of the criterion: 27
+       Complementary graphs and results can be found in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step6/Step6.yield/param_select_step3
+
+       Current value of the information criterion: 15
+       Candidate parameter cgrainv0 is rejected
+
+------ End of parameter selection procedure
+
+---- Summary of the Parameter Selection procedure results
+
+     Selected step:1
+     Selected parameters: vitircarbT
+     Estimated value for vitircarbT: 0.0009
+     Results of the parameter selection procedure are stored in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step6/Step6.yield/optim_results.Rdata
+     A table summarizing the results obtained at the different steps is stored in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step6/Step6.yield/param_selection_steps.csv
+     Graphs and detailed results obtained for the different parameter selection steps can be found in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step6/Step6.yield/param_select_step# folders.
+
+---- End of Step Step6.yield
+
+-- Summary of the multi-step procedure results
+
+   List of observed variables used: iamfs, ilaxs, imats, masec_n, chargefruit, mafruit
+   Estimated value for stlevamf: 225
+   Estimated value for stamflax: 277
+   Estimated value for stdrpmat: 518
+   Estimated value for jvc: 34
+   Estimated value for sensrsec: 0.99
+   Estimated value for jvcmini: 3.3
+   Estimated value for stressdev: 0.51
+   Estimated value for efcroiveg: 4.6
+   Estimated value for efcroirepro: 4.2
+   Estimated value for dlaimaxbrut: 0.00029
+   Estimated value for cgrain: 0.035
+   Estimated value for vitircarbT: 0.0009
+   Forced value for belong: 0.023
+   Forced value for durvieF: 260
+   Forced value for vlaimax: 2.4
+   Forced value for psisto: 13
+   Forced value for psiturg: 11
+   Forced value for nbjgrain: 36
+   Forced value for pgrainmaxi: 0.055
+   Forced value for cgrainv0: 0.042
+   Complementary graphs and results can be found in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step6
+
+   Average time for the model to simulate all required situations: 3.4sec elapsed
+   Total number of criterion evaluation: 8349
+   Total time of model simulations: 28085sec elapsed
+   Total time of parameter estimation procedure: 28451sec elapsed
+
+-- End of Step6
+
+-- Step7
+
+   Estimated parameter(s): stlevamf stamflax stdrpmat jvc sensrsec jvcmini stressdev efcroiveg efcroirepro dlaimaxbrut cgrain vitircarbT
+   Forced parameter(s): belong=  0.023, durvieF=260.000, vlaimax=  2.380, psisto= 12.600, psiturg= 10.600, nbjgrain= 36.000, pgrainmaxi=  0.055, cgrainv0=  0.042
+   Observed variable(s) used: iamfs, ilaxs, imats, masec_n, chargefruit, mafruit
+
+Working: 5.00%. Estimated remaining time: 34.16 hours
+Working: 10.00%. Estimated remaining time: 43.33 hours
+Working: 15.00%. Estimated remaining time: 45.86 hours
+Working: 20.00%. Estimated remaining time: 47.27 hours
+Working: 25.00%. Estimated remaining time: 41.94 hours
+Working: 30.00%. Estimated remaining time: 38.60 hours
+Working: 35.00%. Estimated remaining time: 35.64 hours
+Working: 40.00%. Estimated remaining time: 32.64 hours
+Working: 45.00%. Estimated remaining time: 1.24 days
+Working: 50.00%. Estimated remaining time: 1.11 days
+Working: 55.00%. Estimated remaining time: 1.02 days
+Working: 60.00%. Estimated remaining time: 0.91 days
+Working: 65.00%. Estimated remaining time: 0.79 days
+Working: 70.00%. Estimated remaining time: 0.68 days
+Working: 75.00%. Estimated remaining time: 0.55 days
+Working: 80.00%. Estimated remaining time: 0.44 days
+Working: 85.00%. Estimated remaining time: 0.32 days
+Working: 90.00%. Estimated remaining time: 0.21 days
+Working: 95.00%. Estimated remaining time: 0.11 days
+Working: 100.00%. Estimated remaining time: 0.00 days
+
+   Estimated value for stlevamf: 208
+   Estimated value for stamflax: 346
+   Estimated value for stdrpmat: 685
+   Estimated value for jvc: 58
+   Estimated value for sensrsec: 0.39
+   Estimated value for jvcmini: 4.7
+   Estimated value for stressdev: 0.12
+   Estimated value for efcroiveg: 3.6
+   Estimated value for efcroirepro: 4.8
+   Estimated value for dlaimaxbrut: 0.00058
+   Estimated value for cgrain: 0.039
+   Estimated value for vitircarbT: 0.00064
+   Minimum value of the criterion: 63
+   Complementary graphs and results can be found in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette/AgMIP_protocol_step7
+
+   Average time for the model to simulate all required situations: 20sec elapsed
+   Total number of criterion evaluation: 8995
+   Total time of model simulations: 182491sec elapsed
+   Total time of parameter estimation procedure: 183271sec elapsed
+
+-- End of Step7
+
+Graphs and results can be found in /storage/simple/projects/inra_ea/emmah/sbuis/AgMIP_calibration_Protocol_vignette
+
+End of AgMIP Phase IV protocol
