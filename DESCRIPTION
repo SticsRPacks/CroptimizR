@@ -46,7 +46,6 @@ Imports:
     purrr,
 	readxl,
     rlang,
-    rstudioapi,
     tibble,
     tictoc,
     tidyr
