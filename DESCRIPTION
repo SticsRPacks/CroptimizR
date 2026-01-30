@@ -26,17 +26,16 @@ Description: The purpose of CroptimizR is to provide functions for
     additional features adapted to the problem of crop model calibration.
     It facilitates the comparison of different types of methods on
     different models.
-License: LGPL (>= 3)
+License: file LICENSE
 URL: https://github.com/SticsRPacks/CroptimizR,
     https://doi.org/10.5281/zenodo.4066451
 BugReports: https://github.com/SticsRPacks/CroptimizR/issues
 Depends:
     R (>= 4.2.0)
 Imports:
-    Matrix,
     BayesianTools,
     crayon,
-    doParallel,
+    CroPlotR,
     dplyr,
     ggplot2,
     lhs,
@@ -45,35 +44,34 @@ Imports:
     methods,
     nloptr,
     purrr,
+	readxl,
     rlang,
-    rstudioapi,
     tibble,
     tictoc,
-    SticsRFiles (>= 1.1.3)
+    tidyr
 Suggests:
     ApsimOnR,
     covr,
-    CroPlotR,
     devtools,
+	doParallel,
     gridExtra,
     knitr,
+	openxlsx,
     rmarkdown,
     spelling,
     SticsOnR,
-    SticsRFiles,
-    testthat (>= 2.1.0),
-    tidyr
+    SticsRFiles (>= 1.1.3),
+    testthat (>= 2.1.0)
 VignetteBuilder: 
     knitr
 Remotes:
     github::cran/Matrix@1.6-5,
     github::hol430/ApsimOnR,
     github::SticsRPacks/CroPlotR@*release,
-    github::SticsRPacks/SticsOnR@*release,
-    github::SticsRPacks/SticsRFiles@*release,
+    github::SticsRPacks/SticsOnR@*release
 ByteCompile: true
 Encoding: UTF-8
 Language: en-US
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.3

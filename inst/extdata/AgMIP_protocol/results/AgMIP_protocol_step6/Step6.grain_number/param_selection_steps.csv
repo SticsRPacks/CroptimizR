@@ -1,0 +1,3 @@
+"Estimated parameters";"Initial parameter values";"Final values";"Initial Sum of squared errors";"Final Sum of squared errors";"AICc";"Selected step"
+"cgrain";"0.032";"0.035";"89802381.12";"61347299.06";"202.14";"X"
+"cgrain  , nbjgrain";" 0.035, 20.846";" 0.034, 33.906";"139622253.43";"60622215.11";"204.82";""

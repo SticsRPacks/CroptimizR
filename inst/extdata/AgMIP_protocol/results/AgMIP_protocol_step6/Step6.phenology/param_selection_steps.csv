@@ -1,0 +1,7 @@
+"Estimated parameters";"Initial parameter values";"Final values";"Initial Sum of squared errors";"Final Sum of squared errors";"AICc";"Selected step"
+"stlevamf, stamflax, stdrpmat";"324.80, 446.80, 820.00";"192.06, 255.53, 500.00";"27184.00";"785.00";"129.61";""
+"stlevamf, stamflax, stdrpmat, jvc     ";"192.06, 255.53, 500.00,  32.99";"209.94, 253.51, 500.00,  35.82";"1161.00";"683.00";"126.21";""
+"stlevamf, stamflax, stdrpmat, jvc     , sensrsec";"209.94, 253.51, 500.00,  35.82,   0.47";"216.50, 253.14, 500.00,  27.52,   0.91";"722.00";"626.00";"125.14";""
+"stlevamf, stamflax, stdrpmat, jvc     , sensrsec, belong  ";"216.498, 253.139, 500.000,  27.517,   0.912,   0.011";"215.784, 256.069, 500.000,  29.067,   0.984,   0.011";"662.00";"616.00";"127.19";""
+"stlevamf, stamflax, stdrpmat, jvc     , sensrsec, jvcmini ";"216.50, 253.14, 500.00,  27.52,   0.91,   3.26";"230.01, 257.10, 503.11,  28.81,   0.94,   3.36";"868.00";"579.00";"124.59";""
+"stlevamf , stamflax , stdrpmat , jvc      , sensrsec , jvcmini  , stressdev";"230.009, 257.102, 503.108,  28.811,   0.938,   3.357,   0.062";"224.72, 277.26, 517.96,  34.37,   0.99,   3.35,   0.51";"4704.00";"448.00";"116.71";"X"
