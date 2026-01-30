@@ -306,4 +306,3 @@ test_that("Returned structure from load_protocol_agmip has correct fields and va
   expect_equal(res$param_info$ub[[candidate$parameter]], candidate$upper_bound)
   expect_equal(res$param_info$default[[candidate$parameter]], candidate$default_value)
 })
-
