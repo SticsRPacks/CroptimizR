@@ -210,9 +210,8 @@ Running the whole calibration protocol is done with a single call to `run_protoc
 ```{r run_protocol_agmip, eval=params$recompute_full_protocol, message=FALSE, warning=FALSE, echo=TRUE}
 res <- CroptimizR::run_protocol_agmip(
   obs_list = obs_list,
-  model_function = stics_wrapper,
+  model_function = SticsOnR::stics_wrapper,
   model_options = model_options,
-  optim_options = optim_options,
   param_info = param_info,
   transform_var = c(masec_n = function(x) log(pmax(x, 1e-6))),
   step = step
