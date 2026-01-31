@@ -1,13 +1,12 @@
 ---
-title: "Parameter estimation with the Stics crop Model: a simple case"
-output:
-  rmarkdown::html_vignette
+title: "Parameter estimation with CroptimizR: a simple case using the STICS crop Model"
+output: rmarkdown::html_vignette
 author:
 - name: "Samuel Buis"
 affiliation: "INRAE - EMMAH"
 date: "`r Sys.Date()`"
 vignette: >
-  %\VignetteIndexEntry{Parameter estimation with the Stics crop Model: a simple case}
+  %\VignetteIndexEntry{Parameter estimation with CroptimizR: a simple case using the STICS crop Model}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 params:
@@ -26,15 +25,27 @@ params:
 path_to_JavaStics <- params$path_to_JavaStics
 ```
 
+## Introduction
+
+This document presents a simple example of parameter estimation using CroptimizR on a complex crop model. 
+
+For more advanced use cases, the following vignettes are available:  
+- [Simultaneous estimation of specific and varietal plant parameters](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html) using a multi-varietal dataset.  
+- [Parameter selection procedure](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_selection.html) illustrating how to choose which parameters to estimate.  
+- [AgMIP Calibration Protocol](https://SticsRPacks.github.io/CroptimizR/articles/AgMIP_Calibration_Protocol.html) demonstrating the application of the AgMIP calibration workflow.  
+- [Bayesian parameter estimation](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html) using the DREAM-zs algorithm.  
 
 ## Study Case
 
-This document presents an example of a simple parameter estimation using the Stics model with a single situation, a single observed variable and 2 estimated parameters, just to illustrate how to use the package.
-A more complex example with simultaneous estimation of specific and varietal plant parameters from a multi-varietal dataset is presented in another [vignette](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html). Parameter estimation on chained situations (e.g. rotations) is also possible with the Stics model (see `successive_usms` in argument `model_options` of `stics_wrapper`). A vignette will be provided in next versions.
+This example uses the STICS crop model. However, CroptimizR can be applied to any crop model, provided that a suitable wrapper is available. Guidelines and examples for implementing wrappers are provided in the [Designing a model wrapper vignette](https://sticsrpacks.github.io/CroptimizR/articles/Designing_a_model_wrapper.html).
 
-Data for the following example comes from a maize crop experiment (see description in Wallach et al., 2011).
+Note that a similar example using the ApsimX crop model is available in another [vignette](https://sticsrpacks.github.io/CroptimizR/articles/ApsimX_parameter_estimation_simple_case.html).
 
-The parameter estimation is performed using the Nelder-Mead simplex method implemented in the nloptr package.
+Wrappers already exist for several models. For more details, see the [Get started page](https://sticsrpacks.github.io/CroptimizR/articles/CroptimizR.html) or contact the authors.
+
+The dataset used in this example comes from a maize crop experiment (see Wallach et al., 2011). It involves a single environment, a single observed variable, and two estimated parameters, just to illustrate how to use the package.
+
+Parameter estimation is performed here using the Nelder-Mead simplex method implemented in the R package `nloptr`.
 
 ## Initialisation step
 

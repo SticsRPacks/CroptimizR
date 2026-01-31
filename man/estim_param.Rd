@@ -6,26 +6,24 @@
 \usage{
 estim_param(
   obs_list,
-  crit_function = crit_log_cwss,
   model_function,
   model_options = NULL,
+  crit_function = crit_log_cwss,
   optim_method = "nloptr.simplex",
   optim_options = NULL,
   param_info,
   forced_param_values = NULL,
   candidate_param = NULL,
-  situation = NULL,
-  obs_var = NULL,
   transform_var = NULL,
   transform_obs = NULL,
   transform_sim = NULL,
   satisfy_par_const = NULL,
   var_to_simulate = NULL,
-  info_level = 1,
-  info_crit_func = list(CroptimizR::BIC, CroptimizR::AICc, CroptimizR::AIC),
+  info_crit_func = list(CroptimizR::AICc, CroptimizR::AIC, CroptimizR::BIC),
   weight = NULL,
   step = NULL,
   out_dir = getwd(),
+  info_level = 1,
   var = lifecycle::deprecated()
 )
 }
@@ -36,17 +34,17 @@ one column named Date with the dates (Date or POSIXct format) of the different o
 and one column per observed variables with either the measured values or NA, if
 the variable is not observed at the given date.
 See details section for more information on the list of observations actually
-used during the parameter estimation process.}
-
-\item{crit_function}{Function implementing the criterion to optimize
-(optional, see default value in the function signature). See
-\href{https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html}{here}
-for more details about the list of proposed criteria.}
+used during the parameter estimation procedure.}
 
 \item{model_function}{Crop Model wrapper function to use.}
 
 \item{model_options}{List of options for the Crop Model wrapper (see help of
 the Crop Model wrapper function used).}
+
+\item{crit_function}{Function implementing the criterion to optimize
+(optional, see default value in the function signature). See
+\href{https://sticsrpacks.github.io/CroptimizR/reference/ls_criteria.html}{here}
+for more details about the list of proposed criteria.}
 
 \item{optim_method}{Name of the parameter estimation method to use (optional,
 see default value in the function signature). For the moment, can be "simplex"
@@ -89,19 +87,14 @@ for an example),
 \item{forced_param_values}{Named vector or list, must contain the values (or
 arithmetic expression, see details section) for the model parameters to force. The corresponding
 values will be transferred to the model wrapper through its param_values argument
-during the estimation process.
+during the estimation procedure.
 Should not include values for estimated parameters (i.e. parameters defined in
 \code{param_info} argument), except if they are listed as candidate parameters (see
 argument \code{candidate_param}).}
 
 \item{candidate_param}{Names of the parameters, among those defined in the argument param_info,
-that must only be considered as candidate for parameter estimation (see details section).}
-
-\item{situation}{(optional) List of situations to take into account within obs_list.
-situation = NULL means that all situations in obs_list will be used.}
-
-\item{obs_var}{(optional) List of observed variables to take into account within obs_list.
-obs_var = NULL means that all variables in obs_list will be used.}
+that must only be considered as candidate for parameter estimation (see details section).
+All parameters included in param_info that are not listed in candidate_param will be estimated.}
 
 \item{transform_var}{Named vector of functions to apply both on simulated and
 observed variables. \code{transform_var=c(var1=log, var2=sqrt)} will for example
@@ -122,10 +115,24 @@ results.
 By default the wrapper is asked to simulate only the observed variables. However,
 it may be useful to simulate also other variables, typically when transform_sim
 and/or transform_obs functions are used. Note however that it is
-active only if the model_function used handles this argument.
-If it is the case, and if the obs_var argument is provided, then the list of observations
-used will be restricted to the list of variables given in the obs_var argument,
-plus the ones possibly computed by the transform_sim function.}
+active only if the model_function used handles this argument.}
+
+\item{info_crit_func}{Function (or list of functions) to compute information criteria.
+(optional, see default value in the function signature and \href{https://sticsrpacks.github.io/CroptimizR/reference/information_criteria.html}{here}
+for more details about the list of proposed information criteria.).
+Values of the information criteria will be stored in the returned list.
+In case parameter selection is activated (i.e. if the argument candidate_param
+is defined (see details section)), the first information criterion given will be used.
+ONLY AVAILABLE FOR THE MOMENT FOR crit_function==crit_ols.}
+
+\item{weight}{Weights to use in the criterion to optimize. A function that takes in input a vector
+of observed values and the name of the corresponding variable and that must return either a single value
+for the weights for the given variable or a vector of values of length the length of the vector of observed values given in input.}
+
+\item{step}{(optional) List that describes the steps of the parameter estimation procedure (see details section).
+If \code{NULL}, a single default step will be created using the \code{estim_param} arguments}
+
+\item{out_dir}{Path to the directory where the optimization results will be written. (optional, default to \code{getwd()})}
 
 \item{info_level}{(optional) Integer that controls the level of information returned and stored
 by estim_param (in addition to the results automatically provided that depends on the method used).
@@ -142,92 +149,92 @@ i.e. as used to compute the criterion for each evaluation (element obs_intersect
 (elements sim and sim_transformed in the returned list).
 }}
 
-\item{info_crit_func}{Function (or list of functions) to compute information criteria.
-(optional, see default value in the function signature and \href{https://sticsrpacks.github.io/CroptimizR/reference/information_criteria.html}{here}
-for more details about the list of proposed information criteria.).
-Values of the information criteria will be stored in the returned list.
-In case parameter selection is activated (i.e. if the argument candidate_param
-is defined (see details section)), the first information criterion given will be used.
-ONLY AVAILABLE FOR THE MOMENT FOR crit_function==crit_ols.}
-
-\item{weight}{Weights to use in the criterion to optimize. A function that takes in input a vector
-of observed values and the name of the corresponding variable and that must return either a single value
-for the weights for the given variable or a vector of values of length the length of the vector of observed values given in input.}
-
-\item{step}{(optional) List that describes the steps of the parameter estimation process (see details section).
-If \code{NULL}, a single default step will be created using the \code{estim_param} arguments}
-
-\item{out_dir}{Path to the directory where the optimization results will be written. (optional, default to \code{getwd()})}
-
 \item{var}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} \code{var} is no
 longer supported, use \code{var_to_simulate} instead.}
 }
 \value{
 prints, graphs and a list containing the results of the parameter estimation,
 which content depends on the method used and on the values of the \code{info_level} argument.
-All results are saved in the folder \code{optim_options$out_dir}.
+All results are saved in the folder \code{out_dir}.
 }
 \description{
 main function for parameter estimation
 }
 \details{
+\subsection{Observation used}{
+
 In CroptimizR, parameter estimation is based on the comparison between the values
 of the observed and simulated variables at corresponding dates. Only the situations,
 variables and dates common to both observations (provided in \code{obs_list} argument),
 and simulations returned by the wrapper used, will be taken into account in
-the parameter estimation process.
+the parameter estimation procedure.
 In case where the value of an observed variable is NA for a given situation and
 date, it will not be taken into account. In case where the value of a simulated
 variable is NA (or Inf) for a given situation and date for which there is an
 observation, the optimized criterion will take the NA value, which may stop the
-process, and the user will be warned.
+procedure, and the user will be warned.
+}
 
-If the candidate_param argument is given, a parameter selection procedure following
-the AgMIP calibration phaseIII protocol will be performed:
+\subsection{Parameter selection procedure (argument \code{candidate_param})}{
+
+If the \code{candidate_param} argument is given, a parameter selection procedure following
+\href{https://link.springer.com/article/10.1007/s13593-023-00900-0}{Wallach et al. (2023)} will be performed.
+
 The candidate parameters are added one by one (in the given order) to the parameters
-that MUST be estimated (i.e. the one defined in param_info but not in candidate_param).
+that MUST be estimated (i.e. the one defined in param_info but not in \code{candidate_param}).
 Each time a new candidate is added:
 \itemize{
-\item the parameter estimation is performed and an information criterion is computed (see argument info_crit_func)
+\item the parameter estimation is performed and an information criterion is computed (see argument \code{info_crit_func})
 \item if the information criterion is inferior to all the ones obtained before,
 then the current candidate parameter is added to the list of parameters to estimate
 }
 
-The result includes a summary of all the steps (data.frame param_selection_steps).
+The result includes a summary of all the steps (data.frame \code{param_selection_steps}).
 
-The optional argument \code{transform_obs} must be a function with 4 arguments:
-\itemize{
-\item model_results: the list of simulated results returned by the mode_wrapper used
-\item obs_list: the list of observations as given to estim_param function
-\item param_values: a named vector containing the current parameters values proposed
-by the estimation algorithm
-\item model_options: the list of model options as given to estim_param function
+For an example of this procedure, see the vignette \href{https://SticsRPacks.github.io/CroptimizR/articles/Parameter_selection.html}{Parameter selection with CroptimizR}.
 }
 
-It must return a list of observations (same format as \code{obs_list} argument) that
-will be used to compute the criterion to optimize.
+\subsection{Transformation of simulations and observations (arguments \code{transform_sim} and \code{transform_obs})}{
 
 The optional argument \code{transform_sim} must be a function with 4 arguments:
 \itemize{
-\item model_results: the list of simulated results returned by the mode_wrapper used
-\item obs_list: the list of observations as given to estim_param function
-\item param_values: a named vector containing the current parameters values proposed
+\item \code{model_results}: the list of simulated results returned by the mode_wrapper used
+\item \code{obs_list}: the list of observations as given to estim_param function
+\item \code{param_values}: a named vector containing the current parameters values proposed
 by the estimation algorithm
-\item model_options: the list of model options as given to estim_param function
+\item \code{model_options}: the list of model options as given to estim_param function
 }
 
 It must return a list of simulated results (same format as this returned by the model wrapper used)
 that will be used to compute the criterion to optimize.
 
+The optional argument \code{transform_obs} must be a function with 4 arguments:
+\itemize{
+\item \code{model_results}: the list of simulated results returned by the mode_wrapper used
+\item \code{obs_list}: the list of observations as given to estim_param function
+\item \code{param_values}: a named vector containing the current parameters values proposed
+by the estimation algorithm
+\item \code{model_options}: the list of model options as given to estim_param function
+}
+
+It must return a list of observations (same format as \code{obs_list} argument) that
+will be used to compute the criterion to optimize.
+}
+
+\subsection{Constraints on estimated parameters (argument \code{satisfy_par_const})}{
+
 The optional argument \code{satisfy_par_const} must be a function with 2 arguments:
 \itemize{
-\item param_values: a named vector containing the current parameters values proposed
+\item \code{param_values}: a named vector containing the current parameters values proposed
 by the estimation algorithm
-\item model_options: the list of model options as given to estim_param function
+\item \code{model_options}: the list of model options as given to estim_param function
 }
 
 It must return a logical indicating if the parameters values satisfies the constraints
 (freely defined by the user in the function body) or not.
+}
+
+\subsection{Model parameters to force (argument \code{forced_param_values})}{
 
 The optional argument \code{forced_param_values} may contain arithmetic expressions to
 automatically compute the values of some parameters in function of the values of
@@ -242,49 +249,66 @@ and will dynamically compute the value of p3 in function of the values of parame
 p5 and p6 iteratively provided by the parameter estimation algorithm. In this example,
 the parameters p5 and p6 must thus be part of the list of parameters to estimate, i.e.
 described in the \code{param_info} argument.
+}
+
+\subsection{Multi-steps estimation procedure (argument \code{step})}{
 
 The argument \code{step} is a list of lists used to perform parameter estimation in multiple sequential steps.
-If provided, each step represents a separate stage in the estimation process,
+If provided, each step represents a separate stage in the estimation procedure,
 allowing different configurations for each step (e.g., different sets of parameters to estimate,
-different observed variables, different situations, etc.).
-
-When multiple steps are defined, the parameter values estimated in one step
+different observed variables, different situations, etc.). When multiple steps are defined, the parameter values estimated in one step
 are used as fixed values in the subsequent step.
-Each step is a named list containing only the elements that vary between steps.
-\strong{Any argument} of the \code{estim_param} function (e.g., \code{obs_var}, \code{candidate_param} ...)
-can be defined within a step. Note that the element \code{param} can be used to define
-the list of parameters to estimate at a given step.
 
-Any element not explicitly defined in a step will inherit its value
-from the corresponding argument of \code{estim_param} and remain identical across all steps.
-If \code{NULL}, a single step is created using the function arguments.
+Each step is a named list that may contain \strong{any argument} of the \code{estim_param} function
+(e.g. \code{candidate_param}, \code{optim_options}, ...). Only the arguments that
+differ from those given to \code{estim_param} need to be specified: any element not explicitly
+defined in a step inherits its value from the corresponding argument of \code{estim_param}.
+
+When \code{step} \strong{is} used, the set of parameters to estimate and observed variables to use usually differs between steps.
+For sake of simplicity, a \strong{single global} \code{param_info} list can be provided to \code{estim_param}
+(containing bounds, etc. for all parameters that may ever be estimated),
+and each step specifies explicitly:
+\itemize{
+\item \code{major_param}: a vector containing the name of the parameters that \strong{must be estimated} at this step,
+\item \code{candidate_param} (optional): a vector containing the name of the parameters that are \strong{candidates for estimation} at this step,
+\item \code{obs_var} (optional): a vector containing the name of the observed variables to use at this step,
+\item \code{situation} (optional): a vector containing the name of the situations to use at this step.
+}
+
+When \code{step} is \strong{not} used (\code{step = NULL}), a single-step estimation is performed using the arguments of \code{estim_param}.
+In this case, the list of parameters to be estimated is
+automatically deduced from the \code{param_info} argument: all parameters defined in
+\code{param_info} are considered for estimation (possibly subject to selection if
+\code{candidate_param} is used).
 
 Suppose the \code{step} argument is defined as follows:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{step <- list()
 step[[1]] <- list(
-  param = c("p1"),
+  major_param = c("p1"),
   candidate_param = c("p2"),
   obs_var = c("var1")
 )
 step[[2]] <- list(
-  param = c("p3"),
+  major_param = c("p3"),
   obs_var = c("var2")
 )
 }\if{html}{\out{</div>}}
 
-In this case, the parameter estimation process will proceed in \strong{two steps}:
+In this case, the parameter estimation procedure will proceed in \strong{two steps}:
 \itemize{
-\item \strong{Step 1}: Parameter \code{p1} is estimated, while \code{p2} is included in a parameter selection process.
+\item \strong{Step 1}: Parameter \code{p1} is estimated, while \code{p2} is included in a parameter selection procedure.
 Only observed variable \code{var1} (from \code{obs_list} defined in argument of \code{estim_param}) is used.
 \item \strong{Step 2}: Parameter \code{p3} is estimated, and only observed variable \code{var2} is used.
 Parameters \code{p1} (and possibly \code{p2}, if selected) are fixed at the values estimated in Step 1.
-Information on the parameters to estimate (bounds, ...) can be defined within
-the same \code{param_info} list given in argument of \code{estim_param}.
 }
 
-The results of the parameter estimation process are stored in the folder \code{out_dir},
+Technical information about parameters (bounds, default values, ...)
+can be provided \strong{once for all steps} via the global \code{param_info} argument of \code{estim_param}.
+
+The results of the parameter estimation procedure are stored in the folder \code{out_dir},
 with a separate subfolder for each step.
+}
 }
 \seealso{
 For more details and examples, see the different vignettes in

@@ -1,0 +1,395 @@
+---
+title: "Calibrating a complex crop model using the AgMIP protocol"
+output:
+  rmarkdown::html_vignette
+author:
+- name: "Samuel Buis"
+affiliation: "INRAE - EMMAH"
+date: "`r Sys.Date()`"
+vignette: >
+  %\VignetteIndexEntry{Calibrating a complex crop model using the AgMIP protocol}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+params:
+  recompute_full_protocol: FALSE   # If TRUE, runs the full AgMIP calibration protocol from scratch (very time-consuming).
+                                   # If FALSE, the vignette uses precomputed results stored in the package.
+  path_to_JavaStics: "D:/Home/sbuis/Documents/OUTILS-INFORMATIQUE/STICS/JavaSTICS-1.40-stics-8.50"
+  stics_data_dir: "D:/Home/Partage/PROJETS/AgMIP Calibration PhaseIV/WORK/SticsData_ANONYM/French/TxtFiles_vignette_croptimizR"
+  nb_cores: 6
+---
+
+```{r setup, eval=TRUE, include=FALSE}
+# Global options
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+path_to_JavaStics <- params$path_to_JavaStics
+```
+
+## Introduction
+
+This vignette illustrates the use of the `run_protocol_agmip` function on a realistic and complex crop model (STICS) and a multi-environment dataset. Its goal is to demonstrate the complete workflow, from protocol specification to the analysis of results.
+
+This document intentionally focuses on a representative use case and does not aim at exhaustively documenting all features of the function. Advanced options (e.g. parameter constraints, variable transformations, custom optimization settings, alternative information criteria) are therefore not covered here and are documented in the function reference manual (`?CroptimizR::run_protocol_agmip`).
+
+The AgMIP calibration protocol is described in detail in [Wallach et al (2024)](https://www.sciencedirect.com/science/article/pii/S1364815224002081) and [Wallach et al (2025)](https://www.sciencedirect.com/science/article/pii/S1161030125001558). Only a brief contextual description is given here.
+
+## Scientific and technical context
+
+### The AgMIP calibration protocol
+
+The AgMIP calibration protocol is a two-step procedure:
+
+* Step 6: sequential parameter estimation by groups of variables, with automatic selection of candidate parameters based on an information criterion.
+* Step 7: joint re-estimation of all selected parameters using all available observations, by weighted least squares.
+
+In this vignette, we focus on how to describe and run this protocol using CroptimizR, not on re-describing the protocol itself. The reader is referred to Wallach et al. (2024, 2025) for the scientific rationale. A more detailed, implementation-oriented description of the protocol, including the precise sequence of operations, default settings, optimization strategy, and selection rules, as implemented in CroptimizR is provided in the documentation of `run_protocol_agmip`.
+
+### The STICS model and CroptimizR wrappers
+
+This example uses the STICS crop model, but CroptimizR can in fact be applied to any crop model, provided that a suitable wrapper is available. Guidelines and examples for implementing wrappers are provided in the vignette: https://sticsrpacks.github.io/CroptimizR/articles/Designing_a_model_wrapper.html
+
+Note that wrappers already exist for several models. For more details, see the [Get started page](https://sticsrpacks.github.io/CroptimizR/articles/CroptimizR.html) or contact the authors.
+
+```{r define_model_options, eval=params$recompute_full_protocol, results='hide', message=FALSE, warning=FALSE, include=FALSE}
+# Set the model options (see '? stics_wrapper_options' for details)
+model_options <- SticsOnR::stics_wrapper_options(
+  javastics = params$path_to_JavaStics, workspace = params$stics_data_dir,
+  parallel = TRUE, cores = params$nb_cores
+)
+```
+
+### The dataset
+
+The dataset used in this example comes from the synthetic experiment defined in Wallach et al. (2024).
+
+It includes 22 environments (called situations in CroptimizR terminology). Fourteen situations are used for calibration (six different sites, five different years) and eight for evaluation. Each situation includes all the necessary information to run the crop model (soil, management, weather). Corresponding STICS input files were prepared beforehand.
+
+## Observations and data formatting
+
+### Observed variables
+
+The observed variables used for model calibration in this example include:
+
+* days from 1st January of the sowing year to BBCH30, BBCH55, and BBCH90 (STICS variables `iamfs`, `ilaxs`, and `imats`),
+* biomass at various dates (STICS variable `masec_n`), in t.ha-1,
+* grain number (STICS variable `chargefruit`), in grains.m-2,
+* grain yield (STICS variable `mafruit`), in t.ha-1.
+
+Observations of plant nitrogen content and seed protein, which were part of the original dataset, are not included here because they are not directly simulated by the STICS model. They could be derived from variables simulated by STICS using the `transform_sim` argument (as done in Wallach et al., 2024), but this is not illustrated here for the sake of simplicity.
+
+### The cropr format
+
+All observations must be formatted in the `cropr` format, i.e. as a named list of data frames (or tibble), each element being named after the corresponding situation (see the [Get started](https://sticsrpacks.github.io/CroptimizR/articles/CroptimizR.html) vignette of CroptimizR for details).
+
+```{r get_observations, eval=TRUE, message=FALSE, results=TRUE, warning=FALSE, include=TRUE}
+obs_list <- readRDS(file.path(system.file(
+  file.path("extdata", "AgMIP_protocol", "vignette_data"),
+  package = "CroptimizR"
+), "obs_list.Rds"))
+
+# Show the first two situations
+obs_list[1:2]
+```
+Here, we displayed the available observations for the first two situations, `Site2-culA-10-tec2` and `Site2-culA-11-tec7`.
+In this example, end-of-season observations are assigned to the last day of the year to ensure that these observed values are compared with the final simulated values.
+
+## Describing the calibration protocol
+
+### Principle
+
+Describing the AgMIP protocol for CroptimizR essentially requires specifying:
+
+* the groups of observed variables and their order of use in Step 6,
+* the list of major and candidate parameters associated with each group,
+* the default values and bounds of all parameters.
+
+### Excel-based specification
+
+This information can be provided using a single Excel file containing at least three sheets named:
+
+* `variables`,
+* `major_parameters`,
+* `candidate_parameters`.
+
+In this example, this file is named `agmip_protocol_vignette.xlsx` and is located in the `data/AgMIP_protocol` folder.
+Here is a preview of this file: 
+
+```{r protocol_descr_image, eval=TRUE, message=FALSE, warning=FALSE, echo=FALSE, out.width = "90%"}
+knitr::include_graphics(
+  system.file("extdata", "AgMIP_protocol", "vignette_data", "protocol_descr_file.png", package = "CroptimizR")
+)
+```
+
+The order of the variable groups in the `variables` sheet is particularly important, as it determines their sequence in Step 6 of the protocol.
+
+The `descriptions` columns are not used by CroptimizR and are optional. They are only useful for documentation purposes.
+
+Note that CroptimizR provides helper functions to make it easy to get started with the Excel-based protocol specification:
+
+* `get_agmip_protocol_template()` returns the official Excel template that must be filled by the user to define a new protocol.
+* `get_agmip_protocol_example()` provides a fully worked example.
+
+Although the protocol is provided here as an Excel file for convenience and readability, the calibration procedure actually relies on two R objects, `step` and `param_info`, which fully describe the protocol. In the following section, we examine their structure to understand how the protocol is defined for this specific example.
+
+### Converting the Excel file to R objects
+
+The Excel file is converted into R data structures using the `load_protocol_agmip` function.
+
+Here, we load the protocol description file associated with this vignette:
+
+```{r load_protocol_agmip, eval=TRUE, message=FALSE, warning=FALSE} 
+protocol_descr <- CroptimizR::load_protocol_agmip(
+  protocol_file_path = system.file(
+    file.path("extdata", "AgMIP_protocol", "agmip_protocol_vignette.xlsx"),
+    package = "CroptimizR"
+  )
+)
+
+names(protocol_descr)
+step <- protocol_descr$step
+param_info <- protocol_descr$param_info
+```
+
+In this case, the function returns a list with two elements: `step` and `param_info`.
+We assigned them to two separate objects to improve readability in the rest of the report and code.
+These two objects are the core inputs needed to describe Step 6 of the protocol.
+
+> Note that creating this Excel file is not mandatory. Users may directly build these R objects by hand, but the Excel-based workflow is recommended for clarity, reproducibility, and ease of editing.
+
+### Structure of the protocol for this example
+
+```{r print_steps_names, eval=TRUE, message=FALSE, warning=FALSE} 
+names(step)
+```
+
+Given the available observed variables and the structure of the STICS model, the order defined for the successive groups in Step 6 is:
+
+phenology → plant_biomass → grain_number → yield
+
+Parameters associated with the phenology group are therefore estimated first and then fixed to their estimated values in the subsequent groups. Then parameters of the plant_biomass group are estimated, and so on.
+
+The order of the groups is chosen to minimize feedback, i.e. the influence of a simulated variable on variables that appear earlier in the sequence.
+
+Phenology defines the timing of the main developmental stages of the crop cycle. Plant biomass accumulation depends on these stages and on their synchronisation with environmental conditions. Finally, yield components (first grain number, then grain weight, during two successive phenological phases) depend on biomass growth rate and on the amount of accumulated vegetative biomass. All these processes are therefore interdependent and occur in a well-defined causal order in the STICS model, which is reflected in the calibration strategy.
+
+### Example: the phenology group
+
+```{r print_step_phenology, eval=TRUE, message=FALSE, warning=FALSE} 
+step[["phenology"]]
+```
+
+The major parameters should be chosen with the main goal of reducing bias. A good choice is typically a parameter that affects the simulated values in all environments and behaves approximately like an additive constant.
+
+For phenology, the major parameters chosen here are the thermal time requirements to reach the different observed stages: `stlevamf`, `stamflax`, `stdrpmat`.
+
+For this group, there are three major parameters because there are three observed variables (BBCH30, BBCH55, BBCH90). The protocol recommends selecting one major parameter per observed variable. For groups with multiple measurements over time, it is common to select two or three major parameters (but rarely more), typically either parameters that affect the variable at different periods of the crop cycle, or parameters that separately control the average level and the rate of change over time.
+
+The candidate parameters are those expected to explain part of the variability between environments. They should be ordered, as far as possible, by decreasing expected importance. There is no strict limit on their number, but increasing it increases computation time.
+
+In this example, five candidate parameters are used for the phenology group: `jvc`, `sensrsec`, `belong`, `jvcmini`, `stressdev`. They were ordered based on expert knowledge of the STICS model.
+
+During calibration of the different groups, the major parameters are first estimated. Then candidate parameters are added one by one to the list of estimated parameters and kept only if the resulting information criterion value (AICc by default) improves. Non-selected candidates are fixed to their default values, as are all parameters belonging to groups that have not yet been processed.
+
+
+### Parameter information
+
+```{r print_param_info, eval=TRUE, message=FALSE, warning=FALSE} 
+# Display only the first lines of each component for readability
+lapply(param_info, head)
+```
+
+All information required to automate the protocol (parameter bounds and default values) is stored in the `param_info` object.
+
+## Running the protocol
+
+Running the whole calibration protocol is done with a single call to `run_protocol_agmip.`
+
+```{r run_protocol_agmip, eval=params$recompute_full_protocol, message=FALSE, warning=FALSE, echo=TRUE}
+res <- CroptimizR::run_protocol_agmip(
+  obs_list = obs_list,
+  model_function = SticsOnR::stics_wrapper,
+  model_options = model_options,
+  param_info = param_info,
+  transform_var = c(masec_n = function(x) log(pmax(x, 1e-6))),
+  step = step
+)
+``` 
+
+
+> Note that `run_protocol_agmip` includes many optional arguments not illustrated here (constraints, transformations, optimization settings, etc.). See `?CroptimizR::run_protocol_agmip` for details.
+
+Some model-specific initialization steps (construction of `model_options` for the `stics_wrapper`) are not shown here for the sake of brevity and because they are model-dependent.
+
+In this example, we illustrate the use of the optional `transform_var` argument to apply a logarithmic transformation to biomass observations (`masec_n`). Such transformations are recommended when the variance of the errors is assumed to be proportional to the magnitude of the variable.  The `pmax(x, 1e-6)` construction ensures that zero values are replaced by a small positive number before applying the log, preventing numerical errors.
+
+During execution, the main steps of the protocol and associated results are displayed in the console:
+
+```{r console_display, eval=TRUE, echo=FALSE, results='asis'}
+log_file <- system.file("extdata", "AgMIP_protocol", "results", "output.log", package = "CroptimizR")
+txt <- readChar(log_file, file.info(log_file)$size)
+
+# Handle end of lines
+txt <- gsub("\r", "", txt)
+
+# display HTML with scroll
+cat(
+  "<pre style='border:1px solid #ccc; padding:10px; max-height:300px; overflow:auto; background:#f8f8f8;'>",
+  txt,
+  "</pre>"
+)
+```
+
+## Exploring the results
+
+`run_protocol_agmip` returns a single structured R object that provides a compact, structured summary of the calibration protocol results.
+
+However, the function also produces a large number of additional outputs on disk, in the directory specified by the `out_dir` argument (equal to `getwd()` by default). These files contain, in particular, the full outputs of all calls to `estim_param` performed during Step 6 and Step 7 (including detailed optimization traces, diagnostics, details on parameter selection steps, and intermediate results for each individual minimization).
+
+The returned R object is designed to give direct programmatic access to the main results of the protocol, while the output directory ensures full description of the results obtained.
+
+Readers can refer to the `system.file("extdata", "AgMIP_protocol", "results", package = "CroptimizR")` folder to explore all the results saved on disk by `run_protocol_agmip` for this example.
+
+### Global structure of the returned object
+
+```{r load_res, eval=!params$recompute_full_protocol, echo=FALSE, include=FALSE, results='asis'}
+load(file.path(system.file(
+  file.path("extdata", "AgMIP_protocol", "results"),
+  package = "CroptimizR"
+), "optim_results.Rdata"))
+```
+The main components of the returned R object are:
+
+* `final_values`: final estimated parameter values,
+
+```{r eval=TRUE, message=FALSE}
+head(res$final_values)
+```
+
+* `forced_param_values`: values of parameters that are fixed during the final calibration step (step 7), including non-selected candidate parameters and parameters explicitly fixed in the protocol via the `forced_param_values` input argument.
+
+```{r eval=TRUE, message=FALSE}
+head(res$forced_param_values)
+```
+
+* `obs_var_list`: observed variables used for calibration,
+
+```{r eval=TRUE, message=FALSE}
+res$obs_var_list
+```
+
+* `values_per_step`: parameter values after each step,
+
+```{r eval=TRUE, message=FALSE}
+head(res$values_per_step)
+```
+
+* `stats_per_step`: fit statistics for each variable and each step,
+
+```{r eval=TRUE, message=FALSE}
+head(res$stats_per_step)
+```
+
+* `step6`, `step7`: detailed results for each part of the protocol.
+
+### Exploring parameter selection results (Step 6)
+
+During Step 6, a parameter selection procedure is applied independently within each sub-step of the protocol for which candidate parameters have been specified. Detailed information on this process is available both in the R object returned by run_protocol_agmip and in the outputs written to disk.
+
+Within the returned object, parameter selection details can be accessed via the `param_selection_steps` element of each Step 6 sub-step, i.e. `res$step6$Step6.***$param_selection_steps`.
+
+This element records the successive stages of the selection procedure, including the parameters retained or discarded at each stage, together with the associated intermediate results.
+
+For this example, `res$step6$Step6.phenology$param_selection_steps` contains:
+```{r eval=TRUE, message=FALSE, echo=FALSE, results='asis'}
+cat("<div style='font-size: 0.8em;'>")
+df <- read.csv(file.path(system.file("extdata", "AgMIP_protocol", "results", package = "CroptimizR"), "AgMIP_protocol_step6", "Step6.phenology", "param_selection_steps.csv"), sep = ";")
+knitr::kable(df)
+cat("</div>")
+```
+
+Note that, for the sake of brevity, only the initial and final values of the repetition that produced the lowest criterion are stored in this table.
+
+The same information is also saved to disk as CSV files, with one file per Step 6 sub-step, located in
+`out_dir/Step6.***/param_selection_steps.csv`. Detailed results from all parameter estimations conducted during the selection procedure are stored in the directories `out_dir/Step6.***/param_select_step*`. For this vignette, `out_dir` corresponds to `system.file("extdata", "AgMIP_protocol", "results", package = "CroptimizR")`.
+
+### Built-in diagnostics plots 
+
+Several diagnostic plots are automatically generated and saved to disk in the files `plot_MSE_Bias2_per_step.pdf` and `scatter_plots_*.pdf`.
+
+`plot_MSE_Bias2_per_step.pdf` shows the evolution of the mean squared error (MSE) and bias² for each observed variable across the different steps of the protocol.
+We can check that the performance of a variable is not degraded after it has been used in a step. In this example, this holds for almost all variables, except `imats`, for which bias² and MSE are affected in the `plant_biomass` step. Note, however, that step 7 corrects this effect.
+The graph also illustrates that bias² and MSE are substantially reduced compared to the values obtained using the default parameter settings.
+
+```{r plot_MSE_Bias2_per_step, eval=TRUE, message=FALSE, warning=FALSE, echo=FALSE, out.width = "90%"}
+knitr::include_graphics(
+  system.file("extdata", "AgMIP_protocol", "vignette_data", "plot_MSE_Bias2_per_step.png", package = "CroptimizR")
+)
+```
+
+The files `scatter_plots_*.pdf` contain scatter plots of simulated versus observed variables after each protocol step, allowing a closer inspection of the effect of each step. Here, we display the first page of the `scatter_plots_step7.pdf` file, which shows the results obtained at the end of the protocol for this example for variables `iamfs`, `ilaxs`, `imats` and `masec_n`.
+
+```{r scatter_plots_after_step7, eval=TRUE, message=FALSE, warning=FALSE, echo=FALSE, out.width = "90%"}
+knitr::include_graphics(
+  system.file("extdata", "AgMIP_protocol", "vignette_data", "scatter_plots_after_step7.png", package = "CroptimizR")
+)
+```
+
+## Evaluating the results on an independent dataset
+
+The calibrated model can then be evaluated on an independent dataset (here, the 8 evaluation situations) using the model wrapper function and the results provided by `run_protocol_agmip`.
+
+```{r eval=TRUE, message=FALSE, warning=FALSE}
+# Load observations for evaluation for our example
+obs_eval <- readRDS(file.path(system.file(
+  file.path("extdata", "AgMIP_protocol", "vignette_data"),
+  package = "CroptimizR"
+), "obs_eval.Rds"))
+```
+
+```{r eval=params$recompute_full_protocol, message=FALSE, warning=FALSE}
+# Get the names of the evaluation situations
+situations_eval <- names(obs_eval)
+
+# Run the model on the evaluation situations using the default and then the estimated parameter values
+sim_before_calib <- SticsOnR::stics_wrapper(
+  param_values = param_info$default,
+  model_options = model_options,
+  situation = situations_eval
+)
+sim_post_calib <- SticsOnR::stics_wrapper(
+  param_values = c(res$final_values, res$forced_param_values),
+  model_options = model_options,
+  situation = situations_eval
+)
+```
+
+> Note the use of `res$forced_param_values`, which includes the default values of non-selected candidate parameters, whereas `param_info$default` contains default values for all parameters.
+
+```{r eval=!params$recompute_full_protocol, message=FALSE, warning=FALSE, echo=FALSE, include=FALSE}
+load(file.path(system.file(
+  file.path("extdata", "AgMIP_protocol", "vignette_data"),
+  package = "CroptimizR"
+), "sim_before_calib.Rdata"))
+load(file.path(system.file(
+  file.path("extdata", "AgMIP_protocol", "vignette_data"),
+  package = "CroptimizR"
+), "sim_post_calib.Rdata"))
+```
+
+```{r eval=TRUE, message=FALSE, warning=FALSE, fig.width=8, fig.height=5}
+library(CroPlotR)
+# Compare rRMSE obtained with default and estimated values of the parameters using CroPlotR
+plot(summary(before_cal = sim_before_calib$sim_list, post_cal = sim_post_calib$sim_list, obs = obs_eval, stat = "rRMSE"))
+# Compare observations and simulations, obtained with default and estimated values of the parameters, on scatter plots, using CroPlotR
+plot(before_cal = sim_before_calib$sim_list, post_cal = sim_post_calib$sim_list, obs = obs_eval, type = "scatter")
+```
+
+
+This allows us to assess whether calibration improves predictive performance on the evaluation dataset compared to the default parameter values. This is indeed the case here, particularly for phenology and biomass-related variables, while yield shows a more moderate but still consistent improvement.
+
+## Conclusion
+
+This vignette illustrates how the AgMIP calibration protocol can be fully automated in CroptimizR using a compact and explicit protocol description. The same approach can be applied to other crop models and datasets, provided that a suitable wrapper and protocol specification are available.
+

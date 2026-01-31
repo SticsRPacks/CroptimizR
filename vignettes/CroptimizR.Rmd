@@ -57,17 +57,17 @@ and ad-hoc parameter estimation algorithms implemented in external packages. It
 proposes a standard interface for crop models, a set of adapted calibration procedures
 and goodness-of-fit criteria as well as additional specific features. 
 
-In particular, calibration procedures defined in the [AgMIP Calibration project](https://agmip.org/crop-model-calibration-3/) are implemented in CroptimizR 
-(see for example [here](https://SticsRPacks.github.io/CroptimizR/articles/AgMIP_Calibration_Phenology_protocol.html) an application of phenology 
-estimation following AgMIP-calibration phase III protocol). Actually CroptimizR 
-has been used with more than a dozen of crop models in AgMIP-calibration phase 
-III exercise (see Wallach et al, 2022).
+In particular, calibration protocols defined in the AgMIP Calibration project are implemented in CroptimizR (see this [example](https://SticsRPacks.github.io/CroptimizR/articles/AgMIP_Calibration_Protocol.html) illustrating the use of CroptimizR to apply the AgMIP calibration protocol on a complex crop model).
+
+CroptimizR has actually been used with more than a dozen crop models in AgMIP calibration exercises (see, e.g., Wallach et al., 2023, 2024, 2025).
 
 Other advanced features include among others: 
 
-  * Fine tuning of the selected optimization algorithm through specific options, 
+  * Automatic parameter selection algorithm,  
+  * automation of sequential multi-step parameter estimation workflows,  
+  * fine tuning of the selected optimization algorithm through specific options, 
   * specification of initial values and constraints on the estimated parameters 
-  (bounds and/or freely-defined constraints such as inequalities between parameters),  
+  (bounds and/or freely-defined constraints such as equalities/inequalities between parameters),  
   * dynamic execution of user-defined transformations for observed and/or simulated 
   values of model output variables in case they would not be directly comparable,  
   * forcing of crop model parameters to given values while estimating others,  
@@ -106,7 +106,7 @@ Note that the use of an R wrapper does not imply that the crop model is implemen
 
 Simulated results provided by crop model wrappers compatible with CroptimizR can be directly used with [CroPlotR](https://sticsrpacks.github.io/CroPlotR/) package functions as illustrated in section [Model Evaluation](#model-evaluation). 
 
-Model wrappers for CroptimizR have been developed for more than a dozen of crop models among which STICS (see packages [SticsOnR](https://sticsrpacks.github.io/SticsOnR/) and [SticsRFiles](https://sticsrpacks.github.io/SticsRFiles/)), ApsimX (see [https://github.com/APSIMInitiative/ApsimOnR]), DSSAT 4.7 (CERES and CropSim), SiriusQuality2, HERMES, SIMPLACE, Daisy ... 
+Model wrappers for CroptimizR have been developed for more than a dozen of crop models among which STICS (see packages [SticsOnR](https://sticsrpacks.github.io/SticsOnR/) and [SticsRFiles](https://sticsrpacks.github.io/SticsRFiles/)), ApsimX (see [https://github.com/APSIMInitiative/ApsimOnR]), DSSAT 4.7 (CERES, CropSim, NWheat), SiriusQuality2, HERMES, CropSyst, SIMPLACE–LINTUL5, MONICA, SSM-Wheat, ...
 
 ### Observations
 
@@ -134,17 +134,18 @@ print(obs_list)
 
 Several vignettes detail example of use of CroptimizR:
 
-* a simple introductory example of model calibration using the Stics model is given in this [vignette](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html),
 
-* a more complex one with simultaneous estimation of specific and varietal plant parameters is given  [here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html),
+* Simple introductory examples of parameter estimation using CroptimizR on complex crop models are provided in vignettes, using the STICS model [here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html) and the ApsimX model [here](https://SticsRPacks.github.io/CroptimizR/articles/ApsimX_parameter_estimation_simple_case.html)
+ 
+* A more complex example, showing simultaneous estimation of specific and varietal plant parameters is available  [here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html).
 
-* an example of application of the AgMIP phase III protocol, designed to calibrate phenology of crop models, as described in detail in Wallach et al (2022), is given [here](https://SticsRPacks.github.io/CroptimizR/articles/AgMIP_Calibration_Phenology_protocol.html),
+* An example demonstrating the application of a parameter selection algorithm can be found [here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_selection.html).
 
-* an example using the ApsimX model is detailed [here](https://SticsRPacks.github.io/CroptimizR/articles/ApsimX_parameter_estimation_simple_case.html),
+* An example using the DREAM-zs Bayesian algorithm is detailed [here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html).
 
-* an example using the DREAM-zs Bayesian algorithm is detailed [here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html).
+* An example illustrating the AgMIP calibration workflow is shown [here](https://SticsRPacks.github.io/CroptimizR/articles/AgMIP_Calibration_Protocol.html).
 
-In addition, see [here](https://sticsrpacks.github.io/CroptimizR/reference/estim_param.html) for a detailed description of the input and output arguments of the `estim_param` function (or type `? estim_param` in an R console after having installed and loaded the CroptimizR package).
+See [here](https://sticsrpacks.github.io/CroptimizR/reference/estim_param.html) for a detailed description of the input and output arguments of the `estim_param` function, the core function for parameter estimation (or type `? estim_param` in an R console after installing and loading the CroptimizR package). See also the `run_protocol_agmip` function for applying the AgMIP calibration workflow in a streamlined way.
 
 ## Model evaluation
 
@@ -164,5 +165,8 @@ Wallach, D., Palosuo, T., Thorburn, P., Gourdain, E., Asseng, S., Basso, B., Bui
 
 Wallach, D., Palosuo, T., Thorburn, P., Hochman, Z., Andrianasolo, F., Asseng, S., Basso, B., Buis, S., Crout, N., Dumont, B., Ferrise, R., Gaiser, T., Gayler, S., Hiremath, S., Hoek, S., Horan, H., Hoogenboom, G., Huang, M., Jabloun, M., Jansson, P.E., Jing, Q., Justes, E., Kersebaum, K.C., Launay, M., Lewan, E., Luo, Q., Maestrini, B., Moriondo, M., Olesen, J.E., Padovan, G., Poyda, A., Priesack, E., Pullens, J.W.M., Qian, B., Schütze, N., Shelia, V., Souissi, A., Specka, X., Kumar Srivastava, A., Stella, T., Streck, T., Trombi, G., Wallor, E., Wang, J., Weber, T.K.D., Weihermüller, L., de Wit, A., Wöhling, T., Xiao, L., Zhao, C., Zhu, Y., Seidel, S.J., 2021b. Multi-model evaluation of phenology prediction for wheat in Australia. Agric. For. Meteorol. 298–299, 108289. https://doi.org/10.1016/J.AGRFORMET.2020.108289 
 
-Wallach, D., Palosuo, T., Thorburn, P., Mielenz, H., Buis, S., Hochman, Z., Gourdain, E., Andrianasolo, F., Dumont, B., Ferrise, R., Gaiser, T., Garcia, C., Gayler, S., Hiremath, S., Horan, H., Hoogenboom, G., Jansson, P.-E., Jing, Q., Justes, E., Kersebaum, K.-C., Launay, M., Lewan, E., Mequanint, F., Moriondo, M., Nendel, C., Padovan, G., Qian, B., Schütze, N., Seserman, D.-M., Shelia, V., Souissi, A., Specka, X., Srivastava, A.K., Trombi, G., Weber, T.K.D., Weihermüller, L., Wöhling, T., Seidel, S.J., 2022. Calibration of crop phenology models: Going beyond recommendations. [bioRxiv 2022.06.08.495355](https://www.biorxiv.org/content/10.1101/2022.06.08.495355v1)
+Wallach, D., Palosuo, T., Thorburn, P., Mielenz, H., Buis, S., Hochman, Z., Gourdain, E., Andrianasolo, F., Dumont, B., Ferrise, R., Gaiser, T., Garcia, C., Gayler, S., Hiremath, S., Horan, H., Hoogenboom, G., Jansson, P.-E., Jing, Q., Justes, E., Kersebaum, K.-C., Launay, M., Lewan, E., Mequanint, F., Moriondo, M., Nendel, C., Padovan, G., Qian, B., Schütze, N., Seserman, D.-M., Shelia, V., Souissi, A., Specka, X., Srivastava, A.K., Trombi, G., Weber, T.K.D., Weihermüller, L., Wöhling, T., Seidel, S.J., 2023. Proposal and extensive test of a calibration protocol for crop phenology models. https://link.springer.com/article/10.1007/s13593-023-00900-0
 
+Wallach D., Buis S., Seserman D.M., Palosuo T., Thorburn P., Mielenz H., Justes E., Kersebaum K.C., Dumont B., Launay M., Seidel S.J. 2024. A calibration protocol for soil-crop models. Environmental Modelling & Software, 180, 106147. https://doi.org/10.1016/j.envsoft.2024.106147
+
+Wallach, D., Kim, K. S., Hyun, S., Buis, S., Thorburn, P., Mielenz, H., Seidel, S., Alderman, P., Dumont, B., Fallah, M.H., Hoogenboom, G., Justes, E., KErsebaum, K.-C., Launay, M., Leolini, L., Mehmood, M.Z., Moriondo, M., Jing Q., Qian, B., Schultz, S., Palosuo, T. 2025. Evaluating the AgMIP calibration protocol for crop models; case study and new diagnostic tests. European Journal of Agronomy, 168: 127659. https://doi.org/10.1016/j.eja.2025.127659 
