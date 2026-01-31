@@ -21,7 +21,6 @@ options(tibble.print_min = 5, tibble.print_max = 5)
 # CroptimizR: A Package to estimate parameters of Crop Models
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![Codecov test coverage](https://codecov.io/gh/SticsRPacks/CroptimizR/branch/master/graph/badge.svg)](https://codecov.io/gh/SticsRPacks/CroptimizR?branch=master)
 [![DOI](https://zenodo.org/badge/187874725.svg)](https://zenodo.org/badge/latestdoi/187874725)
 
 The purpose of CroptimizR is to provide functions for estimating crop model parameters from observations of their simulated variables, a process often referred to as calibration. For that, it offers a generic framework for linking crop models with up-to-date and ad-hoc algorithms, as well as a choice of goodness-of-fit criteria and additional features adapted to the problem of crop model calibration. It facilitates the comparison of different types of methods on different models. It is used in this context in the [AgMIP Calibration project](https://agmip.org/crop-model-calibration-3/) on a dozen of crop models.

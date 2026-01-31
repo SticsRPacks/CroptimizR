@@ -8,10 +8,6 @@ CroptimizR
 [![Project Status: Active – The project has reached a stable, usable
 state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![R build
-status](https://github.com/SticsRPacks/CroptimizR/actions/workflows/check-standard.yaml/badge.svg?branch=main)](https://github.com/SticsRPacks/CroptimizR/actions)
-[![Codecov test
-coverage](https://codecov.io/gh/SticsRPacks/CroptimizR/branch/master/graph/badge.svg)](https://codecov.io/gh/SticsRPacks/CroptimizR?branch=master)
 [![DOI](https://zenodo.org/badge/187874725.svg)](https://zenodo.org/badge/latestdoi/187874725)
 
 The purpose of CroptimizR is to provide functions for estimating crop
@@ -33,10 +29,6 @@ to connect its own crop model to CroptimizR.
 The list of functions accessible to the users is provided in the
 [Reference](https://sticsrpacks.github.io/CroptimizR/reference/index.html)
 tab.
-
-**The package is still under active development, feel free to fill an
-issue or request a feature
-[here](https://github.com/SticsRPacks/CroptimizR/issues) at any time.**
 
 If you want to be notified when a new release of this package is made,
 you can tick the Releases box in the “Watch / Unwatch =\> Custom” menu
@@ -67,30 +59,34 @@ remotes::install_github("SticsRPacks/CroptimizR@*release")
 
 ## Examples
 
-- A simple introductory example of model calibration using the
-  Nelder-Mead simplex method on the STICS model is given in this
-  [vignette](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html).
+- Simple introductory examples of parameter estimation using CroptimizR
+  on complex crop models are provided in vignettes, using the STICS
+  model
+  [here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html)
+  and the ApsimX model
+  [here](https://SticsRPacks.github.io/CroptimizR/articles/ApsimX_parameter_estimation_simple_case.html)
 
-- A more complex one with simultaneous estimation of specific and
-  varietal plant parameters is given
+- A more complex example, showing simultaneous estimation of specific
+  and varietal plant parameters is available
   [here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html).
 
-- An example of application of the AgMIP phase III protocol, designed to
-  calibrate phenology of crop models, as described in detail in Wallach
-  et al (2022), is given
-  [here](https://SticsRPacks.github.io/CroptimizR/articles/AgMIP_Calibration_Phenology_protocol.html).
-
-- An example using the ApsimX model is detailed
-  [here](https://SticsRPacks.github.io/CroptimizR/articles/ApsimX_parameter_estimation_simple_case.html).
+- An example demonstrating the application of a parameter selection
+  algorithm can be found
+  [here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_selection.html).
 
 - An example using the DREAM-zs Bayesian algorithm is detailed
   [here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html).
 
+- An example illustrating the AgMIP calibration workflow is shown
+  [here](https://SticsRPacks.github.io/CroptimizR/articles/AgMIP_Calibration_Protocol.html).
+
 See
 [here](https://sticsrpacks.github.io/CroptimizR/reference/estim_param.html)
 for a detailed description of the input and output arguments of the
-estim_param function (or type `? estim_param` in an R console after
-having installed and loaded the CroptimizR package).
+`estim_param` function, the core function for parameter estimation (or
+type `? estim_param` in an R console after installing and loading the
+CroptimizR package). See also the `run_protocol_agmip` function for
+applying the AgMIP calibration workflow in a streamlined way.
 
 ## Getting help
 
@@ -105,9 +101,3 @@ Thanks for that, this would greatly help us to improve this package.
 If you have used this package for a study that led to a publication or
 report, please cite us. To get the suggested citation, run
 `citation("CroptimizR")`.
-
-## Code of conduct
-
-Please note that this project is released with a [Contributor Code of
-Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree
-to abide by its terms.
