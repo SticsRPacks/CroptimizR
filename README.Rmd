@@ -30,8 +30,6 @@ The [Get started page](https://sticsrpacks.github.io/CroptimizR/articles/Croptim
 
 The list of functions accessible to the users is provided in the [Reference](https://sticsrpacks.github.io/CroptimizR/reference/index.html) tab.
 
-**The package is still under active development, feel free to fill an issue or request a feature [here](https://github.com/SticsRPacks/CroptimizR/issues) at any time.** 
-
 If you want to be notified when a new release of this package is made, you can tick the Releases box in the "Watch / Unwatch => Custom" menu at the top right of [this page](https://github.com/SticsRPacks/CroptimizR).
 
 ## Installation
