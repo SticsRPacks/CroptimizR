@@ -248,8 +248,9 @@ test_that("Test estim_param 2 steps crit_ols with param selection and limited li
   load(file.path(tempdir(), "Step1/param_select_step2/optim_results.Rdata"))
   res1b <- res
 
-  expect_equal(res1$obs_situation_list,
-               c("sit1_2000", "sit1_2001", "sit2_2003")
+  expect_equal(
+    res1$obs_situation_list,
+    c("sit1_2000", "sit1_2001", "sit2_2003")
   )
 
   # Load results from step 2
@@ -264,8 +265,8 @@ test_that("Test estim_param 2 steps crit_ols with param selection and limited li
     tolerance = param_true_values[["rB"]] * 1e-2
   )
   expect_equal(res_final$final_values[["Bmax"]],
-               param_true_values[["Bmax"]],
-               tolerance = param_true_values[["Bmax"]] * 1e-2
+    param_true_values[["Bmax"]],
+    tolerance = param_true_values[["Bmax"]] * 1e-2
   )
   expect_equal(res_final$final_values[["h"]],
     param_true_values[["h"]],
@@ -274,10 +275,10 @@ test_that("Test estim_param 2 steps crit_ols with param selection and limited li
   expect_true(res_final$total_eval_count >= nb_eval_steps)
   expect_true(res_final$total_eval_count <= (nb_eval_steps + 2 * nb_substeps))
 
-  expect_equal(res2$obs_situation_list,
+  expect_equal(
+    res2$obs_situation_list,
     c("sit1_2000", "sit1_2001", "sit2_2003", "sit2_2004")
   )
-
 })
 
 # ------------------------------------------------------------------------
