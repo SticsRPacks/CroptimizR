@@ -139,35 +139,38 @@
 #'
 #'   ## Parameter selection procedure (argument `candidate_param`)
 #'
-#'   If the candidate_param argument is given, a parameter selection procedure following
-#'   the AgMIP calibration phaseIII protocol will be performed:
+#'   If the `candidate_param` argument is given, a parameter selection procedure following
+#'   [Wallach et al. (2023)](https://link.springer.com/article/10.1007/s13593-023-00900-0) will be performed.
+#'
 #'   The candidate parameters are added one by one (in the given order) to the parameters
-#'   that MUST be estimated (i.e. the one defined in param_info but not in candidate_param).
+#'   that MUST be estimated (i.e. the one defined in param_info but not in `candidate_param`).
 #'   Each time a new candidate is added:
-#'    - the parameter estimation is performed and an information criterion is computed (see argument info_crit_func)
+#'    - the parameter estimation is performed and an information criterion is computed (see argument `info_crit_func`)
 #'    - if the information criterion is inferior to all the ones obtained before,
 #'      then the current candidate parameter is added to the list of parameters to estimate
 #'
-#'   The result includes a summary of all the steps (data.frame param_selection_steps).
+#'   The result includes a summary of all the steps (data.frame `param_selection_steps`).
+#'
+#'   For an example of this procedure, see the vignette [Parameter selection with CroptimizR](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_selection.html).
 #'
 #'   ## Transformation of simulations and observations (arguments `transform_sim` and `transform_obs`)
 #'
 #'   The optional argument `transform_sim` must be a function with 4 arguments:
-#'   - model_results: the list of simulated results returned by the mode_wrapper used
-#'   - obs_list: the list of observations as given to estim_param function
-#'   - param_values: a named vector containing the current parameters values proposed
+#'   - `model_results`: the list of simulated results returned by the mode_wrapper used
+#'   - `obs_list`: the list of observations as given to estim_param function
+#'   - `param_values`: a named vector containing the current parameters values proposed
 #'      by the estimation algorithm
-#'   - model_options: the list of model options as given to estim_param function
+#'   - `model_options`: the list of model options as given to estim_param function
 #'
 #'   It must return a list of simulated results (same format as this returned by the model wrapper used)
 #'   that will be used to compute the criterion to optimize.
 #'
 #'   The optional argument `transform_obs` must be a function with 4 arguments:
-#'   - model_results: the list of simulated results returned by the mode_wrapper used
-#'   - obs_list: the list of observations as given to estim_param function
-#'   - param_values: a named vector containing the current parameters values proposed
+#'   - `model_results`: the list of simulated results returned by the mode_wrapper used
+#'   - `obs_list`: the list of observations as given to estim_param function
+#'   - `param_values`: a named vector containing the current parameters values proposed
 #'      by the estimation algorithm
-#'   - model_options: the list of model options as given to estim_param function
+#'   - `model_options`: the list of model options as given to estim_param function
 #'
 #'   It must return a list of observations (same format as `obs_list` argument) that
 #'   will be used to compute the criterion to optimize.
@@ -175,9 +178,9 @@
 #'   ## Constraints on estimated parameters (argument `satisfy_par_const`)
 #'
 #'   The optional argument `satisfy_par_const` must be a function with 2 arguments:
-#'   - param_values: a named vector containing the current parameters values proposed
+#'   - `param_values`: a named vector containing the current parameters values proposed
 #'      by the estimation algorithm
-#'   - model_options: the list of model options as given to estim_param function
+#'   - `model_options`: the list of model options as given to estim_param function
 #'
 #'   It must return a logical indicating if the parameters values satisfies the constraints
 #'   (freely defined by the user in the function body) or not.
@@ -203,28 +206,29 @@
 #'   The argument `step` is a list of lists used to perform parameter estimation in multiple sequential steps.
 #'   If provided, each step represents a separate stage in the estimation procedure,
 #'   allowing different configurations for each step (e.g., different sets of parameters to estimate,
-#'   different observed variables, different situations, etc.).
-#'
-#'   When multiple steps are defined, the parameter values estimated in one step
+#'   different observed variables, different situations, etc.). When multiple steps are defined, the parameter values estimated in one step
 #'   are used as fixed values in the subsequent step.
+#'
 #'   Each step is a named list that may contain **any argument** of the `estim_param` function
-#'   (e.g. `obs_var`, `candidate_param`, ...). Only the arguments that
+#'   (e.g. `candidate_param`, `optim_options`, ...). Only the arguments that
 #'   differ from those given to `estim_param` need to be specified: any element not explicitly
 #'   defined in a step inherits its value from the corresponding argument of `estim_param`.
+#'
+#'   When `step` **is** used, the set of parameters to estimate and observed variables to use usually differs between steps.
+#'   For sake of simplicity, a **single global** `param_info` list can be provided to `estim_param`
+#'   (containing bounds, etc. for all parameters that may ever be estimated),
+#'   and each step specifies explicitly:
+#'
+#'   - `major_param`: a vector containing the name of the parameters that **must be estimated** at this step,
+#'   - `candidate_param` (optional): a vector containing the name of the parameters that are **candidates for estimation** at this step,
+#'   - `obs_var` (optional): a vector containing the name of the observed variables to use at this step,
+#'   - `situation` (optional): a vector containing the name of the situations to use at this step.
 #'
 #'   When `step` is **not** used (`step = NULL`), a single-step estimation is performed using the arguments of `estim_param`.
 #'   In this case, the list of parameters to be estimated is
 #'   automatically deduced from the `param_info` argument: all parameters defined in
 #'   `param_info` are considered for estimation (possibly subject to selection if
 #'   `candidate_param` is used).
-#'
-#'   When `step` **is** used, the set of parameters to estimate usually differs between steps.
-#'   For sake of simplicity, a **single global** `param_info` list can be provided to `estim_param`
-#'   (containing bounds, etc. for all parameters that may ever be estimated),
-#'   and each step specifies explicitly which parameters are:
-#'
-#'   - `major_param`: the parameters that **must be estimated** at this step,
-#'   - `candidate_param` (optional): the parameters that are **candidates for estimation**.
 #'
 #'   Suppose the `step` argument is defined as follows:
 #'   ```r
@@ -266,7 +270,7 @@
 estim_param <- function(obs_list, model_function,
                         model_options = NULL, crit_function = crit_log_cwss, optim_method = "nloptr.simplex",
                         optim_options = NULL, param_info, forced_param_values = NULL,
-                        candidate_param = NULL, situation = NULL, obs_var = NULL, transform_var = NULL, transform_obs = NULL,
+                        candidate_param = NULL, transform_var = NULL, transform_obs = NULL,
                         transform_sim = NULL, satisfy_par_const = NULL,
                         var_to_simulate = NULL,
                         info_crit_func = list(

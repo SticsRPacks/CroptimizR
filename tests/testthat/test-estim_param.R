@@ -186,9 +186,7 @@ test_that("Test estim_param 1 step OLS criterion", {
     crit_function = crit_ols,
     optim_options = optim_options,
     param_info = param_info,
-    obs_var = c("biomass", "yield"),
     forced_param_values = forced_param_values,
-    situation = c("sit1_2000", "sit1_2001", "sit2_2003"),
     out_dir = tempdir()
   )
 
@@ -202,13 +200,13 @@ test_that("Test estim_param 1 step OLS criterion", {
   )
   expect_equal(
     res$obs_situation_list,
-    c("sit1_2000", "sit1_2001", "sit2_2003")
+    c("sit1_2000", "sit1_2001", "sit2_2003", "sit2_2004")
   )
 })
 
 # ------------------------------------------------------------------------
 
-test_that("Test estim_param 2 steps crit_ols with param selection", {
+test_that("Test estim_param 2 steps crit_ols with param selection and limited list of situation", {
   optim_options <- list(
     nb_rep = 5, xtol_rel = 1e-2,
     ranseed = 1234
@@ -216,13 +214,14 @@ test_that("Test estim_param 2 steps crit_ols with param selection", {
   param_info <- list(
     rB = list(lb = 0, ub = 1, default = 0.1),
     h = list(lb = 0, ub = 1, default = 0.5),
-    Bmax = list(lb = 5, ub = 15, default = 7)
+    Bmax = list(lb = 5, ub = 15, default = 15)
   )
   steps <- list(
     list(
       major_param = c("rB"),
       candidate_param = c("Bmax"),
-      obs_var = c("biomass")
+      obs_var = c("biomass"),
+      situation = c("sit1_2000", "sit1_2001", "sit2_2003")
     ),
     list(
       major_param = c("h"),
@@ -249,6 +248,10 @@ test_that("Test estim_param 2 steps crit_ols with param selection", {
   load(file.path(tempdir(), "Step1/param_select_step2/optim_results.Rdata"))
   res1b <- res
 
+  expect_equal(res1$obs_situation_list,
+               c("sit1_2000", "sit1_2001", "sit2_2003")
+  )
+
   # Load results from step 2
   load(file.path(tempdir(), "Step2/optim_results.Rdata"))
   res2 <- res
@@ -260,12 +263,21 @@ test_that("Test estim_param 2 steps crit_ols with param selection", {
     param_true_values[["rB"]],
     tolerance = param_true_values[["rB"]] * 1e-2
   )
+  expect_equal(res_final$final_values[["Bmax"]],
+               param_true_values[["Bmax"]],
+               tolerance = param_true_values[["Bmax"]] * 1e-2
+  )
   expect_equal(res_final$final_values[["h"]],
     param_true_values[["h"]],
     tolerance = param_true_values[["h"]] * 1e-2
   )
   expect_true(res_final$total_eval_count >= nb_eval_steps)
   expect_true(res_final$total_eval_count <= (nb_eval_steps + 2 * nb_substeps))
+
+  expect_equal(res2$obs_situation_list,
+    c("sit1_2000", "sit1_2001", "sit2_2003", "sit2_2004")
+  )
+
 })
 
 # ------------------------------------------------------------------------
@@ -321,16 +333,16 @@ test_that("Test estim_param 1 steps with param selection", {
     Bmax = list(lb = 5, ub = 15)
   )
   forced_param_values <- c(h = 0.55)
+  obs_synth_biomass <- filter_obs(obs_synth, var = "biomass")
 
   res_final <- estim_param(
-    obs_list = obs_synth,
+    obs_list = obs_synth_biomass,
     crit_function = crit_ols,
     model_function = toymodel_wrapper,
     model_options = model_options,
     optim_options = optim_options,
     param_info = param_info,
     candidate_param = c("Bmax"),
-    obs_var = "biomass",
     forced_param_values = forced_param_values,
     out_dir = tempdir()
   )
@@ -351,41 +363,18 @@ test_that("Test step check undefined candidate", {
   param_info <- list(
     rB = list(lb = 0, ub = 1, default = 0.1)
   )
+  obs_synth_biomass <- filter_obs(obs_synth, var = "biomass")
 
   expect_error(estim_param(
-    obs_list = obs_synth,
+    obs_list = obs_synth_biomass,
     crit_function = crit_ols,
     model_function = toymodel_wrapper,
     model_options = model_options,
     optim_options = optim_options,
     param_info = param_info,
     candidate_param = c("Bmax"),
-    obs_var = "biomass",
     out_dir = tempdir()
   ), regexp = "candidate parameter")
-})
-
-# ------------------------------------------------------------------------
-
-test_that("Test step check undefined observed variable", {
-  optim_options <- list(
-    nb_rep = 5, xtol_rel = 1e-2,
-    ranseed = 1234
-  )
-  param_info <- list(
-    rB = list(lb = 0, ub = 1, default = 0.1)
-  )
-
-  expect_error(suppressWarnings(estim_param(
-    obs_list = obs_synth,
-    crit_function = crit_ols,
-    model_function = toymodel_wrapper,
-    model_options = model_options,
-    optim_options = optim_options,
-    param_info = param_info,
-    obs_var = "LAI",
-    out_dir = tempdir()
-  )), regexp = "")
 })
 
 # ------------------------------------------------------------------------
@@ -413,9 +402,7 @@ test_that("estim_param equality constraints", {
     crit_function = crit_ols,
     optim_options = optim_options,
     param_info = param_info,
-    obs_var = c("biomass", "yield"),
     forced_param_values = forced_param_values,
-    situation = c("sit1_2000", "sit1_2001", "sit2_2003"),
     out_dir = tempdir()
   )
 
@@ -757,9 +744,7 @@ test_that("Test estim_param 1 step with sit_list", {
     crit_function = crit_ols,
     optim_options = optim_options,
     param_info = param_info,
-    obs_var = c("biomass", "yield"),
     forced_param_values = forced_param_values,
-    situation = c("sit1_2000", "sit1_2001", "sit2_2003"),
     out_dir = tempdir()
   )
 
@@ -777,7 +762,7 @@ test_that("Test estim_param 1 step with sit_list", {
   )
   expect_equal(
     res$obs_situation_list,
-    c("sit1_2000", "sit1_2001", "sit2_2003")
+    c("sit1_2000", "sit1_2001", "sit2_2003", "sit2_2004")
   )
 })
 
@@ -813,9 +798,7 @@ test_that("Test estim_param 2 steps with sit_list returns an error", {
     crit_function = crit_ols,
     optim_options = optim_options,
     param_info = param_info,
-    obs_var = c("biomass", "yield"),
     forced_param_values = forced_param_values,
-    situation = c("sit1_2000", "sit1_2001", "sit2_2003"),
     step = steps,
     out_dir = tempdir()
   )), regexp = "not compatible with multi-step calibration")
@@ -843,10 +826,8 @@ test_that("Test estim_param with sit_list and candidate", {
     crit_function = crit_ols,
     optim_options = optim_options,
     param_info = param_info,
-    obs_var = c("biomass", "yield"),
     forced_param_values = forced_param_values,
     candidate_param = c("Bmax"),
-    situation = c("sit1_2000", "sit1_2001", "sit2_2003"),
     out_dir = tempdir()
   )), regexp = "not compatible with the use of")
 })
