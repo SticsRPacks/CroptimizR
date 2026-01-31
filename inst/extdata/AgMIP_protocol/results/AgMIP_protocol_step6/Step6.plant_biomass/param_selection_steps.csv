@@ -1,0 +1,7 @@
+"Estimated parameters";"Initial parameter values";"Final values";"Initial Sum of squared errors";"Final Sum of squared errors";"AICc";"Selected step"
+"efcroiveg  , efcroirepro";"5.25, 4.52";"3.00, 4.34";"17.39";"7.13";"-75.81";""
+"efcroiveg  , efcroirepro, dlaimaxbrut";"3.00000, 4.34032, 0.00067";"4.61917, 4.24638, 0.00029";"2.17";"0.82";"-168.53";"X"
+"efcroiveg  , efcroirepro, dlaimaxbrut, durvieF    ";"  4.61917,   4.24638,   0.00029, 260.00000";"  4.59761,   4.56342,   0.00029, 264.88566";"0.82";"0.82";"-166.30";""
+"efcroiveg  , efcroirepro, dlaimaxbrut, vlaimax    ";"4.61917, 4.24638, 0.00029, 2.27101";"4.53534, 4.28771, 0.00031, 2.49963";"0.92";"0.81";"-166.87";""
+"efcroiveg  , efcroirepro, dlaimaxbrut, psisto     ";" 4.61917,  4.24638,  0.00029, 15.50693";" 4.56391,  4.73253,  0.00029, 11.01185";"0.82";"0.82";"-166.43";""
+"efcroiveg  , efcroirepro, dlaimaxbrut, psiturg    ";"4.61917, 4.24638, 0.00029, 2.08135";"4.61064, 4.49542, 0.00029, 2.10933";"0.82";"0.82";"-166.29";""

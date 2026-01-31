@@ -57,7 +57,7 @@ remotes::install_github("SticsRPacks/CroptimizR@*release")
 
 * A more complex one with simultaneous estimation of specific and varietal plant parameters is given  [here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html).
 
-* An example of application of the AgMIP phase III protocol, designed to calibrate phenology of crop models, as described in detail in Wallach et al (2022), is given [here](https://SticsRPacks.github.io/CroptimizR/articles/AgMIP_Calibration_Phenology_protocol.html).
+* An example of application of a parameter selection algorithm, is given [here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_selection.html).
 
 * An example using the ApsimX model is detailed [here](https://SticsRPacks.github.io/CroptimizR/articles/ApsimX_parameter_estimation_simple_case.html).
 

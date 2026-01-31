@@ -1,5 +1,7 @@
 context("Test the estim_param function using a toy model")
 
+library(testthat)
+
 # Define a toy model and its wrapper
 toymodel <- function(nb_days, rB = 0.1, Bmin = 0.1, Bmax = 10, h = 0.5, Bini = 0.01) {
   # Simulate biomass and yield with a simple logistic model
@@ -58,6 +60,8 @@ toymodel_wrapper <- function(param_values = NULL, situation,
     param_values <- param_values[!names(param_values) %in% "dummy"]
   }
 
+  param_values <- tibble::tibble(!!!param_values) # convert param_values in a tibble
+
   for (sit in situation) {
     # Retrieve begin and end date from situation name
     begin_date <- dplyr::filter(model_options, situation == sit) %>%
@@ -67,13 +71,24 @@ toymodel_wrapper <- function(param_values = NULL, situation,
 
     date_sequence <- seq(from = begin_date[[1]], to = end_date[[1]], by = "day")
 
-    if (!all(names(param_values) %in% c(
+    # Handle the case of param_values being a tibble with situation column
+    if (!is.null(param_values)) {
+      if (!"situation" %in% names(param_values)) {
+        params <- param_values
+      } else {
+        params <-
+          dplyr::filter(param_values, situation == sit) %>%
+          dplyr::select(-situation)
+      }
+    }
+
+    if (!all(names(params) %in% c(
       "rB", "Bmin", "Bmax", "h", "Bini"
     ))) {
       warning(
         paste(
           "Unknown parameters in param_values:",
-          paste(names(param_values), collapse = ",")
+          paste(names(params), collapse = ",")
         )
       )
       results$error <- TRUE
@@ -84,7 +99,7 @@ toymodel_wrapper <- function(param_values = NULL, situation,
     # param_values
     res <- do.call(
       "toymodel",
-      c(nb_days = length(date_sequence), as.list(param_values))
+      c(nb_days = length(date_sequence), as.list(params))
     )
 
     # Fill the result variable
@@ -105,7 +120,7 @@ toymodel_wrapper <- function(param_values = NULL, situation,
 # Use setup() to define shared data for all tests in this file
 setup({
   # These variables will be available in all tests
-  .GlobalEnv$model_options <- tibble(
+  .GlobalEnv$model_options <- dplyr::tibble(
     situation = c("sit1_2000", "sit1_2001", "sit2_2003", "sit2_2004"),
     begin_date = as.Date(c("2000-05-01", "2001-05-12", "2003-05-05", "2004-05-15")),
     end_date = as.Date(c("2000-11-05", "2001-11-20", "2003-11-15", "2004-11-18"))
@@ -131,8 +146,9 @@ teardown({
   if (exists("obs_synth", envir = .GlobalEnv)) rm(obs_synth, envir = .GlobalEnv)
 })
 
-# Test the wrapper
-test_that("Wrapper OK", {
+# ------------------------------------------------------------------------
+
+test_that("Test the wrapper", {
   res <- test_wrapper(
     model_function = toymodel_wrapper,
     model_options = model_options,
@@ -142,13 +158,15 @@ test_that("Wrapper OK", {
   expect_true(all(res$test_results))
 })
 
-# Test synthetic observations
-test_that("Synthetic obs", {
+# ------------------------------------------------------------------------
+
+test_that("Test synthetic observations", {
   expect_true(CroptimizR:::is.obs(obs_synth))
 })
 
-# Test estim_param - 1 step, OLS criterion
-test_that("estim_param 1 step OLS criterion", {
+# ------------------------------------------------------------------------
+
+test_that("Test estim_param 1 step OLS criterion", {
   param_info <- list(
     rB = list(lb = 0, ub = 1),
     h = list(lb = 0, ub = 1)
@@ -168,9 +186,7 @@ test_that("estim_param 1 step OLS criterion", {
     crit_function = crit_ols,
     optim_options = optim_options,
     param_info = param_info,
-    obs_var = c("biomass", "yield"),
     forced_param_values = forced_param_values,
-    situation = c("sit1_2000", "sit1_2001", "sit2_2003"),
     out_dir = tempdir()
   )
 
@@ -184,12 +200,13 @@ test_that("estim_param 1 step OLS criterion", {
   )
   expect_equal(
     res$obs_situation_list,
-    c("sit1_2000", "sit1_2001", "sit2_2003")
+    c("sit1_2000", "sit1_2001", "sit2_2003", "sit2_2004")
   )
 })
 
-# Test 2 steps with param selection
-test_that("estim_param 2 steps crit_ols", {
+# ------------------------------------------------------------------------
+
+test_that("Test estim_param 2 steps crit_ols with param selection and limited list of situation", {
   optim_options <- list(
     nb_rep = 5, xtol_rel = 1e-2,
     ranseed = 1234
@@ -197,16 +214,17 @@ test_that("estim_param 2 steps crit_ols", {
   param_info <- list(
     rB = list(lb = 0, ub = 1, default = 0.1),
     h = list(lb = 0, ub = 1, default = 0.5),
-    Bmax = list(lb = 5, ub = 15, default = 7)
+    Bmax = list(lb = 5, ub = 15, default = 15)
   )
   steps <- list(
     list(
-      param = c("rB"),
+      major_param = c("rB"),
       candidate_param = c("Bmax"),
-      obs_var = c("biomass")
+      obs_var = c("biomass"),
+      situation = c("sit1_2000", "sit1_2001", "sit2_2003")
     ),
     list(
-      param = c("h"),
+      major_param = c("h"),
       obs_var = c("yield")
     )
   )
@@ -223,15 +241,19 @@ test_that("estim_param 2 steps crit_ols", {
   )
 
   # Load results from step 1
-  load(file.path(tempdir(), "step1/optim_results.Rdata"))
+  load(file.path(tempdir(), "Step1/optim_results.Rdata"))
   res1 <- res
-  load(file.path(tempdir(), "step1/param_select_step1/optim_results.Rdata"))
+  load(file.path(tempdir(), "Step1/param_select_step1/optim_results.Rdata"))
   res1a <- res
-  load(file.path(tempdir(), "step1/param_select_step2/optim_results.Rdata"))
+  load(file.path(tempdir(), "Step1/param_select_step2/optim_results.Rdata"))
   res1b <- res
 
+  expect_equal(res1$obs_situation_list,
+               c("sit1_2000", "sit1_2001", "sit2_2003")
+  )
+
   # Load results from step 2
-  load(file.path(tempdir(), "step2/optim_results.Rdata"))
+  load(file.path(tempdir(), "Step2/optim_results.Rdata"))
   res2 <- res
 
   nb_eval_steps <- sum(sapply(list(res1a, res1b, res2), function(x) nrow(x$params_and_crit)))
@@ -241,16 +263,26 @@ test_that("estim_param 2 steps crit_ols", {
     param_true_values[["rB"]],
     tolerance = param_true_values[["rB"]] * 1e-2
   )
+  expect_equal(res_final$final_values[["Bmax"]],
+               param_true_values[["Bmax"]],
+               tolerance = param_true_values[["Bmax"]] * 1e-2
+  )
   expect_equal(res_final$final_values[["h"]],
     param_true_values[["h"]],
     tolerance = param_true_values[["h"]] * 1e-2
   )
   expect_true(res_final$total_eval_count >= nb_eval_steps)
   expect_true(res_final$total_eval_count <= (nb_eval_steps + 2 * nb_substeps))
+
+  expect_equal(res2$obs_situation_list,
+    c("sit1_2000", "sit1_2001", "sit2_2003", "sit2_2004")
+  )
+
 })
 
-# Test 2 steps without param selection
-test_that("estim_param 2 steps without param selection", {
+# ------------------------------------------------------------------------
+
+test_that("Test estim_param 2 steps without param selection", {
   optim_options <- list(
     nb_rep = 5, xtol_rel = 1e-2,
     ranseed = 1234
@@ -262,11 +294,11 @@ test_that("estim_param 2 steps without param selection", {
   forced_param_values <- c(Bmax = 7)
   step <- list(
     list(
-      param = c("rB"),
+      major_param = c("rB"),
       obs_var = c("biomass")
     ),
     list(
-      param = c("h"),
+      major_param = c("h"),
       obs_var = c("yield")
     )
   )
@@ -289,8 +321,9 @@ test_that("estim_param 2 steps without param selection", {
   )
 })
 
-# Test 1 step with param selection
-test_that("estim_param 1 steps with param selection", {
+# ------------------------------------------------------------------------
+
+test_that("Test estim_param 1 steps with param selection", {
   optim_options <- list(
     nb_rep = 5, xtol_rel = 1e-2,
     ranseed = 1234
@@ -300,16 +333,16 @@ test_that("estim_param 1 steps with param selection", {
     Bmax = list(lb = 5, ub = 15)
   )
   forced_param_values <- c(h = 0.55)
+  obs_synth_biomass <- filter_obs(obs_synth, var = "biomass")
 
   res_final <- estim_param(
-    obs_list = obs_synth,
+    obs_list = obs_synth_biomass,
     crit_function = crit_ols,
     model_function = toymodel_wrapper,
     model_options = model_options,
     optim_options = optim_options,
     param_info = param_info,
     candidate_param = c("Bmax"),
-    obs_var = "biomass",
     forced_param_values = forced_param_values,
     out_dir = tempdir()
   )
@@ -320,8 +353,8 @@ test_that("estim_param 1 steps with param selection", {
   )
 })
 
+# ------------------------------------------------------------------------
 
-# Test check step
 test_that("Test step check undefined candidate", {
   optim_options <- list(
     nb_rep = 5, xtol_rel = 1e-2,
@@ -330,40 +363,21 @@ test_that("Test step check undefined candidate", {
   param_info <- list(
     rB = list(lb = 0, ub = 1, default = 0.1)
   )
+  obs_synth_biomass <- filter_obs(obs_synth, var = "biomass")
 
   expect_error(estim_param(
-    obs_list = obs_synth,
+    obs_list = obs_synth_biomass,
     crit_function = crit_ols,
     model_function = toymodel_wrapper,
     model_options = model_options,
     optim_options = optim_options,
     param_info = param_info,
     candidate_param = c("Bmax"),
-    obs_var = "biomass",
     out_dir = tempdir()
   ), regexp = "candidate parameter")
 })
-test_that("Test step check undefined observed variable", {
-  optim_options <- list(
-    nb_rep = 5, xtol_rel = 1e-2,
-    ranseed = 1234
-  )
-  param_info <- list(
-    rB = list(lb = 0, ub = 1, default = 0.1)
-  )
 
-  expect_error(suppressWarnings(estim_param(
-    obs_list = obs_synth,
-    crit_function = crit_ols,
-    model_function = toymodel_wrapper,
-    model_options = model_options,
-    optim_options = optim_options,
-    param_info = param_info,
-    obs_var = "LAI",
-    out_dir = tempdir()
-  )), regexp = "")
-})
-
+# ------------------------------------------------------------------------
 
 # Test estim_param - equality constraints
 ## Test that the parameter defined as equal to an estimated parameter
@@ -388,9 +402,7 @@ test_that("estim_param equality constraints", {
     crit_function = crit_ols,
     optim_options = optim_options,
     param_info = param_info,
-    obs_var = c("biomass", "yield"),
     forced_param_values = forced_param_values,
-    situation = c("sit1_2000", "sit1_2001", "sit2_2003"),
     out_dir = tempdir()
   )
 
@@ -400,9 +412,9 @@ test_that("estim_param equality constraints", {
   )
 })
 
+# ------------------------------------------------------------------------
 
-# Test that empty intersection between sim and obs lead to an error
-test_that("estim_param empty sim-obs intersection lead to an error", {
+test_that("Test estim_param empty sim-obs intersection lead to an error", {
   optim_options <- list(
     nb_rep = 5, xtol_rel = 1e-2,
     ranseed = 1234
@@ -417,17 +429,17 @@ test_that("estim_param empty sim-obs intersection lead to an error", {
   })
   step <- list(
     list(
-      param = c("rB"),
+      major_param = c("rB"),
       obs_var = c("biomass_NEW")
     ),
     list(
-      param = c("h"),
+      major_param = c("h"),
       obs_var = c("yield")
     )
   )
 
   expect_error(
-    res_final <- estim_param(
+    suppressWarnings(estim_param(
       obs_list = obs_synth_new,
       crit_function = crit_ols,
       model_function = toymodel_wrapper,
@@ -437,6 +449,385 @@ test_that("estim_param empty sim-obs intersection lead to an error", {
       forced_param_values = forced_param_values,
       step = step,
       out_dir = tempdir()
+    ))
+  )
+})
+
+# ------------------------------------------------------------------------
+
+test_that("Test estim_param 2 steps without major_param", {
+  optim_options <- list(
+    nb_rep = 5, xtol_rel = 1e-2,
+    ranseed = 1234
+  )
+  param_info <- list(
+    rB = list(lb = 0, ub = 1, default = 0.1),
+    h = list(lb = 0, ub = 1, default = 0.5)
+  )
+  forced_param_values <- c(Bmax = 7)
+  step <- list(
+    list(
+      obs_var = c("biomass")
+    ),
+    list(
+      obs_var = c("yield")
     )
   )
+
+  expect_error(
+    suppressWarnings(estim_param(
+      obs_list = obs_synth,
+      crit_function = crit_ols,
+      model_function = toymodel_wrapper,
+      model_options = model_options,
+      optim_options = optim_options,
+      param_info = param_info,
+      forced_param_values = forced_param_values,
+      step = step,
+      out_dir = tempdir()
+    ))
+  )
+})
+
+# ------------------------------------------------------------------------
+
+test_that("Test estim_param with common major and candidate param", {
+  optim_options <- list(
+    nb_rep = 5, xtol_rel = 1e-2,
+    ranseed = 1234
+  )
+  param_info <- list(
+    rB = list(lb = 0, ub = 1, default = 0.1),
+    h = list(lb = 0, ub = 1, default = 0.5)
+  )
+  forced_param_values <- c(Bmax = 7)
+
+  # common major params
+  step <- list(
+    list(
+      major_param = c("rB"),
+      obs_var = c("biomass")
+    ),
+    list(
+      major_param = c("rB"),
+      obs_var = c("yield")
+    )
+  )
+  expect_error(
+    suppressWarnings(estim_param(
+      obs_list = obs_synth,
+      crit_function = crit_ols,
+      model_function = toymodel_wrapper,
+      model_options = model_options,
+      optim_options = optim_options,
+      param_info = param_info,
+      forced_param_values = forced_param_values,
+      step = step,
+      out_dir = tempdir()
+    )),
+    regexp = "major parameter"
+  )
+
+  # common candidate params
+  step <- list(
+    list(
+      major_param = c("rB"),
+      candidate_param = c("Bmax"),
+      obs_var = c("biomass")
+    ),
+    list(
+      major_param = c("h"),
+      candidate_param = c("Bmax"),
+      obs_var = c("yield")
+    )
+  )
+  expect_error(
+    suppressWarnings(estim_param(
+      obs_list = obs_synth,
+      crit_function = crit_ols,
+      model_function = toymodel_wrapper,
+      model_options = model_options,
+      optim_options = optim_options,
+      param_info = param_info,
+      forced_param_values = forced_param_values,
+      step = step,
+      out_dir = tempdir()
+    )),
+    regexp = "candidate parameter"
+  )
+
+  # common params between major and candidate
+  step <- list(
+    list(
+      major_param = c("rB"),
+      candidate_param = c("rB"),
+      obs_var = c("biomass")
+    )
+  )
+  expect_error(
+    suppressWarnings(estim_param(
+      obs_list = obs_synth,
+      crit_function = crit_ols,
+      model_function = toymodel_wrapper,
+      model_options = model_options,
+      optim_options = optim_options,
+      param_info = param_info,
+      forced_param_values = forced_param_values,
+      step = step,
+      out_dir = tempdir()
+    )),
+    regexp = "major and candidate parameters"
+  )
+})
+
+# ------------------------------------------------------------------------
+
+test_that("Test estim_param without major param", {
+  optim_options <- list(
+    nb_rep = 5, xtol_rel = 1e-2,
+    ranseed = 1234
+  )
+  param_info <- list(
+    rB = list(lb = 0, ub = 1, default = 0.1)
+  )
+  forced_param_values <- c(Bmax = 7)
+
+  # major param not defined
+  step <- list(
+    list(
+      candidate_param = c("rB"),
+      obs_var = c("biomass")
+    )
+  )
+  expect_error(
+    suppressWarnings(estim_param(
+      obs_list = obs_synth,
+      crit_function = crit_ols,
+      model_function = toymodel_wrapper,
+      model_options = model_options,
+      optim_options = optim_options,
+      param_info = param_info,
+      forced_param_values = forced_param_values,
+      step = step,
+      out_dir = tempdir()
+    )),
+    regexp = "major_param"
+  )
+
+  # No major and no candidate
+  step <- list(
+    list(
+      major_param = NULL,
+      obs_var = c("biomass")
+    )
+  )
+  expect_error(
+    suppressWarnings(estim_param(
+      obs_list = obs_synth,
+      crit_function = crit_ols,
+      model_function = toymodel_wrapper,
+      model_options = model_options,
+      optim_options = optim_options,
+      param_info = param_info,
+      forced_param_values = forced_param_values,
+      step = step,
+      out_dir = tempdir()
+    )),
+    regexp = "major_param"
+  )
+
+  # major param set to NULL
+  step <- list(
+    list(
+      major_param = NULL,
+      candidate_param = c("rB"),
+      obs_var = c("biomass")
+    )
+  )
+  res_final <- estim_param(
+    obs_list = obs_synth,
+    crit_function = crit_ols,
+    model_function = toymodel_wrapper,
+    model_options = model_options,
+    optim_options = optim_options,
+    param_info = param_info,
+    forced_param_values = forced_param_values,
+    step = step,
+    out_dir = tempdir()
+  )
+  expect_identical(names(res_final$final_values), "rB")
+  expect_equal(res_final$final_values[["rB"]],
+    param_true_values[["rB"]],
+    tolerance = param_true_values[["rB"]] * 1e-2
+  )
+})
+
+# ------------------------------------------------------------------------
+
+test_that("Test if error is catched in case an obs in step is not in obs_list", {
+  optim_options <- list(
+    nb_rep = 5, xtol_rel = 1e-2,
+    ranseed = 1234
+  )
+  param_info <- list(
+    rB = list(lb = 0, ub = 1, default = 0.1)
+  )
+  forced_param_values <- c(Bmax = 7)
+
+  # obs not defined
+  step <- list(
+    list(
+      major_param = NULL,
+      candidate_param = c("rB"),
+      obs_var = c("toto")
+    )
+  )
+  expect_error(
+    suppressWarnings(estim_param(
+      obs_list = obs_synth,
+      crit_function = crit_ols,
+      model_function = toymodel_wrapper,
+      model_options = model_options,
+      optim_options = optim_options,
+      param_info = param_info,
+      forced_param_values = forced_param_values,
+      step = step,
+      out_dir = tempdir()
+    )),
+    regexp = "but not found"
+  )
+
+  # situation not defined
+  step <- list(
+    list(
+      major_param = NULL,
+      candidate_param = c("rB"),
+      obs_var = c("biomass"),
+      situation = c("toto")
+    )
+  )
+  expect_error(
+    suppressWarnings(estim_param(
+      obs_list = obs_synth,
+      crit_function = crit_ols,
+      model_function = toymodel_wrapper,
+      model_options = model_options,
+      optim_options = optim_options,
+      param_info = param_info,
+      forced_param_values = forced_param_values,
+      step = step,
+      out_dir = tempdir()
+    )),
+    regexp = "but not found"
+  )
+})
+
+# ------------------------------------------------------------------------
+
+test_that("Test estim_param 1 step with sit_list", {
+  param_info <- list(
+    rB = list(lb = 0, ub = 1, sit_list = list(c("sit1_2000", "sit1_2001"), c("sit2_2003", "sit2_2004"))),
+    h = list(lb = 0, ub = 1, sit_list = list(c("sit1_2000", "sit1_2001", "sit2_2003", "sit2_2004")))
+  )
+
+  optim_options <- list(
+    nb_rep = 5, xtol_rel = 1e-2,
+    ranseed = 1234
+  )
+
+  forced_param_values <- c(Bmax = 7)
+
+  res <- estim_param(
+    obs_list = obs_synth,
+    model_function = toymodel_wrapper,
+    model_options = model_options,
+    crit_function = crit_ols,
+    optim_options = optim_options,
+    param_info = param_info,
+    forced_param_values = forced_param_values,
+    out_dir = tempdir()
+  )
+
+  expect_equal(res$final_values[["rB1"]],
+    param_true_values[["rB"]],
+    tolerance = param_true_values[["rB"]] * 1e-2
+  )
+  expect_equal(res$final_values[["rB2"]],
+    param_true_values[["rB"]],
+    tolerance = param_true_values[["rB"]] * 1e-2
+  )
+  expect_equal(res$final_values[["h"]],
+    param_true_values[["h"]],
+    tolerance = param_true_values[["h"]] * 1e-2
+  )
+  expect_equal(
+    res$obs_situation_list,
+    c("sit1_2000", "sit1_2001", "sit2_2003", "sit2_2004")
+  )
+})
+
+# ------------------------------------------------------------------------
+
+test_that("Test estim_param 2 steps with sit_list returns an error", {
+  param_info <- list(
+    rB = list(lb = 0, ub = 1, sit_list = list(c("sit1_2000", "sit1_2001"), c("sit2_2003", "sit2_2004"))),
+    h = list(lb = 0, ub = 1, sit_list = list(c("sit1_2000", "sit1_2001", "sit2_2003", "sit2_2004")))
+  )
+  steps <- list(
+    list(
+      major_param = c("rB"),
+      obs_var = c("biomass")
+    ),
+    list(
+      major_param = c("h"),
+      obs_var = c("yield")
+    )
+  )
+
+  optim_options <- list(
+    nb_rep = 5, xtol_rel = 1e-2,
+    ranseed = 1234
+  )
+
+  forced_param_values <- c(Bmax = 7)
+
+  expect_error(suppressWarnings(estim_param(
+    obs_list = obs_synth,
+    model_function = toymodel_wrapper,
+    model_options = model_options,
+    crit_function = crit_ols,
+    optim_options = optim_options,
+    param_info = param_info,
+    forced_param_values = forced_param_values,
+    step = steps,
+    out_dir = tempdir()
+  )), regexp = "not compatible with multi-step calibration")
+})
+
+
+# ------------------------------------------------------------------------
+
+test_that("Test estim_param with sit_list and candidate", {
+  param_info <- list(
+    rB = list(lb = 0, ub = 1, sit_list = list(c("sit1_2000", "sit1_2001"), c("sit2_2003", "sit2_2004"))),
+    Bmax = list(lb = 5, ub = 15, sit_list = list(c("sit1_2000", "sit1_2001", "sit2_2003", "sit2_2004")))
+  )
+  forced_param_values <- c(h = 0.55)
+
+  optim_options <- list(
+    nb_rep = 5, xtol_rel = 1e-2,
+    ranseed = 1234
+  )
+
+  expect_error(suppressWarnings(estim_param(
+    obs_list = obs_synth,
+    model_function = toymodel_wrapper,
+    model_options = model_options,
+    crit_function = crit_ols,
+    optim_options = optim_options,
+    param_info = param_info,
+    forced_param_values = forced_param_values,
+    candidate_param = c("Bmax"),
+    out_dir = tempdir()
+  )), regexp = "not compatible with the use of")
 })

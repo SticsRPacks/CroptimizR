@@ -9,7 +9,8 @@ summary_FwdRegAgMIP(
   param_selection_steps,
   info_crit_list,
   path_results,
-  optim_results
+  optim_results,
+  indent = 0
 )
 }
 \arguments{
@@ -18,6 +19,8 @@ parameter estimation steps, as returned by the post_treat_FwdRegAgMIP function.}
 
 \item{optim_results}{Results list returned by the parameter estimation method
 wrapper used}
+
+\item{indent}{Integer, level of indent of the printed messages as required by make_display_prefix}
 }
 \value{
 Print the results in standard output.
