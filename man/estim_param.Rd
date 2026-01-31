@@ -151,12 +151,6 @@ i.e. as used to compute the criterion for each evaluation (element obs_intersect
 
 \item{var}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} \code{var} is no
 longer supported, use \code{var_to_simulate} instead.}
-
-\item{situation}{(optional) List of situations to take into account within obs_list.
-situation = NULL means that all situations in obs_list will be used.}
-
-\item{obs_var}{(optional) List of observed variables to take into account within obs_list.
-obs_var = NULL means that all variables in obs_list will be used.}
 }
 \value{
 prints, graphs and a list containing the results of the parameter estimation,

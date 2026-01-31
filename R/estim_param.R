@@ -62,12 +62,6 @@
 #' that must only be considered as candidate for parameter estimation (see details section).
 #' All parameters included in param_info that are not listed in candidate_param will be estimated.
 #'
-#' @param situation (optional) List of situations to take into account within obs_list.
-#' situation = NULL means that all situations in obs_list will be used.
-#'
-#' @param obs_var (optional) List of observed variables to take into account within obs_list.
-#' obs_var = NULL means that all variables in obs_list will be used.
-#'
 #' @param transform_var Named vector of functions to apply both on simulated and
 #' observed variables. `transform_var=c(var1=log, var2=sqrt)` will for example
 #' apply log-transformation on simulated and observed values of variable var1,
