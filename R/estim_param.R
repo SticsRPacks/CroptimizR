@@ -801,6 +801,21 @@ validate_step <- function(step, step_name) {
     })
   }
 
+  ## Incompatibility between sit_list and candidate_param
+  has_sit_list <- any(sapply(step$param_info, function(x) {
+    "sit_list" %in% names(x)
+  }))
+
+  if (has_sit_list && !is.null(step$candidate_param)) {
+    stop(
+      paste(
+        "Step", step_name, ": `sit_list` is not compatible with the use of `candidate_param`.",
+        "Please remove `candidate_param` or avoid using `sit_list` in param_info."
+      ),
+      call. = FALSE
+    )
+  }
+
   ## forced_param_values
   if (!is.null(step$forced_param_values)) {
     if (!is.vector(step$forced_param_values)) {
@@ -889,6 +904,21 @@ validate_steps <- function(step_list) {
     validate_step(step_list[[i]], names(step_list)[i])
   })
   names(step) <- names(step_list)
+  ## Check incompatibility between sit_list and multi-step mode
+  if (length(step) > 1) {
+    has_sit_list <- any(sapply(step, function(st) {
+      any(sapply(st$param_info, function(p) "sit_list" %in% names(p)))
+    }))
+    if (has_sit_list) {
+      stop(
+        paste(
+          "The use of `sit_list` is not compatible with multi-step calibration.",
+          "Please use a single step when defining `sit_list` in `param_info`."
+        ),
+        call. = FALSE
+      )
+    }
+  }
   ## Check that there are no major params that appear in different steps, if so, give the list of duplicated ones
   all_major_param <- unlist(lapply(step, function(x) x$major_param))
   duplicated_major_param <- all_major_param[duplicated(all_major_param)]

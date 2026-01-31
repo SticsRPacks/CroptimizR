@@ -60,6 +60,8 @@ toymodel_wrapper <- function(param_values = NULL, situation,
     param_values <- param_values[!names(param_values) %in% "dummy"]
   }
 
+  param_values <- tibble::tibble(!!!param_values) # convert param_values in a tibble
+
   for (sit in situation) {
     # Retrieve begin and end date from situation name
     begin_date <- dplyr::filter(model_options, situation == sit) %>%
@@ -69,13 +71,24 @@ toymodel_wrapper <- function(param_values = NULL, situation,
 
     date_sequence <- seq(from = begin_date[[1]], to = end_date[[1]], by = "day")
 
-    if (!all(names(param_values) %in% c(
+    # Handle the case of param_values being a tibble with situation column
+    if (!is.null(param_values)) {
+      if (!"situation" %in% names(param_values)) {
+        params <- param_values
+      } else {
+        params <-
+          dplyr::filter(param_values, situation == sit) %>%
+          dplyr::select(-situation)
+      }
+    }
+
+    if (!all(names(params) %in% c(
       "rB", "Bmin", "Bmax", "h", "Bini"
     ))) {
       warning(
         paste(
           "Unknown parameters in param_values:",
-          paste(names(param_values), collapse = ",")
+          paste(names(params), collapse = ",")
         )
       )
       results$error <- TRUE
@@ -86,7 +99,7 @@ toymodel_wrapper <- function(param_values = NULL, situation,
     # param_values
     res <- do.call(
       "toymodel",
-      c(nb_days = length(date_sequence), as.list(param_values))
+      c(nb_days = length(date_sequence), as.list(params))
     )
 
     # Fill the result variable
@@ -720,4 +733,121 @@ test_that("Test if error is catched in case an obs in step is not in obs_list", 
     )),
     regexp = "but not found"
   )
+})
+
+# ------------------------------------------------------------------------
+
+test_that("Test estim_param 1 step with sit_list", {
+  param_info <- list(
+    rB = list(lb = 0, ub = 1, sit_list = list(c("sit1_2000", "sit1_2001"), c("sit2_2003", "sit2_2004"))),
+    h = list(lb = 0, ub = 1, sit_list = list(c("sit1_2000", "sit1_2001", "sit2_2003", "sit2_2004")))
+  )
+
+  optim_options <- list(
+    nb_rep = 5, xtol_rel = 1e-2,
+    ranseed = 1234
+  )
+
+  forced_param_values <- c(Bmax = 7)
+
+  res <- estim_param(
+    obs_list = obs_synth,
+    model_function = toymodel_wrapper,
+    model_options = model_options,
+    crit_function = crit_ols,
+    optim_options = optim_options,
+    param_info = param_info,
+    obs_var = c("biomass", "yield"),
+    forced_param_values = forced_param_values,
+    situation = c("sit1_2000", "sit1_2001", "sit2_2003"),
+    out_dir = tempdir()
+  )
+
+  expect_equal(res$final_values[["rB1"]],
+    param_true_values[["rB"]],
+    tolerance = param_true_values[["rB"]] * 1e-2
+  )
+  expect_equal(res$final_values[["rB2"]],
+    param_true_values[["rB"]],
+    tolerance = param_true_values[["rB"]] * 1e-2
+  )
+  expect_equal(res$final_values[["h"]],
+    param_true_values[["h"]],
+    tolerance = param_true_values[["h"]] * 1e-2
+  )
+  expect_equal(
+    res$obs_situation_list,
+    c("sit1_2000", "sit1_2001", "sit2_2003")
+  )
+})
+
+# ------------------------------------------------------------------------
+
+test_that("Test estim_param 2 steps with sit_list returns an error", {
+  param_info <- list(
+    rB = list(lb = 0, ub = 1, sit_list = list(c("sit1_2000", "sit1_2001"), c("sit2_2003", "sit2_2004"))),
+    h = list(lb = 0, ub = 1, sit_list = list(c("sit1_2000", "sit1_2001", "sit2_2003", "sit2_2004")))
+  )
+  steps <- list(
+    list(
+      major_param = c("rB"),
+      obs_var = c("biomass")
+    ),
+    list(
+      major_param = c("h"),
+      obs_var = c("yield")
+    )
+  )
+
+  optim_options <- list(
+    nb_rep = 5, xtol_rel = 1e-2,
+    ranseed = 1234
+  )
+
+  forced_param_values <- c(Bmax = 7)
+
+  expect_error(suppressWarnings(estim_param(
+    obs_list = obs_synth,
+    model_function = toymodel_wrapper,
+    model_options = model_options,
+    crit_function = crit_ols,
+    optim_options = optim_options,
+    param_info = param_info,
+    obs_var = c("biomass", "yield"),
+    forced_param_values = forced_param_values,
+    situation = c("sit1_2000", "sit1_2001", "sit2_2003"),
+    step = steps,
+    out_dir = tempdir()
+  )), regexp = "not compatible with multi-step calibration")
+})
+
+
+# ------------------------------------------------------------------------
+
+test_that("Test estim_param with sit_list and candidate", {
+  param_info <- list(
+    rB = list(lb = 0, ub = 1, sit_list = list(c("sit1_2000", "sit1_2001"), c("sit2_2003", "sit2_2004"))),
+    Bmax = list(lb = 5, ub = 15, sit_list = list(c("sit1_2000", "sit1_2001", "sit2_2003", "sit2_2004")))
+  )
+  forced_param_values <- c(h = 0.55)
+
+  optim_options <- list(
+    nb_rep = 5, xtol_rel = 1e-2,
+    ranseed = 1234
+  )
+
+  expect_error(suppressWarnings(estim_param(
+    obs_list = obs_synth,
+    model_function = toymodel_wrapper,
+    model_options = model_options,
+    crit_function = crit_ols,
+    optim_options = optim_options,
+    param_info = param_info,
+    obs_var = c("biomass", "yield"),
+    forced_param_values = forced_param_values,
+    candidate_param = c("Bmax"),
+    situation = c("sit1_2000", "sit1_2001", "sit2_2003"),
+    out_dir = tempdir()
+  )), regexp = "not compatible with the use of")
+
 })
