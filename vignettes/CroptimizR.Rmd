@@ -63,13 +63,14 @@ CroptimizR has actually been used with more than a dozen crop models in AgMIP ca
 
 Other advanced features include among others: 
 
-  * Fine tuning of the selected optimization algorithm through specific options, 
+  * Automatic parameter selection algorithm,  
+  * automation of sequential multi-step parameter estimation workflows,  
+  * fine tuning of the selected optimization algorithm through specific options, 
   * specification of initial values and constraints on the estimated parameters 
-  (bounds and/or freely-defined constraints such as inequalities between parameters),  
+  (bounds and/or freely-defined constraints such as equalities/inequalities between parameters),  
   * dynamic execution of user-defined transformations for observed and/or simulated 
   values of model output variables in case they would not be directly comparable,  
   * forcing of crop model parameters to given values while estimating others,  
-  * automatic parameter selection algorithm,  
   * modulating the level of additional information in output of the parameter 
   estimation process (from nothing to all simulated results for each parameter values 
   tested),  
