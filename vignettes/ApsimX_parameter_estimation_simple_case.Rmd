@@ -40,7 +40,7 @@ This example uses the ApsimX crop model. However, CroptimizR can be applied to a
 
 Note that a similar example using the STICS crop model is available in another [vignette](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case_stics.html).
 
-Wrappers already exist for several models (e.g., STICS, APSIM, SiriusQuality2, DSSAT, and others). For more details, see the [package README](https://sticsrpacks.github.io/CroptimizR/) or contact the authors.
+Wrappers already exist for several models. For more details, see the [Get started page](https://sticsrpacks.github.io/CroptimizR/articles/CroptimizR.html) or contact the authors.
 
 The dataset used in this example comes from a maize crop experiment (see Wallach et al., 2011). It involves a single environment, a single observed variable, and two estimated parameters, just to illustrate how to use the package.
 

@@ -64,6 +64,8 @@ The STICS crop model is used in this example. Initialization steps required by t
 
 Note however that CroptimizR can be applied to any crop model, provided that a suitable wrapper is available. Guidelines and examples for implementing wrappers are provided in the [Designing a model wrapper vignette](https://sticsrpacks.github.io/CroptimizR/articles/Designing_a_model_wrapper.html).
 
+Wrappers already exist for several models. For more details, see the [Get started page](https://sticsrpacks.github.io/CroptimizR/articles/CroptimizR.html) or contact the authors.
+
 ## Plotting the observations
 
 ```{r setup_initializations, eval=params$eval_auto_test, message=FALSE, results=FALSE, warning=FALSE, include=FALSE}

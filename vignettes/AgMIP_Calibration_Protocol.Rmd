@@ -50,8 +50,7 @@ In this vignette, we focus on how to describe and run this protocol using Cropti
 
 This example uses the STICS crop model, but CroptimizR can in fact be applied to any crop model, provided that a suitable wrapper is available. Guidelines and examples for implementing wrappers are provided in the vignette: https://sticsrpacks.github.io/CroptimizR/articles/Designing_a_model_wrapper.html
 
-Note that Wrappers already exist for several models (e.g. STICS, APSIM, SiriusQuality2, DSSAT, ...). For more details, see the package README
-(https://sticsrpacks.github.io/CroptimizR/), or feel free to contact the authors.
+Note that wrappers already exist for several models. For more details, see the [Get started page](https://sticsrpacks.github.io/CroptimizR/articles/CroptimizR.html) or contact the authors.
 
 ```{r define_model_options, eval=params$recompute_full_protocol, results='hide', message=FALSE, warning=FALSE, include=FALSE}
 # Set the model options (see '? stics_wrapper_options' for details)

@@ -732,3 +732,5 @@ plot(tmp$sim_list, obs = obs_synth, type = "scatter")
 ### Other examples
 
 More complex examples of crop model wrappers for CroptimizR can be found in the [SticsOnR](https://github.com/SticsRPacks/SticsOnR) and [ApsimOnR](https://github.com/APSIMInitiative/ApsimOnR) packages  for the Stics and Apsim models.
+
+Wrappers already exist for several models. For more details, see the [Get started page](https://sticsrpacks.github.io/CroptimizR/articles/CroptimizR.html) or contact the authors.
