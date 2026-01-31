@@ -1,8 +1,8 @@
 Type: Package
 Package: CroptimizR
 Title: A Package to Estimate Parameters of Crop Models
-Version: 0.7.0
-Date: 2024-11-13
+Version: 1.0.0
+Date: 2026-01-31
 Authors@R: c(
     person("Samuel", "Buis", , "samuel.buis@inrae.fr", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-8676-5447")),
@@ -12,9 +12,14 @@ Authors@R: c(
            comment = c(ORCID = "0000-0002-0808-1461")),
     person("Michel", "Giner", , "michel.giner@cirad.fr", role = "aut",
            comment = c(ORCID = "0000-0002-9310-2377")),
-    person("Theo", "Vailhere", role = "ctb"),
-    person("Thomas", "Robine", role = "ctb"),
     person("Drew", "Holzworth", role = "ctb"),
+    person("Henrike", "Mielenz", role = "ctb",  comment = "AgMIP Calibration Protocol design"),
+    person("Taru", "Palosuo", role = "ctb",  comment = "AgMIP Calibration Protocol design"),
+    person("Thomas", "Robine", role = "ctb"),
+    person("Sabine", "Seidel", role = "ctb",  comment = "AgMIP Calibration Protocol design"),
+    person("Peter", "Thorburn", role = "ctb",  comment = "AgMIP Calibration Protocol design"),
+    person("Daniel", "Wallach", role = "ctb",  comment = "AgMIP Calibration Protocol design"),
+    person("Theo", "Vailhere", role = "ctb"),
     person("Julie", "Constantin", role = "rev"),
     person("Benjamin", "Dumont", role = "rev")
   )
@@ -23,7 +28,8 @@ Description: The purpose of CroptimizR is to provide functions for
     variables. This process is often referred to as calibration. For that, it
     offers a generic framework for linking crop models with up-to-date and
     ad-hoc algorithms, as well as a choice of goodness-of-fit criteria and
-    additional features adapted to the problem of crop model calibration.
+    additional features adapted to the problem of crop model calibration 
+	  including AgMIP calibration protocol and user-defined sequential multi-step workflow.
     It facilitates the comparison of different types of methods on
     different models.
 License: file LICENSE

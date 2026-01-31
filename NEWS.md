@@ -1,3 +1,32 @@
+# CroptimizR 1.0.0
+
+This release consolidates the core API and introduces support for standardized
+calibration workflows, including the AgMIP Calibration Protocol and user-defined
+sequential multi-step workflows.
+
+## Main changes
+
+- Support for **user-defined sequential multi-step calibration workflows**
+- Implementation of the **AgMIP Calibration Protocol** (Wallach et al., 2024, 2025), fully integrated into CroptimizR, including ad-hoc diagnostics
+- New high-level functions:
+  - `run_protocol_agmip()` to execute AgMIP-compliant calibration workflows
+  - `load_protocol_agmip()` to load and validate predefined calibration protocols
+
+## Documentation
+
+- New vignette dedicated to the AgMIP Calibration Protocol, illustrating a complete calibration workflow
+- Improved consistency and standardization across documentation
+
+## Fixes
+
+- Minor bug fixes and internal consistency improvements
+- Improved input validation and error handling in calibration workflows
+
+## Related references
+
+- Wallach D., Buis S., Seserman D.M., Palosuo T., Thorburn P., Mielenz H., Justes E., Kersebaum K.C., Dumont B., Launay M., Seidel S.J. 2024. A calibration protocol for soil-crop models. Environmental Modelling & Software, 180, 106147. https://doi.org/10.1016/j.envsoft.2024.106147
+- Wallach, D., Kim, K. S., Hyun, S., Buis, S., Thorburn, P., Mielenz, H., Seidel, S., Alderman, P., Dumont, B., Fallah, M.H., Hoogenboom, G., Justes, E., KErsebaum, K.-C., Launay, M., Leolini, L., Mehmood, M.Z., Moriondo, M., Jing Q., Qian, B., Schultz, S., Palosuo, T. 2025. Evaluating the AgMIP calibration protocol for crop models; case study and new diagnostic tests. European Journal of Agronomy, 168: 127659. https://doi.org/10.1016/j.eja.2025.127659
+
 # CroptimizR 0.7.0(2024-11-13)
 
 ## Main Changes

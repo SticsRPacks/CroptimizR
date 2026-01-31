@@ -2,18 +2,21 @@
 # CITATION file created with {cffr} R package, v0.5.0
 # See also: https://docs.ropensci.org/cffr/
 # -----------------------------------------------------------
- 
+
 cff-version: 1.2.0
 message: 'To cite package "CroptimizR" in publications use:'
 type: software
 title: 'CroptimizR: A Package to Estimate Parameters of Crop Models'
-version: 0.5.1
-abstract: The purpose of CroptimizR is to provide functions for estimating crop model
-  parameters from observations of their simulated variables. This process is often
-  referred to as calibration. For that, it offers a generic framework for linking
-  crop models with up-to-date and ad-hoc algorithms, as well as a choice of goodness-of-fit
-  criteria and additional features adapted to the problem of crop model calibration.
-  It facilitates the comparison of different types of methods on different models.
+version: 1.0.0
+abstract: The purpose of CroptimizR is to provide functions for
+    estimating crop model parameters from observations of their simulated
+    variables. This process is often referred to as calibration. For that, it
+    offers a generic framework for linking crop models with up-to-date and
+    ad-hoc algorithms, as well as a choice of goodness-of-fit criteria and
+    additional features adapted to the problem of crop model calibration
+	  including AgMIP calibration protocol and user-defined sequential multi-step workflow.
+    It facilitates the comparison of different types of methods on
+    different models.
 authors:
 - family-names: Buis
   given-names: Samuel
