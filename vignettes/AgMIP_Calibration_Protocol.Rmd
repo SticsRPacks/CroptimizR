@@ -305,14 +305,15 @@ This element records the successive stages of the selection procedure, including
 For this example, `res$step6$Step6.phenology$param_selection_steps` contains:
 ```{r eval=TRUE, message=FALSE, echo=FALSE, results='asis'}
 cat("<div style='font-size: 0.8em;'>")
-knitr::kable(res$step6$Step6.phenology$param_selection_steps)
+df <- read.csv(file.path(system.file("extdata", "AgMIP_protocol", "results", package = "CroptimizR"), "AgMIP_protocol_step6","Step6.phenology","param_selection_steps.csv"), sep = ";")
+knitr::kable(df)
 cat("</div>")
 ```
 
 Note that, for the sake of brevity, only the initial and final values of the repetition that produced the lowest criterion are stored in this table.
 
 The same information is also saved to disk as CSV files, with one file per Step 6 sub-step, located in
-`out_dir/Step6.***/param_selection_steps.csv`. Detailed results from all parameter estimations conducted during the selection procedure are stored in the directories `out_dir/Step6.***/param_select_step*`. For this vignette, `out_dir` corresponds to system.file("extdata", "AgMIP_protocol", "results", package = "CroptimizR").
+`out_dir/Step6.***/param_selection_steps.csv`. Detailed results from all parameter estimations conducted during the selection procedure are stored in the directories `out_dir/Step6.***/param_select_step*`. For this vignette, `out_dir` corresponds to `system.file("extdata", "AgMIP_protocol", "results", package = "CroptimizR")`.
 
 ### Built-in diagnostics plots 
 
