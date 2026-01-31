@@ -849,5 +849,4 @@ test_that("Test estim_param with sit_list and candidate", {
     situation = c("sit1_2000", "sit1_2001", "sit2_2003"),
     out_dir = tempdir()
   )), regexp = "not compatible with the use of")
-
 })
