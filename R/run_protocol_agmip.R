@@ -171,7 +171,9 @@
 #' (`param_info`, `obs_list`, ...).
 #'
 #' If the user wants this information to be specific to a given step, it can also be provided
-#' inside the corresponding step description, using the same argument names.
+#' inside the corresponding step description, using the same argument names. Please note however,
+#' that `obs_list` and `transform_obs` **cannot** be provided inside a sub-step.
+#' They must always be passed directly as arguments to `run_protocol_agmip`.
 #'
 #' For example:
 #'
@@ -293,10 +295,12 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
   } else {
     steps <- step
   }
+  # Check that forbidden elements are not in sub-steps
+  check_step_content(steps)
 
   cat("\nAgMIP Calibration Phase IV protocol: automatic calculation steps 6 and 7",
-    "\n(see doi.org/10.1016/j.envsoft.2024.106147 for a detailed description of the full protocol)\n",
-    sep = ""
+      "\n(see doi.org/10.1016/j.envsoft.2024.106147 for a detailed description of the full protocol)\n",
+      sep = ""
   )
 
   # Prefix the steps name by "Step6." for a clearer display of the steps names.
@@ -356,7 +360,7 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
 
   # Compute stats for default values of the parameters
   stats_default <- summary(sim_default$sim_list,
-    obs = obs_transformed, stats = c("Bias2", "MSE", "rRMSE", "EF")
+                           obs = obs_transformed, stats = c("Bias2", "MSE", "rRMSE", "EF")
   ) %>%
     dplyr::mutate(step = "Default") %>%
     dplyr::select(step, dplyr::everything(), -dplyr::any_of(c("group", "situation")))
@@ -471,7 +475,7 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
 
   ## Compute SSE and number of observations for each observed variable
   stats_tmp <- summary(sim$sim_list,
-    obs = obs_transformed, stats = c("n_obs", "SS_res")
+                       obs = obs_transformed, stats = c("n_obs", "SS_res")
   )
 
   ## Sum SSE and number of observations per group of variables
@@ -597,7 +601,7 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
   }
   ## Compute goodness-of-fit stats after step7
   stats_step7 <- summary(sim_after_step7$sim_list,
-    obs = obs_transformed, stats = c("Bias2", "MSE", "rRMSE", "EF")
+                         obs = obs_transformed, stats = c("Bias2", "MSE", "rRMSE", "EF")
   ) %>%
     dplyr::mutate(step = "Step7") %>%
     dplyr::select(step, dplyr::everything(), -dplyr::any_of(c("group", "situation")))
@@ -732,4 +736,59 @@ compute_stat_per_group <- function(stat_col, step_var_map, stats_per_var) {
     },
     numeric(1)
   )
+}
+
+#' Check the content of sub-steps for forbidden elements
+#'
+#' This function validates that none of the sub-steps in a step list contain elements
+#' that are forbidden, such as `obs_list` or `transform_obs`. These elements must be
+#' passed directly as arguments to `run_protocol_agmip` rather than within a sub-step.
+#'
+#' @param step A list of sub-steps. Each sub-step should itself be a named list
+#'   describing a group of variables (e.g., obs_var, major_param, candidate_param).
+#' @param forbidden_elements A character vector of element names that are not allowed
+#'   in sub-steps. Default is `c("obs_list", "transform_obs")`.
+#'
+#' @return Invisibly returns `TRUE` if all checks pass. Throws an error if any
+#'   forbidden element is found.
+#'
+#' @examples
+#' # Valid step
+#' step_ok <- list(
+#'   list(obs_var = c("var1"), major_param = c("p1"))
+#' )
+#' \dontrun{
+#' check_step_content(step_ok)
+#' }
+#'
+#' # Invalid step
+#' step_err <- list(
+#'   list(obs_var = c("var1"), obs_list = list(a = 1))
+#' )
+#' \dontrun{
+#' check_step_content(step_err) # triggers an error
+#' }
+#'
+#' @keywords internal
+check_step_content <- function(step, forbidden_elements = c("obs_list", "transform_obs")) {
+  for (i in seq_along(step)) {
+    substep_names <- names(step[[i]])
+    substep_name <- names(step)[i]
+    if (is.null(substep_name) || substep_name == "") {
+      substep_name <- paste0("step ", i)
+    }
+
+    for (el in forbidden_elements) {
+      if (el %in% substep_names) {
+        stop(
+          sprintf(
+            "Error: '%s' must not be defined in step[[%d]] ('%s'). Pass it directly as an argument to `run_protocol_agmip.`",
+            el, i, substep_name
+          )
+        )
+      }
+    }
+  }
+
+  invisible(TRUE)
 }

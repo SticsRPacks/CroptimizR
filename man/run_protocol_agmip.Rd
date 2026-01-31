@@ -262,7 +262,9 @@ provided \strong{once for all steps} via the corresponding arguments of \code{ru
 (\code{param_info}, \code{obs_list}, ...).
 
 If the user wants this information to be specific to a given step, it can also be provided
-inside the corresponding step description, using the same argument names.
+inside the corresponding step description, using the same argument names. Please note however,
+that \code{obs_list} and \code{transform_obs} \strong{cannot} be provided inside a sub-step.
+They must always be passed directly as arguments to \code{run_protocol_agmip}.
 
 For example:
 

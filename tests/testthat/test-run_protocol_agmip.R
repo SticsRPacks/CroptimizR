@@ -1002,7 +1002,6 @@ test_that("Test AgMIP protocol with provided initial values", {
   )
 })
 
-
 # ------------------------------------------------------------------------
 
 test_that("Test AgMIP protocol with model crash", {
@@ -1037,9 +1036,9 @@ test_that("Test AgMIP protocol with model crash", {
         model_options = model_options,
         optim_options = optim_options,
         obs_list = obs_synth,
-        out_dir = file.path(tempdir(), "Test10"),
         step = steps,
         param_info = param_info,
+        out_dir = tempdir(),
         info_level = 1
       )
     ),
@@ -1058,13 +1057,57 @@ test_that("Test AgMIP protocol with model crash", {
         model_options = model_options,
         optim_options = optim_options,
         obs_list = obs_synth,
-        out_dir = file.path(tempdir(), "Test10"),
         step = steps,
         param_info = param_info,
+        out_dir = tempdir(),
         info_level = 1
       )
     ),
     regexp = "There was an error during the parameter estimation procedure",
     fixed = TRUE
   )
+})
+
+# ------------------------------------------------------------------------
+
+test_that("Test AgMIP protocol stop if obs_list is defined in sub_step", {
+  optim_options <- list(
+    nb_rep = 3, xtol_rel = 1e-2,
+    ranseed = 1234
+  )
+  param_info <- list(
+    rB = list(lb = 0, ub = 1, default = 0.1),
+    h = list(lb = 0, ub = 1, default = 0.5),
+    Bmax = list(lb = 5, ub = 15, default = 7)
+  )
+  steps <- list(
+    biomass = list(
+      major_param = c("rB"),
+      candidate_param = c("Bmax"),
+      obs_var = c("biomass"),
+      obs_list = obs_synth
+    ),
+    yield = list(
+      major_param = c("h"),
+      obs_var = c("yield")
+    )
+  )
+
+  testthat::expect_error(
+    suppressWarnings(
+      run_protocol_agmip(
+        model_function = toymodel_wrapper,
+        model_options = model_options,
+        optim_options = optim_options,
+        obs_list = obs_synth,
+        step = steps,
+        param_info = param_info,
+        out_dir = tempdir(),
+        info_level = 1
+      )
+    ),
+    regexp = "'obs_list' must not be defined in step",
+    fixed = TRUE
+  )
+
 })
