@@ -304,7 +304,7 @@ This element records the successive stages of the selection procedure, including
 For this example, `res$step6$Step6.phenology$param_selection_steps` contains:
 ```{r eval=TRUE, message=FALSE, echo=FALSE, results='asis'}
 cat("<div style='font-size: 0.8em;'>")
-df <- read.csv(file.path(system.file("extdata", "AgMIP_protocol", "results", package = "CroptimizR"), "AgMIP_protocol_step6","Step6.phenology","param_selection_steps.csv"), sep = ";")
+df <- read.csv(file.path(system.file("extdata", "AgMIP_protocol", "results", package = "CroptimizR"), "AgMIP_protocol_step6", "Step6.phenology", "param_selection_steps.csv"), sep = ";")
 knitr::kable(df)
 cat("</div>")
 ```
