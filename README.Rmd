@@ -21,7 +21,6 @@ options(tibble.print_min = 5, tibble.print_max = 5)
 # CroptimizR: A Package to estimate parameters of Crop Models
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![R build status](https://github.com/SticsRPacks/CroptimizR/actions/workflows/check-standard.yaml/badge.svg?branch=main)](https://github.com/SticsRPacks/CroptimizR/actions)
 [![Codecov test coverage](https://codecov.io/gh/SticsRPacks/CroptimizR/branch/master/graph/badge.svg)](https://codecov.io/gh/SticsRPacks/CroptimizR?branch=master)
 [![DOI](https://zenodo.org/badge/187874725.svg)](https://zenodo.org/badge/latestdoi/187874725)
 
@@ -74,7 +73,3 @@ Thanks for that, this would greatly help us to improve this package.
 ## Citation
 
 If you have used this package for a study that led to a publication or report, please cite us. To get the suggested citation, run `citation("CroptimizR")`.
-
-## Code of conduct
-
-Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
