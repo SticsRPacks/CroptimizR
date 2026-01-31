@@ -1,15 +1,15 @@
 ---
-title: "Parameter estimation with the ApsimX crop Model: a simple case"
+title: "Parameter estimation with CroptimizR: a simple case using the ApsimX crop Model"
 output: rmarkdown::html_vignette
 author:
 - name: "Patrice Lecharpentier"
-  affiliation: "INRAE - Agroclim"
+  affiliation: "INRAE Agroclim"
 - name: "Samuel Buis"
-  affiliation: "INRAE - EMMAH"
+  affiliation: "INRAE EMMAH"
 - name: "Drew Holzworth"
 date: "`r Sys.Date()`"
 vignette: >
-  %\VignetteIndexEntry{Parameter estimation with the ApsimX crop Model: a simple case}
+  %\VignetteIndexEntry{Parameter estimation with CroptimizR: a simple case using the ApsimX crop Model}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 params:
@@ -18,20 +18,33 @@ params:
   result_path: "D:/Home/sbuis/Documents/GitHub/CroptimizR/vignettes"
 ---
 
-
-
 ```{r setup, eval=TRUE, include=FALSE}
 # Global options
 knitr::opts_chunk$set(eval = params$eval_rmd)
 ```
 
+## Introduction
+
+This document presents a simple example of parameter estimation using CroptimizR on a complex crop model. 
+
+For more advanced use cases, the following vignettes are available:  
+
+- [Simultaneous estimation of specific and varietal plant parameters](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html) using a multi-varietal dataset.  
+- [Parameter selection procedure](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_selection.html) illustrating how to choose which parameters to estimate.  
+- [AgMIP Calibration Protocol](https://SticsRPacks.github.io/CroptimizR/articles/AgMIP_Calibration_Protocol.html) demonstrating the application of the AgMIP calibration workflow.  
+- [Bayesian parameter estimation](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html) using the DREAM-zs algorithm.  
 
 ## Study Case
 
-A simple parameter estimation with a single situation, a single observed variable and 2 estimated parameters, just to illustrate how to use the package with the ApsimX model.
+This example uses the ApsimX crop model. However, CroptimizR can be applied to any crop model, provided that a suitable wrapper is available. Guidelines and examples for implementing wrappers are provided in the [Designing a model wrapper vignette](https://sticsrpacks.github.io/CroptimizR/articles/Designing_a_model_wrapper.html).
 
-The parameter estimation is performed using the Nelder-Mead simplex method implemented in the `nloptr` package.
+Note that a similar example using the STICS crop model is available in another [vignette](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case_stics.html).
 
+Wrappers already exist for several models (e.g., STICS, APSIM, SiriusQuality2, DSSAT, and others). For more details, see the [package README](https://sticsrpacks.github.io/CroptimizR/) or contact the authors.
+
+The dataset used in this example comes from a maize crop experiment (see Wallach et al., 2011). It involves a single environment, a single observed variable, and two estimated parameters, just to illustrate how to use the package.
+
+Parameter estimation is performed here using the Nelder-Mead simplex method implemented in the R package `nloptr`.
 
 ## Initialisation step
 

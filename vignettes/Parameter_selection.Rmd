@@ -60,7 +60,9 @@ Using an information criterion helps the algorithm limit overfitting, because it
 
 The crop model input data used in this example comes from a maize crop experiment (see description in [Wallach et al., 2011](https://www.sciencedirect.com/science/article/pii/S1364815210002574)). To illustrate the calibration procedure, julian days of two phenological stages were simulated from this dataset on 8 different environments (called situations in CroptimizR language) and then used as observations, after adding some random errors.
 
-The STICS crop model is used in this example. Initialization steps required by the use of this model (definition of the `model_options` argument of the `estim_param` function) are hidden in this example for sake of brevity. They are detailed in the vignette [Parameter estimation with the Stics crop Model: a simple case](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html). 
+The STICS crop model is used in this example. Initialization steps required by the use of this model (definition of the `model_options` argument of the `estim_param` function) are hidden in this example for sake of brevity. They are detailed in the vignette [Parameter estimation with CroptimizR: a simple case using the STICS crop Model](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html). 
+
+Note however that CroptimizR can be applied to any crop model, provided that a suitable wrapper is available. Guidelines and examples for implementing wrappers are provided in the [Designing a model wrapper vignette](https://sticsrpacks.github.io/CroptimizR/articles/Designing_a_model_wrapper.html).
 
 ## Plotting the observations
 

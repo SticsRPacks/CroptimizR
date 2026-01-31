@@ -24,16 +24,17 @@ params:
 path_to_JavaStics <- params$path_to_JavaStics
 ```
 
+## Introduction
 
+This document presents an example of use of the DREAM-zs algorithm on a complex crop model. 
 
 ## Study Case
 
-This document presents an example of use of the DREAM-zs algorithm with the Stics crop model.
+This example uses the STICS crop model. However, CroptimizR can be applied to any crop model, provided that a suitable wrapper is available. Guidelines and examples for implementing wrappers are provided in the [Designing a model wrapper vignette](https://sticsrpacks.github.io/CroptimizR/articles/Designing_a_model_wrapper.html).
 
 The study case is the same as the specific and varietal parameters estimation presented in this [vignette](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html).
 
 ## Initialisation step
-
 
 This part is not shown here, it is the same as this of the [introductory example](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html).
 
