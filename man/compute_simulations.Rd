@@ -26,6 +26,9 @@ the Crop Model wrapper function used).}
 \item{param_values}{Named vector or tibble, value(s) of the parameters to
 pass to the model wrapper}
 
+\item{situation}{(optional) List of situations to take into account within obs_list.
+situation = NULL means that all situations in obs_list will be used.}
+
 \item{var_to_simulate}{(optional) List of variables for which the model wrapper must return
 results.
 By default the wrapper is asked to simulate only the observed variables. However,
@@ -62,3 +65,4 @@ Returns NA if an error occurs during the simulations.
 Compute simulated variables by running the model wrapper and applying
 the required transformations.
 }
+\keyword{internal}

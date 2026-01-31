@@ -3,7 +3,6 @@
 export(AIC)
 export(AICc)
 export(BIC)
-export(compute_simulations)
 export(crit_log_cwss)
 export(crit_log_cwss_corr)
 export(crit_ols)

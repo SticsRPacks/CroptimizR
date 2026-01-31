@@ -247,7 +247,7 @@ cat(
 
 `run_protocol_agmip` returns a single structured R object that provides a compact, structured summary of the calibration protocol results.
 
-However, the function also produces a large number of additional outputs on disk, in the directory specified by the `out_dir` argument (equal to `getwd()` by default). These files contain, in particular, the full outputs of all calls to `estim_param` performed during Step 6 and Step 7 (including detailed optimization traces, diagnostics, and intermediate results for each individual minimization).
+However, the function also produces a large number of additional outputs on disk, in the directory specified by the `out_dir` argument (equal to `getwd()` by default). These files contain, in particular, the full outputs of all calls to `estim_param` performed during Step 6 and Step 7 (including detailed optimization traces, diagnostics, details on parameter selection steps, and intermediate results for each individual minimization).
 
 The returned R object is designed to give direct programmatic access to the main results of the protocol, while the output directory ensures full description of the results obtained.
 
@@ -269,7 +269,7 @@ The main components of the returned R object are:
 head(res$final_values)
 ```
 
-* `forced_param_values`: values of parameters not estimated during calibration,
+* `forced_param_values`: values of parameters that are fixed during the final calibration step (step 7), including non-selected candidate parameters and parameters explicitly fixed in the protocol via the `forced_param_values` input argument.
 
 ```{r eval=TRUE, message=FALSE}
 head(res$forced_param_values)
@@ -294,6 +294,8 @@ head(res$stats_per_step)
 ```
 
 * `step6`, `step7`: detailed results for each part of the protocol.
+
+
 
 ### Built-in diagnostics plots 
 

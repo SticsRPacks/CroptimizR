@@ -4,6 +4,8 @@
 #' @inheritParams estim_param
 #' @param param_values Named vector or tibble, value(s) of the parameters to
 #' pass to the model wrapper
+#' @param situation (optional) List of situations to take into account within obs_list.
+#' situation = NULL means that all situations in obs_list will be used.
 #' @param sit_var_dates_mask List of situations: a named list
 #' containing a mask for variables and dates for which simulated values
 #' should be returned. Typically a list containing the observations to which
@@ -12,7 +14,7 @@
 #' @return A list containing the model outputs and transformed results, in the cropr_simulation format.
 #' Returns NA if an error occurs during the simulations.
 #'
-#' @export
+#' @keywords internal
 #'
 compute_simulations <- function(model_function, model_options, param_values,
                                 situation, var_to_simulate, obs_list,
