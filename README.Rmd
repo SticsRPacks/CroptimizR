@@ -53,19 +53,18 @@ remotes::install_github("SticsRPacks/CroptimizR@*release")
 
 ## Examples
 
-* A simple introductory example of model calibration using the Nelder-Mead simplex method on the STICS model is given in this [vignette](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html).
+* Simple introductory examples of parameter estimation using CroptimizR on complex crop models are provided in vignettes, using the STICS model [here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html) and the ApsimX model [here](https://SticsRPacks.github.io/CroptimizR/articles/ApsimX_parameter_estimation_simple_case.html)
+ 
+* A more complex example, showing simultaneous estimation of specific and varietal plant parameters is available  [here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html).
 
-* A more complex one with simultaneous estimation of specific and varietal plant parameters is given  [here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_Specific_and_Varietal.html).
-
-* An example of application of the AgMIP phase III protocol, designed to calibrate phenology of crop models, as described in detail in Wallach et al (2022), is given [here](https://SticsRPacks.github.io/CroptimizR/articles/AgMIP_Calibration_Phenology_protocol.html).
-
-* An example using the ApsimX model is detailed [here](https://SticsRPacks.github.io/CroptimizR/articles/ApsimX_parameter_estimation_simple_case.html).
+* An example demonstrating the application of a parameter selection algorithm can be found [here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_selection.html).
 
 * An example using the DREAM-zs Bayesian algorithm is detailed [here](https://SticsRPacks.github.io/CroptimizR/articles/Parameter_estimation_DREAM.html).
 
+* An example illustrating the AgMIP calibration workflow is shown [here](https://SticsRPacks.github.io/CroptimizR/articles/AgMIP_Calibration_Protocol.html).
 
-See [here](https://sticsrpacks.github.io/CroptimizR/reference/estim_param.html) for a detailed description of the input and output arguments of the estim_param function (or type `? estim_param` in an R console after having installed and loaded the CroptimizR package).
-
+See [here](https://sticsrpacks.github.io/CroptimizR/reference/estim_param.html) for a detailed description of the input and output arguments of the `estim_param` function, the core function for parameter estimation (or type `? estim_param` in an R console after installing and loading the CroptimizR package). See also the `run_protocol_agmip` function for applying the AgMIP calibration workflow in a streamlined way.
+ 
 ## Getting help
 
 If you have any question or suggestion or if you want to report a bug, please do it via the GitHub [issues](https://github.com/SticsRPacks/CroptimizR/issues).

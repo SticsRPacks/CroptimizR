@@ -7,7 +7,7 @@
 fill_step_info(step, mc, env)
 }
 \arguments{
-\item{step}{(optional) List that describes the steps of the parameter estimation process (see details section).
+\item{step}{(optional) List that describes the steps of the parameter estimation procedure (see details section).
 If \code{NULL}, a single default step will be created using the \code{estim_param} arguments}
 
 \item{mc}{A matched call object from \code{match.call()} in \code{estim_param},
