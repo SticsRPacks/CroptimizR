@@ -299,8 +299,8 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
   check_step_content(steps)
 
   cat("\nAgMIP Calibration Phase IV protocol: automatic calculation steps 6 and 7",
-      "\n(see doi.org/10.1016/j.envsoft.2024.106147 for a detailed description of the full protocol)\n",
-      sep = ""
+    "\n(see doi.org/10.1016/j.envsoft.2024.106147 for a detailed description of the full protocol)\n",
+    sep = ""
   )
 
   # Prefix the steps name by "Step6." for a clearer display of the steps names.
@@ -360,7 +360,7 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
 
   # Compute stats for default values of the parameters
   stats_default <- summary(sim_default$sim_list,
-                           obs = obs_transformed, stats = c("Bias2", "MSE", "rRMSE", "EF")
+    obs = obs_transformed, stats = c("Bias2", "MSE", "rRMSE", "EF")
   ) %>%
     dplyr::mutate(step = "Default") %>%
     dplyr::select(step, dplyr::everything(), -dplyr::any_of(c("group", "situation")))
@@ -475,7 +475,7 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
 
   ## Compute SSE and number of observations for each observed variable
   stats_tmp <- summary(sim$sim_list,
-                       obs = obs_transformed, stats = c("n_obs", "SS_res")
+    obs = obs_transformed, stats = c("n_obs", "SS_res")
   )
 
   ## Sum SSE and number of observations per group of variables
@@ -601,7 +601,7 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
   }
   ## Compute goodness-of-fit stats after step7
   stats_step7 <- summary(sim_after_step7$sim_list,
-                         obs = obs_transformed, stats = c("Bias2", "MSE", "rRMSE", "EF")
+    obs = obs_transformed, stats = c("Bias2", "MSE", "rRMSE", "EF")
   ) %>%
     dplyr::mutate(step = "Step7") %>%
     dplyr::select(step, dplyr::everything(), -dplyr::any_of(c("group", "situation")))
