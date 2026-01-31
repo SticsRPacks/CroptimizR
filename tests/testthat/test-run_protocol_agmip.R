@@ -1109,5 +1109,4 @@ test_that("Test AgMIP protocol stop if obs_list is defined in sub_step", {
     regexp = "'obs_list' must not be defined in step",
     fixed = TRUE
   )
-
 })
