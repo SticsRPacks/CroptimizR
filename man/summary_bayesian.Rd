@@ -4,7 +4,7 @@
 \alias{summary_bayesian}
 \title{Summarizes results of bayesian methods}
 \usage{
-summary_bayesian(optim_options, param_info, optim_results, out_dir)
+summary_bayesian(optim_options, param_info, optim_results, out_dir, indent = 0)
 }
 \arguments{
 \item{optim_options}{List of options of the parameter estimation method, containing:
@@ -43,6 +43,8 @@ for an example),
 \item{optim_results}{Results list returned by bayesian method wrappers}
 
 \item{out_dir}{Path to the directory where the optimization results will be written. (optional, default to \code{getwd()})}
+
+\item{indent}{Integer, level of indent of the printed messages as required by make_display_prefix}
 }
 \value{
 Prints results of bayesian methods

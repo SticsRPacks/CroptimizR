@@ -26,14 +26,21 @@ path_to_JavaStics <- params$path_to_JavaStics
 ```
 
 
-## Study Case
+## Introduction
 
-This document presents an example of a simultaneous estimation of one specific and one varietal parameter on a multi-varietal dataset using the Stics model, while a simpler introductory example is presented in this [vignette](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html) (you should look at it first).
+This document presents an example of a simultaneous estimation of one specific and one varietal parameter on a multi-varietal dataset using the STICS model, while a simpler introductory example is presented in this [vignette](https://sticsrpacks.github.io/CroptimizR/articles/Parameter_estimation_simple_case.html) (you should look at it first).
+
+> Important
+CroptimizR can be applied to any crop model, provided that a suitable wrapper is available.
+To use this feature, the model wrapper must be able to handle the `param_values` argument as a `tibble` with a `situation` column identifying the situations, allowing parameter values to differ across situations.
+This requirement is fulfilled by the STICS wrapper (see `SticsOnR::stics_wrapper`).
+If you are using another wrapper, make sure that it supports this interface. Guidelines and examples for implementing such wrappers are provided in the [Designing_a_model_wrapper vignette](https://sticsrpacks.github.io/CroptimizR/articles/Designing_a_model_wrapper.html).
+
+## Study Case
 
 Data comes from a maize crop experiment (see description in Wallach et al., 2011). In this example, 8 situations (USMs in Stics language) will be used for the parameter estimation. This test case correspond to case 1c in (Wallach et al., 2011).
 
 The parameter estimation is performed using the Nelder-Mead simplex method implemented in the nloptr package.
-
 
 ## Initialisation step
 
