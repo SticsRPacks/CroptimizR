@@ -1,0 +1,4 @@
+"Estimated parameters";"Initial parameter values";"Final values";"Initial Sum of squared errors";"Final Sum of squared errors";"AICc";"Selected step"
+"vitircarbT";"0.00052";"0.0009";"186.33";"27.39";"12.05";"X"
+"vitircarbT, pgrainmaxi";"0.0009, 0.0368";"0.00095, 0.03938";"25.86";"22.44";"12.30";""
+"vitircarbT, cgrainv0  ";"0.0009, 0.0420";"0.0009, 0.0464";"27.39";"27.39";"14.89";""

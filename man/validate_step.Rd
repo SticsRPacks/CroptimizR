@@ -4,12 +4,12 @@
 \alias{validate_step}
 \title{Validate the information for a given step}
 \usage{
-validate_step(step, istep)
+validate_step(step, step_name)
 }
 \arguments{
 \item{step}{A list containing the characteristics of a given step.}
 
-\item{istep}{The index of the step in the list of steps.}
+\item{step_name}{The name of the step.}
 }
 \value{
 The validated step with possibly updated information.

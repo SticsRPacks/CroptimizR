@@ -4,12 +4,14 @@
 \alias{summary_multi_step}
 \title{Summarizes results of multi-step procedure}
 \usage{
-summary_multi_step(results_multi_step, path_results)
+summary_multi_step(results_multi_step, path_results, indent = 0)
 }
 \arguments{
 \item{results_multi_step}{Results of the multi_step procedure as returned by post_treat_multi_step}
 
-\item{path_results}{Folder path where results of the multi-step optimization process can be found}
+\item{path_results}{Folder path where results of the multi-step optimization procedure can be found}
+
+\item{indent}{Integer, level of indent of the printed messages as required by make_display_prefix}
 }
 \value{
 Prints results of the multi-step procedure
