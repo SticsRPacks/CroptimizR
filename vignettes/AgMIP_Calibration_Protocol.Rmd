@@ -117,7 +117,7 @@ In this example, this file is named `agmip_protocol_vignette.xlsx` and is locate
 Here is a preview of this file: 
 
 ```{r protocol_descr_image, eval=TRUE, message=FALSE, warning=FALSE, echo=FALSE, out.width = "90%"}
-knitr::include_graphics("figures/AgMIP_protocol/protocol_descr_file.png")
+knitr::include_graphics("vignettes/figures/AgMIP_protocol/protocol_descr_file.png")
 ```
 
 The order of the variable groups in the `variables` sheet is particularly important, as it determines their sequence in Step 6 of the protocol.
@@ -321,13 +321,13 @@ We can check that the performance of a variable is not degraded after it has bee
 The graph also illustrates that bias² and MSE are substantially reduced compared to the values obtained using the default parameter settings.
 
 ```{r plot_MSE_Bias2_per_step, eval=TRUE, message=FALSE, warning=FALSE, echo=FALSE, out.width = "90%"}
-knitr::include_graphics("figures/AgMIP_protocol/plot_MSE_Bias2_per_step.png")
+knitr::include_graphics("vignettes/figures/AgMIP_protocol/plot_MSE_Bias2_per_step.png")
 ```
 
 The files `scatter_plots_*.pdf` contain scatter plots of simulated versus observed variables after each protocol step, allowing a closer inspection of the effect of each step. Here, we display the first page of the `scatter_plots_step7.pdf` file, which shows the results obtained at the end of the protocol for this example for variables `iamfs`, `ilaxs`, `imats` and `masec_n`.
 
 ```{r scatter_plots_after_step7, eval=TRUE, message=FALSE, warning=FALSE, echo=FALSE, out.width = "90%"}
-knitr::include_graphics("figures/AgMIP_protocol/scatter_plots_after_step7.png")
+knitr::include_graphics("vignettes/figures/AgMIP_protocol/scatter_plots_after_step7.png")
 ```
 
 ## Evaluating the results on an independent dataset
