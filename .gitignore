@@ -38,3 +38,5 @@ vignettes/sim_obs_plots.png
 vignettes/debug_crit_NA.Rdata
 vignettes/sim_obs.png
 vignettes/*.R
+/doc/
+/Meta/
