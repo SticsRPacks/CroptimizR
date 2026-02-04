@@ -115,7 +115,7 @@ Buis</h4>
 EMMAH<br><h4 data-toc-skip class="author">Patrice
 Lecharpentier</h4>
             <address class="author_afil">
-      INRAE - Agroclim<br><h4 data-toc-skip class="date">2026-02-03</h4>
+      INRAE - Agroclim<br><h4 data-toc-skip class="date">2026-02-04</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/main/vignettes/Designing_a_model_wrapper.Rmd" class="external-link"><code>vignettes/Designing_a_model_wrapper.Rmd</code></a></small>
       <div class="hidden name"><code>Designing_a_model_wrapper.Rmd</code></div>
@@ -761,26 +761,26 @@ estimation using this wrapper:</p>
 <span><span class="co">##    Forced parameter(s): none</span></span>
 <span><span class="co">##    Observed variable(s) used: lai</span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## Working: 20.00%. Estimated remaining time: 0.99 secs</span></span>
-<span><span class="co">## Working: 40.00%. Estimated remaining time: 1.08 secs</span></span>
-<span><span class="co">## Working: 60.00%. Estimated remaining time: 0.77 secs</span></span>
-<span><span class="co">## Working: 80.00%. Estimated remaining time: 0.41 secs</span></span>
+<span><span class="co">## Working: 20.00%. Estimated remaining time: 1.17 secs</span></span>
+<span><span class="co">## Working: 40.00%. Estimated remaining time: 0.84 secs</span></span>
+<span><span class="co">## Working: 60.00%. Estimated remaining time: 0.64 secs</span></span>
+<span><span class="co">## Working: 80.00%. Estimated remaining time: 0.32 secs</span></span>
 <span><span class="co">## Working: 100.00%. Estimated remaining time: 0.00 secs</span></span></code></pre>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##    Estimated value for inc_slope: 25</span></span>
 <span><span class="co">##    Estimated value for dec_slope: 10</span></span>
-<span><span class="co">##    Minimum value of the criterion: 0.00063</span></span>
+<span><span class="co">##    Minimum value of the criterion: 0.0011</span></span>
 <span><span class="co">##    Complementary graphs and results can be found in /Users/runner/work/CroptimizR/CroptimizR/vignettes</span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">##    Average time for the model to simulate all required situations: 0.004sec elapsed</span></span>
-<span><span class="co">##    Total number of criterion evaluation: 188</span></span>
-<span><span class="co">##    Total time of model simulations: 0.8sec elapsed</span></span>
-<span><span class="co">##    Total time of parameter estimation procedure: 4sec elapsed</span></span></code></pre>
+<span><span class="co">##    Average time for the model to simulate all required situations: 0.0038sec elapsed</span></span>
+<span><span class="co">##    Total number of criterion evaluation: 183</span></span>
+<span><span class="co">##    Total time of model simulations: 0.7sec elapsed</span></span>
+<span><span class="co">##    Total time of parameter estimation procedure: 3sec elapsed</span></span></code></pre>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res</span><span class="op">$</span><span class="va">final_values</span></span></code></pre></div>
 <pre><code><span><span class="co">## inc_slope dec_slope </span></span>
-<span><span class="co">##  25.03923  10.04032</span></span></code></pre>
+<span><span class="co">## 24.927754  9.955786</span></span></code></pre>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the simulations obtained with the optimized values of the parameters VS</span></span>
 <span><span class="co"># the observed ones using the CroPlotR package.</span></span>
@@ -980,27 +980,27 @@ wrapper:</p>
 <span><span class="co">##    Forced parameter(s): none</span></span>
 <span><span class="co">##    Observed variable(s) used: lai</span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## Working: 20.00%. Estimated remaining time: 8.04 secs</span></span>
-<span><span class="co">## Working: 40.00%. Estimated remaining time: 5.47 secs</span></span>
-<span><span class="co">## Working: 60.00%. Estimated remaining time: 3.35 secs</span></span>
-<span><span class="co">## Working: 80.00%. Estimated remaining time: 1.66 secs</span></span>
+<span><span class="co">## Working: 20.00%. Estimated remaining time: 6.19 secs</span></span>
+<span><span class="co">## Working: 40.00%. Estimated remaining time: 6.00 secs</span></span>
+<span><span class="co">## Working: 60.00%. Estimated remaining time: 3.48 secs</span></span>
+<span><span class="co">## Working: 80.00%. Estimated remaining time: 1.61 secs</span></span>
 <span><span class="co">## Working: 100.00%. Estimated remaining time: 0.00 secs</span></span></code></pre>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##    Estimated value for inc_slope1: 25</span></span>
 <span><span class="co">##    Estimated value for inc_slope2: 50</span></span>
 <span><span class="co">##    Estimated value for dec_slope: 10</span></span>
-<span><span class="co">##    Minimum value of the criterion: 0.0033</span></span>
+<span><span class="co">##    Minimum value of the criterion: 0.0072</span></span>
 <span><span class="co">##    Complementary graphs and results can be found in /Users/runner/work/CroptimizR/CroptimizR/vignettes</span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">##    Average time for the model to simulate all required situations: 0.012sec elapsed</span></span>
-<span><span class="co">##    Total number of criterion evaluation: 380</span></span>
-<span><span class="co">##    Total time of model simulations: 5sec elapsed</span></span>
-<span><span class="co">##    Total time of parameter estimation procedure: 11sec elapsed</span></span></code></pre>
+<span><span class="co">##    Average time for the model to simulate all required situations: 0.013sec elapsed</span></span>
+<span><span class="co">##    Total number of criterion evaluation: 350</span></span>
+<span><span class="co">##    Total time of model simulations: 4sec elapsed</span></span>
+<span><span class="co">##    Total time of parameter estimation procedure: 10sec elapsed</span></span></code></pre>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res</span><span class="op">$</span><span class="va">final_values</span></span></code></pre></div>
 <pre><code><span><span class="co">## inc_slope1 inc_slope2  dec_slope </span></span>
-<span><span class="co">##   25.05286   49.80769   10.02840</span></span></code></pre>
+<span><span class="co">##  25.186038  50.125723   9.999268</span></span></code></pre>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the simulations obtained with the optimized values of the parameters VS</span></span>
 <span><span class="co"># the observed ones using the CroPlotR package.</span></span>
