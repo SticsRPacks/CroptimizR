@@ -84,10 +84,9 @@ Observations of plant nitrogen content and seed protein, which were part of the 
 All observations must be formatted in the `cropr` format, i.e. as a named list of data frames (or tibble), each element being named after the corresponding situation (see the [Get started](https://sticsrpacks.github.io/CroptimizR/articles/CroptimizR.html) vignette of CroptimizR for details).
 
 ```{r get_observations, eval=TRUE, message=FALSE, results=TRUE, warning=FALSE, include=TRUE}
-obs_list <- readRDS(file.path(system.file(
-  file.path("extdata", "AgMIP_protocol", "vignette_data"),
-  package = "CroptimizR"
-), "obs_list.Rds"))
+obs_list <- readRDS(
+  system.file("extdata", "AgMIP_protocol", "vignette_data", "obs_list.Rds", package = "CroptimizR")
+)
 
 # Show the first two situations
 obs_list[1:2]
@@ -113,18 +112,14 @@ This information can be provided using a single Excel file containing at least t
 * `major_parameters`,
 * `candidate_parameters`.
 
-In this example, this file is named `agmip_protocol_vignette.xlsx` and is located in the `data/AgMIP_protocol` folder.
+In this example, this file is named `agmip_protocol_vignette.xlsx` and is located in the `extdata/AgMIP_protocol` folder.
 Here is a preview of this file: 
 
 ```{r protocol_descr_image, eval=TRUE, message=FALSE, warning=FALSE, echo=FALSE, out.width = "90%"}
 knitr::include_graphics(
-  system.file(
-    "extdata",
-    "AgMIP_protocol",
-    "vignette_data",
-    "protocol_descr_file.png",
-    package = "CroptimizR"
-  )
+  file.path("AgMIP_protocol",
+  "vignette_data",
+  "protocol_descr_file.png")
 )
 ```
 
@@ -147,10 +142,8 @@ Here, we load the protocol description file associated with this vignette:
 
 ```{r load_protocol_agmip, eval=TRUE, message=FALSE, warning=FALSE} 
 protocol_descr <- CroptimizR::load_protocol_agmip(
-  protocol_file_path = system.file(
-    file.path("extdata", "AgMIP_protocol", "agmip_protocol_vignette.xlsx"),
-    package = "CroptimizR"
-  )
+  protocol_file_path =
+  system.file("extdata", "AgMIP_protocol", "agmip_protocol_vignette.xlsx", package = "CroptimizR")
 )
 
 names(protocol_descr)
@@ -330,12 +323,10 @@ The graph also illustrates that bias² and MSE are substantially reduced compare
 
 ```{r plot_MSE_Bias2_per_step, eval=TRUE, message=FALSE, warning=FALSE, echo=FALSE, out.width = "90%"}
 knitr::include_graphics(
-  system.file(
-    "extdata",
+  file.path(
     "AgMIP_protocol",
     "vignette_data",
-    "plot_MSE_Bias2_per_step.png",
-    package = "CroptimizR"
+    "plot_MSE_Bias2_per_step.png"
   )
 )
 ```
@@ -344,12 +335,10 @@ The files `scatter_plots_*.pdf` contain scatter plots of simulated versus observ
 
 ```{r scatter_plots_after_step7, eval=TRUE, message=FALSE, warning=FALSE, echo=FALSE, out.width = "90%"}
 knitr::include_graphics(
-  system.file(
-    "extdata",
+  file.path(
     "AgMIP_protocol",
     "vignette_data",
-    "scatter_plots_after_step7.png",
-    package = "CroptimizR"
+    "scatter_plots_after_step7.png"
   )
 )
 ```
@@ -360,10 +349,9 @@ The calibrated model can then be evaluated on an independent dataset (here, the 
 
 ```{r eval=TRUE, message=FALSE, warning=FALSE}
 # Load observations for evaluation for our example
-obs_eval <- readRDS(file.path(system.file(
-  file.path("extdata", "AgMIP_protocol", "vignette_data"),
-  package = "CroptimizR"
-), "obs_eval.Rds"))
+obs_eval <- readRDS(
+  system.file("extdata", "AgMIP_protocol", "vignette_data", "obs_eval.Rds", package = "CroptimizR")
+)
 ```
 
 ```{r eval=params$recompute_full_protocol, message=FALSE, warning=FALSE}
@@ -386,14 +374,8 @@ sim_post_calib <- SticsOnR::stics_wrapper(
 > Note the use of `res$forced_param_values`, which includes the default values of non-selected candidate parameters, whereas `param_info$default` contains default values for all parameters.
 
 ```{r eval=!params$recompute_full_protocol, message=FALSE, warning=FALSE, echo=FALSE, include=FALSE}
-load(file.path(system.file(
-  file.path("extdata", "AgMIP_protocol", "vignette_data"),
-  package = "CroptimizR"
-), "sim_before_calib.Rdata"))
-load(file.path(system.file(
-  file.path("extdata", "AgMIP_protocol", "vignette_data"),
-  package = "CroptimizR"
-), "sim_post_calib.Rdata"))
+load(file.path("AgMIP_protocol", "vignette_data", "sim_before_calib.Rdata"))
+load(file.path("AgMIP_protocol", "vignette_data", "sim_post_calib.Rdata"))
 ```
 
 ```{r eval=TRUE, message=FALSE, warning=FALSE, fig.width=8, fig.height=5}
@@ -410,4 +392,3 @@ This allows us to assess whether calibration improves predictive performance on 
 ## Conclusion
 
 This vignette illustrates how the AgMIP calibration protocol can be fully automated in CroptimizR using a compact and explicit protocol description. The same approach can be applied to other crop models and datasets, provided that a suitable wrapper and protocol specification are available.
-
