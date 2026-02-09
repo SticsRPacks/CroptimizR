@@ -117,9 +117,11 @@ Here is a preview of this file:
 
 ```{r protocol_descr_image, eval=TRUE, message=FALSE, warning=FALSE, echo=FALSE, out.width = "90%"}
 knitr::include_graphics(
-  file.path("AgMIP_protocol",
-  "vignette_data",
-  "protocol_descr_file.png")
+  file.path(
+    "AgMIP_protocol",
+    "vignette_data",
+    "protocol_descr_file.png"
+  )
 )
 ```
 
@@ -143,7 +145,7 @@ Here, we load the protocol description file associated with this vignette:
 ```{r load_protocol_agmip, eval=TRUE, message=FALSE, warning=FALSE} 
 protocol_descr <- CroptimizR::load_protocol_agmip(
   protocol_file_path =
-  system.file("extdata", "AgMIP_protocol", "agmip_protocol_vignette.xlsx", package = "CroptimizR")
+    system.file("extdata", "AgMIP_protocol", "agmip_protocol_vignette.xlsx", package = "CroptimizR")
 )
 
 names(protocol_descr)
