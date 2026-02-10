@@ -111,7 +111,7 @@ protocol</h1>
                         <h4 data-toc-skip class="author">Samuel
 Buis</h4>
                         
-            <h4 data-toc-skip class="date">2026-02-04</h4>
+            <h4 data-toc-skip class="date">2026-02-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/SticsRPacks/CroptimizR/blob/main/vignettes/AgMIP_Calibration_Protocol.Rmd" class="external-link"><code>vignettes/AgMIP_Calibration_Protocol.Rmd</code></a></small>
       <div class="hidden name"><code>AgMIP_Calibration_Protocol.Rmd</code></div>
@@ -217,10 +217,9 @@ i.e. as a named list of data frames (or tibble), each element being
 named after the corresponding situation (see the <a href="https://sticsrpacks.github.io/CroptimizR/articles/CroptimizR.html" class="external-link">Get
 started</a> vignette of CroptimizR for details).</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">obs_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"AgMIP_protocol"</span>, <span class="st">"vignette_data"</span><span class="op">)</span>,</span>
-<span>  package <span class="op">=</span> <span class="st">"CroptimizR"</span></span>
-<span><span class="op">)</span>, <span class="st">"obs_list.Rds"</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">obs_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"AgMIP_protocol"</span>, <span class="st">"vignette_data"</span>, <span class="st">"obs_list.Rds"</span>, package <span class="op">=</span> <span class="st">"CroptimizR"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Show the first two situations</span></span>
 <span><span class="va">obs_list</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span></span>
@@ -273,9 +272,9 @@ at least three sheets named:</p>
 </ul>
 <p>In this example, this file is named
 <code>agmip_protocol_vignette.xlsx</code> and is located in the
-<code>data/AgMIP_protocol</code> folder. Here is a preview of this
+<code>extdata/AgMIP_protocol</code> folder. Here is a preview of this
 file:</p>
-<p><img src="../../../../../../private/var/folders/yz/zr09txvs5dn18vt4cn21kzl40000gn/T/RtmpInvDaS/temp_libpath2dab3b013723/CroptimizR/extdata/AgMIP_protocol/vignette_data/protocol_descr_file.png" class="r-plt" alt="" width="90%"></p>
+<p><img src="AgMIP_protocol/vignette_data/protocol_descr_file.png" class="r-plt" alt="" width="90%"></p>
 <p>The order of the variable groups in the <code>variables</code> sheet
 is particularly important, as it determines their sequence in Step 6 of
 the protocol.</p>
@@ -308,10 +307,8 @@ example.</p>
 vignette:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">protocol_descr</span> <span class="op">&lt;-</span> <span class="fu">CroptimizR</span><span class="fu">::</span><span class="fu"><a href="../reference/load_protocol_agmip.html">load_protocol_agmip</a></span><span class="op">(</span></span>
-<span>  protocol_file_path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"AgMIP_protocol"</span>, <span class="st">"agmip_protocol_vignette.xlsx"</span><span class="op">)</span>,</span>
-<span>    package <span class="op">=</span> <span class="st">"CroptimizR"</span></span>
-<span>  <span class="op">)</span></span>
+<span>  protocol_file_path <span class="op">=</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"AgMIP_protocol"</span>, <span class="st">"agmip_protocol_vignette.xlsx"</span>, package <span class="op">=</span> <span class="st">"CroptimizR"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">protocol_descr</span><span class="op">)</span></span>
@@ -1239,7 +1236,7 @@ for which bias² and MSE are affected in the <code>plant_biomass</code>
 step. Note, however, that step 7 corrects this effect. The graph also
 illustrates that bias² and MSE are substantially reduced compared to the
 values obtained using the default parameter settings.</p>
-<p><img src="../../../../../../private/var/folders/yz/zr09txvs5dn18vt4cn21kzl40000gn/T/RtmpInvDaS/temp_libpath2dab3b013723/CroptimizR/extdata/AgMIP_protocol/vignette_data/plot_MSE_Bias2_per_step.png" class="r-plt" alt="" width="90%"></p>
+<p><img src="AgMIP_protocol/vignette_data/plot_MSE_Bias2_per_step.png" class="r-plt" alt="" width="90%"></p>
 <p>The files <code>scatter_plots_*.pdf</code> contain scatter plots of
 simulated versus observed variables after each protocol step, allowing a
 closer inspection of the effect of each step. Here, we display the first
@@ -1247,7 +1244,7 @@ page of the <code>scatter_plots_step7.pdf</code> file, which shows the
 results obtained at the end of the protocol for this example for
 variables <code>iamfs</code>, <code>ilaxs</code>, <code>imats</code> and
 <code>masec_n</code>.</p>
-<p><img src="../../../../../../private/var/folders/yz/zr09txvs5dn18vt4cn21kzl40000gn/T/RtmpInvDaS/temp_libpath2dab3b013723/CroptimizR/extdata/AgMIP_protocol/vignette_data/scatter_plots_after_step7.png" class="r-plt" alt="" width="90%"></p>
+<p><img src="AgMIP_protocol/vignette_data/scatter_plots_after_step7.png" class="r-plt" alt="" width="90%"></p>
 </div>
 </div>
 <div class="section level2">
@@ -1258,10 +1255,9 @@ variables <code>iamfs</code>, <code>ilaxs</code>, <code>imats</code> and
 the results provided by <code>run_protocol_agmip</code>.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load observations for evaluation for our example</span></span>
-<span><span class="va">obs_eval</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"AgMIP_protocol"</span>, <span class="st">"vignette_data"</span><span class="op">)</span>,</span>
-<span>  package <span class="op">=</span> <span class="st">"CroptimizR"</span></span>
-<span><span class="op">)</span>, <span class="st">"obs_eval.Rds"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">obs_eval</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"AgMIP_protocol"</span>, <span class="st">"vignette_data"</span>, <span class="st">"obs_eval.Rds"</span>, package <span class="op">=</span> <span class="st">"CroptimizR"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get the names of the evaluation situations</span></span>
 <span><span class="va">situations_eval</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">obs_eval</span><span class="op">)</span></span>
