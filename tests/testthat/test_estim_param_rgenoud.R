@@ -23,6 +23,7 @@ toymodel <- function(nb_days, rB = 0.1, Bmin = 0.1, Bmax = 10, h = 0.5, Bini = 0
   yield <- h * biom
   return(list(biom = biom, yield = yield))
 }
+clip <- function(x, lb, ub) pmin(pmax(x, lb), ub)
 
 toymodel_wrapper <- function(param_values = NULL, situation,
                              model_options, ...) {
@@ -81,8 +82,14 @@ toymodel_wrapper <- function(param_values = NULL, situation,
       return(results)
     }
 
-    # Call the toymodel with varying arguments depending on what is given in
-    # param_values
+    # --- force parameters into bounds (important for Nelder-Mead) ---
+    if (!is.null(param_values)) {
+      if ("rB" %in% names(param_values))   param_values["rB"]   <- clip(param_values["rB"],   0, 1)
+      if ("h" %in% names(param_values))    param_values["h"]    <- clip(param_values["h"],    0, 1)
+      if ("Bmax" %in% names(param_values)) param_values["Bmax"] <- clip(param_values["Bmax"], 5, 15)
+    }
+    # ---------------------------------------------------------------
+
     res <- do.call(
       "toymodel",
       c(nb_days = length(date_sequence), as.list(param_values))
@@ -141,19 +148,28 @@ test_that("estim_param 1 step OLS criterion", {
     Bmax = list(lb = 5, ub = 15, init_values = 6)
   )
 
+
   optim_options <- list(
     ranseed = 1234,
-    itermax = 50,
-    reltol = 3.929623e-04,
-    steptol = 4,
-    NP = 30
+    pop.size = 30,
+    max.generations = 20,
+    wait.generations = 30,
+    BFGS = TRUE,
+    optim.method = "Nelder-Mead",
+    boundary.enforcement = 1,
+    gradient.check = FALSE,
+    control = list(maxit = 1, reltol = 1e-06),
+    solution.tolerance = 1e-3,
+    hard.generation.limit = FALSE,
+    print.level = 3,
+    P9 = 0
   )
 
   res <- estim_param(
     obs_list = obs_synth,
     model_function = toymodel_wrapper,
     model_options = model_options,
-    optim_method = "DEoptim",
+    optim_method = "genoud",
     crit_function = crit_ols,
     optim_options = optim_options,
     param_info = param_info,
@@ -164,15 +180,15 @@ test_that("estim_param 1 step OLS criterion", {
   str(res$trace_df)
 
   expect_equal(res$final_values[["rB"]],
-    param_true_values[["rB"]],
-    tolerance = param_true_values[["rB"]] * 1e-2
+               param_true_values[["rB"]],
+               tolerance = param_true_values[["rB"]] * 1e-2
   )
   expect_equal(res$final_values[["h"]],
-    param_true_values[["h"]],
-    tolerance = param_true_values[["h"]] * 1e-2
+               param_true_values[["h"]],
+               tolerance = param_true_values[["h"]] * 1e-2
   )
   expect_equal(res$final_values[["Bmax"]],
-    param_true_values[["Bmax"]],
-    tolerance = param_true_values[["Bmax"]] * 1e-2
+               param_true_values[["Bmax"]],
+               tolerance = param_true_values[["Bmax"]] * 1e-2
   )
 })

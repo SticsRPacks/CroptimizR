@@ -145,9 +145,10 @@ test_that("estim_param 1 step OLS criterion", {
   optim_options <- list(
     ranseed = 1234,
     n_params = length(param_info),
-    n_iter = 60,
+    n_iter = 50,
     n_particles = 30,
     n_diff = 2,
+    stop_check = 3,
     return_trace = TRUE
   )
 
