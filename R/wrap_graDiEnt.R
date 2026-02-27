@@ -7,7 +7,6 @@
 #' @keywords internal
 #'
 wrap_graDiEnt <- function(optim_options, param_info, crit_options) {
-
   if (is.null((ranseed <- optim_options$ranseed))) {
     ranseed <- NULL
   }
@@ -45,7 +44,7 @@ wrap_graDiEnt <- function(optim_options, param_info, crit_options) {
   start_time <- Sys.time()
 
   .trace_env <- new.env(parent = emptyenv())
-  .trace_env$par_list  <- list()
+  .trace_env$par_list <- list()
   .trace_env$crit_list <- list()
   .trace_env$k <- 0L
 
@@ -58,7 +57,7 @@ wrap_graDiEnt <- function(optim_options, param_info, crit_options) {
     names(x) <- param_names
     val <- main_crit(x, crit_options = crit_options)
     .trace_env$k <- .trace_env$k + 1L
-    .trace_env$par_list[[.trace_env$k]]  <- x
+    .trace_env$par_list[[.trace_env$k]] <- x
     .trace_env$crit_list[[.trace_env$k]] <- val
     return(val)
   }
@@ -139,7 +138,7 @@ wrap_graDiEnt <- function(optim_options, param_info, crit_options) {
 
     n_it_est <- ceiling(k / n_pop)
     iter <- rep(seq_len(n_it_est), each = n_pop)[seq_len(k)]
-    ind  <- rep(seq_len(n_pop), times = n_it_est)[seq_len(k)]
+    ind <- rep(seq_len(n_pop), times = n_it_est)[seq_len(k)]
 
     trace_df <- as.data.frame(pars_mat)
     trace_df$ind <- ind
@@ -148,7 +147,7 @@ wrap_graDiEnt <- function(optim_options, param_info, crit_options) {
     trace_df$eval <- seq_len(k)
     trace_df$method <- "graDiEnt"
     trace_df$rep <- 1L
-        }
+  }
   res <- list(
     final_values = final_values,
     init_values = init_values,
