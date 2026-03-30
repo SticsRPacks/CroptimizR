@@ -25,15 +25,16 @@ jobs:
       github.event_name == 'workflow_dispatch' ||
       (
         github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.event == 'push' &&
         (
-          github.event.workflow_run.event == 'pull_request' ||
-          github.event.workflow_run.head_branch == 'main'
+          github.event.workflow_run.head_branch == 'main' ||
+          github.event.workflow_run.head_branch == 'master'
         )
       )
     strategy:
       fail-fast: false
       matrix:
-        dependency_mode: [main, release]
+        dependency_mode: [release]
     uses: SticsRPacks/SticsRTests/.github/workflows/integration-tests.yaml@main
     with:
       repo: CroptimizR
