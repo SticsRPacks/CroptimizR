@@ -1,4 +1,7 @@
 name: integration-tests
+run-name: >-
+  integration-tests for ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.event.workflow_run.head_branch }}
+  with SticsRTests@${{ github.event_name == 'workflow_dispatch' && inputs.sticsrtests_ref || 'main' }}
 
 on:
   workflow_run:
