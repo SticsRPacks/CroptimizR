@@ -1150,8 +1150,8 @@ test_that("Test definition of different optimization method options for step6 an
   )
 
   # Check the number of repetition is as required
-  expect_equal(length(res$step6$Step6.yield$crit_values),2)
-  expect_equal(length(res$step7$crit_values),1)
+  expect_equal(length(res$step6$Step6.yield$crit_values), 2)
+  expect_equal(length(res$step7$crit_values), 1)
 
   # Check xtol_rel is as required
   get_xtol <- function(txt) {
@@ -1163,5 +1163,4 @@ test_that("Test definition of different optimization method options for step6 an
   expect_equal(xtol_step7, 0.001)
   expect_equal(xtol_step6_biomass, 0.01)
   expect_equal(xtol_step6_yield, 0.01)
-
 })
