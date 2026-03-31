@@ -8,7 +8,12 @@ run_protocol_agmip(
   obs_list,
   model_function,
   model_options,
-  optim_options = list(),
+  optim_method = "nloptr.simplex",
+  optim_options = list(xtol_rel = 0.001, maxeval = 50000),
+  optim_method_step6 = NULL,
+  optim_options_step6 = NULL,
+  optim_method_step7 = NULL,
+  optim_options_step7 = NULL,
   param_info = NULL,
   forced_param_values = NULL,
   transform_var = NULL,
@@ -36,31 +41,49 @@ if the variable is not observed at the given date.
 \item{model_options}{List of options for the Crop Model wrapper (see help of
 the Crop Model wrapper function used).}
 
-\item{optim_options}{(optional) List of options controlling the minimization method
-(Nelder–Mead simplex), containing:
+\item{optim_method}{(optional) Name of the optimization method to use globally
+(i.e. both in step6 and step7, default: \code{"nloptr.simplex"}). This method is used for both step6 and step7 unless
+overridden by \code{optim_method_step6} or \code{optim_method_step7}.}
+
+\item{optim_options}{(optional) List of options controlling the optimization method,
+applied globally to both step6 and step7 unless locally overridden by \code{optim_options_step6} and \code{optim_options_step7} arguments.
+
+The list may include (for the default \code{"nloptr.simplex"} method):
 \itemize{
-\item \code{ranseed}: random seed used to make results reproducible. If \code{NULL}, the seed is not
-fixed and results may differ between runs. Otherwise, set it to an integer value
-(e.g. \code{1234}). Default is \code{NULL}.
+\item \code{ranseed}: random seed used to make results reproducible. If \code{NULL}, results may differ
+between runs (default: \code{NULL}).
 \item \code{nb_rep}: number of multi-start repetitions of the minimization.
-If provided, this value is used for all minimizations in both step6 and step7.
-The same setting is therefore applied to the whole protocol.
-By default, this is set to \code{c(10, 5)} for step6 (respectively for major-parameter estimation
-and for each candidate-parameter addition) and to \code{c(20)} for step7.
 \item \code{maxeval}: maximum number of evaluations of the minimized criterion per minimization
 (default: \code{50000}).
-\item \code{xtol_rel}: relative tolerance threshold on parameter values. Minimization stops when
-parameter values change by less than \code{xtol_rel} times the absolute value of the parameter
-between two successive iterations.
-The default value is \code{1e-3}, which provides a good compromise between computational cost
-and numerical accuracy for most applications of the AgMIP protocol.
-\item additional options can be provided; see \code{?nl.opts} for a complete list.
+\item \code{xtol_rel}: relative tolerance threshold on parameter values (default: \code{1e-3}).
+\item additional options (see \code{?nl.opts}).
+}
+
+These options are specific to the \code{"nloptr.simplex"} method. If another optimization
+method is used, the corresponding method-specific options should be provided instead.
+
+By default, when using \code{"nloptr.simplex"}, the AgMIP protocol uses:
+\itemize{
+\item \code{nb_rep = c(10, 5)} for step6 (respectively for major-parameter estimation and candidate addition),
+\item \code{nb_rep = 20} for step7.
 }
 
 For debugging or testing purposes (i.e. to simply check that the protocol executes correctly
 without aiming at meaningful results), the user can use very small values, for example
 \code{nb_rep = 1} and \code{maxeval = 2}, in order to obtain a fast "dry run" of the whole protocol.
 Such settings must of course be removed for any real calibration experiment.}
+
+\item{optim_method_step6}{(optional) Optimization method specific to step6.
+If \code{NULL}, the value of \code{optim_method} is used.}
+
+\item{optim_options_step6}{(optional) List of optimization options specific to step6.
+These options override (and complement) \code{optim_options}.}
+
+\item{optim_method_step7}{(optional) Optimization method specific to step7.
+If \code{NULL}, the value of \code{optim_method} is used.}
+
+\item{optim_options_step7}{(optional) List of optimization options specific to step7.
+These options override (and complement) \code{optim_options}.}
 
 \item{param_info}{Information about the parameters to estimate.
 A list containing:
@@ -71,16 +94,15 @@ A list containing:
 
 The names correspond to the parameter names.
 Default values are used when a parameter is not estimated in the current step
-(e.g. major or candidate parameter estimated in a subsequent step, candidate parameter
-that was not selected, etc.), and also as one of the initial values when the parameter is estimated.}
+and also as one of the initial values when the parameter is estimated.
+
+\code{param_info} can be created directly in R or loaded from an Excel file using \code{\link{load_protocol_agmip}}.}
 
 \item{forced_param_values}{(optional)  Named vector or list specifying parameter values to force in
-the model.
-It may also contain arithmetic expressions to define equality constraints between parameters
-(see the Details section of \code{estim_param}). In this case, the values to force are computed before
-each call to the model wrapper and passed through its \code{param_values} argument during the estimation procedure.
-This argument should not include values for parameters that are estimated (i.e. parameters
-defined in \code{param_info}).}
+the model (including arithmetic expressions to define equality constraints between parameters).
+See \code{\link{estim_param}} for details.
+
+\code{forced_param_values} can be created directly in R or loaded from an Excel file using \code{\link{load_protocol_agmip}}.}
 
 \item{transform_var}{Named vector of functions to apply both on simulated and
 observed variables. \code{transform_var=c(var1=log, var2=sqrt)} will for example
@@ -88,13 +110,13 @@ apply log-transformation on simulated and observed values of variable var1,
 and square-root transformation on values of variable var2.}
 
 \item{transform_obs}{(optional) User-defined function to transform observations before each criterion
-evaluation. See the Details section of \code{estim_param} for more information.}
+evaluation. See \code{\link{estim_param}}.}
 
 \item{transform_sim}{(optional) User-defined function to transform simulations before each criterion
-evaluation. See the Details section of \code{estim_param} for more information.}
+evaluation. See \code{\link{estim_param}}.}
 
-\item{satisfy_par_const}{(optional) User-defined function to enforce inequality constraints on estimated
-parameters. See the Details section of \code{estim_param} for more information.}
+\item{satisfy_par_const}{(optional) User-defined function to enforce inequality constraints on parameters.
+See \code{\link{estim_param}}.}
 
 \item{var_to_simulate}{(optional) List of variables for which the model wrapper must return
 results.
@@ -103,16 +125,22 @@ it may be useful to simulate also other variables, typically when transform_sim
 and/or transform_obs functions are used. Note however that it is
 active only if the model_function used handles this argument.}
 
-\item{info_crit_func}{Function or list of functions used to compute information criteria
-(optional; see the default value in the function signature and
-https://sticsrpacks.github.io/CroptimizR/reference/information_criteria.html
-for the list of available criteria).
+\item{info_crit_func}{Function or list of functions used to compute information criteria.
+If parameter selection is activated, the first criterion is used (but all are computed, for information).}
 
-The values of all provided information criteria are stored in the returned object.
-If parameter selection is activated (i.e. if \code{candidate_param} is provided in at least one
-step of step6), the first information criterion in the list is used for parameter selection.}
+\item{step}{A list defining the sub-steps for step 6 of the AgMIP Calibration protocol.
+It can be created directly in R or loaded from an Excel file using \code{\link{load_protocol_agmip}}.
 
-\item{step}{A list defining the sub-steps for step 6 of the AgMIP Calibration protocol (see Details section).}
+Each sub-step must define at least:
+\itemize{
+\item \code{obs_var}: names of observed variables used,
+\item \code{major_param} and/or \code{candidate_param}. At least one of \code{major_param} or \code{candidate_param} must be provided.
+}
+
+Note that \code{obs_list} and \code{transform_obs} \strong{cannot} be defined inside sub-steps
+and must be provided at the top level.
+
+See Details section for more information.}
 
 \item{out_dir}{Path to the directory where the optimization results will be written. (optional, default to \code{getwd()})}
 
@@ -174,6 +202,19 @@ for each variable, before and after each step,
 \item \code{step6}: a list with detailed results for step6,
 \item \code{step7}: a list with detailed results for step7.
 }
+\subsection{Optimization configuration}{
+
+The optimization method and options can be defined at three levels:
+\itemize{
+\item Global: \code{optim_method}, \code{optim_options}
+\item Step6: \code{optim_method_step6}, \code{optim_options_step6}
+\item Step7: \code{optim_method_step7}, \code{optim_options_step7}
+}
+
+Step-specific arguments override global ones when provided.
+Optimization options are merged: step-specific values overwrite global ones,
+while unspecified options are inherited.
+}
 }
 \description{
 Automate the AgMIP Phase IV Calibration protocol
@@ -184,9 +225,9 @@ Automate the AgMIP Phase IV Calibration protocol
 The AgMIP Phase IV Calibration protocol is thoroughly described in Wallach et al. (2024)
 and Wallach et al. (2025).
 
-This protocol consists of two successive steps, called step6 and step7.
+This protocol consists of two successive steps, called \strong{step6} and \strong{step7}.
 
-Step6 consists in a sequential parameter estimation by groups of variables.
+\strong{Step6} consists in a sequential parameter estimation by groups of variables.
 For each group of variables, parameters are estimated by ordinary least squares (OLS)
 using a multi-start Nelder–Mead optimization (i.e. several minimizations starting from
 different initial values).
@@ -209,7 +250,7 @@ By default, the estimation of the major parameters for a given step is performed
 multi-start repetitions are performed each time a new candidate parameter is added to
 the set of parameters to estimate.
 
-Step7 consists in re-estimating all parameters selected during step6 using all available
+\strong{Step7} consists in re-estimating all parameters selected during step6 using all available
 observations, by weighted least squares (WLS). The weights are set to the estimated standard
 deviation of the model error for each variable, as obtained at the end of step6.
 

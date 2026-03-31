@@ -1110,3 +1110,58 @@ test_that("Test AgMIP protocol stop if obs_list is defined in sub_step", {
     fixed = TRUE
   )
 })
+
+# ------------------------------------------------------------------------
+
+test_that("Test definition of different optimization method options for step6 and step7", {
+  optim_options <- list(
+    nb_rep = 2, xtol_rel = 1e-2,
+    ranseed = 1234
+  )
+  optim_options_step7 <- list(
+    nb_rep = 1, xtol_rel = 1e-3
+  )
+  param_info <- list(
+    rB = list(lb = 0, ub = 1, default = 0.1),
+    h = list(lb = 0, ub = 1, default = 0.5),
+    Bmax = list(lb = 5, ub = 15, default = 7)
+  )
+  steps <- list(
+    biomass = list(
+      major_param = c("rB"),
+      candidate_param = c("Bmax"),
+      obs_var = c("biomass")
+    ),
+    yield = list(
+      major_param = c("h"),
+      obs_var = c("yield")
+    )
+  )
+
+  res <- run_protocol_agmip(
+    model_function = toymodel_wrapper,
+    model_options = model_options,
+    optim_options = optim_options,
+    optim_options_step7 = optim_options_step7,
+    obs_list = obs_synth,
+    out_dir = file.path(tempdir(), "Test11"),
+    step = steps,
+    param_info = param_info
+  )
+
+  # Check the number of repetition is as required
+  expect_equal(length(res$step6$Step6.yield$crit_values),2)
+  expect_equal(length(res$step7$crit_values),1)
+
+  # Check xtol_rel is as required
+  get_xtol <- function(txt) {
+    as.numeric(sub(".*xtol_rel:\\s*([0-9.eE+-]+).*", "\\1", txt))
+  }
+  xtol_step7 <- get_xtol(res$step7$nlo[[1]]$termination_conditions)
+  xtol_step6_biomass <- get_xtol(res$step6$Step6.biomass$nlo[[1]]$termination_conditions)
+  xtol_step6_yield <- get_xtol(res$step6$Step6.yield$nlo[[1]]$termination_conditions)
+  expect_equal(xtol_step7, 0.001)
+  expect_equal(xtol_step6_biomass, 0.01)
+  expect_equal(xtol_step6_yield, 0.01)
+
+})

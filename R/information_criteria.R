@@ -17,7 +17,7 @@ AIC <- function(obs_list, crit_value, param_nb) {
 
   n <- sum(sapply(
     obs_list,
-    function(x) sum(!is.na(x %>% select(-.data$Date)))
+    function(x) sum(!is.na(x %>% select(-Date)))
   ))
 
   return(n * log(crit_value / n) + 2 * param_nb)
@@ -44,7 +44,7 @@ AICc <- function(obs_list, crit_value, param_nb) {
 
   n <- sum(sapply(
     obs_list,
-    function(x) sum(!is.na(x %>% select(-.data$Date)))
+    function(x) sum(!is.na(x %>% select(-Date)))
   ))
 
   p <- param_nb
@@ -78,7 +78,7 @@ BIC <- function(obs_list, crit_value, param_nb) {
 
   n <- sum(sapply(
     obs_list,
-    function(x) sum(!is.na(x %>% select(-.data$Date)))
+    function(x) sum(!is.na(x %>% select(-Date)))
   ))
 
   return(n * log(crit_value / n) + param_nb * log(n))

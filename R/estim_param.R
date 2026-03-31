@@ -5,7 +5,7 @@
 #' one column named Date with the dates (Date or POSIXct format) of the different observations
 #' and one column per observed variables with either the measured values or NA, if
 #' the variable is not observed at the given date.
-#' See details section for more information on the list of observations actually
+#' See Details section for more information on the list of observations actually
 #' used during the parameter estimation procedure.
 #'
 #' @param model_function Crop Model wrapper function to use.
@@ -51,7 +51,7 @@
 #'   - `default`, vector of default values per group (optional, the parameter is set to its default value when it is part of the `candidate_param` list and when it is not estimated ; the default value is also used as first initial value when the parameter is estimated)
 #'
 #' @param forced_param_values Named vector or list, must contain the values (or
-#' arithmetic expression, see details section) for the model parameters to force. The corresponding
+#' arithmetic expression, see Details section) for the model parameters to force. The corresponding
 #' values will be transferred to the model wrapper through its param_values argument
 #' during the estimation procedure.
 #' Should not include values for estimated parameters (i.e. parameters defined in
@@ -59,7 +59,7 @@
 #' argument `candidate_param`).
 #'
 #' @param candidate_param Names of the parameters, among those defined in the argument param_info,
-#' that must only be considered as candidate for parameter estimation (see details section).
+#' that must only be considered as candidate for parameter estimation (see Details section).
 #' All parameters included in param_info that are not listed in candidate_param will be estimated.
 #'
 #' @param transform_var Named vector of functions to apply both on simulated and
@@ -68,13 +68,13 @@
 #' and square-root transformation on values of variable var2.
 #'
 #' @param transform_obs User function for transforming observations before each criterion
-#' evaluation (optional), see details section for more information.
+#' evaluation (optional), see Details section for more information.
 #'
 #' @param transform_sim User function for transforming simulations before each criterion
-#' evaluation  (optional), see details section for more information.
+#' evaluation  (optional), see Details section for more information.
 #'
 #' @param satisfy_par_const User function for including constraints on estimated
-#' parameters (optional), see details section for more information.
+#' parameters (optional), see Details section for more information.
 #'
 #' @param var_to_simulate (optional) List of variables for which the model wrapper must return
 #' results.
@@ -88,14 +88,14 @@
 #' for more details about the list of proposed information criteria.).
 #' Values of the information criteria will be stored in the returned list.
 #' In case parameter selection is activated (i.e. if the argument candidate_param
-#' is defined (see details section)), the first information criterion given will be used.
+#' is defined (see Details section)), the first information criterion given will be used.
 #' ONLY AVAILABLE FOR THE MOMENT FOR crit_function==crit_ols.
 #'
 #' @param weight Weights to use in the criterion to optimize. A function that takes in input a vector
 #' of observed values and the name of the corresponding variable and that must return either a single value
 #' for the weights for the given variable or a vector of values of length the length of the vector of observed values given in input.
 #'
-#' @param step (optional) List that describes the steps of the parameter estimation procedure (see details section).
+#' @param step (optional) List that describes the steps of the parameter estimation procedure (see Details section).
 #' If `NULL`, a single default step will be created using the `estim_param` arguments
 #'
 #' @param out_dir Path to the directory where the optimization results will be written. (optional, default to `getwd()`)
