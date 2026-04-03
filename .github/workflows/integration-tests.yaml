@@ -1,0 +1,48 @@
+name: integration-tests
+run-name: >-
+  integration-tests for ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.event.workflow_run.head_branch }}
+  with SticsRTests@${{ github.event_name == 'workflow_dispatch' && inputs.sticsrtests_ref || 'main' }}
+
+on:
+  workflow_run:
+    workflows: ["R-CMD-check"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      sticsrtests_ref:
+        description: Branch, tag, or SHA of SticsRTests to run
+        required: false
+        default: main
+        type: string
+      dependency_mode:
+        description: Ref selection mode for the other SticsRPacks packages
+        required: false
+        default: release
+        type: choice
+        options:
+          - main
+          - release
+
+permissions:
+  contents: read
+
+jobs:
+  integration-tests:
+    name: branch + others ${{ github.event_name == 'workflow_dispatch' && inputs.dependency_mode || 'release' }}
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (
+        github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.event == 'push' &&
+        (
+          github.event.workflow_run.head_branch == 'main'
+        )
+      )
+    uses: SticsRPacks/SticsRTests/.github/workflows/integration-tests.yaml@main
+    with:
+      repo: CroptimizR
+      ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.event.workflow_run.head_branch }}
+      sha: ${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
+      dependency_mode: ${{ github.event_name == 'workflow_dispatch' && inputs.dependency_mode || 'release' }}
+      sticsrtests_ref: ${{ github.event_name == 'workflow_dispatch' && inputs.sticsrtests_ref || 'main' }}
+    secrets: inherit
