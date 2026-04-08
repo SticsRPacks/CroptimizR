@@ -8,30 +8,46 @@
 #' - and one column per observed variable, containing either the measured values or `NA`
 #'   if the variable is not observed at the given date.
 #'
-#' @param optim_options (optional) List of options controlling the minimization method
-#' (Nelder–Mead simplex), containing:
-#' - `ranseed`: random seed used to make results reproducible. If `NULL`, the seed is not
-#'   fixed and results may differ between runs. Otherwise, set it to an integer value
-#'   (e.g. `1234`). Default is `NULL`.
+#' @param optim_method (optional) Name of the optimization method to use globally
+#' (i.e. both in step6 and step7, default: `"nloptr.simplex"`). This method is used for both step6 and step7 unless
+#' overridden by `optim_method_step6` or `optim_method_step7`.
+#'
+#'
+#' @param optim_options (optional) List of options controlling the optimization method,
+#' applied globally to both step6 and step7 unless locally overridden by `optim_options_step6` and `optim_options_step7` arguments.
+#'
+#' The list may include (for the default `"nloptr.simplex"` method):
+#' - `ranseed`: random seed used to make results reproducible. If `NULL`, results may differ
+#'   between runs (default: `NULL`).
 #' - `nb_rep`: number of multi-start repetitions of the minimization.
-#'   If provided, this value is used for all minimizations in both step6 and step7.
-#'   The same setting is therefore applied to the whole protocol.
-#'   By default, this is set to `c(10, 5)` for step6 (respectively for major-parameter estimation
-#'   and for each candidate-parameter addition) and to `c(20)` for step7.
 #' - `maxeval`: maximum number of evaluations of the minimized criterion per minimization
 #'   (default: `50000`).
-#' - `xtol_rel`: relative tolerance threshold on parameter values. Minimization stops when
-#'   parameter values change by less than `xtol_rel` times the absolute value of the parameter
-#'   between two successive iterations.
-#'   The default value is `1e-3`, which provides a good compromise between computational cost
-#'   and numerical accuracy for most applications of the AgMIP protocol.
-#' - additional options can be provided; see `?nl.opts` for a complete list.
+#' - `xtol_rel`: relative tolerance threshold on parameter values (default: `1e-3`).
+#' - additional options (see \code{?nl.opts}).
+#'
+#' These options are specific to the `"nloptr.simplex"` method. If another optimization
+#' method is used, the corresponding method-specific options should be provided instead.
+#'
+#' By default, when using `"nloptr.simplex"`, the AgMIP protocol uses:
+#' - `nb_rep = c(10, 5)` for step6 (respectively for major-parameter estimation and candidate addition),
+#' - `nb_rep = 20` for step7.
 #'
 #' For debugging or testing purposes (i.e. to simply check that the protocol executes correctly
 #' without aiming at meaningful results), the user can use very small values, for example
 #' \code{nb_rep = 1} and \code{maxeval = 2}, in order to obtain a fast "dry run" of the whole protocol.
 #' Such settings must of course be removed for any real calibration experiment.
 #'
+#' @param optim_method_step6 (optional) Optimization method specific to step6.
+#' If `NULL`, the value of `optim_method` is used.
+#'
+#' @param optim_options_step6 (optional) List of optimization options specific to step6.
+#' These options override (and complement) `optim_options`.
+#'
+#' @param optim_method_step7 (optional) Optimization method specific to step7.
+#' If `NULL`, the value of `optim_method` is used.
+#'
+#' @param optim_options_step7 (optional) List of optimization options specific to step7.
+#' These options override (and complement) `optim_options`.
 #'
 #' @param param_info Information about the parameters to estimate.
 #' A list containing:
@@ -40,36 +56,39 @@
 #'
 #' The names correspond to the parameter names.
 #' Default values are used when a parameter is not estimated in the current step
-#' (e.g. major or candidate parameter estimated in a subsequent step, candidate parameter
-#' that was not selected, etc.), and also as one of the initial values when the parameter is estimated.
+#' and also as one of the initial values when the parameter is estimated.
+#'
+#' `param_info` can be created directly in R or loaded from an Excel file using \code{\link{load_protocol_agmip}}.
 #'
 #' @param forced_param_values (optional)  Named vector or list specifying parameter values to force in
-#' the model.
-#' It may also contain arithmetic expressions to define equality constraints between parameters
-#' (see the Details section of `estim_param`). In this case, the values to force are computed before
-#' each call to the model wrapper and passed through its `param_values` argument during the estimation procedure.
-#' This argument should not include values for parameters that are estimated (i.e. parameters
-#' defined in `param_info`).
+#' the model (including arithmetic expressions to define equality constraints between parameters).
+#' See \code{\link{estim_param}} for details.
+#'
+#' `forced_param_values` can be created directly in R or loaded from an Excel file using \code{\link{load_protocol_agmip}}.
 #'
 #' @param transform_obs (optional) User-defined function to transform observations before each criterion
-#' evaluation. See the Details section of `estim_param` for more information.
+#' evaluation. See \code{\link{estim_param}}.
 #'
 #' @param transform_sim (optional) User-defined function to transform simulations before each criterion
-#' evaluation. See the Details section of `estim_param` for more information.
+#' evaluation. See \code{\link{estim_param}}.
 #'
-#' @param satisfy_par_const (optional) User-defined function to enforce inequality constraints on estimated
-#' parameters. See the Details section of `estim_param` for more information.
+#' @param satisfy_par_const (optional) User-defined function to enforce inequality constraints on parameters.
+#' See \code{\link{estim_param}}.
 #'
-#' @param info_crit_func Function or list of functions used to compute information criteria
-#' (optional; see the default value in the function signature and
-#' https://sticsrpacks.github.io/CroptimizR/reference/information_criteria.html
-#' for the list of available criteria).
+#' @param info_crit_func Function or list of functions used to compute information criteria.
+#' If parameter selection is activated, the first criterion is used (but all are computed, for information).
 #'
-#' The values of all provided information criteria are stored in the returned object.
-#' If parameter selection is activated (i.e. if `candidate_param` is provided in at least one
-#' step of step6), the first information criterion in the list is used for parameter selection.
+#' @param step A list defining the sub-steps for step 6 of the AgMIP Calibration protocol.
+#' It can be created directly in R or loaded from an Excel file using \code{\link{load_protocol_agmip}}.
 #'
-#' @param step A list defining the sub-steps for step 6 of the AgMIP Calibration protocol (see Details section).
+#' Each sub-step must define at least:
+#' - `obs_var`: names of observed variables used,
+#' - `major_param` and/or `candidate_param`. At least one of `major_param` or `candidate_param` must be provided.
+#'
+#' Note that `obs_list` and `transform_obs` **cannot** be defined inside sub-steps
+#' and must be provided at the top level.
+#'
+#' See Details section for more information.
 #'
 #' @param info_level (optional) Integer controlling how much information is stored during each call
 #' to \code{estim_param()} inside the AgMIP calibration protocol.
@@ -101,9 +120,9 @@
 #' The AgMIP Phase IV Calibration protocol is thoroughly described in Wallach et al. (2024)
 #' and Wallach et al. (2025).
 #'
-#' This protocol consists of two successive steps, called step6 and step7.
+#' This protocol consists of two successive steps, called **step6** and **step7**.
 #'
-#' Step6 consists in a sequential parameter estimation by groups of variables.
+#' **Step6** consists in a sequential parameter estimation by groups of variables.
 #' For each group of variables, parameters are estimated by ordinary least squares (OLS)
 #' using a multi-start Nelder–Mead optimization (i.e. several minimizations starting from
 #' different initial values).
@@ -124,7 +143,7 @@
 #' multi-start repetitions are performed each time a new candidate parameter is added to
 #' the set of parameters to estimate.
 #'
-#' Step7 consists in re-estimating all parameters selected during step6 using all available
+#' **Step7** consists in re-estimating all parameters selected during step6 using all available
 #' observations, by weighted least squares (WLS). The weights are set to the estimated standard
 #' deviation of the model error for each variable, as obtained at the end of step6.
 #'
@@ -254,6 +273,18 @@
 #' - `step6`: a list with detailed results for step6,
 #' - `step7`: a list with detailed results for step7.
 #'
+#' ## Optimization configuration
+#'
+#' The optimization method and options can be defined at three levels:
+#'
+#' - Global: `optim_method`, `optim_options`
+#' - Step6: `optim_method_step6`, `optim_options_step6`
+#' - Step7: `optim_method_step7`, `optim_options_step7`
+#'
+#' Step-specific arguments override global ones when provided.
+#' Optimization options are merged: step-specific values overwrite global ones,
+#' while unspecified options are inherited.
+#'
 #' @seealso
 #'   * \code{\link{load_protocol_agmip}} to extract `step`, `param_info` and `forced_param_values` from a structured Excel file,
 #'   * \code{\link{get_agmip_protocol_template}} and \code{\link{get_agmip_protocol_example}} to obtain
@@ -264,21 +295,30 @@
 #'
 #' @importFrom CroPlotR save_plot_pdf
 #' @importFrom dplyr bind_rows mutate
+#' @importFrom utils modifyList
 #'
 #' @export
 #'
-run_protocol_agmip <- function(obs_list, model_function, model_options, optim_options = list(),
-                               param_info = NULL, forced_param_values = NULL, transform_var = NULL,
-                               transform_obs = NULL, transform_sim = NULL, satisfy_par_const = NULL,
-                               var_to_simulate = NULL,
-                               info_crit_func = list(
-                                 CroptimizR::AICc,
-                                 CroptimizR::AIC,
-                                 CroptimizR::BIC
-                               ),
-                               step, out_dir = getwd(), info_level = 0) {
+run_protocol_agmip <- function(
+  obs_list, model_function, model_options,
+  optim_method = "nloptr.simplex",
+  optim_options = list(xtol_rel = 1e-3, maxeval = 50000),
+  optim_method_step6 = NULL,
+  optim_options_step6 = NULL,
+  optim_method_step7 = NULL,
+  optim_options_step7 = NULL,
+  param_info = NULL, forced_param_values = NULL,
+  transform_var = NULL, transform_obs = NULL,
+  transform_sim = NULL, satisfy_par_const = NULL,
+  var_to_simulate = NULL,
+  info_crit_func = list(
+    CroptimizR::AICc,
+    CroptimizR::AIC,
+    CroptimizR::BIC
+  ),
+  step, out_dir = getwd(), info_level = 0
+) {
   res <- NULL
-  optim_options_given <- optim_options
   if (!dir.exists(out_dir)) dir.create(out_dir, recursive = TRUE)
 
   on.exit({
@@ -376,17 +416,19 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
 
   # Run step6
   cat("\n", make_display_prefix(1, "title"), "Step6\n", sep = "")
-  # Force nb_rep to c(10, 5) for step6 as defined in the AgMIP Phase IV protocol
-  if (is.null(optim_options_given$nb_rep)) {
-    optim_options$nb_rep <- c(10, 5)
-  }
-  # Force xtol_rel to 1e-3 for step6
-  if (is.null(optim_options_given$xtol_rel)) {
-    optim_options$xtol_rel <- 1e-3
-  }
 
-  # Define initial values for step6 if not done by the user:
-  # default values for 1st rep., the values for the other rep. and randomly sampled in estim_param
+  ## Define optim method and options for step6,
+  ## using the specific settings for step6 if provided by the user, and the general settings otherwise
+  method_step6 <- optim_method_step6 %||% optim_method
+  default_step6 <- list(nb_rep = c(10, 5))
+  optim_options <- optim_options %||% list()
+  opts_step6 <- modifyList(
+    modifyList(default_step6, optim_options),
+    optim_options_step6 %||% list()
+  )
+
+  ## Define initial values for step6 if not done by the user:
+  ## default values for 1st rep., the values for the other rep. and randomly sampled in estim_param
   if (is.null(get_init_values(param_info))) {
     default <- get_params_default(param_info)
     if (!is.null(default)) {
@@ -402,7 +444,8 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
     model_function = model_function,
     model_options = model_options,
     crit_function = crit_ols,
-    optim_options = optim_options,
+    optim_method = method_step6,
+    optim_options = opts_step6,
     param_info = param_info,
     forced_param_values = forced_param_values,
     transform_var = transform_var,
@@ -419,11 +462,10 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
     res_step6[[names(steps)]] <- res_step6
   }
 
-  # Run the model with the parameters values estimated at each sub-step of step 6
+  ## Run the model with the parameters values estimated at each sub-step of step 6
   stats_step6 <- list()
   p_step6 <- list()
   for (istep in seq(steps)) {
-    ## Run the model for the current step
     step_name <- names(steps)[istep]
     tmp <- compute_simulations(
       model_function = model_function,
@@ -471,16 +513,18 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
   cat("\n\n", make_display_prefix(1, "title"), "End of Step6\n", sep = "")
 
 
-  # Compute weights for step7
+  # Prepare step7
 
-  ## Compute SSE and number of observations for each observed variable
+  ## Compute weights for step7
+
+  ### Compute SSE and number of observations for each observed variable
   stats_tmp <- summary(sim$sim_list,
     obs = obs_transformed, stats = c("n_obs", "SS_res")
   )
 
-  ## Sum SSE and number of observations per group of variables
-  ## (weight of variables belonging to the same group must be the same)
-  ### Compute the list of variables used at the same step for each variable
+  ### Sum SSE and number of observations per group of variables
+  ### (weight of variables belonging to the same group must be the same)
+  #### Compute the list of variables used at the same step for each variable
   obs_var_names <- get_obs_var(obs_transformed)
   step_var_map <- lapply(obs_var_names, function(var) {
     unique(
@@ -497,7 +541,7 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
   names(SSE) <- obs_var_names
   names(n_obs) <- obs_var_names
 
-  ## Compute number of estimated parameters per variable
+  #### Compute number of estimated parameters per variable
   p <- vapply(obs_var_names, function(var) {
     sum(sapply(res_step6[names(steps)], function(x) {
       if (var %in% x$obs_var) {
@@ -509,7 +553,7 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
   }, numeric(1))
   names(p) <- obs_var_names
 
-  ## Define weight function
+  #### Define weight function
   weights <- vapply(obs_var_names, function(var) {
     if (n_obs[[var]] == p[[var]]) {
       warning(paste(
@@ -527,15 +571,15 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
     return(weights[[var]])
   }
 
-  # Define parameters to estimate and to set for step7
+  ## Define parameters to estimate and to set for step7
   param_info_step7 <- filter_param_info(param_info, names(res_step6$final_values))
   forced_param_values_step7 <- NULL
   if (length(res_step6$forced_param_values) > 0) {
     forced_param_values_step7 <- res_step6$forced_param_values
   }
 
-  # Define initial values for step7: values estimated at step6 for 1st rep.,
-  # default values for 2nd rep., the values for the other rep. and randomly sampled
+  ## Define initial values for step7: values estimated at step6 for 1st rep.,
+  ## default values for 2nd rep., the values for the other rep. and randomly sampled
   param_info_step7 <- set_init_values(
     param_info_step7,
     dplyr::bind_rows(
@@ -544,14 +588,15 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
     )
   )
 
-  # Force nb_rep to 20 for step7 as defined in the AgMIP Phase IV protocol
-  if (is.null(optim_options_given$nb_rep)) {
-    optim_options$nb_rep <- 20
-  }
-  # Force xtol_rel to 1e-3 for step7
-  if (is.null(optim_options_given$xtol_rel)) {
-    optim_options$xtol_rel <- 1e-3
-  }
+  ## Define optim method and options for step7,
+  ## using the specific settings for step7 if provided by the user, and the general settings otherwise
+  method_step7 <- optim_method_step7 %||% optim_method
+  optim_options <- optim_options %||% list()
+  default_step7 <- list(nb_rep = 20)
+  opts_step7 <- modifyList(
+    modifyList(default_step7, optim_options),
+    optim_options_step7 %||% list()
+  )
 
   # Run step7
   cat("\n", make_display_prefix(1, "title"), "Step7\n", sep = "")
@@ -560,7 +605,8 @@ run_protocol_agmip <- function(obs_list, model_function, model_options, optim_op
     model_function = model_function,
     model_options = model_options,
     crit_function = crit_wls,
-    optim_options = optim_options,
+    optim_method = method_step7,
+    optim_options = opts_step7,
     param_info = param_info_step7,
     forced_param_values = forced_param_values_step7,
     transform_var = transform_var,

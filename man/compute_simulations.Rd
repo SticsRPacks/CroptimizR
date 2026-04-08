@@ -41,11 +41,11 @@ A \verb{named list} (names = situations names) of data.frame containing
 one column named Date with the dates (Date or POSIXct format) of the different observations
 and one column per observed variables with either the measured values or NA, if
 the variable is not observed at the given date.
-See details section for more information on the list of observations actually
+See Details section for more information on the list of observations actually
 used during the parameter estimation procedure.}
 
 \item{transform_sim}{User function for transforming simulations before each criterion
-evaluation  (optional), see details section for more information.}
+evaluation  (optional), see Details section for more information.}
 
 \item{transform_var}{Named vector of functions to apply both on simulated and
 observed variables. \code{transform_var=c(var1=log, var2=sqrt)} will for example
