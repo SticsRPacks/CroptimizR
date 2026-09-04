@@ -8,7 +8,13 @@
 #'
 #' @return Prints results of frequentist methods
 #'
-summary_frequentist <- function(optim_options, param_info, optim_results, out_dir, indent = 0) {
+summary_frequentist <- function(
+  optim_options,
+  param_info,
+  optim_results,
+  out_dir,
+  indent = 0
+) {
   param_names <- get_params_names(param_info)
   nb_params <- length(param_names)
   est_values <- optim_results$est_values
@@ -22,10 +28,14 @@ summary_frequentist <- function(optim_options, param_info, optim_results, out_di
     cat(
       "\n",
       make_display_prefix(indent, "info"),
-      "Estimated value for ", param_names[ipar], ": ",
-      format(est_values[ind_min_crit, ipar],
+      "Estimated value for ",
+      param_names[ipar],
+      ": ",
+      format(
+        est_values[ind_min_crit, ipar],
         scientific = FALSE,
-        digits = 2, nsmall = 0
+        digits = 2,
+        nsmall = 0
       ),
       sep = ""
     )
@@ -40,7 +50,8 @@ summary_frequentist <- function(optim_options, param_info, optim_results, out_di
   cat(
     "\n",
     make_display_prefix(indent, "info"),
-    "Complementary graphs and results can be found in ", out_dir,
+    "Complementary graphs and results can be found in ",
+    out_dir,
     "\n",
     sep = ""
   )
@@ -59,8 +70,12 @@ summary_frequentist <- function(optim_options, param_info, optim_results, out_di
 #'
 #' @return Updated results of frequentist method
 #'
-post_treat_frequentist <- function(optim_options, param_info, optim_results,
-                                   crit_options) {
+post_treat_frequentist <- function(
+  optim_options,
+  param_info,
+  optim_results,
+  crit_options
+) {
   param_names <- get_params_names(param_info)
   nb_params <- length(param_names)
   info_crit_list <- crit_options$info_crit_list
@@ -74,20 +89,29 @@ post_treat_frequentist <- function(optim_options, param_info, optim_results,
   if (info_final$crit != optim_results$min_crit_value) {
     stop(paste(
       "Internal error: incoherent computation of minimum criterion value. \nValue obtained in method wrapper:",
-      optim_results$min_crit_value, "\nValue obtained afterwards:",
+      optim_results$min_crit_value,
+      "\nValue obtained afterwards:",
       info_final$crit
     ))
   }
   optim_results$forced_param_values <- info_final$forced_param_values
 
-  info_crit_values <- vapply(info_crit_list, function(f) {
-    f(
-      obs_list = info_final$obs_intersect,
-      crit = info_final$crit,
-      param_nb = nb_params
-    )
-  }, FUN.VALUE = numeric(1))
-  names(info_crit_values) <- vapply(info_crit_list, function(f) f()$name, character(1))
+  info_crit_values <- vapply(
+    info_crit_list,
+    function(f) {
+      f(
+        obs_list = info_final$obs_intersect,
+        crit = info_final$crit,
+        param_nb = nb_params
+      )
+    },
+    FUN.VALUE = numeric(1)
+  )
+  names(info_crit_values) <- vapply(
+    info_crit_list,
+    function(f) f()$name,
+    character(1)
+  )
   optim_results$info_crit_values <- info_crit_values
 
   return(optim_results)
@@ -104,7 +128,12 @@ post_treat_frequentist <- function(optim_options, param_info, optim_results,
 #'
 #' @keywords internal
 #'
-plot_frequentist <- function(optim_options, param_info, optim_results, out_dir) {
+plot_frequentist <- function(
+  optim_options,
+  param_info,
+  optim_results,
+  out_dir
+) {
   bounds <- get_params_bounds(param_info)
   init_values <- optim_results$init_values
   est_values <- optim_results$est_values
@@ -117,19 +146,22 @@ plot_frequentist <- function(optim_options, param_info, optim_results, out_dir) 
     {
       grDevices::pdf(
         file = file.path(out_dir, "EstimatedVSinit.pdf"),
-        width = 9, height = 9
+        width = 9,
+        height = 9
       )
     },
     error = function(cond) {
       filename <- paste0("EstimatedVSinit_new.pdf")
       warning(
-        "Error trying to create ", out_dir,
+        "Error trying to create ",
+        out_dir,
         "/EstimatedVSinit.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
         filename
       )
       grDevices::pdf(
         file = file.path(out_dir, filename),
-        width = 9, height = 9
+        width = 9,
+        height = 9
       )
     }
   )
@@ -137,8 +169,11 @@ plot_frequentist <- function(optim_options, param_info, optim_results, out_dir) 
   tryCatch(
     {
       p <- plot_estimVSinit(
-        init_values, est_values,
-        crit_values, bounds$lb, bounds$ub
+        init_values,
+        est_values,
+        crit_values,
+        bounds$lb,
+        bounds$ub
       )
     },
     error = function(cond) {
@@ -150,8 +185,12 @@ plot_frequentist <- function(optim_options, param_info, optim_results, out_dir) 
         "\n Trying without the bubbles ..."
       )
 
-      p <- plot_estimVSinit(init_values, est_values, crit_values,
-        bounds$lb, bounds$ub,
+      p <- plot_estimVSinit(
+        init_values,
+        est_values,
+        crit_values,
+        bounds$lb,
+        bounds$ub,
         bubble = FALSE
       )
     }
@@ -170,19 +209,22 @@ plot_frequentist <- function(optim_options, param_info, optim_results, out_dir) 
       {
         grDevices::pdf(
           file = file.path(out_dir, "ValuesVSit.pdf"),
-          width = 9, height = 9
+          width = 9,
+          height = 9
         )
       },
       error = function(cond) {
         filename <- paste0("ValuesVSit_new.pdf")
         warning(
-          "Error trying to create ", out_dir,
+          "Error trying to create ",
+          out_dir,
           "/ValuesVSit.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
           filename
         )
         grDevices::pdf(
           file = file.path(out_dir, filename),
-          width = 9, height = 9
+          width = 9,
+          height = 9
         )
       }
     )
@@ -202,19 +244,22 @@ plot_frequentist <- function(optim_options, param_info, optim_results, out_dir) 
       {
         grDevices::pdf(
           file = file.path(out_dir, "ValuesVSit_2D.pdf"),
-          width = 9, height = 9
+          width = 9,
+          height = 9
         )
       },
       error = function(cond) {
         filename <- paste0("ValuesVSit_2D_new.pdf")
         warning(
-          "Error trying to create ", out_dir,
+          "Error trying to create ",
+          out_dir,
           "/ValuesVSit_2D.pdf file. It is maybe opened in a pdf viewer and locked. It will be created under the name ",
           filename
         )
         grDevices::pdf(
           file = file.path(out_dir, filename),
-          width = 9, height = 9
+          width = 9,
+          height = 9
         )
       }
     )
@@ -251,13 +296,19 @@ plot_frequentist <- function(optim_options, param_info, optim_results, out_dir) 
 #' in red (if bubble is false) while the other ones are written in black.
 #'
 #' @importFrom ggplot2 ggplot theme element_text geom_point geom_text
-#' scale_size_binned scale_size labs xlim ylim
+#' @importFrom ggplot2  scale_size_binned scale_size labs xlim ylim
 #' @importFrom dplyr filter
 #'
 #' @export
 #'
-plot_estimVSinit <- function(init_values, est_values, crit, lb, ub,
-                             bubble = TRUE) {
+plot_estimVSinit <- function(
+  init_values,
+  est_values,
+  crit,
+  lb,
+  ub,
+  bubble = TRUE
+) {
   param_names <- colnames(init_values)
   nb_rep <- nrow(init_values)
   ind_min_crit <- which.min(crit)
@@ -290,7 +341,8 @@ plot_estimVSinit <- function(init_values, est_values, crit, lb, ub,
     p[[param_name]] <- ggplot(df, tmp_aes) +
       labs(
         title = paste0(
-          "Estimated vs Initial values of ", param_name,
+          "Estimated vs Initial values of ",
+          param_name,
           " \n for the different repetitions"
         ),
         y = paste("Estimated value for", param_name),
@@ -299,13 +351,15 @@ plot_estimVSinit <- function(init_values, est_values, crit, lb, ub,
       theme(plot.title = element_text(hjust = 0.5))
 
     if (bubble) {
-      p[[param_name]] <- p[[param_name]] + geom_point(alpha = 0.5, color = "red")
+      p[[param_name]] <- p[[param_name]] +
+        geom_point(alpha = 0.5, color = "red")
     }
 
     p[[param_name]] <- p[[param_name]] +
       geom_text(
         label = rownames(df),
-        nudge_x = 0, nudge_y = 0,
+        nudge_x = 0,
+        nudge_y = 0,
         check_overlap = T,
         show.legend = F,
         size = 4
@@ -313,20 +367,23 @@ plot_estimVSinit <- function(init_values, est_values, crit, lb, ub,
       geom_text(
         data = df[ind_min_crit, ],
         label = rownames(df[ind_min_crit, ]),
-        nudge_x = 0, nudge_y = 0,
+        nudge_x = 0,
+        nudge_y = 0,
         check_overlap = T,
         show.legend = F,
-        size = 4, color = color_best_rep
+        size = 4,
+        color = color_best_rep
       ) +
       xlim(minvalue[param_name], maxvalue[param_name]) +
       ylim(minvalue[param_name], maxvalue[param_name])
 
     if (bubble) {
       if (length(unique(crit)) > 1) {
-        p[[param_name]] <- p[[param_name]] + scale_size_binned(
-          range = c(2, 20),
-          name = "Final Value of \n minimized criteria"
-        )
+        p[[param_name]] <- p[[param_name]] +
+          scale_size_binned(
+            range = c(2, 20),
+            name = "Final Value of \n minimized criteria"
+          )
       } else {
         p[[param_name]] <- p[[param_name]] +
           scale_size(name = "Final Value of \n minimized criteria")
@@ -367,14 +424,18 @@ plot_estimVSinit <- function(init_values, est_values, crit, lb, ub,
 #' increases.
 #'
 #' @importFrom ggplot2 ggplot aes_string theme element_text geom_point
-#' scale_color_gradient2 geom_line geom_label aes labs scale_y_log10
+#' @importFrom ggplot2 scale_color_gradient2 geom_line geom_label aes labs scale_y_log10
 #' @importFrom dplyr select filter %>%
 #'
 #' @export
 #'
-plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
-                            crit_log = TRUE,
-                            rep_label = c("begin_end", "begin", "end")) {
+plot_valuesVSit <- function(
+  df,
+  param_info,
+  iter_or_eval = c("iter", "eval"),
+  crit_log = TRUE,
+  rep_label = c("begin_end", "begin", "end")
+) {
   param_names <- get_params_names(param_info)
   bounds <- get_params_bounds(param_info)
 
@@ -389,14 +450,22 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
     if (all(df$crit > 0)) {
       trans <- "log10"
       mid <- (max(log10(df$crit)) -
-        min(log10(df$crit))) / 2 + min(log10(df$crit))
+        min(log10(df$crit))) /
+        2 +
+        min(log10(df$crit))
     } else {
-      warning("The criterion takes negative values, log transformation will not be done.")
+      warning(
+        "The criterion takes negative values, log transformation will not be done."
+      )
       crit_log <- FALSE
     }
   }
 
-  tmp <- rbind(bounds$lb, bounds$ub, dplyr::select(df, dplyr::all_of(param_names)))
+  tmp <- rbind(
+    bounds$lb,
+    bounds$ub,
+    dplyr::select(df, dplyr::all_of(param_names))
+  )
   tmp[tmp == Inf | tmp == -Inf] <- NA
   minvalue <- apply(tmp, 2, min, na.rm = TRUE)
   maxvalue <- apply(tmp, 2, max, na.rm = TRUE)
@@ -406,15 +475,20 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
   p <- list()
 
   for (param_name in param_names) {
-    p[[param_name]] <- ggplot(df, aes(
-      x = !!rlang::sym(iter_or_eval[1]),
-      y = !!rlang::sym(param_name),
-      color = .data$crit
-    )) +
+    p[[param_name]] <- ggplot(
+      df,
+      aes(
+        x = !!rlang::sym(iter_or_eval[1]),
+        y = !!rlang::sym(param_name),
+        color = .data$crit
+      )
+    ) +
       labs(
         title = paste0(
-          "Evolution of ", param_name,
-          " \n in function of the minimization ", lab
+          "Evolution of ",
+          param_name,
+          " \n in function of the minimization ",
+          lab
         ),
         y = param_name,
         x = paste(lab, "number")
@@ -422,8 +496,12 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
       theme(plot.title = element_text(hjust = 0.5)) +
       geom_point(alpha = 0.5) +
       scale_color_gradient2(
-        midpoint = mid, low = "blue", mid = "yellow",
-        high = "red", space = "Lab", trans = trans
+        midpoint = mid,
+        low = "blue",
+        mid = "yellow",
+        high = "red",
+        space = "Lab",
+        trans = trans
       )
 
     for (irep in unique(df$rep)) {
@@ -431,15 +509,19 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
         geom_line(data = dplyr::filter(df, .data$rep == irep))
       if (rep_label[1] %in% c("begin_end", "begin")) {
         p[[param_name]] <- p[[param_name]] +
-          geom_label(aes(label = .data$rep),
-            data = dplyr::filter(df, .data$rep == irep) %>% dplyr::filter(.data$eval == min(.data$eval)),
+          geom_label(
+            aes(label = .data$rep),
+            data = dplyr::filter(df, .data$rep == irep) %>%
+              dplyr::filter(.data$eval == min(.data$eval)),
             size = 3
           )
       }
       if (rep_label[1] %in% c("begin_end", "end")) {
         p[[param_name]] <- p[[param_name]] +
-          geom_label(aes(label = .data$rep),
-            data = dplyr::filter(df, .data$rep == irep) %>% dplyr::filter(.data$eval == max(.data$eval)),
+          geom_label(
+            aes(label = .data$rep),
+            data = dplyr::filter(df, .data$rep == irep) %>%
+              dplyr::filter(.data$eval == max(.data$eval)),
             size = 3
           )
       }
@@ -470,12 +552,16 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
   for (irep in unique(df$rep)) {
     p[["criterion"]] <- p[["criterion"]] +
       geom_line(data = dplyr::filter(df, .data$rep == irep)) +
-      geom_label(aes(label = .data$rep),
-        data = dplyr::filter(df, .data$rep == irep) %>% dplyr::filter(.data$eval == min(.data$eval)),
+      geom_label(
+        aes(label = .data$rep),
+        data = dplyr::filter(df, .data$rep == irep) %>%
+          dplyr::filter(.data$eval == min(.data$eval)),
         size = 3
       ) +
-      geom_label(aes(label = .data$rep),
-        data = dplyr::filter(df, .data$rep == irep) %>% dplyr::filter(.data$eval == max(.data$eval))
+      geom_label(
+        aes(label = .data$rep),
+        data = dplyr::filter(df, .data$rep == irep) %>%
+          dplyr::filter(.data$eval == max(.data$eval))
       )
   }
 
@@ -519,15 +605,20 @@ plot_valuesVSit <- function(df, param_info, iter_or_eval = c("iter", "eval"),
 #' increases.
 #'
 #' @importFrom ggplot2 ggplot aes_string theme element_text geom_point labs
-#' xlim ylim geom_path scale_y_log10
+#' @importFrom ggplot2 xlim ylim geom_path scale_y_log10
 #' @importFrom dplyr select filter %>% all_of
 #'
 #' @export
 #'
-plot_valuesVSit_2D <- function(df, param_info, iter_or_eval = c("eval", "iter"),
-                               fill = c("crit", "rep"), crit_log = TRUE,
-                               lines = FALSE,
-                               rep_label = c("begin_end", "begin", "end")) {
+plot_valuesVSit_2D <- function(
+  df,
+  param_info,
+  iter_or_eval = c("eval", "iter"),
+  fill = c("crit", "rep"),
+  crit_log = TRUE,
+  lines = FALSE,
+  rep_label = c("begin_end", "begin", "end")
+) {
   param_names <- get_params_names(param_info)
   if (length(param_names) <= 1) {
     return()
@@ -546,9 +637,13 @@ plot_valuesVSit_2D <- function(df, param_info, iter_or_eval = c("eval", "iter"),
     if (all(df$crit > 0)) {
       trans <- "log10"
       mid <- (max(log10(df$crit)) -
-        min(log10(df$crit))) / 2 + min(log10(df$crit))
+        min(log10(df$crit))) /
+        2 +
+        min(log10(df$crit))
     } else {
-      warning("The criterion takes negative values, log transformation will not be done.")
+      warning(
+        "The criterion takes negative values, log transformation will not be done."
+      )
       crit_log <- FALSE
     }
   }
@@ -576,8 +671,11 @@ plot_valuesVSit_2D <- function(df, param_info, iter_or_eval = c("eval", "iter"),
     ) +
       labs(
         title = paste0(
-          "Evolution of ", df_pairs[1, ipair], " and ",
-          df_pairs[2, ipair], " \n in function of the minimization ",
+          "Evolution of ",
+          df_pairs[1, ipair],
+          " and ",
+          df_pairs[2, ipair],
+          " \n in function of the minimization ",
           lab
         ),
         y = paste("Estimated value for", df_pairs[2, ipair]),
@@ -589,8 +687,12 @@ plot_valuesVSit_2D <- function(df, param_info, iter_or_eval = c("eval", "iter"),
     if (fill[1] == "crit") {
       p[[ipair]] <- p[[ipair]] +
         scale_color_gradient2(
-          midpoint = mid, low = "blue", mid = "yellow",
-          high = "red", space = "Lab", trans = trans
+          midpoint = mid,
+          low = "blue",
+          mid = "yellow",
+          high = "red",
+          space = "Lab",
+          trans = trans
         )
     }
 
@@ -600,15 +702,19 @@ plot_valuesVSit_2D <- function(df, param_info, iter_or_eval = c("eval", "iter"),
           geom_path(data = filter(df, rep == irep))
         if (rep_label[1] == "begin_end" || rep_label[1] == "begin") {
           p[[ipair]] <- p[[ipair]] +
-            geom_label(aes(label = rep),
-              data = filter(df, rep == irep) %>% filter(eval == min(.data$eval)),
+            geom_label(
+              aes(label = rep),
+              data = filter(df, rep == irep) %>%
+                filter(eval == min(.data$eval)),
               size = 3
             )
         }
         if (rep_label[1] == "begin_end" || rep_label[1] == "end") {
           p[[ipair]] <- p[[ipair]] +
-            geom_label(aes(label = rep),
-              data = filter(df, rep == irep) %>% filter(eval == max(.data$eval)),
+            geom_label(
+              aes(label = rep),
+              data = filter(df, rep == irep) %>%
+                filter(eval == max(.data$eval)),
               size = 3
             )
         }
