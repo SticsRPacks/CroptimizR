@@ -8,13 +8,16 @@
 #' - and one column per observed variable, containing either the measured values or `NA`
 #'   if the variable is not observed at the given date.
 #'
-#' @param optim_method (optional) Name of the optimization method to use globally
-#' (i.e. both in step6 and step7, default: `"nloptr.simplex"`). This method is used for both step6 and step7 unless
-#' overridden by `optim_method_step6` or `optim_method_step7`.
+#' @param optim_method (optional) Name of the optimization method to use. A character string
+#' applies the same method to both step6 and step7. Alternatively, a named list can be used
+#' to specify different methods for the two steps, e.g.
+#' `list(step6 = "nloptr.simplex", step7 = "nloptr.simplex")`.
+#' Default: `"nloptr.simplex"`.
 #'
-#'
-#' @param optim_options (optional) List of options controlling the optimization method,
-#' applied globally to both step6 and step7 unless locally overridden by `optim_options_step6` and `optim_options_step7` arguments.
+#' @param optim_options (optional) List of options controlling the optimization method.
+#' Global options can be specified directly in the list and apply to both step6 and step7.
+#' Step-specific options can be provided in nested `step6` and `step7` lists; these override
+#' the corresponding global options.
 #'
 #' The list may include (for the default `"nloptr.simplex"` method):
 #' - `ranseed`: random seed used to make results reproducible. If `NULL`, results may differ
@@ -28,26 +31,18 @@
 #' These options are specific to the `"nloptr.simplex"` method. If another optimization
 #' method is used, the corresponding method-specific options should be provided instead.
 #'
-#' By default, when using `"nloptr.simplex"`, the AgMIP protocol uses:
+#' By default, the AgMIP protocol uses:
 #' - `nb_rep = c(10, 5)` for step6 (respectively for major-parameter estimation and candidate addition),
 #' - `nb_rep = 20` for step7.
 #'
+#' These defaults can be overridden globally, for example with
+#' `optim_options = list(nb_rep = 1)`, or independently for each step, for example with
+#' `optim_options = list(step6 = list(nb_rep = c(10))`.
+#'
 #' For debugging or testing purposes (i.e. to simply check that the protocol executes correctly
 #' without aiming at meaningful results), the user can use very small values, for example
-#' \code{nb_rep = 1} and \code{maxeval = 2}, in order to obtain a fast "dry run" of the whole protocol.
+#' `nb_rep = 1` and `maxeval = 2`, in order to obtain a fast "dry run" of the whole protocol.
 #' Such settings must of course be removed for any real calibration experiment.
-#'
-#' @param optim_method_step6 (optional) Optimization method specific to step6.
-#' If `NULL`, the value of `optim_method` is used.
-#'
-#' @param optim_options_step6 (optional) List of optimization options specific to step6.
-#' These options override (and complement) `optim_options`.
-#'
-#' @param optim_method_step7 (optional) Optimization method specific to step7.
-#' If `NULL`, the value of `optim_method` is used.
-#'
-#' @param optim_options_step7 (optional) List of optimization options specific to step7.
-#' These options override (and complement) `optim_options`.
 #'
 #' @param param_info Information about the parameters to estimate.
 #' A list containing:
@@ -60,7 +55,7 @@
 #'
 #' `param_info` can be created directly in R or loaded from an Excel file using \code{\link{load_protocol_agmip}}.
 #'
-#' @param forced_param_values (optional)  Named vector or list specifying parameter values to force in
+#' @param forced_param_values (optional) Named vector or list specifying parameter values to force in
 #' the model (including arithmetic expressions to define equality constraints between parameters).
 #' See \code{\link{estim_param}} for details.
 #'
@@ -93,18 +88,18 @@
 #' @param info_level (optional) Integer controlling how much information is stored during each call
 #' to \code{estim_param()} inside the AgMIP calibration protocol.
 #'
-#' This argument is a direct pass-through to the \code{info_level} argument of \code{estim_param()},
+#' This argument is a direct pass-through to the `info_level` argument of \code{estim_param()},
 #' and therefore controls the amount of diagnostic information kept in memory during the optimization steps.
 #'
 #' Because the AgMIP protocol may involve a large number of successive calibrations,
-#' the default value is set to \code{0} in order to limit memory usage and disk storage.
+#' the default value is set to `0` in order to limit memory usage and disk storage.
 #'
 #' However, note that:
 #' \itemize{
-#'   \item Setting \code{info_level = 0} disables the storage of intermediate values of the simplex
+#'   \item Setting `info_level = 0` disables the storage of intermediate values of the simplex
 #'         and therefore prevents the generation of diagnostic plots such as
-#'         \code{ValuesVSIt.pdf} and \code{ValuesVSIt_2D.pdf}.
-#'   \item A value of at least \code{1} is required to enable these diagnostic outputs.
+#'         `ValuesVSIt.pdf` and `ValuesVSIt_2D.pdf`.
+#'   \item A value of at least `1` is required to enable these diagnostic outputs.
 #' }
 #'
 #' Higher values provide increasingly detailed information (simulations, observations, full model outputs)
@@ -123,9 +118,9 @@
 #' This protocol consists of two successive steps, called **step6** and **step7**.
 #'
 #' **Step6** consists in a sequential parameter estimation by groups of variables.
-#' For each group of variables, parameters are estimated by ordinary least squares (OLS)
-#' using a multi-start Nelder–Mead optimization (i.e. several minimizations starting from
-#' different initial values).
+#' For each group of variables, parameters are estimated by ordinary least squares (OLS).
+#' The optimization method is configurable through `optim_method`.
+#' "nloptr.simplex", a multi-start Nelder-Mead simplex optimization (i.e. several minimizations starting from different initial values) is used by default.
 #' Once estimated, parameters are fixed to their estimated values for the subsequent steps.
 #'
 #' For each group of variables, the user defines:
@@ -142,13 +137,14 @@
 #' 10 multi-start repetitions. When candidate parameters are considered, 5 additional
 #' multi-start repetitions are performed each time a new candidate parameter is added to
 #' the set of parameters to estimate.
+#' These values can be changed through `optim_options`.
 #'
 #' **Step7** consists in re-estimating all parameters selected during step6 using all available
 #' observations, by weighted least squares (WLS). The weights are set to the estimated standard
 #' deviation of the model error for each variable, as obtained at the end of step6.
 #'
-#' The WLS minimization is performed using a multi-start Nelder–Mead simplex algorithm with
-#' 20 repetitions by default. The first two repetitions are initialized respectively from:
+#' The WLS minimization uses the optimization method specified by `optim_method` and 20 repetitions
+#' by default when `"nloptr.simplex"` is used. The first two repetitions are initialized respectively from:
 #' (i) the parameter values estimated at the end of step6, and
 #' (ii) the default parameter values.
 #' The remaining repetitions are initialized from parameter values randomly drawn within
@@ -241,6 +237,45 @@
 #' associated with these variables) can still be used in step7, where all parameters selected
 #' during step6 are re-estimated using all observed variables (WLS step).
 #'
+#' ## Optimization configuration
+#'
+#' The optimization method and options are specified through the two arguments `optim_method`
+#' and `optim_options`.
+#'
+#' `optim_method` can either be a single character string, in which case the same method is used
+#' for both step6 and step7, or a named list with `step6` and `step7` elements, in which case
+#' a different method can be specified for each step.
+#'
+#' `optim_options` can contain global options directly in the list and step-specific options
+#' in nested `step6` and `step7` lists. The resulting options are determined independently for
+#' each step according to the following priority:
+#'
+#' 1. step-specific options (`optim_options$step6` or `optim_options$step7`),
+#' 2. global options in `optim_options`,
+#' 3. AgMIP default values for `nb_rep`.
+#'
+#' For example:
+#'
+#' ```r
+#' # Same optimization method and options for both steps
+#' optim_method <- "nloptr.simplex"
+#' optim_options <- list(
+#'   nb_rep = 20,
+#'   maxeval = 500000
+#' )
+#'
+#' # Different methods and/or options for the two steps
+#' optim_method <- list(
+#'   step6 = "nloptr.simplex",
+#'   step7 = "nloptr.lbfgs"
+#' )
+#' optim_options <- list(
+#'   maxeval = 100,
+#'   step6 = list(nb_rep = c(2, 1)),
+#'   step7 = list(nb_rep = 5)
+#' )
+#' ```
+#'
 #' @return
 #' Prints, graphs, and a list containing the results of the AgMIP Phase IV Calibration protocol.
 #' All results are saved in the folder specified by `out_dir`.
@@ -263,27 +298,16 @@
 #'   in the final calibration step 7. This includes in particular:
 #'   \itemize{
 #'     \item candidate parameters that were tested during step6 but not selected,
-#'     \item parameters defined through equality constraints or forced by the user (see input argument `forced_param_values`).
+#'     \item parameters defined through equality constraints or forced by the user (see input argument
+#'       `forced_param_values`).
 #'   }
 #' - `obs_var_list`: a character vector with the names of observed variables used in the protocol,
-#' - `values_per_step`: a data.frame containing the default parameter values (from `param_info$default`, or `NA` if not provided) and the estimated
-#'   values after step6 and step7,
+#' - `values_per_step`: a data.frame containing the default parameter values (from `param_info$default`, or `NA`
+#'   if not provided) and the estimated values after step6 and step7,
 #' - `stats_per_step`: a data.frame containing statistics (MSE, bias², rRMSE, and Efficiency)
 #'   for each variable, before and after each step,
 #' - `step6`: a list with detailed results for step6,
 #' - `step7`: a list with detailed results for step7.
-#'
-#' ## Optimization configuration
-#'
-#' The optimization method and options can be defined at three levels:
-#'
-#' - Global: `optim_method`, `optim_options`
-#' - Step6: `optim_method_step6`, `optim_options_step6`
-#' - Step7: `optim_method_step7`, `optim_options_step7`
-#'
-#' Step-specific arguments override global ones when provided.
-#' Optimization options are merged: step-specific values overwrite global ones,
-#' while unspecified options are inherited.
 #'
 #' @seealso
 #'   * \code{\link{load_protocol_agmip}} to extract `step`, `param_info` and `forced_param_values` from a structured Excel file,
@@ -302,11 +326,7 @@
 run_protocol_agmip <- function(
   obs_list, model_function, model_options,
   optim_method = "nloptr.simplex",
-  optim_options = list(xtol_rel = 1e-3, maxeval = 50000),
-  optim_method_step6 = NULL,
-  optim_options_step6 = NULL,
-  optim_method_step7 = NULL,
-  optim_options_step7 = NULL,
+  optim_options = list(xtol_rel = 1e-3, maxeval = 50000, step6 = list(nb_rep = c(10, 5)), step7 = list(nb_rep = 20)),
   param_info = NULL, forced_param_values = NULL,
   transform_var = NULL, transform_obs = NULL,
   transform_sim = NULL, satisfy_par_const = NULL,
@@ -417,14 +437,53 @@ run_protocol_agmip <- function(
   # Run step6
   cat("\n", make_display_prefix(1, "title"), "Step6\n", sep = "")
 
-  ## Define optim method and options for step6,
-  ## using the specific settings for step6 if provided by the user, and the general settings otherwise
-  method_step6 <- optim_method_step6 %||% optim_method
-  default_step6 <- list(nb_rep = c(10, 5))
-  optim_options <- optim_options %||% list()
+  ## Define optim method and options for step6.
+  ## optim_method can be a single method for both steps or a named list with step-specific methods.
+  if (is.character(optim_method) && length(optim_method) == 1) {
+    method_step6 <- optim_method
+    method_step7 <- optim_method
+  } else if (
+    is.list(optim_method) &&
+      all(c("step6", "step7") %in% names(optim_method)) &&
+      is.character(optim_method$step6) &&
+      length(optim_method$step6) == 1 &&
+      is.character(optim_method$step7) &&
+      length(optim_method$step7) == 1
+  ) {
+    method_step6 <- optim_method$step6
+    method_step7 <- optim_method$step7
+  } else {
+    stop(
+      "`optim_method` must be either a single character string or a named list ",
+      "containing character strings `step6` and `step7`."
+    )
+  }
+
+  ## Define optimization options for each step.
+  ## Global options are combined with step-specific options, with step-specific values taking precedence.
+  if (is.null(optim_options)) {
+    optim_options <- list()
+  }
+  if (!is.list(optim_options)) {
+    stop("`optim_options` must be a list.")
+  }
+
+  global_optim_options <- optim_options[setdiff(names(optim_options), c("step6", "step7"))]
+  step6_optim_options <- optim_options$step6 %||% list()
+  step7_optim_options <- optim_options$step7 %||% list()
+
+  if (!is.list(step6_optim_options)) {
+    stop("`optim_options$step6` must be a list.")
+  }
+  if (!is.list(step7_optim_options)) {
+    stop("`optim_options$step7` must be a list.")
+  }
+
   opts_step6 <- modifyList(
-    modifyList(default_step6, optim_options),
-    optim_options_step6 %||% list()
+    global_optim_options, step6_optim_options
+  )
+  opts_step7 <- modifyList(
+    global_optim_options, step7_optim_options
   )
 
   ## Define initial values for step6 if not done by the user:
@@ -586,16 +645,6 @@ run_protocol_agmip <- function(
       as.data.frame(t(res_step6$final_values)),
       get_params_default(param_info_step7)
     )
-  )
-
-  ## Define optim method and options for step7,
-  ## using the specific settings for step7 if provided by the user, and the general settings otherwise
-  method_step7 <- optim_method_step7 %||% optim_method
-  optim_options <- optim_options %||% list()
-  default_step7 <- list(nb_rep = 20)
-  opts_step7 <- modifyList(
-    modifyList(default_step7, optim_options),
-    optim_options_step7 %||% list()
   )
 
   # Run step7

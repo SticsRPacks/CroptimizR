@@ -9,11 +9,8 @@ run_protocol_agmip(
   model_function,
   model_options,
   optim_method = "nloptr.simplex",
-  optim_options = list(xtol_rel = 0.001, maxeval = 50000),
-  optim_method_step6 = NULL,
-  optim_options_step6 = NULL,
-  optim_method_step7 = NULL,
-  optim_options_step7 = NULL,
+  optim_options = list(xtol_rel = 0.001, maxeval = 50000, step6 = list(nb_rep = c(10,
+    5)), step7 = list(nb_rep = 20)),
   param_info = NULL,
   forced_param_values = NULL,
   transform_var = NULL,
@@ -41,12 +38,16 @@ if the variable is not observed at the given date.
 \item{model_options}{List of options for the Crop Model wrapper (see help of
 the Crop Model wrapper function used).}
 
-\item{optim_method}{(optional) Name of the optimization method to use globally
-(i.e. both in step6 and step7, default: \code{"nloptr.simplex"}). This method is used for both step6 and step7 unless
-overridden by \code{optim_method_step6} or \code{optim_method_step7}.}
+\item{optim_method}{(optional) Name of the optimization method to use. A character string
+applies the same method to both step6 and step7. Alternatively, a named list can be used
+to specify different methods for the two steps, e.g.
+\code{list(step6 = "nloptr.simplex", step7 = "nloptr.simplex")}.
+Default: \code{"nloptr.simplex"}.}
 
-\item{optim_options}{(optional) List of options controlling the optimization method,
-applied globally to both step6 and step7 unless locally overridden by \code{optim_options_step6} and \code{optim_options_step7} arguments.
+\item{optim_options}{(optional) List of options controlling the optimization method.
+Global options can be specified directly in the list and apply to both step6 and step7.
+Step-specific options can be provided in nested \code{step6} and \code{step7} lists; these override
+the corresponding global options.
 
 The list may include (for the default \code{"nloptr.simplex"} method):
 \itemize{
@@ -62,28 +63,20 @@ between runs (default: \code{NULL}).
 These options are specific to the \code{"nloptr.simplex"} method. If another optimization
 method is used, the corresponding method-specific options should be provided instead.
 
-By default, when using \code{"nloptr.simplex"}, the AgMIP protocol uses:
+By default, the AgMIP protocol uses:
 \itemize{
 \item \code{nb_rep = c(10, 5)} for step6 (respectively for major-parameter estimation and candidate addition),
 \item \code{nb_rep = 20} for step7.
 }
 
+These defaults can be overridden globally, for example with
+\code{optim_options = list(nb_rep = 1)}, or independently for each step, for example with
+\verb{optim_options = list(step6 = list(nb_rep = c(10))}.
+
 For debugging or testing purposes (i.e. to simply check that the protocol executes correctly
 without aiming at meaningful results), the user can use very small values, for example
 \code{nb_rep = 1} and \code{maxeval = 2}, in order to obtain a fast "dry run" of the whole protocol.
 Such settings must of course be removed for any real calibration experiment.}
-
-\item{optim_method_step6}{(optional) Optimization method specific to step6.
-If \code{NULL}, the value of \code{optim_method} is used.}
-
-\item{optim_options_step6}{(optional) List of optimization options specific to step6.
-These options override (and complement) \code{optim_options}.}
-
-\item{optim_method_step7}{(optional) Optimization method specific to step7.
-If \code{NULL}, the value of \code{optim_method} is used.}
-
-\item{optim_options_step7}{(optional) List of optimization options specific to step7.
-These options override (and complement) \code{optim_options}.}
 
 \item{param_info}{Information about the parameters to estimate.
 A list containing:
@@ -98,7 +91,7 @@ and also as one of the initial values when the parameter is estimated.
 
 \code{param_info} can be created directly in R or loaded from an Excel file using \code{\link{load_protocol_agmip}}.}
 
-\item{forced_param_values}{(optional)  Named vector or list specifying parameter values to force in
+\item{forced_param_values}{(optional) Named vector or list specifying parameter values to force in
 the model (including arithmetic expressions to define equality constraints between parameters).
 See \code{\link{estim_param}} for details.
 
@@ -192,28 +185,16 @@ This includes all parameters selected during step6 and re-estimated in step7.
 in the final calibration step 7. This includes in particular:
 \itemize{
 \item candidate parameters that were tested during step6 but not selected,
-\item parameters defined through equality constraints or forced by the user (see input argument \code{forced_param_values}).
+\item parameters defined through equality constraints or forced by the user (see input argument
+\code{forced_param_values}).
 }
 \item \code{obs_var_list}: a character vector with the names of observed variables used in the protocol,
-\item \code{values_per_step}: a data.frame containing the default parameter values (from \code{param_info$default}, or \code{NA} if not provided) and the estimated
-values after step6 and step7,
+\item \code{values_per_step}: a data.frame containing the default parameter values (from \code{param_info$default}, or \code{NA}
+if not provided) and the estimated values after step6 and step7,
 \item \code{stats_per_step}: a data.frame containing statistics (MSE, bias², rRMSE, and Efficiency)
 for each variable, before and after each step,
 \item \code{step6}: a list with detailed results for step6,
 \item \code{step7}: a list with detailed results for step7.
-}
-\subsection{Optimization configuration}{
-
-The optimization method and options can be defined at three levels:
-\itemize{
-\item Global: \code{optim_method}, \code{optim_options}
-\item Step6: \code{optim_method_step6}, \code{optim_options_step6}
-\item Step7: \code{optim_method_step7}, \code{optim_options_step7}
-}
-
-Step-specific arguments override global ones when provided.
-Optimization options are merged: step-specific values overwrite global ones,
-while unspecified options are inherited.
 }
 }
 \description{
@@ -228,9 +209,9 @@ and Wallach et al. (2025).
 This protocol consists of two successive steps, called \strong{step6} and \strong{step7}.
 
 \strong{Step6} consists in a sequential parameter estimation by groups of variables.
-For each group of variables, parameters are estimated by ordinary least squares (OLS)
-using a multi-start Nelder–Mead optimization (i.e. several minimizations starting from
-different initial values).
+For each group of variables, parameters are estimated by ordinary least squares (OLS).
+The optimization method is configurable through \code{optim_method}.
+"nloptr.simplex", a multi-start Nelder-Mead simplex optimization (i.e. several minimizations starting from different initial values) is used by default.
 Once estimated, parameters are fixed to their estimated values for the subsequent steps.
 
 For each group of variables, the user defines:
@@ -249,13 +230,14 @@ By default, the estimation of the major parameters for a given step is performed
 10 multi-start repetitions. When candidate parameters are considered, 5 additional
 multi-start repetitions are performed each time a new candidate parameter is added to
 the set of parameters to estimate.
+These values can be changed through \code{optim_options}.
 
 \strong{Step7} consists in re-estimating all parameters selected during step6 using all available
 observations, by weighted least squares (WLS). The weights are set to the estimated standard
 deviation of the model error for each variable, as obtained at the end of step6.
 
-The WLS minimization is performed using a multi-start Nelder–Mead simplex algorithm with
-20 repetitions by default. The first two repetitions are initialized respectively from:
+The WLS minimization uses the optimization method specified by \code{optim_method} and 20 repetitions
+by default when \code{"nloptr.simplex"} is used. The first two repetitions are initialized respectively from:
 (i) the parameter values estimated at the end of step6, and
 (ii) the default parameter values.
 The remaining repetitions are initialized from parameter values randomly drawn within
@@ -353,6 +335,46 @@ Note that in step7, all observations included in \code{obs_list} are used, regar
 Thus, observations for variables not used in step6 (e.g. because no parameter is directly
 associated with these variables) can still be used in step7, where all parameters selected
 during step6 are re-estimated using all observed variables (WLS step).
+}
+
+\subsection{Optimization configuration}{
+
+The optimization method and options are specified through the two arguments \code{optim_method}
+and \code{optim_options}.
+
+\code{optim_method} can either be a single character string, in which case the same method is used
+for both step6 and step7, or a named list with \code{step6} and \code{step7} elements, in which case
+a different method can be specified for each step.
+
+\code{optim_options} can contain global options directly in the list and step-specific options
+in nested \code{step6} and \code{step7} lists. The resulting options are determined independently for
+each step according to the following priority:
+\enumerate{
+\item step-specific options (\code{optim_options$step6} or \code{optim_options$step7}),
+\item global options in \code{optim_options},
+\item AgMIP default values for \code{nb_rep}.
+}
+
+For example:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{# Same optimization method and options for both steps
+optim_method <- "nloptr.simplex"
+optim_options <- list(
+  nb_rep = 20,
+  maxeval = 500000
+)
+
+# Different methods and/or options for the two steps
+optim_method <- list(
+  step6 = "nloptr.simplex",
+  step7 = "nloptr.lbfgs"
+)
+optim_options <- list(
+  maxeval = 100,
+  step6 = list(nb_rep = c(2, 1)),
+  step7 = list(nb_rep = 5)
+)
+}\if{html}{\out{</div>}}
 }
 }
 \seealso{

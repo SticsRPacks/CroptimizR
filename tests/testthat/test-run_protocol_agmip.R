@@ -1116,10 +1116,8 @@ test_that("Test AgMIP protocol stop if obs_list is defined in sub_step", {
 test_that("Test definition of different optimization method options for step6 and step7", {
   optim_options <- list(
     nb_rep = 2, xtol_rel = 1e-2,
-    ranseed = 1234
-  )
-  optim_options_step7 <- list(
-    nb_rep = 1, xtol_rel = 1e-3
+    ranseed = 1234,
+    step7 = list(nb_rep = 1, xtol_rel = 1e-3)
   )
   param_info <- list(
     rB = list(lb = 0, ub = 1, default = 0.1),
@@ -1142,7 +1140,6 @@ test_that("Test definition of different optimization method options for step6 an
     model_function = toymodel_wrapper,
     model_options = model_options,
     optim_options = optim_options,
-    optim_options_step7 = optim_options_step7,
     obs_list = obs_synth,
     out_dir = file.path(tempdir(), "Test11"),
     step = steps,
