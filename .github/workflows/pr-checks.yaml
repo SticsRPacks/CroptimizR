@@ -1,10 +1,12 @@
-# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
-# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+name: pull-request-checks
+run-name: pull-request-checks for ${{ github.head_ref }}
+
 on:
-  push:
+  pull_request:
     branches: [main, master]
 
-name: R-CMD-check
+permissions:
+  contents: read
 
 jobs:
   R-CMD-check:
@@ -16,7 +18,6 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          #- { os: macos-latest, r: "release" }
           - { os: windows-latest, r: "release" }
           - { os: windows-latest, r: "4.2.0" }
           - {
@@ -31,7 +32,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-      - uses: r-hub/actions/setup-r-sysreqs@v1 # Install and setup R system dependencies on macOS.
+
+      - uses: r-hub/actions/setup-r-sysreqs@v1
         with:
           type: full
 
@@ -52,3 +54,27 @@ jobs:
         with:
           upload-snapshots: true
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
+
+  integration-tests-main:
+    name: integration-tests (others main)
+    needs: R-CMD-check
+    uses: SticsRPacks/SticsRTests/.github/workflows/integration-tests.yaml@main
+    with:
+      repo: CroptimizR
+      ref: ${{ github.head_ref }}
+      sha: ${{ github.event.pull_request.head.sha }}
+      dependency_mode: main
+      sticsrtests_ref: main
+    secrets: inherit
+
+  integration-tests-release:
+    name: integration-tests (others release)
+    needs: R-CMD-check
+    uses: SticsRPacks/SticsRTests/.github/workflows/integration-tests.yaml@main
+    with:
+      repo: CroptimizR
+      ref: ${{ github.head_ref }}
+      sha: ${{ github.event.pull_request.head.sha }}
+      dependency_mode: release
+      sticsrtests_ref: main
+    secrets: inherit

@@ -8,6 +8,7 @@ CroptimizR
 [![Project Status: Active – The project has reached a stable, usable
 state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![R build status](https://github.com/SticsRPacks/CroptimizR/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/SticsRPacks/CroptimizR/actions/workflows/check-standard.yaml)
 [![DOI](https://zenodo.org/badge/187874725.svg)](https://zenodo.org/badge/latestdoi/187874725)
 
 The purpose of CroptimizR is to provide functions for estimating crop
