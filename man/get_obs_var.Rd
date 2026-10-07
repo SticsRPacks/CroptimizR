@@ -12,7 +12,7 @@ A \verb{named list} (names = situations names) of data.frame containing
 one column named Date with the dates (Date or POSIXct format) of the different observations
 and one column per observed variables with either the measured values or NA, if
 the variable is not observed at the given date.
-See details section for more information on the list of observations actually
+See Details section for more information on the list of observations actually
 used during the parameter estimation procedure.}
 }
 \value{

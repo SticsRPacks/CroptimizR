@@ -33,7 +33,7 @@ A \verb{named list} (names = situations names) of data.frame containing
 one column named Date with the dates (Date or POSIXct format) of the different observations
 and one column per observed variables with either the measured values or NA, if
 the variable is not observed at the given date.
-See details section for more information on the list of observations actually
+See Details section for more information on the list of observations actually
 used during the parameter estimation procedure.}
 
 \item{model_function}{Crop Model wrapper function to use.}
@@ -85,7 +85,7 @@ for an example),
 }}
 
 \item{forced_param_values}{Named vector or list, must contain the values (or
-arithmetic expression, see details section) for the model parameters to force. The corresponding
+arithmetic expression, see Details section) for the model parameters to force. The corresponding
 values will be transferred to the model wrapper through its param_values argument
 during the estimation procedure.
 Should not include values for estimated parameters (i.e. parameters defined in
@@ -93,7 +93,7 @@ Should not include values for estimated parameters (i.e. parameters defined in
 argument \code{candidate_param}).}
 
 \item{candidate_param}{Names of the parameters, among those defined in the argument param_info,
-that must only be considered as candidate for parameter estimation (see details section).
+that must only be considered as candidate for parameter estimation (see Details section).
 All parameters included in param_info that are not listed in candidate_param will be estimated.}
 
 \item{transform_var}{Named vector of functions to apply both on simulated and
@@ -102,13 +102,13 @@ apply log-transformation on simulated and observed values of variable var1,
 and square-root transformation on values of variable var2.}
 
 \item{transform_obs}{User function for transforming observations before each criterion
-evaluation (optional), see details section for more information.}
+evaluation (optional), see Details section for more information.}
 
 \item{transform_sim}{User function for transforming simulations before each criterion
-evaluation  (optional), see details section for more information.}
+evaluation  (optional), see Details section for more information.}
 
 \item{satisfy_par_const}{User function for including constraints on estimated
-parameters (optional), see details section for more information.}
+parameters (optional), see Details section for more information.}
 
 \item{var_to_simulate}{(optional) List of variables for which the model wrapper must return
 results.
@@ -122,14 +122,14 @@ active only if the model_function used handles this argument.}
 for more details about the list of proposed information criteria.).
 Values of the information criteria will be stored in the returned list.
 In case parameter selection is activated (i.e. if the argument candidate_param
-is defined (see details section)), the first information criterion given will be used.
+is defined (see Details section)), the first information criterion given will be used.
 ONLY AVAILABLE FOR THE MOMENT FOR crit_function==crit_ols.}
 
 \item{weight}{Weights to use in the criterion to optimize. A function that takes in input a vector
 of observed values and the name of the corresponding variable and that must return either a single value
 for the weights for the given variable or a vector of values of length the length of the vector of observed values given in input.}
 
-\item{step}{(optional) List that describes the steps of the parameter estimation procedure (see details section).
+\item{step}{(optional) List that describes the steps of the parameter estimation procedure (see Details section).
 If \code{NULL}, a single default step will be created using the \code{estim_param} arguments}
 
 \item{out_dir}{Path to the directory where the optimization results will be written. (optional, default to \code{getwd()})}
