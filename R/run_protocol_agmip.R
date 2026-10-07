@@ -320,6 +320,7 @@
 #' @importFrom CroPlotR save_plot_pdf
 #' @importFrom dplyr bind_rows mutate
 #' @importFrom utils modifyList
+#' @importFrom rlang %||%
 #'
 #' @export
 #'
