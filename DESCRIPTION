@@ -13,25 +13,30 @@ Authors@R: c(
     person("Michel", "Giner", , "michel.giner@cirad.fr", role = "aut",
            comment = c(ORCID = "0000-0002-9310-2377")),
     person("Drew", "Holzworth", role = "ctb"),
-    person("Henrike", "Mielenz", role = "ctb",  comment = "AgMIP Calibration Protocol design"),
-    person("Taru", "Palosuo", role = "ctb",  comment = "AgMIP Calibration Protocol design"),
+    person("Henrike", "Mielenz", role = "ctb",
+           comment = "AgMIP Calibration Protocol design"),
+    person("Taru", "Palosuo", role = "ctb",
+           comment = "AgMIP Calibration Protocol design"),
     person("Thomas", "Robine", role = "ctb"),
-    person("Sabine", "Seidel", role = "ctb",  comment = "AgMIP Calibration Protocol design"),
-    person("Peter", "Thorburn", role = "ctb",  comment = "AgMIP Calibration Protocol design"),
-    person("Daniel", "Wallach", role = "ctb",  comment = "AgMIP Calibration Protocol design"),
+    person("Sabine", "Seidel", role = "ctb",
+           comment = "AgMIP Calibration Protocol design"),
+    person("Peter", "Thorburn", role = "ctb",
+           comment = "AgMIP Calibration Protocol design"),
+    person("Daniel", "Wallach", role = "ctb",
+           comment = "AgMIP Calibration Protocol design"),
     person("Theo", "Vailhere", role = "ctb"),
     person("Julie", "Constantin", role = "rev"),
     person("Benjamin", "Dumont", role = "rev")
   )
 Description: The purpose of CroptimizR is to provide functions for
     estimating crop model parameters from observations of their simulated
-    variables. This process is often referred to as calibration. For that, it
-    offers a generic framework for linking crop models with up-to-date and
-    ad-hoc algorithms, as well as a choice of goodness-of-fit criteria and
-    additional features adapted to the problem of crop model calibration 
-	  including AgMIP calibration protocol and user-defined sequential multi-step workflow.
-    It facilitates the comparison of different types of methods on
-    different models.
+    variables. This process is often referred to as calibration. For that,
+    it offers a generic framework for linking crop models with up-to-date
+    and ad-hoc algorithms, as well as a choice of goodness-of-fit criteria
+    and additional features adapted to the problem of crop model
+    calibration including AgMIP calibration protocol and user-defined
+    sequential multi-step workflow.  It facilitates the comparison of
+    different types of methods on different models.
 License: file LICENSE
 URL: https://github.com/SticsRPacks/CroptimizR,
     https://doi.org/10.5281/zenodo.4066451
@@ -50,7 +55,7 @@ Imports:
     methods,
     nloptr,
     purrr,
-	readxl,
+    readxl,
     rlang,
     tibble,
     tictoc,
@@ -59,10 +64,10 @@ Suggests:
     ApsimOnR,
     covr,
     devtools,
-	doParallel,
+    doParallel,
     gridExtra,
     knitr,
-	openxlsx,
+    openxlsx,
     rmarkdown,
     spelling,
     SticsOnR,
@@ -76,8 +81,8 @@ Remotes:
     github::SticsRPacks/CroPlotR@*release,
     github::SticsRPacks/SticsOnR@*release
 ByteCompile: true
+Config/roxygen2/version: 8.0.0
 Encoding: UTF-8
 Language: en-US
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
