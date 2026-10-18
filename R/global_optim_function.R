@@ -334,8 +334,6 @@ plot_valuesVSit_go <- function(df, param_info, iter_or_eval = c("iter", "eval"),
 #' estimated parameter), criterion (crit column), repetition number (rep),
 #' iteration number (iter) and evaluation number (eval)
 #'  (similar to params_and_crit).
-#' See Details section for comments about the difference between evaluations
-#' and iterations.
 #' @param iter_or_eval "iter" for plotting the values for each iteration,
 #' "eval" for plotting the values for each evaluation
 #' @param fill If "crit", colours the points and lines in function of the

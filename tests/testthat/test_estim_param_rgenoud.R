@@ -151,17 +151,18 @@ test_that("estim_param 1 step OLS criterion", {
 
   optim_options <- list(
     ranseed = 1234,
-    pop.size = 30,
-    max.generations = 20,
-    wait.generations = 30,
+    pop.size = 50,
+    max.generations = 70,
+    wait.generations = 10,
     BFGS = TRUE,
-    optim.method = "Nelder-Mead",
     boundary.enforcement = 1,
-    gradient.check = FALSE,
-    control = list(maxit = 1, reltol = 1e-06),
+    optim.method = "BFGS",
+    gradient.check = TRUE,
+    control = list(),
     solution.tolerance = 1e-3,
-    hard.generation.limit = FALSE,
+    hard.generation.limit = TRUE,
     print.level = 3,
+    MemoryMatrix = FALSE,
     P9 = 0
   )
 

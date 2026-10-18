@@ -24,40 +24,37 @@ optim_switch <- function(...) {
   flag_error <- FALSE
   if (nargs() > 2) {
     on.exit({
-      ####
       if (!is.null(crit_options)) {
         res$forced_param_values <- crit_options$forced_param_values
-      }
-      #####
+        }
       if (!is.null(res$final_values)) {
         res$forced_param_values <- compute_eq_const(
           res$forced_param_values,
           res$final_values
         )
-      }
-
+        }
       if (exists(".croptEnv") && !is.null(arguments$crit_options$info_level)) {
         # Save results even in case parameter estimation crash
         res$obs_var_list <- .croptEnv$obs_var_list
         if (exists("obs_var_list", where = .croptEnv)) {
           rm("obs_var_list", envir = .croptEnv)
-        }
+          }
         res$obs_situation_list <- .croptEnv$obs_situation_list
         if (exists("obs_situation_list", where = .croptEnv)) {
           rm("obs_situation_list", envir = .croptEnv)
-        }
+          }
         if (arguments$crit_options$info_level >= 1) {
           res$params_and_crit <- dplyr::bind_rows(.croptEnv$params_and_crit)
           if (exists("params_and_crit", where = .croptEnv)) {
             rm("params_and_crit", envir = .croptEnv)
           }
-        }
+          }
         if (arguments$crit_options$info_level >= 2) {
           res$sim_intersect <- .croptEnv$sim_intersect
           if (exists("sim_intersect", where = .croptEnv)) {
             rm("sim_intersect", envir = .croptEnv)
           }
-        }
+          }
         if (arguments$crit_options$info_level >= 3) {
           res$obs_intersect <- .croptEnv$obs_intersect
           if (exists("obs_intersect", where = .croptEnv)) {
@@ -73,43 +70,28 @@ optim_switch <- function(...) {
         }
       }
 
-      # if (!is.null(crit_options$out_dir) & length(res) > 0) {
       if (!is.null(crit_options) && !is.null(crit_options$out_dir) && length(res) > 0) {
         save(res, file = file.path(
           crit_options$out_dir,
           "optim_results.Rdata"
         ))
-      }
+        }
 
-      if (!flag_error) { # do not return in case of error,
-        # otherwise error is not catched in tests
+      if (!flag_error) {
         return(res)
-      } else if (length(res) > 0) {
-        warning(paste(
-          "An error occured during the parameter estimation process (see other error and warning messages). Partial results saved in",
-          file.path(crit_options$out_dir, "optim_results.Rdata")
-        ))
-      }
+        } else if (length(res) > 0) {
+          warning(paste(
+            "An error occured during the parameter estimation process (see other error and warning messages). Partial results saved in",
+            file.path(crit_options$out_dir, "optim_results.Rdata")
+          ))
+          }
     })
-  }
+    }
 
   arguments <- list(...)
   optim_method <- arguments$optim_method
   optim_options <- arguments$optim_options
   wrap_args <- within(arguments, rm("optim_method"))
-  ##########################
-  #
-  # param_info   <- NULL
-  # crit_options <- NULL
-
-  # if ("param_info" %in% names(arguments)) {
-  #   param_info <- arguments$param_info
-  # }
-  # if ("crit_options" %in% names(arguments)) {
-  #  crit_options <- arguments$crit_options
-  # }
-  ##########################
-
   if (nargs() > 2) {
     param_info <- arguments$param_info
     crit_options <- arguments$crit_options
@@ -117,7 +99,7 @@ optim_switch <- function(...) {
 
   flag_unknown_method <- FALSE
   tryCatch(
-    if (optim_method == "nloptr.simplex" || optim_method == "simplex") {
+    if (optim_method == "nloptr.simplex" || optim_method == "simplex" || optim_method == "BFGS") {
       res <- do.call(wrap_nloptr, wrap_args)
       if (nargs() > 2) {
         res$obs_var_list <- .croptEnv$obs_var_list
@@ -269,16 +251,16 @@ optim_switch <- function(...) {
           optim_results = res,
           out_dir = crit_options$out_dir
         )
-      }
-    } else {
-      flag_unknown_method <- TRUE
-    },
+        }
+      } else {
+        flag_unknown_method <- TRUE
+        },
     error = function(cond) {
       message("=== ERROR CAUGHT IN optim_switch ===")
       traceback(20)
       stop(cond)
-    }
-  )
+      }
+    )
 
   if (flag_unknown_method) {
     flag_error <- TRUE
@@ -286,9 +268,8 @@ optim_switch <- function(...) {
       "Unknown method ", optim_method,
       ", please choose between nloptr.simplex, BayesianTools.dreamzs, DEoptim and graDiEnt."
     ))
-  }
-
+    }
   return(res)
-}
+  }
 
 utils::globalVariables(c(".croptEnv"))

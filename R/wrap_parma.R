@@ -10,11 +10,7 @@ wrap_cmaes <- function(optim_options, param_info, crit_options) {
   if(is.null((ranseed <- optim_options$ranseed))) {
     ranseed = NULL
   }
-  if (is.null((n_params <- optim_options$n_params))) {
-    stop(
-      "Optim_options$n_params is mandatory, please define it (e.g., 10 * number of parameters)"
-    )
-  }
+
   if (is.null((trace <- optim_options$return_trace))) {
     optim_options$return_trace <- TRUE
   }
@@ -23,14 +19,9 @@ wrap_cmaes <- function(optim_options, param_info, crit_options) {
 
   # return requested information if only optim_options is given in argument
   if (nargs() == 1 && methods::hasArg(optim_options)) {
-    init_nb <- if (!is.null(optim_options$n_particles)) {
-      optim_options$n_particles
-    } else {
-      NA_integer_
-    }
     return(list(
       package = "parma", family = "Global",
-      method = "cmaes", init_values_nb = init_nb
+      method = "cmaes", init_values_nb = 1L
     ))
   }
   param_names <- get_params_names(param_info)
@@ -40,17 +31,19 @@ wrap_cmaes <- function(optim_options, param_info, crit_options) {
 
   control_params <- optim_options$ctrl
   if (is.null(control_params )) {
-    control_params <- parma::cmaes.control()
-   } else{
-     if (is.null(control_params$options) && is.null(control_params$CMA)) {
-       ctrl <- parma::cmaes.control(options = control_params, CMA = list())
-       }else {
-         ctrl <- do.call(parma::cmaes.control, control_params)
-       }
-   }
+    ctrl <- parma::cmaes.control()
+  } else{
+    if (is.null(control_params$options) && is.null(control_params$CMA)) {
+      control_params$Trace <- NULL
+      ctrl <- parma::cmaes.control(options = control_params, CMA = list())
+    }else {
+      control_params$options$Trace <- NULL
+      ctrl <- do.call(parma::cmaes.control, control_params)
+    }
+  }
   if (!is.null(ctrl$options$PopSize) && !is.null(ctrl$options$MaxIter)){
     crit_options$tot_max_eval <- as.integer(ctrl$options$PopSize * ctrl$options$MaxIter)
-    }
+  }
 
   start_time <- Sys.time()
 
@@ -59,27 +52,27 @@ wrap_cmaes <- function(optim_options, param_info, crit_options) {
     x <- as.numeric(x)
     names(x) <- param_names
     main_crit(x, crit_options = crit_options)
-    }
+  }
   insigma <- optim_options$insigma
   if (is.null(insigma)) {
-  # default value if it is not provided
-  insigma <- rep(0.3, nb_params)
+    # default value if it is not provided
+    insigma <- rep(0.3, nb_params)
   }
   if (length(insigma) == 1L) insigma <- rep(insigma, nb_params)
   parma_res <- tryCatch(
     parma::cmaes(
-    pars    = init_values,
-    fun     = ObjFun,
-    lower   = bounds$lb,
-    upper   = bounds$ub,
-    insigma = insigma,
-    ctrl    = ctrl
+      pars    = init_values,
+      fun     = ObjFun,
+      lower   = bounds$lb,
+      upper   = bounds$ub,
+      insigma = insigma,
+      ctrl    = ctrl
     ),
     error = function(e) {
-    warning(sprintf("parma::cmaes failed: %s", e$message))
-     NULL
+      warning(sprintf("parma::cmaes failed: %s", e$message))
+      NULL
     }
-    )
+  )
   elapsed <- Sys.time() - start_time
 
   if (is.null(parma_res)) {
@@ -94,7 +87,7 @@ wrap_cmaes <- function(optim_options, param_info, crit_options) {
     sol <- parma_res$xbest
   if (is.null(sol)) {
     stop("Impossible to find a solution in the object sent by parma::cmaes().")
-    }
+  }
 
   final_values <- as.numeric(sol)
   names(final_values) <- param_names
