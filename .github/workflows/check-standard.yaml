@@ -46,7 +46,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck
+          extra-packages: any::rcmdcheck, any::remotes
           needs: check
 
       - name: Install custom R dependencies
@@ -75,7 +75,7 @@ jobs:
           repository: SticsRPacks/SticsRTests
           event-type: R-CMD-check
           client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "repo": "${{ github.event.repository.name }}"}'
-          
+
       - name: Wait for SticsRTests workflow to complete (block-and-fail)
         uses: actions/github-script@v6
         with:
